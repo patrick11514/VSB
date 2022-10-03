@@ -8,4 +8,4 @@
 * **[Cykly a podmínky](https://github.com/patrick11514/VSB/tree/main/UPR/Ukol2)**
 ![Task 2](http://upload.patrick115.eu/screenshot/kelvin_h2.png)
 * **[Funkce](https://github.com/patrick11514/VSB/tree/main/UPR/Ukol3)**
-![Task 3](https://upload.patrick115.eu/file/kelvin_h3.png)
+![Task 3](https://upload.patrick115.eu/screenshot/kelvin_h3.png)
