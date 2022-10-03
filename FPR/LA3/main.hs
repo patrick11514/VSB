@@ -58,8 +58,7 @@ reverseL [x, y] = [y,x]
 reverseL (x : xs) = (reverseL xs)++[x]
 
 scalar :: [Int] -> [Int] -> Int
-scalar [_] []        = 0
 scalar [] []         = 0
-scalar [] (_:_)      = 0
-scalar (_:_:_) []    = 0
+scalar _ []          = 0
+scalar [] _          = 0
 scalar (x:xs) (y:ys) = x*y + scalar xs ys
