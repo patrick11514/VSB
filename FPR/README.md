@@ -1,3 +1,5 @@
 # FPR - Functional Programming
 
-**Main page: http://behalek.cs.vsb.cz/wiki/index.php/Functional_programming**
+### **Main pages:** 
+* **http://behalek.cs.vsb.cz/wiki/index.php/Functional_programming**
+* **https://mrlvsb.github.io/upr-skripta/uvod/uvod.html**
