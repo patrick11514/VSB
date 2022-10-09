@@ -18,9 +18,11 @@ void nactiSouradnice(int *x, int *y)
 int main()
 {
     int x = 0, y = 0;
+    int pole[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
-    nactiSouradnice(&x, &y);
-    printf("Nacteno v main (%d,%d)\n", x, y);
+    scanf("%d", pole);
+
+    printf("%d %d %d", pole[0], pole[1], pole[2]);
 
     return 0;
 }
