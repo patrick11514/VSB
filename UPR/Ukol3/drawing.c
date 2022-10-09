@@ -79,7 +79,7 @@ void roof()
 {
     // roof
     int width = 1;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 3; i++)
     {
         for (int l = 0; l < width; l++)
         {
@@ -104,7 +104,7 @@ void chimney()
     }
 
     // chimney
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 1; i++)
     {
         move_up();
         draw_pixel();
@@ -113,20 +113,20 @@ void chimney()
 
 void body()
 {
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 3; i++)
     {
         move_down();
     }
     // body
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 2; i++)
     {
-        for (int l = 0; l < 5; l++)
+        for (int l = 0; l < 3; l++)
         {
             draw_pixel();
             move_right();
         }
         move_down();
-        for (int l = 0; l < 5; l++)
+        for (int l = 0; l < 3; l++)
         {
             move_left();
         }
@@ -147,10 +147,10 @@ void house()
     body();
 
     // back to start line to be able to draw another house
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 7; i++)
     {
         move_right();
-        if (i < 7)
+        if (i < 5)
             move_up();
     }
 }
@@ -162,12 +162,274 @@ void village(int houses)
     for (int i = 0; i < houses; i++)
     {
         // new line
-        if (i % 12 == 0 && i > 0)
+        if (i % 20 == 0 && i > 0)
         {
-            current += 9;
+            current += 6;
             move_to(current, 5);
         }
         house();
+    }
+}
+
+void line(int length)
+{
+    for (int i = 0; i < length * 2; i++)
+    {
+        if (i % 2 == 0)
+            set_red_color();
+        else
+            reset_color();
+        draw_pixel();
+        move_right();
+    }
+}
+
+void stairsDown(int count)
+{
+    set_green_color();
+    int stairSize = 2;
+    for (int i = 0; i < count; i++)
+    {
+        for (int l = 0; l < stairSize; l++)
+        {
+            draw_pixel();
+            move_right();
+        }
+        move_left();
+        for (int l = 0; l < stairSize; l++)
+        {
+            draw_pixel();
+            move_down();
+        }
+        move_up();
+    }
+}
+
+void stairsUp(int count)
+{
+    set_green_color();
+    int stairSize = 2;
+    for (int i = 0; i < count; i++)
+    {
+        for (int l = 0; l < stairSize; l++)
+        {
+            draw_pixel();
+            move_up();
+        }
+        move_down();
+        for (int l = 0; l < stairSize; l++)
+        {
+            draw_pixel();
+            move_right();
+        }
+        move_left();
+    }
+}
+
+void cloud()
+{
+    reset_color();
+
+    // start is from middle of cloud
+    move_up();
+
+    int currentSize = 1;
+    for (int i = 0; i < 3; i++)
+    {
+        for (int l = 0; l < currentSize; l++)
+        {
+            draw_pixel();
+            move_right();
+        }
+        move_down();
+        if (i == 0)
+        {
+            for (int l = 0; l < currentSize + 1; l++)
+            {
+                move_left();
+            }
+            currentSize += 2;
+        }
+        else
+        {
+            currentSize -= 2;
+            for (int l = 0; l < currentSize + 1; l++)
+            {
+                move_left();
+            }
+        }
+    }
+}
+
+void clearCloud()
+{
+    set_blue_color();
+
+    // start is from middle of cloud
+    move_up();
+
+    int currentSize = 1;
+    for (int i = 0; i < 3; i++)
+    {
+        for (int l = 0; l < currentSize; l++)
+        {
+            draw_pixel();
+            move_right();
+        }
+        move_down();
+        if (i == 0)
+        {
+            for (int l = 0; l < currentSize + 1; l++)
+            {
+                move_left();
+            }
+            currentSize += 2;
+        }
+        else
+        {
+            currentSize -= 2;
+            for (int l = 0; l < currentSize + 1; l++)
+            {
+                move_left();
+            }
+        }
+    }
+}
+
+int plane()
+{
+    set_green_color();
+    // start is from middle of plane wings
+    move_up();
+    move_left();
+    move_left();
+    for (int i = 0; i < 3; i++)
+    {
+        for (int l = 0; l < 5; l++)
+        {
+            switch (i)
+            {
+            case 0:
+            {
+
+                if (l == 0 || l == 3)
+                {
+                    draw_pixel();
+                }
+                move_right();
+                break;
+            }
+            case 1:
+            {
+                draw_pixel();
+                move_right();
+                break;
+            }
+            case 2:
+            {
+                if (l == 3)
+                {
+                    draw_pixel();
+                }
+                move_right();
+                break;
+            }
+            }
+        }
+        move_down();
+        for (int l = 0; l < 5; l++)
+        {
+            move_left();
+        }
+    }
+}
+
+void fastAnimate()
+{
+    fflush(stdout);
+    // Sleep for 500ms
+    usleep(1000 * 100);
+}
+
+void animation(int faster)
+{
+    int width = 130;
+
+    set_blue_color();
+    // background
+    for (int l = 0; l < canvas_height; l++)
+    {
+        move_to(l + 1, 1);
+        for (int i = 0; i < width; i++)
+        {
+            draw_pixel();
+            move_right();
+        }
+    }
+
+    int cloud1x = 10;
+    int cloud2x = 80;
+    int cloud3x = 35;
+    int cloud4x = 50;
+    int cloud5x = 75;
+
+    int frames = 130;
+
+    for (int i = 0; i < frames; i++)
+    {
+        move_to(5, cloud1x);
+        cloud();
+        move_to(3, cloud2x);
+        cloud();
+        move_to(6, cloud3x);
+        cloud();
+        move_to(4, cloud4x);
+        cloud();
+        move_to(8, cloud5x);
+        cloud();
+        move_to(9, 45);
+        plane();
+
+        if (faster)
+            fastAnimate();
+        else
+            animate();
+
+        move_to(5, cloud1x);
+        clearCloud();
+        move_to(3, cloud2x);
+        clearCloud();
+        move_to(6, cloud3x);
+        clearCloud();
+        move_to(4, cloud4x);
+        clearCloud();
+        move_to(8, cloud5x);
+        clearCloud();
+
+        if (cloud1x == 2)
+            cloud1x = width - 1;
+        else
+            cloud1x -= 1;
+
+        if (cloud2x == 2)
+            cloud2x = width - 1;
+        else
+            cloud2x -= 1;
+
+        if (cloud3x == 2)
+            cloud3x = width - 1;
+        else
+            cloud3x -= 1;
+
+        if (cloud4x == 2)
+            cloud4x = width - 1;
+        else
+            cloud4x -= 1;
+
+        if (cloud5x == 2)
+            cloud5x = width - 1;
+        else
+            cloud5x -= 1;
     }
 }
 
@@ -176,8 +438,21 @@ int main()
     // Keep this line here
     clear_screen();
 
-    // Put your drawing code here
-    village(20);
+    //  Put your drawing code here
+    // move_to(1, 20);
+    // house();
+
+    // village(25);
+
+    // line(25);
+    // stairsDown(10);
+
+    // move_to(13, 20);
+    // stairsUp(10);
+
+    // 0 - for slower animation
+    // 1 - for faster animation
+    // animation(1);
 
     // Keep this line here
     end_drawing();
@@ -216,7 +491,7 @@ void set_blue_color()
 void clear_screen()
 {
     reset_color();
-    // hide_cursor();
+    hide_cursor();
 
     // Clear screen
     printf("\x1b[2J");
