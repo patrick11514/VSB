@@ -296,7 +296,7 @@ void clearCloud()
     }
 }
 
-int plane()
+void plane()
 {
     set_green_color();
     // start is from middle of plane wings
