@@ -1,4 +1,5 @@
 #!/bin/bash
+mkdir $1
 cd $1
 wget https://github.com/geordi/upr-course/raw/master/assets/exercises/templates/ex_01.zip
 unzip ex_01.zip
