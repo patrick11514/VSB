@@ -3,23 +3,22 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int main()
+void vypisMatice(int *p, int x, int y)
 {
-    int p[4][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}};
-    int *v = (int *)p;
-
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < x; i++)
     {
-        for (int j = 0; j < 3; j++)
+        for (int j = 0; j < y; j++)
         {
-            printf("%d ", p[i][j]);
+            printf("%d ", p[i * y + j]);
         }
         printf("\n");
     }
+}
 
-    for (int i = 0; i < 4 * 3; i++)
-    {
-        printf("%d ", v[i]);
-    }
+int main()
+{
+    int p[4][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}};
+
+    vypisMatice((int *)p, 4, 3);
     return 0;
 }
