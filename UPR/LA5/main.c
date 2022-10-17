@@ -15,10 +15,19 @@ void vypisMatice(int *p, int x, int y)
     }
 }
 
+void vypisVektoru(int *p, int c)
+{
+    for (int i = 0; i < c; i++)
+    {
+        printf("%d ", p[i]);
+    }
+}
+
 int main()
 {
     int p[4][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}};
 
     vypisMatice((int *)p, 4, 3);
+    vypisVektoru((int *)p, 4 * 3);
     return 0;
 }
