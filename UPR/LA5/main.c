@@ -3,37 +3,24 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void vypisMatice(int *p, int x, int y)
+int *nacti()
 {
-    for (int i = 0; i < x; i++)
-    {
-        for (int j = 0; j < y; j++)
-        {
-            printf("%d ", p[i * y + j]);
-        }
-        printf("\n");
-    }
-}
-
-void vypisVektoru(int *p, int c)
-{
+    int c;
+    scanf("%d", &c);
+    int vek[c];
     for (int i = 0; i < c; i++)
     {
-        printf("%d ", p[i]);
+        scanf("%d", vek + i);
     }
+    return vek;
 }
 
 int main()
 {
-    int *obr = (int *)malloc(2000 * 3000 * sizeof(int));
-
-    if (obr == NULL)
+    int *vek = nacti();
+    for (int i = 0; i < 10; i++)
     {
-        printf("Nepodařilo se alokovat paměť");
-    }
-    else
-    {
-        printf("OK");
+        printf("%d ", vek[i]);
     }
     return 0;
 }
