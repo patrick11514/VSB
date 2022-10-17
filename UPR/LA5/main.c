@@ -25,9 +25,15 @@ void vypisVektoru(int *p, int c)
 
 int main()
 {
-    int p[4][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}};
+    int *obr = (int *)malloc(2000 * 3000 * sizeof(int));
 
-    vypisMatice((int *)p, 4, 3);
-    vypisVektoru((int *)p, 4 * 3);
+    if (obr == NULL)
+    {
+        printf("Nepodařilo se alokovat paměť");
+    }
+    else
+    {
+        printf("OK");
+    }
     return 0;
 }
