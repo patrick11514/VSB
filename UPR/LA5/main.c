@@ -3,25 +3,32 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int *nacti()
+int *nasobeniMatVek(int *mat, int *vek, int x, int y)
 {
-    int c;
-    scanf("%d", &c);
-    int *vek = (int *)calloc(c, sizeof(int));
-    for (int i = 0; i < c; i++)
+    int *vysledek = (int *)calloc(x, sizeof(int));
+    for (int i = 0; i < x; i++)
     {
-        scanf("%d", vek + i);
+        for (int l = 0; l < y; l++)
+        {
+            vysledek[i] += mat[i * y + l] * vek[l];
+        }
     }
-    return vek;
+
+    return vysledek;
 }
 
 int main()
 {
-    int *vek = nacti();
-    for (int i = 0; i < 10; i++)
+    int mat[3][4] = {{1, 1, 1, 2}, {2, 3, 4, 5}, {2, 1, 1, 2}};
+    int vek[4] = {2, 2, 3, 2};
+
+    int *vysledek = nasobeniMatVek((int *)mat, vek, 3, 4);
+
+    for (int i = 0; i < 3; i++)
     {
-        printf("%d ", vek[i]);
+        printf("%d ", vysledek[i]);
     }
-    free(vek);
+
+    free(vysledek);
     return 0;
 }
