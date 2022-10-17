@@ -22,5 +22,6 @@ int main()
     {
         printf("%d ", vek[i]);
     }
+    free(vek);
     return 0;
 }
