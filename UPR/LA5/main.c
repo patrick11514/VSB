@@ -7,7 +7,7 @@ int *nacti()
 {
     int c;
     scanf("%d", &c);
-    int *vek = (int *)malloc(c * sizeof(int));
+    int *vek = (int *)calloc(c, sizeof(int));
     for (int i = 0; i < c; i++)
     {
         scanf("%d", vek + i);
