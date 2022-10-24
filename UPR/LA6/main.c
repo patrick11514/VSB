@@ -42,7 +42,10 @@ int main()
 
     // nacte pouze 79 znaku, protože funkce fgets načítá do n-1
     char retezec[80];
-    fgets(retezec, sizeof(retezec), stdin);
+    // scanf neřeší max charů
+    scanf("%s", retezec);
+    // tady zadam cislo, ale uklada do n+1, protoze na konec prida \0
+    scanf("%40s", retezec);
 
     printf("Nacteno %d znaku: \n%s\n", strlen(retezec), retezec);
 
