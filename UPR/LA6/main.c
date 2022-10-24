@@ -31,8 +31,14 @@ int main()
     // printf("3: %s\n", t3);
     // printf("4: %s\n", t4);
 
-    printf("Shoda: %d %d %d %d %d\n", t1 == t1, t1 == t2, t1 == t3, t1 == t4, t1 == "Cau");
-    printf("Shoda strcmp: %d %d %d %d\n", strcmp(t1, t1), strcmp(t1, t2), strcmp(t1, t3), strcmp(t1, t4));
+    // printf("Shoda: %d %d %d %d %d\n", t1 == t1, t1 == t2, t1 == t3, t1 == t4, t1 == "Cau");
+    // printf("Shoda strcmp: %d %d %d %d\n", strcmp(t1, t1), strcmp(t1, t2), strcmp(t1, t3), strcmp(t1, t4));
+
+    char a = 'a';
+    // na velke
+    printf("%c\n", a - 'a' + 'A');
+
+    printf("%d\n", atoi("456"));
 
     return 0;
 }
