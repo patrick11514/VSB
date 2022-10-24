@@ -6,7 +6,7 @@
 
 int main()
 {
-    char t1[] = "Ahoj"; // ekvivalent k řádku t2
+    /*char t1[] = "Ahoj"; // ekvivalent k řádku t2
     char t2[] = {'A', 'h', 'o', 'j', '\0'};
     const char *t3 = "Ahoj";
     char *t4 = "Ahoj";
@@ -38,7 +38,13 @@ int main()
     // na velke
     printf("%c\n", a - 'a' + 'A');
 
-    printf("%d\n", atoi("456"));
+    printf("%d\n", atoi("456"));*/
+
+    // nacte pouze 79 znaku, protože funkce fgets načítá do n-1
+    char retezec[80];
+    fgets(retezec, sizeof(retezec), stdin);
+
+    printf("Nacteno %d znaku: \n%s\n", strlen(retezec), retezec);
 
     return 0;
 }
