@@ -7,7 +7,7 @@ pp x = putStr (unlines x)
 sampleMoves :: [(Int, Int)]
 sampleMoves = [(1,1),(8,8),(2,2),(3,3),(4,2),(3,2)]
 
---ticktack::(Int,Int) -> [(Int,Int)] -> Result
+ticktack::(Int,Int) -> [(Int,Int)] -> Result
 ticktack (w,h) moves = let
     pairMovesWithSymbols :: [(Int, Int, [Char])] -> [(Int, Int)] -> Int -> [(Int, Int, [Char])]
     pairMovesWithSymbols list [] _ = list
