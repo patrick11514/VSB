@@ -6,3 +6,5 @@ unzip ex_01.zip
 cp -r ex_01/. ex_01/.vscode .
 rm -r ex_01
 rm ex_01.zip
+cp ../../build.sh .
+cp ../../test.sh .
