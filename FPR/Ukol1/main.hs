@@ -14,13 +14,16 @@ ticktack (w,h) moves = let
     pairMovesWithSymbols list ((x,y):xs) symbol | odd symbol = (x,y,"x"):pairMovesWithSymbols list xs (symbol+1)
                                                 | otherwise = (x,y,"o"):pairMovesWithSymbols list xs (symbol+1)
     
+    generate :: [(Int, Int, String)] -> Int -> Int -> Result
+    generate moves w h = [makeLine [] [getSymbol moves x y | x <- [1..w]] | y <- [1..h]]
+
     makeLine :: String -> [String] -> String
     makeLine to [] = to
     makeLine to (x:xs) = x++makeLine to xs
 
     isHere :: Int -> Int -> (Int,Int,String) -> Bool
-    isHere x y (currentX,currentY,symbol) | x == currentX && y == currentY = True
-                                          | otherwise = False
+    isHere x y (currentX,currentY,_) | x == currentX && y == currentY = True
+                                     | otherwise = False
 
     getCurrentSymbol :: [(Int, Int, String)] -> String
     getCurrentSymbol [(_,_,symbol)] = symbol
@@ -28,9 +31,6 @@ ticktack (w,h) moves = let
     getSymbol :: [(Int, Int, String)] -> Int -> Int -> String
     getSymbol moves x y | length (filter (isHere x y) moves) > 0 = getCurrentSymbol (filter (isHere x y) moves)
                         | otherwise = " "
-
-    generate :: [(Int, Int, String)] -> Int -> Int -> Result
-    generate moves w h = [makeLine [] [getSymbol moves x y | x <- [1..w]] | y <- [1..h]]
 
     addToLine :: Result -> Result
     addToLine list = ["|"++line++"|" | line <- list]
