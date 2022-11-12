@@ -1,0 +1,38 @@
+<html>
+<body>
+<div>
+<h1>AAPL: highest volume</h1>
+<div>Day: 1</div>
+<div>Start price: 428.42</div>
+<div>End price: 428.35</div>
+<div>Volume: 86159980</div>
+</div>
+<ul>
+<li>Day: 8, ticker: GOOGL, start: 670.05, end: 666.63, diff: -3.42, volume: 21837107</li>
+<li>Day: 8, ticker: GME, start: 646.08, end: 650.74, diff: 4.66, volume: 7891465</li>
+<li>Day: 7, ticker: BBBY, start: 696.32, end: 698.63, diff: 2.31, volume: 76573039</li>
+<li>Day: 7, ticker: GOOGL, start: 671.13, end: 670.05, diff: -1.08, volume: 35014494</li>
+<li>Day: 7, ticker: GME, start: 650.69, end: 646.08, diff: -4.61, volume: 13645419</li>
+<li><b>Day: 6, ticker: AAPL, start: 423.00, end: 422.37, diff: -0.63, volume: 8292977</b></li>
+<li>Day: 6, ticker: GME, start: 649.48, end: 650.69, diff: 1.21, volume: 34985857</li>
+<li><b>Day: 5, ticker: AAPL, start: 418.63, end: 423.00, diff: 4.37, volume: 3157825</b></li>
+<li>Day: 5, ticker: BBBY, start: 696.53, end: 696.32, diff: -0.21, volume: 97697122</li>
+<li>Day: 5, ticker: GOOGL, start: 674.19, end: 671.13, diff: -3.06, volume: 24926513</li>
+<li>Day: 5, ticker: GME, start: 644.67, end: 649.48, diff: 4.81, volume: 4984456</li>
+<li><b>Day: 4, ticker: AAPL, start: 422.44, end: 418.63, diff: -3.81, volume: 12385197</b></li>
+<li>Day: 4, ticker: GOOGL, start: 678.92, end: 674.19, diff: -4.73, volume: 85328245</li>
+<li>Day: 4, ticker: GME, start: 640.31, end: 644.67, diff: 4.36, volume: 80921954</li>
+<li><b>Day: 3, ticker: AAPL, start: 425.25, end: 422.44, diff: -2.81, volume: 77122995</b></li>
+<li>Day: 3, ticker: BBBY, start: 700.52, end: 696.53, diff: -3.99, volume: 19743903</li>
+<li>Day: 3, ticker: GOOGL, start: 682.22, end: 678.92, diff: -3.30, volume: 57294352</li>
+<li>Day: 3, ticker: GME, start: 644.14, end: 640.31, diff: -3.83, volume: 29689712</li>
+<li><b>Day: 2, ticker: AAPL, start: 428.35, end: 425.25, diff: -3.10, volume: 2275538</b></li>
+<li>Day: 2, ticker: BBBY, start: 700.66, end: 700.52, diff: -0.14, volume: 84676944</li>
+<li>Day: 2, ticker: GME, start: 639.97, end: 644.14, diff: 4.17, volume: 48065060</li>
+<li><b>Day: 1, ticker: AAPL, start: 428.42, end: 428.35, diff: -0.07, volume: 86159980</b></li>
+<li>Day: 1, ticker: BBBY, start: 696.16, end: 700.66, diff: 4.50, volume: 77905347</li>
+<li>Day: 1, ticker: GOOGL, start: 678.72, end: 682.22, diff: 3.50, volume: 91297504</li>
+<li>Day: 1, ticker: GME, start: 639.72, end: 639.97, diff: 0.25, volume: 70133481</li>
+</ul>
+</body>
+</html>

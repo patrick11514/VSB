@@ -1,0 +1,19 @@
+<html>
+<body>
+<div>
+Ticker AMC was not found
+</div>
+<ul>
+<li>Day: 5, ticker: META, start: 458.51, end: 462.19, diff: 3.68, volume: 32837163</li>
+<li>Day: 4, ticker: GOOGL, start: 687.75, end: 690.60, diff: 2.85, volume: 84021759</li>
+<li>Day: 4, ticker: META, start: 462.58, end: 458.51, diff: -4.07, volume: 53629189</li>
+<li>Day: 3, ticker: AAPL, start: 408.75, end: 411.80, diff: 3.05, volume: 73745173</li>
+<li>Day: 3, ticker: GOOGL, start: 687.98, end: 687.75, diff: -0.23, volume: 70074900</li>
+<li>Day: 3, ticker: META, start: 461.47, end: 462.58, diff: 1.11, volume: 27544538</li>
+<li>Day: 2, ticker: AAPL, start: 408.15, end: 408.75, diff: 0.60, volume: 47585068</li>
+<li>Day: 2, ticker: GOOGL, start: 685.68, end: 687.98, diff: 2.30, volume: 91902769</li>
+<li>Day: 2, ticker: META, start: 458.37, end: 461.47, diff: 3.10, volume: 19824825</li>
+<li>Day: 1, ticker: AAPL, start: 403.28, end: 408.15, diff: 4.87, volume: 71579480</li>
+</ul>
+</body>
+</html>
