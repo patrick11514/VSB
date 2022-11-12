@@ -14,4 +14,6 @@
 * **[Dynamická alokace paměti](https://github.com/patrick11514/VSB/tree/main/UPR/Ukol5)**
 ![Task 5](https://upload.patrick115.eu/screenshot/kelvin_h5.png)
 * **[Práce s textem](https://github.com/patrick11514/VSB/tree/main/UPR/Ukol6)**
-![Task 5](https://upload.patrick115.eu/screenshot/kelvin_h6.png)
+![Task 6](https://upload.patrick115.eu/screenshot/kelvin_h6.png)
+* **[Struktury](https://github.com/patrick11514/VSB/tree/main/UPR/Ukol7)**
+![Task 7](https://upload.patrick115.eu/screenshot/kelvin_h7.png)
