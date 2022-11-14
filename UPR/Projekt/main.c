@@ -143,7 +143,41 @@ void addHighscore(Highscores *highscores, char *name, int score)
     highscores->count = highscores->count + 1;
 }
 
-void writeHighscore(Highscores *highscores)
+void swapScores(int *x, int *y)
+{
+    int temp = *x;
+    *x = *y;
+    *y = temp;
+}
+
+void swapNames(char **x, char **y)
+{
+    char *temp = *x;
+    *x = *y;
+    *y = temp;
+}
+
+// sort from highest to lowest
+void sortHighscores(Highscores *highscores)
+{
+    int *scores = highscores->scores;
+    char **names = highscores->players;
+    int count = highscores->count;
+
+    for (int i = 0; i < count - 1; i++)
+    {
+        for (int j = 0; j < count - i - 1; j++)
+        {
+            if (scores[j] < scores[j + 1])
+            {
+                swapScores(scores + j, scores + j + 1);
+                swapNames(names + j, names + j + 1);
+            }
+        }
+    }
+}
+
+void writeHighscores(Highscores *highscores)
 {
     FILE *file = openFile("highscores.txt", "wt");
 
@@ -206,7 +240,9 @@ int main()
 
     addHighscore(highscores, username, score);
 
-    writeHighscore(highscores);
+    sortHighscores(highscores);
+
+    writeHighscores(highscores);
 
     return 0;
 }
