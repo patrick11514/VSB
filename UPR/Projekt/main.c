@@ -1,209 +1,38 @@
+// basic includes
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <stdbool.h>
 
-FILE *openFile(char *filename, char *mode)
-{
-    FILE *file = fopen(filename, mode);
-    if (!file)
-    {
-        printf("Nepovedlo se otevřít soubor. (%d - %s)\n", errno, strerror(errno));
-    }
-    return file;
-}
+// my includes
+#include "highscores.c"
 
-typedef struct
-{
-    int count;
-    int *scores;
-    char **players;
-} Highscores;
+// SDL2
+#include <SDL2/SDL.h>
+
+// ======================= [ GLOBAL FUNCTIONS ] ========================
 
 char *readInput(char *input)
 {
     return strtok(input, ";\n");
 }
 
-int getLines(FILE *fp)
+// =====================================================================
+
+// ======================= [ MAIN FUNCTION ] ==========================
+
+void addNewHigh()
 {
-    char ch;
-    int lines = 0;
-
-    while (!feof(fp))
-    {
-        ch = fgetc(fp);
-        if (ch == '\n')
-        {
-            lines++;
-        }
-    }
-
-    return lines;
-}
-
-Highscores *readHighscores(FILE *file)
-{
-    char row[100];
-
-    int count = 0;
-
-    int lines = getLines(file);
-
-    // tries to allocate players and scores by
-
-    int *scores = (int *)malloc(sizeof(int) * lines);
-    char **players = (char **)malloc(sizeof(char *) * lines);
-
-    if (!scores || !players)
-    {
-        printf("Unable to allocate memory");
-        exit(1);
-    }
-
-    fseek(file, 0, 0);
-
-    while (fgets(row, 100, file) != NULL)
-    {
-        char *name = readInput(row);
-
-        char *scoreStr = readInput(NULL);
-        if (!scoreStr)
-            continue;
-
-        char *saveName = (char *)malloc(sizeof(char) * strlen(name) + 1);
-        if (!strcpy(saveName, name))
-        {
-            printf("Unable to copy string");
-            exit(1);
-        }
-        int score = atoi(scoreStr);
-
-        players[count] = saveName;
-        scores[count] = score;
-
-        count++;
-    }
-
-    Highscores *highscores = (Highscores *)malloc(sizeof(Highscores));
-
-    if (!highscores)
-    {
-        printf("Unable to allocate memory");
-        exit(1);
-    }
-
-    int *realScores = (int *)malloc(sizeof(int) * count);
-    char **realPlayers = (char **)malloc(sizeof(char *) * count);
-
-    for (int i = 0; i < count; i++)
-    {
-        realScores[i] = scores[i];
-        realPlayers[i] = players[i];
-    }
-
-    free(players);
-    free(scores);
-
-    highscores->count = count;
-    highscores->players = realPlayers;
-    highscores->scores = realScores;
-
-    return highscores;
-}
-
-void addHighscore(Highscores *highscores, char *name, int score)
-{
-    char **players = (char **)malloc(sizeof(char *) * (highscores->count + 1));
-    int *scores = (int *)malloc(sizeof(int) * (highscores->count + 1));
-
-    for (int i = 0; i < highscores->count; i++)
-    {
-        players[i] = highscores->players[i];
-        scores[i] = highscores->scores[i];
-    }
-
-    char *newName = (char *)malloc(sizeof(char) * strlen(name) + 1);
-    if (!strcpy(newName, name))
-    {
-        printf("Unable to copy string");
-        exit(1);
-    }
-
-    players[highscores->count] = newName;
-    scores[highscores->count] = score;
-
-    free(highscores->players);
-    free(highscores->scores);
-
-    highscores->players = players;
-    highscores->scores = scores;
-    highscores->count = highscores->count + 1;
-}
-
-void swapScores(int *x, int *y)
-{
-    int temp = *x;
-    *x = *y;
-    *y = temp;
-}
-
-void swapNames(char **x, char **y)
-{
-    char *temp = *x;
-    *x = *y;
-    *y = temp;
-}
-
-// sort from highest to lowest
-void sortHighscores(Highscores *highscores)
-{
-    int *scores = highscores->scores;
-    char **names = highscores->players;
-    int count = highscores->count;
-
-    for (int i = 0; i < count - 1; i++)
-    {
-        for (int j = 0; j < count - i - 1; j++)
-        {
-            if (scores[j] < scores[j + 1])
-            {
-                swapScores(scores + j, scores + j + 1);
-                swapNames(names + j, names + j + 1);
-            }
-        }
-    }
-}
-
-void writeHighscores(Highscores *highscores)
-{
-    FILE *file = openFile("highscores.txt", "wt");
-
-    for (int i = 0; i < highscores->count; i++)
-    {
-        fprintf(file, "%s;%d\n", highscores->players[i], highscores->scores[i]);
-    }
-
-    fclose(file);
-
-    for (int i = 0; i < highscores->count; i++)
-    {
-        free(highscores->players[i]);
-    }
-
-    free(highscores->players);
-    free(highscores->scores);
-    free(highscores);
-}
-
-int main()
-{
+    // read file
     FILE *file = openFile("highscores.txt", "rt");
 
+    // initialize highscores
     Highscores *highscores;
 
+    // if file doesn't exist, create new highscores
     if (!file)
     {
         highscores = (Highscores *)malloc(sizeof(Highscores));
@@ -213,6 +42,7 @@ int main()
     }
     else
     {
+        // read highscores from file
         highscores = readHighscores(file);
         fclose(file);
     }
@@ -238,11 +68,75 @@ int main()
 
     int score = atoi(scoreStr);
 
+    // add new highscore
     addHighscore(highscores, username, score);
 
+    // sort highscores
     sortHighscores(highscores);
 
+    // write highscores to file
     writeHighscores(highscores);
+}
+
+int main(int argc, char **argv)
+{
+    if (argc > 1)
+    {
+        // check if arguments contains --help
+        for (int i = 1; i < argc; i++)
+        {
+            if (strcmp(argv[i], "--help") == 0)
+            {
+                printf("Usage: %s --[OPTION]=[VALUE]...\n", argv[0]);
+                printf("Options:\n");
+                printf("help - show this message\n");
+                printf("level - load level from given file\n");
+                printf("      - Example %s --level=level1.txt\n", argv[0]);
+            }
+        }
+    }
+
+    if (SDL_Init(SDL_INIT_VIDEO))
+    {
+        fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
+        return 1;
+    }
+    SDL_Window *window = SDL_CreateWindow("Breakout", 100, 100, 800, 600, SDL_WINDOW_SHOWN);
+    if (!window)
+    {
+        fprintf(stderr, "SDL_CreateWindow Error: %s\n", SDL_GetError());
+        SDL_Quit();
+        return 1;
+    }
+
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if (!renderer)
+    {
+        SDL_DestroyWindow(window);
+        fprintf(stderr, "SDL_CreateRenderer Error: %s", SDL_GetError());
+        SDL_Quit();
+        return 1;
+    }
+
+    SDL_Event e;
+    bool quit = false;
+
+    while (!quit)
+    {
+        while (SDL_PollEvent(&e))
+        {
+            if (e.type == SDL_QUIT)
+            {
+                quit = true;
+            }
+        }
+    }
+
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 
     return 0;
 }
+
+// =====================================================================
