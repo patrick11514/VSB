@@ -13,15 +13,6 @@
 // SDL2
 #include <SDL2/SDL.h>
 
-// ======================= [ GLOBAL FUNCTIONS ] ========================
-
-char *readInput(char *input)
-{
-    return strtok(input, ";\n");
-}
-
-// =====================================================================
-
 // ======================= [ MAIN FUNCTION ] ==========================
 
 void addNewHigh()
@@ -57,8 +48,8 @@ void addNewHigh()
         exit(1);
     }
 
-    char *username = readInput(row);
-    char *scoreStr = readInput(NULL);
+    char *username = splitInputAt(row);
+    char *scoreStr = splitInputAt(NULL);
 
     if (!scoreStr)
     {

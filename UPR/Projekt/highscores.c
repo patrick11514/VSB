@@ -7,6 +7,7 @@
 
 // my includes
 #include "files.c"
+#include "global.c"
 
 // =========================== [ TYPES ] ===============================
 typedef struct
@@ -44,9 +45,9 @@ Highscores *readHighscores(FILE *file)
 
     while (fgets(row, 100, file) != NULL)
     {
-        char *name = readInput(row);
+        char *name = splitInputAt(row);
 
-        char *scoreStr = readInput(NULL);
+        char *scoreStr = splitInputAt(NULL);
         if (!scoreStr)
             continue;
 
@@ -73,7 +74,7 @@ Highscores *readHighscores(FILE *file)
     }
 
     // if number of real scores are lower than lines (Some of lines are corrupted - missing ; etc..)
-    if (scores != lines)
+    if (count != lines)
     {
         // initialize new variables with correct count
         int *realScores = (int *)malloc(sizeof(int) * count);
