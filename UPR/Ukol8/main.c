@@ -147,6 +147,13 @@ int getStart(char *string, Alphabet *alphabet, int width)
         lenOfImage += image->width + 1;
     }
 
+    if (lenOfImage > width)
+    {
+        // strok removes \n on the end
+        printf("Text '%s' is longer than width of image.", strtok(string, "\n"));
+        exit(1);
+    }
+
     return (width - lenOfImage - 1) / 2;
 }
 
