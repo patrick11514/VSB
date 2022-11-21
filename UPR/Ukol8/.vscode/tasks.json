@@ -1,0 +1,27 @@
+{
+"version": "2.0.0",
+"tasks": [
+    {
+        "type": "shell",
+        "label": "gcc - Build and debug active file",
+        "command": "/usr/bin/gcc",
+        "args": [
+            "-g",
+            "${fileDirname}/*.c",
+            "-o",
+            "${fileDirname}/${fileBasenameNoExtension}",
+            "-lm"
+        ],
+        "options": {
+            "cwd": "/usr/bin"
+        },
+        "problemMatcher": [
+            "$gcc"
+        ],
+        "group": {
+            "kind": "build",
+            "isDefault": true
+        }
+    }
+]
+}
