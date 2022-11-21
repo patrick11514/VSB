@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
-            "args": [],
+            "args": ["img1.tga", "out.tga", "font"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
