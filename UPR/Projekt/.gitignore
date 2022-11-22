@@ -2,3 +2,6 @@
 .vscode/settings.json
 
 highscores.txt
+
+#build files
+*.o
