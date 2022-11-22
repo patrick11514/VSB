@@ -1,27 +1,13 @@
 // Basic includes
 #include <stdio.h>
-#include <stdbool.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
 
-// my includes
-#include "files.c"
-#include "global.c"
-
-// =========================== [ TYPES ] ===============================
-typedef struct
-{
-    int count;
-    int *scores;
-    char **players;
-} Highscores;
-
-// =====================================================================
+// header files
+#include "highscores.h"
 
 // ======================= [ HIGHSCORE FUNCTIONS ] =====================
 
-// read highscores from given file
 Highscores *readHighscores(FILE *file)
 {
     char row[100];
@@ -45,9 +31,9 @@ Highscores *readHighscores(FILE *file)
 
     while (fgets(row, 100, file) != NULL)
     {
-        char *name = splitInputAt(row);
+        char *name = splitInput(row);
 
-        char *scoreStr = splitInputAt(NULL);
+        char *scoreStr = splitInput(NULL);
         if (!scoreStr)
             continue;
 
@@ -108,7 +94,6 @@ Highscores *readHighscores(FILE *file)
     return highscores;
 }
 
-// Add new highscore to existings one
 void addHighscore(Highscores *highscores, char *name, int score)
 {
     // allocate memory for current count + 1
@@ -144,7 +129,6 @@ void addHighscore(Highscores *highscores, char *name, int score)
     highscores->count = highscores->count + 1;
 }
 
-// swap scores between X and Y
 void swapScores(int *x, int *y)
 {
     int temp = *x;
@@ -152,7 +136,6 @@ void swapScores(int *x, int *y)
     *y = temp;
 }
 
-// swap names between X and Y
 void swapNames(char **x, char **y)
 {
     char *temp = *x;
@@ -160,7 +143,6 @@ void swapNames(char **x, char **y)
     *y = temp;
 }
 
-// sort from highest to lowest
 void sortHighscores(Highscores *highscores)
 {
     int *scores = highscores->scores;
@@ -181,7 +163,6 @@ void sortHighscores(Highscores *highscores)
     }
 }
 
-// write highscores to file
 void writeHighscores(Highscores *highscores)
 {
     // open file as write

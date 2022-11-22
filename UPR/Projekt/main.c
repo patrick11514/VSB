@@ -8,7 +8,7 @@
 #include <stdbool.h>
 
 // my includes
-#include "highscores.c"
+#include "highscores.h"
 
 // SDL2
 #include <SDL2/SDL.h>
@@ -48,8 +48,8 @@ void addNewHigh()
         exit(1);
     }
 
-    char *username = splitInputAt(row);
-    char *scoreStr = splitInputAt(NULL);
+    char *username = splitInput(row);
+    char *scoreStr = splitInput(NULL);
 
     if (!scoreStr)
     {

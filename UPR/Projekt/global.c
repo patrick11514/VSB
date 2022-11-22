@@ -1,8 +1,12 @@
-#include <strings.h>
+// basic includes
+#include <string.h>
+
+// header files
+#include "global.h"
 
 // ======================= [ GLOBAL FUNCTIONS ] ========================
 
-char *splitInputAt(char *input)
+char *splitInput(char *input)
 {
     return strtok(input, ";\n");
 }
