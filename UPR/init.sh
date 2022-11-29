@@ -8,3 +8,4 @@ rm -r ex_01
 rm ex_01.zip
 cp ../../build.sh .
 cp ../../test.sh .
+cp ../Makefile .
