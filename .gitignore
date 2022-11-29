@@ -1,3 +1,6 @@
 #build main files
 main
 main2
+
+#OBJECT files
+*.o
