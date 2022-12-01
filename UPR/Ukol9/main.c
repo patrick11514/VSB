@@ -7,6 +7,7 @@
 
 int main(int argc, char **argv)
 {
+    // check parameters
     if (argc < 3)
     {
         printf("Wrong parameters\n");
@@ -15,15 +16,16 @@ int main(int argc, char **argv)
 
     bool reverseTranslate = false;
 
-    // if 4th argument is
+    // if 4th argument is "reverse" set reverse translate to true
     if (argc > 4)
     {
-        if (strcmp(argv[4], "reverse"))
+        if (strcmp(argv[4], "reverse") == 0)
         {
             reverseTranslate = true;
         }
     }
 
+    // open dictionary file
     FILE *dictFile = fopen(argv[1], "rt");
 
     if (!dictFile)
@@ -32,6 +34,7 @@ int main(int argc, char **argv)
         exit(1);
     }
 
+    // open input file
     FILE *input = fopen(argv[2], "rt");
     if (!input)
     {
@@ -39,6 +42,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    // open output file
     FILE *output = fopen(argv[3], "wt");
     if (!output)
     {
@@ -59,19 +63,25 @@ int main(int argc, char **argv)
 
     fclose(dictFile);
 
-    char line[255];
-    while (fgets(line, 255, input) != NULL)
+    // 300 because of reverse translation some lines are longer than 255 characters
+    char line[300];
+
+    // while until end of file
+    while (fgets(line, 300, input) != NULL)
     {
         char *word = strtok(line, " \n");
 
         int c = 0;
+        // while until end of line
         while (word != NULL)
         {
             char *translated = (char *)dictionaryGet(dictionary, word, reverseTranslate);
+            // before every word than first add space
             if (c > 0)
             {
                 fprintf(output, " ");
             }
+
             if (translated == NULL)
             {
                 fprintf(output, "<unknown>");
@@ -84,6 +94,7 @@ int main(int argc, char **argv)
             word = strtok(NULL, " \n");
             c++;
         }
+
         fprintf(output, "\n");
     }
 
