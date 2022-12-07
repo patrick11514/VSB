@@ -1,5 +1,5 @@
 COMPILER=gcc
-ARGS=-Wall -Wextra -g -O2 -fsanitize=address -lSDL2
+ARGS=-Wall -Wextra -g -O2 -fsanitize=address -lSDL2 -lSDL2_ttf -lSDL2_image
 OFILES=main.o
 EXEC=main
 
