@@ -5,29 +5,24 @@
 
 // header files
 #include "highscores.h"
+#include "vector.h"
 
 // ======================= [ HIGHSCORE FUNCTIONS ] =====================
 
 Highscores *readHighscores(FILE *file)
 {
+
     char row[100];
 
-    int count = 0;
-
-    int lines = getLines(file);
-
-    // tries to allocate players and scores by number of lines in file
-
-    int *scores = (int *)malloc(sizeof(int) * lines);
-    char **players = (char **)malloc(sizeof(char *) * lines);
-
-    if (!scores || !players)
+    Highscores *highscores = (Highscores *)malloc(sizeof(Highscores));
+    if (!highscores)
     {
-        printf("Unable to allocate memory");
+        printf("Unabel to allocate memory for highscores");
         exit(1);
     }
-
-    fseek(file, 0, 0);
+    highscores->scores = vectorInit(_VECTOR_DEFAULT_CAPACITY);
+    highscores->players = vectorInit(_VECTOR_DEFAULT_CAPACITY);
+    highscores->count = 0;
 
     while (fgets(row, 100, file) != NULL)
     {
@@ -44,19 +39,6 @@ Highscores *readHighscores(FILE *file)
             exit(1);
         }
         int score = atoi(scoreStr);
-
-        players[count] = saveName;
-        scores[count] = score;
-
-        count++;
-    }
-
-    Highscores *highscores = (Highscores *)malloc(sizeof(Highscores));
-
-    if (!highscores)
-    {
-        printf("Unable to allocate memory");
-        exit(1);
     }
 
     // if number of real scores are lower than lines (Some of lines are corrupted - missing ; etc..)

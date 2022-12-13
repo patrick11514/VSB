@@ -4,13 +4,14 @@
 // includes
 #include "files.h"
 #include "global.h"
+#include "vector.h"
 
 // sctuctures
 typedef struct
 {
     int count;
-    int *scores;
-    char **players;
+    Vector *scores;
+    Vector *players;
 } Highscores;
 
 // read highscores from given file

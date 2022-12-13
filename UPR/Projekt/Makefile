@@ -1,17 +1,21 @@
-#build
-build: global.o files.o highscores.o main.o
-	gcc global.o files.o highscores.o main.o -o main -lSDL2 -Wall -Wextra -g -O2 -fsanitize=address
+COMPILER=gcc
+ARGS=-Wall -Wextra -g -O2 -fsanitize=address
+OFILES=main.o vector.o
+HFILES=vector.h
+EXEC=main
 
-#modules
-global.o: 
-	gcc -c global.c -o global.o
-files.o:
-	gcc -c files.c -o files.o
-highscores.o:
-	gcc -c highscores.c -o highscores.o
-main.o:
-	gcc -c main.c -o main.o
+$(EXEC): $(OFILES)
+	$(COMPILER) $(HFILES) $(ARGS) $(OFILES) -o $(EXEC)
 
-#clean
-clean:
-	rm *.o
+%.o: %.c
+	$(COMPILER) $(ARGS) -c $<
+
+cleanOBJ:
+	rm -f $(OFILES)
+
+cleanEXEC:
+	rm -f $(EXEC)
+
+clean: cleanOBJ cleanEXEC
+
+all: clean $(EXEC)
