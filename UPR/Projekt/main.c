@@ -9,6 +9,7 @@
 
 // my includes
 #include "highscores.h"
+#include "breakout.h"
 
 // SDL2
 #include <SDL2/SDL.h>
@@ -28,8 +29,8 @@ void addNewHigh()
     {
         highscores = (Highscores *)malloc(sizeof(Highscores));
         highscores->count = 0;
-        highscores->players = NULL;
-        highscores->scores = NULL;
+        highscores->players = arrayInit(_VECTOR_DEFAULT_CAPACITY);
+        highscores->scores = arrayInit(_VECTOR_DEFAULT_CAPACITY);
     }
     else
     {
@@ -49,15 +50,7 @@ void addNewHigh()
     }
 
     char *username = splitInput(row);
-    char *scoreStr = splitInput(NULL);
-
-    if (!scoreStr)
-    {
-        printf("No score found.");
-        exit(1);
-    }
-
-    int score = atoi(scoreStr);
+    char *score = splitInput(NULL);
 
     // add new highscore
     addHighscore(highscores, username, score);
@@ -83,6 +76,8 @@ int main(int argc, char **argv)
                 printf("help - show this message\n");
                 printf("level - load level from given file\n");
                 printf("      - Example %s --level=level1.txt\n", argv[0]);
+
+                return 0;
             }
         }
     }
@@ -92,7 +87,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
         return 1;
     }
-    SDL_Window *window = SDL_CreateWindow("Breakout", 100, 100, 800, 600, SDL_WINDOW_SHOWN);
+    SDL_Window *window = SDL_CreateWindow("Breakout", 100, 100, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
     if (!window)
     {
         fprintf(stderr, "SDL_CreateWindow Error: %s\n", SDL_GetError());

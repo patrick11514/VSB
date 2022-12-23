@@ -5,7 +5,7 @@
 
 // header files
 #include "highscores.h"
-#include "vector.h"
+#include "dynamicarray.h"
 
 // ======================= [ HIGHSCORE FUNCTIONS ] =====================
 
@@ -20,105 +20,77 @@ Highscores *readHighscores(FILE *file)
         printf("Unabel to allocate memory for highscores");
         exit(1);
     }
-    highscores->scores = vectorInit(_VECTOR_DEFAULT_CAPACITY);
-    highscores->players = vectorInit(_VECTOR_DEFAULT_CAPACITY);
+    highscores->scores = arrayInit(_VECTOR_DEFAULT_CAPACITY);
+    highscores->players = arrayInit(_VECTOR_DEFAULT_CAPACITY);
     highscores->count = 0;
 
     while (fgets(row, 100, file) != NULL)
     {
         char *name = splitInput(row);
 
-        char *scoreStr = splitInput(NULL);
-        if (!scoreStr)
-            continue;
-
-        char *saveName = (char *)malloc(sizeof(char) * strlen(name) + 1);
-        if (!strcpy(saveName, name))
+        if (!name)
         {
-            printf("Unable to copy string");
+            printf("Unable to read name");
             exit(1);
         }
-        int score = atoi(scoreStr);
-    }
 
-    // if number of real scores are lower than lines (Some of lines are corrupted - missing ; etc..)
-    if (count != lines)
-    {
-        // initialize new variables with correct count
-        int *realScores = (int *)malloc(sizeof(int) * count);
-        char **realPlayers = (char **)malloc(sizeof(char *) * count);
+        char *score = splitInput(NULL);
 
-        // copy values from old variables to new
-        for (int i = 0; i < count; i++)
+        if (!score)
         {
-            realScores[i] = scores[i];
-            realPlayers[i] = players[i];
+            printf("Unable to read score");
+            exit(1);
         }
 
-        // free old pointers
-        free(players);
-        free(scores);
+        if (!arrayAdd(highscores->players, strdup(name)))
+        {
+            printf("Unable to add player to array");
+            exit(1);
+        }
+        if (!arrayAdd(highscores->scores, strdup(score)))
+        {
+            printf("Unable to add score to array");
+            exit(1);
+        }
 
-        // save to highscores object
-        highscores->players = realPlayers;
-        highscores->scores = realScores;
+        highscores->count++;
     }
-    else
-    {
-        // save to highscores object
-        highscores->players = players;
-        highscores->scores = scores;
-    }
-
-    // save count to highscores object
-    highscores->count = count;
 
     return highscores;
 }
 
-void addHighscore(Highscores *highscores, char *name, int score)
+void addHighscore(Highscores *highscores, char *name, char *score)
 {
-    // allocate memory for current count + 1
-    char **players = (char **)malloc(sizeof(char *) * (highscores->count + 1));
-    int *scores = (int *)malloc(sizeof(int) * (highscores->count + 1));
+    char *nameCopied = strdup(name);
 
-    // copy values
-    for (int i = 0; i < highscores->count; i++)
+    if (!nameCopied)
     {
-        players[i] = highscores->players[i];
-        scores[i] = highscores->scores[i];
-    }
-
-    // allocate memory for our name
-    char *newName = (char *)malloc(sizeof(char) * strlen(name) + 1);
-    if (!strcpy(newName, name))
-    {
-        printf("Unable to copy string");
+        printf("Unable to copy name");
         exit(1);
     }
 
-    // save it to last place of arrays
-    players[highscores->count] = newName;
-    scores[highscores->count] = score;
+    char *scoreCopied = strdup(score);
 
-    // free old arrays
-    free(highscores->players);
-    free(highscores->scores);
+    if (!scoreCopied)
+    {
+        printf("Unable to copy score");
+        exit(1);
+    }
 
-    // save new arrays to highscores object
-    highscores->players = players;
-    highscores->scores = scores;
-    highscores->count = highscores->count + 1;
+    if (!arrayAdd(highscores->players, nameCopied))
+    {
+        printf("Unable to add player to array");
+        exit(1);
+    }
+    if (!arrayAdd(highscores->scores, scoreCopied))
+    {
+        printf("Unable to add score to array");
+        exit(1);
+    }
+    highscores->count++;
 }
 
-void swapScores(int *x, int *y)
-{
-    int temp = *x;
-    *x = *y;
-    *y = temp;
-}
-
-void swapNames(char **x, char **y)
+void swap(char **x, char **y)
 {
     char *temp = *x;
     *x = *y;
@@ -127,8 +99,8 @@ void swapNames(char **x, char **y)
 
 void sortHighscores(Highscores *highscores)
 {
-    int *scores = highscores->scores;
-    char **names = highscores->players;
+    Array *scores = highscores->scores;
+    Array *names = highscores->players;
     int count = highscores->count;
 
     // bubble sort
@@ -136,10 +108,10 @@ void sortHighscores(Highscores *highscores)
     {
         for (int j = 0; j < count - i - 1; j++)
         {
-            if (scores[j] < scores[j + 1])
+            if (atoi((char *)scores->data[j]) < atoi((char *)scores->data[j + 1]))
             {
-                swapScores(scores + j, scores + j + 1);
-                swapNames(names + j, names + j + 1);
+                swap(((char **)scores->data + j), (char **)scores->data + j + 1);
+                swap((char **)names->data + j, (char **)names->data + j + 1);
             }
         }
     }
@@ -153,23 +125,31 @@ void writeHighscores(Highscores *highscores)
     // save scores to file
     for (int i = 0; i < highscores->count; i++)
     {
-        fprintf(file, "%s;%d\n", highscores->players[i], highscores->scores[i]);
+        fprintf(file, "%s;%s\n", (char *)highscores->players->data[i], (char *)highscores->scores->data[i]);
     }
 
     // close file
     fclose(file);
 
-    // free char pointers
+    // free memory
+    // free data
     for (int i = 0; i < highscores->count; i++)
     {
-        free(highscores->players[i]);
+        free(highscores->players->data[i]);
+        free(highscores->scores->data[i]);
     }
 
-    // free char**
-    free(highscores->players);
-    // free int*
-    free(highscores->scores);
-    // free Highscores*
+    // free arrays
+    if (!arrayFree(highscores->players, true))
+    {
+        printf("Unable to free memory");
+        exit(1);
+    }
+    if (!arrayFree(highscores->scores, true))
+    {
+        printf("Unable to free memory");
+        exit(1);
+    }
     free(highscores);
 }
 

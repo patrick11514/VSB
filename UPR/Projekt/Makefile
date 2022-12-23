@@ -1,14 +1,14 @@
 COMPILER=gcc
-ARGS=-Wall -Wextra -g -O2 -fsanitize=address
-OFILES=main.o vector.o
-HFILES=vector.h
+ARGS=-Wall -Wextra -g -O2 -fsanitize=address -lSDL2
+OFILES=main.o dynamicarray.o breakout.o files.o global.o highscores.o
+HFILES=dynamicarray.h breakout.h files.h global.h highscores.h
 EXEC=main
 
 $(EXEC): $(OFILES)
-	$(COMPILER) $(HFILES) $(ARGS) $(OFILES) -o $(EXEC)
+	$(COMPILER) $(ARGS) $(OFILES) -o $(EXEC)
 
-%.o: %.c
-	$(COMPILER) $(ARGS) -c $<
+%.o: %.c $(HFILES)
+	$(COMPILER) $(ARGS) $(HFILES) -c $<
 
 cleanOBJ:
 	rm -f $(OFILES)
