@@ -17,22 +17,4 @@ FILE *openFile(char *filename, char *mode)
     }
     return file;
 }
-
-int getLines(FILE *fp)
-{
-    char ch;
-    int lines = 0;
-
-    while (!feof(fp))
-    {
-        ch = fgetc(fp);
-        if (ch == '\n')
-        {
-            lines++;
-        }
-    }
-
-    return lines;
-}
-
 // =====================================================================

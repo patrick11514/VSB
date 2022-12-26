@@ -6,7 +6,4 @@
 // Open file called fileName with mode mode
 FILE *openFile(char *fileName, char *mode);
 
-// Get number of lines in file
-int getLines(FILE *file);
-
 #endif
