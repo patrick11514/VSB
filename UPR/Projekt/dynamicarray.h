@@ -5,7 +5,7 @@
 #include <sys/cdefs.h>
 
 // struct
-typedef struct
+typedef struct Array
 {
     int size;
     int capacity;

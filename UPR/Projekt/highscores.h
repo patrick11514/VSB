@@ -7,7 +7,7 @@
 #include "dynamicarray.h"
 
 // sctuctures
-typedef struct
+typedef struct Highscores
 {
     int count;
     Array *scores;

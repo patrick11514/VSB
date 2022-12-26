@@ -6,6 +6,7 @@
 #include <string.h>
 #include <errno.h>
 #include <stdbool.h>
+#include <time.h>
 
 // my includes
 #include "highscores.h"
@@ -13,6 +14,8 @@
 
 // SDL2
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 
 // ======================= [ MAIN FUNCTION ] ==========================
 
@@ -82,12 +85,26 @@ int main(int argc, char **argv)
         }
     }
 
+    // SDL2 INIT
     if (SDL_Init(SDL_INIT_VIDEO))
     {
         fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
         return 1;
     }
-    SDL_Window *window = SDL_CreateWindow("Breakout", 100, 100, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+
+    // Calculate scale based on display resolution
+    float SCALE;
+    SDL_DisplayMode DisplayMode;
+    if (SDL_GetCurrentDisplayMode(0, &DisplayMode) != 0)
+    {
+        fprintf(stderr, "Unable to get DisplaMode: %s\n", SDL_GetError());
+        return 1;
+    }
+
+    SCALE = getScale(DisplayMode.h);
+
+    // create window with scale
+    SDL_Window *window = SDL_CreateWindow("Breakout", 100, 100, WINDOW_WIDTH * SCALE, WINDOW_HEIGHT * SCALE, SDL_WINDOW_SHOWN);
     if (!window)
     {
         fprintf(stderr, "SDL_CreateWindow Error: %s\n", SDL_GetError());
@@ -107,6 +124,46 @@ int main(int argc, char **argv)
     SDL_Event e;
     bool quit = false;
 
+    int frames = 0;
+
+    // colors
+    Colors *colors = (Colors *)malloc(sizeof(Colors));
+    colors->black = (SDL_Color){0, 0, 0, 255};
+    colors->white = (SDL_Color){255, 255, 255, 255};
+    colors->red = (SDL_Color){255, 0, 0, 255};
+    colors->green = (SDL_Color){0, 255, 0, 255};
+    colors->blue = (SDL_Color){0, 0, 255, 255};
+    colors->yellow = (SDL_Color){255, 255, 0, 255};
+
+    // allocate memory for Window Properties
+    WindowProperties *windowProperties = (WindowProperties *)malloc(sizeof(WindowProperties));
+    windowProperties->colors = colors;
+    windowProperties->scale = SCALE;
+    windowProperties->currentMenu = MainMenu;
+
+    snprintf(windowProperties->currentFPS, 10, "FPS: 0");
+    unsigned long prevTime = time(NULL);
+
+    TTF_Init();
+
+    TTF_Font *font = TTF_OpenFont("assets/fonts/Roboto-Bold.ttf", 24);
+    if (!font)
+    {
+        fprintf(stderr, "TTF_OpenFont Error: %s", TTF_GetError());
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return 1;
+    }
+    windowProperties->font = font;
+
+    // textures
+    windowProperties->textures = (Textures *)malloc(sizeof(Textures));
+
+    // load textures
+    SDL_Texture *paddleTexture = IMG_LoadTexture(renderer, "assets/images/paddle.png");
+    windowProperties->textures->paddle = paddleTexture;
+
     while (!quit)
     {
         while (SDL_PollEvent(&e))
@@ -115,8 +172,19 @@ int main(int argc, char **argv)
             {
                 quit = true;
             }
+
+            checkEvents(&e, &quit, SCALE);
         }
+
+        calculateFPS(&prevTime, &frames, windowProperties->currentFPS);
+        tick(&frames, renderer, SCALE, windowProperties);
     }
+
+    free(windowProperties->colors);
+    free(windowProperties);
+
+    TTF_CloseFont(font);
+    TTF_Quit();
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
