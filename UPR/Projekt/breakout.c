@@ -2,14 +2,14 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
-#include <errno.h>
 #include <stdbool.h>
+#include <time.h>
 
 // my includes
 #include "highscores.h"
 #include "breakout.h"
+#include "assets.h"
 
 // SDL2
 #include <SDL2/SDL.h>
@@ -18,7 +18,7 @@
 
 //======================= [ BREAKOUT FUNCTIONS ] ==========================
 
-void tick(int *frames, SDL_Renderer *renderer, float scale, WindowProperties *windowProperties)
+void tick(int *frames, SDL_Renderer *renderer, float scale, WindowProperties *windowProperties, MainVariables *mainVars)
 {
 
     // clear screen
@@ -32,69 +32,82 @@ void tick(int *frames, SDL_Renderer *renderer, float scale, WindowProperties *wi
 
     // FPS
     int FPSHeight = 16;
-    SDL_Rect FPSRect = {.x = 0, .y = WINDOW_HEIGHT * windowProperties->scale - FPSHeight, .w = 50, .h = FPSHeight};
-
-    SDL_Surface *FPSSurface = TTF_RenderText_Solid(windowProperties->font, windowProperties->currentFPS, windowProperties->colors->white);
-    SDL_Texture *FPSTexture = SDL_CreateTextureFromSurface(renderer, FPSSurface);
-    SDL_RenderCopy(renderer, FPSTexture, NULL, &FPSRect);
+    if (!renderText(renderer, windowProperties->currentFPS, windowProperties->font, windowProperties->colors->white, 50, FPSHeight, 0, WINDOW_HEIGHT * windowProperties->scale - FPSHeight))
+    {
+        printf("Error rendering text: %s", SDL_GetError());
+    }
 
     if (windowProperties->currentMenu == MainMenu)
     {
-        renderMainMenu(renderer, scale, windowProperties);
+        renderMainMenu(renderer, scale, windowProperties, mainVars);
     }
 
     // rerender
     SDL_RenderPresent(renderer);
-
-    // free memory
-    SDL_DestroyTexture(FPSTexture);
-    SDL_FreeSurface(FPSSurface);
     *frames += 1;
 }
 
-void renderMainMenu(SDL_Renderer *renderer, float scale, WindowProperties *windowProperties)
+void renderMainMenu(SDL_Renderer *renderer, float scale, WindowProperties *windowProperties, MainVariables *mainVars)
 {
     // title
     int titleWidth = 275;
+    int titleHeight = 80;
 
-    SDL_Rect TitleRect = {.x = (WINDOW_WIDTH * windowProperties->scale / 2) - (titleWidth / 2), .y = 0, .w = titleWidth, .h = 80};
-    SDL_Surface *TitleSurface = TTF_RenderText_Solid(windowProperties->font, "BREAKOUT", windowProperties->colors->yellow);
-    SDL_Texture *TitleTexture = SDL_CreateTextureFromSurface(renderer, TitleSurface);
-    SDL_RenderCopy(renderer, TitleTexture, NULL, &TitleRect);
-
-    int paddlePos;
-    if (!paddlePos)
+    if (!renderText(renderer, "BREAKOUT", windowProperties->font, windowProperties->colors->yellow, titleWidth, titleHeight, (WINDOW_WIDTH * windowProperties->scale / 2) - (titleWidth / 2), 0))
     {
-        paddlePos = 0;
+        printf("Error rendering text: %s\n", SDL_GetError());
+    }
+
+    // paddle
+    int paddlePathWidth = 250;
+    mainVars->paddlePosition.y = titleHeight;
+
+    mainVars->paddleStartPosition = (WINDOW_WIDTH * windowProperties->scale / 2) - (paddlePathWidth / 2);
+
+    if (mainVars->paddlePosition.x > mainVars->paddleStartPosition + paddlePathWidth - windowProperties->textures->paddle->width && !mainVars->paddleReverse)
+    {
+        mainVars->paddleReverse = true;
+    }
+    else if (mainVars->paddlePosition.x < mainVars->paddleStartPosition && mainVars->paddleReverse)
+    {
+        mainVars->paddleReverse = false;
     }
     else
     {
-        if (paddlePos > 200)
+        if (mainVars->FPS > 0)
         {
-            paddlePos = 0;
-        }
-        else
-        {
-            paddlePos++;
+            if (mainVars->paddleReverse)
+            {
+                mainVars->paddlePosition.x -= (MOVE_FPS / mainVars->FPS);
+            }
+            else
+            {
+                mainVars->paddlePosition.x += (MOVE_FPS / mainVars->FPS);
+            }
         }
     }
 
-        // free memory
-    SDL_DestroyTexture(TitleTexture);
-    SDL_FreeSurface(TitleSurface);
+    printf("%f\n", mainVars->paddlePosition.x);
+
+    Texture *paddle = windowProperties->textures->paddle;
+    if (!renderTexture(renderer, paddle->texture, mainVars->paddlePosition.x, mainVars->paddlePosition.y, paddle->width, paddle->height))
+    {
+        printf("Error rendering texture: %s\n", SDL_GetError());
+    }
 }
 
 void checkEvents(SDL_Event *e, bool *quit, float scale)
 {
 }
 
-void calculateFPS(unsigned long *prevTime, int *frames, char *currentFPS)
+void calculateFPS(unsigned long *prevTime, int *frames, char *currentFPS, MainVariables *vars)
 {
     // calculate FPS
     unsigned long currentTime = time(NULL);
     if (currentTime - (*prevTime) >= 1)
     {
         snprintf(currentFPS, 10, "FPS: %d", *frames);
+        vars->FPS = *frames;
         *frames = 0;
         *prevTime = currentTime;
     }

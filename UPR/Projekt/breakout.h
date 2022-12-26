@@ -4,9 +4,13 @@
 #define WINDOW_WIDTH 720
 #define WINDOW_HEIGHT 900
 
+#define MOVE_FPS 60.0f
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <stdbool.h>
+
+#include "assets.h"
 
 typedef enum
 {
@@ -23,31 +27,37 @@ typedef struct Colors
     SDL_Color black;
 } Colors;
 
-typedef struct WindowProperties
-{
-    float scale;
-    TTF_Font *font;
-    char currentFPS[255];
-    Colors *colors;
-    MenuTypes currentMenu;
-    Textures *textures;
-} WindowProperties;
-
 typedef struct Textures
 {
-    SDL_Texture *paddle;
+    Texture *paddle;
 } Textures;
+
+typedef struct WindowProperties
+{
+    // scale of window
+    float scale;
+    // Roboto Font
+    TTF_Font *font;
+    // current FPS text
+    char currentFPS[255];
+    // colors
+    Colors *colors;
+    // current menu
+    MenuTypes currentMenu;
+    // loaded textures
+    Textures *textures;
+} WindowProperties;
 
 // function ran on every SDL event
 void checkEvents(SDL_Event *e, bool *quit, float scale);
 
 // function run every frame
-void tick(int *frames, SDL_Renderer *renderer, float scale, WindowProperties *windowProperties);
+void tick(int *frames, SDL_Renderer *renderer, float scale, WindowProperties *windowProperties, MainVariables *vars);
 
 // calculate and display current FPS
-void calculateFPS(unsigned long *prevTime, int *frames, char *currentFPS);
+void calculateFPS(unsigned long *prevTime, int *frames, char *currentFPS, MainVariables *vars);
 
 // main menu
-void renderMainMenu(SDL_Renderer *renderer, float scale, WindowProperties *windowProperties);
+void renderMainMenu(SDL_Renderer *renderer, float scale, WindowProperties *windowProperties, MainVariables *vars);
 
 #endif
