@@ -4,13 +4,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <errno.h>
 #include <stdbool.h>
 #include <time.h>
 
 // my includes
 #include "highscores.h"
 #include "breakout.h"
+#include "assets.h"
 
 // SDL2
 #include <SDL2/SDL.h>
@@ -67,6 +67,7 @@ void addNewHigh()
 
 int main(int argc, char **argv)
 {
+    // arguments
     if (argc > 1)
     {
         // check if arguments contains --help
@@ -112,6 +113,10 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    // disable resizing
+    SDL_SetWindowResizable(window, SDL_FALSE);
+
+    // create renderer
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (!renderer)
     {
@@ -121,9 +126,9 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    // some variables
     SDL_Event e;
     bool quit = false;
-
     int frames = 0;
 
     // colors
@@ -141,11 +146,12 @@ int main(int argc, char **argv)
     windowProperties->scale = SCALE;
     windowProperties->currentMenu = MainMenu;
 
-    snprintf(windowProperties->currentFPS, 10, "FPS: 0");
+    // default fps text
+    snprintf(windowProperties->currentFPS, 10, "FPS: ~~");
     unsigned long prevTime = time(NULL);
 
+    // load fonts
     TTF_Init();
-
     TTF_Font *font = TTF_OpenFont("assets/fonts/Roboto-Bold.ttf", 24);
     if (!font)
     {
@@ -157,13 +163,24 @@ int main(int argc, char **argv)
     }
     windowProperties->font = font;
 
-    // textures
+    // load textures
     windowProperties->textures = (Textures *)malloc(sizeof(Textures));
 
-    // load textures
+    // paddle
+    Texture *paddle = (Texture *)malloc(sizeof(Texture));
     SDL_Texture *paddleTexture = IMG_LoadTexture(renderer, "assets/images/paddle.png");
-    windowProperties->textures->paddle = paddleTexture;
+    paddle->texture = paddleTexture;
+    paddle->width = 20;
+    paddle->height = 6;
+    windowProperties->textures->paddle = paddle;
 
+    // paddle main menu
+    int paddleStartPosition = (WINDOW_WIDTH * windowProperties->scale / 2) - 100;
+    Position paddlePosition = {.x = paddleStartPosition, .y = 0};
+
+    MainVariables vars = {.paddlePosition = paddlePosition, .FPS = 0, .paddleReverse = false};
+
+    // game loop
     while (!quit)
     {
         while (SDL_PollEvent(&e))
@@ -176,9 +193,14 @@ int main(int argc, char **argv)
             checkEvents(&e, &quit, SCALE);
         }
 
-        calculateFPS(&prevTime, &frames, windowProperties->currentFPS);
-        tick(&frames, renderer, SCALE, windowProperties);
+        calculateFPS(&prevTime, &frames, windowProperties->currentFPS, &vars);
+        tick(&frames, renderer, SCALE, windowProperties, &vars);
     }
+
+    // free textures
+    SDL_DestroyTexture(windowProperties->textures->paddle);
+
+    free(windowProperties->textures);
 
     free(windowProperties->colors);
     free(windowProperties);
