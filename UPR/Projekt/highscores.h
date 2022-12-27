@@ -1,12 +1,12 @@
 #ifndef HIGHSCORES_H
 #define HIGHSCORES_H 1
 
-// includes
+// my includes
 #include "files.h"
 #include "global.h"
 #include "dynamicarray.h"
 
-// sctuctures
+// Highscores structure
 typedef struct Highscores
 {
     int count;

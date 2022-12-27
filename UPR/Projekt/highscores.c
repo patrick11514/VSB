@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-// header files
+// my includes
 #include "highscores.h"
 #include "dynamicarray.h"
 

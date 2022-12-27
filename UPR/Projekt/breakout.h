@@ -6,10 +6,14 @@
 
 #define MOVE_FPS 60.0f
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
+// default includes
 #include <stdbool.h>
 
+// sdl
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+
+// my includes
 #include "assets.h"
 
 typedef enum

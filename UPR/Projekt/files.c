@@ -3,7 +3,7 @@
 #include <string.h>
 #include <errno.h>
 
-// header files
+// my includes
 #include "files.h"
 
 // =============== [ FUNCTIONS WORKING WITH FILES ] ====================

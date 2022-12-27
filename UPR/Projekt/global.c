@@ -1,7 +1,7 @@
 // basic includes
 #include <string.h>
 
-// header files
+// my includes
 #include "global.h"
 #include "breakout.h"
 

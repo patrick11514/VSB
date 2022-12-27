@@ -1,17 +1,24 @@
 #ifndef ASSETS_H
 #define ASSETS_H 1
 
+// default includes
 #include <stdbool.h>
 
+// sdl
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
+// my includes
+#include "highscores.h"
+
+// Position structure for X Y coordinates
 typedef struct Position
 {
     float x;
     float y;
 } Position;
 
+// Texture structure for SDL_Texture and width and height
 typedef struct Texture
 {
     SDL_Texture *texture;
@@ -19,8 +26,10 @@ typedef struct Texture
     int height;
 } Texture;
 
+// Main Variables from main.c file for easy access in other functions
 typedef struct MainVariables
 {
+    // SDL WINDOW
     SDL_Window *window;
 
     // paddle under title position
@@ -32,6 +41,7 @@ typedef struct MainVariables
 
     // current fps
     int FPS;
+    Highscores *highscores;
 
     // MAIN MENU BUTTONS
     //  main menu play button corners LeftTop + RightBottom
@@ -73,10 +83,13 @@ typedef struct MainVariables
 
 } MainVariables;
 
-bool renderText(SDL_Renderer *renderer, char *text, TTF_Font *font, SDL_Color color, int with, int height, int x, int y);
+// function to render text _text with font _font and color _color on position _x and _y with SDL_Renderer _renderer
+bool renderText(SDL_Renderer *_renderer, char *_text, TTF_Font *_font, SDL_Color _color, int _with, int _height, int _x, int _y);
 
-bool renderTexture(SDL_Renderer *renderer, SDL_Texture *texture, int x, int y, int w, int h);
+// function to render texture _texture on position _x and _y with _width and _height
+bool renderTexture(SDL_Renderer *_renderer, SDL_Texture *_texture, int _x, int _y, int _width, int _height);
 
-bool renderRect(SDL_Renderer *renderer, int x, int y, int w, int h, SDL_Color color);
+// render rectangle on position _x and _y with _width and _height with color _color
+bool renderRect(SDL_Renderer *_renderer, int _x, int _y, int _width, int _height, SDL_Color _color);
 
 #endif

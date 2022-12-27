@@ -1,9 +1,10 @@
-// h files
-#include "dynamicarray.h"
-// libraries
+// default includes
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+
+// my includes
+#include "dynamicarray.h"
 
 Array *arrayInit(int capacity)
 {

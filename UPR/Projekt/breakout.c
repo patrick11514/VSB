@@ -6,15 +6,15 @@
 #include <stdbool.h>
 #include <time.h>
 
-// my includes
-#include "highscores.h"
-#include "breakout.h"
-#include "assets.h"
-
 // SDL2
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
+
+// my includes
+#include "highscores.h"
+#include "breakout.h"
+#include "assets.h"
 
 //======================= [ BREAKOUT FUNCTIONS ] ==========================
 

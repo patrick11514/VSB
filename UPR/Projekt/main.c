@@ -7,17 +7,15 @@
 #include <stdbool.h>
 #include <time.h>
 
-// my includes
-#include "highscores.h"
-#include "breakout.h"
-#include "assets.h"
-
 // SDL2
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
-// ======================= [ MAIN FUNCTION ] ==========================
+// my includes
+#include "highscores.h"
+#include "breakout.h"
+#include "assets.h"
 
 void addNewHigh()
 {
@@ -231,5 +229,3 @@ int main(int argc, char **argv)
 
     return 0;
 }
-
-// =====================================================================
