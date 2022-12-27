@@ -54,3 +54,20 @@ bool renderTexture(SDL_Renderer *renderer, SDL_Texture *texture, int x, int y, i
 
     return true;
 }
+
+bool renderRect(SDL_Renderer *renderer, int x, int y, int w, int h, SDL_Color color)
+{
+    SDL_Rect rect = {.x = x, .y = y, .w = w, .h = h};
+
+    if (SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a) != 0)
+    {
+        return false;
+    }
+
+    if (SDL_RenderFillRect(renderer, &rect) != 0)
+    {
+        return false;
+    }
+
+    return true;
+}
