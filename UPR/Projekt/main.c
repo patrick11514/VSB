@@ -177,17 +177,33 @@ int main(int argc, char **argv)
     Texture *buttonUp = (Texture *)malloc(sizeof(Texture));
     SDL_Texture *buttonUpTexture = IMG_LoadTexture(renderer, "assets/images/button_up.png");
     buttonUp->texture = buttonUpTexture;
-    buttonUp->width = 30;
-    buttonUp->height = 10;
+    buttonUp->width = 150;
+    buttonUp->height = 50;
     windowProperties->textures->buttonUp = buttonUp;
+
+    // button up hover
+    Texture *buttonUpHover = (Texture *)malloc(sizeof(Texture));
+    SDL_Texture *buttonUpHoverTexture = IMG_LoadTexture(renderer, "assets/images/button_up_hover.png");
+    buttonUpHover->texture = buttonUpHoverTexture;
+    buttonUpHover->width = 150;
+    buttonUpHover->height = 50;
+    windowProperties->textures->buttonUpHover = buttonUpHover;
 
     // button down
     Texture *buttonDown = (Texture *)malloc(sizeof(Texture));
     SDL_Texture *buttonDownTexture = IMG_LoadTexture(renderer, "assets/images/button_down.png");
     buttonDown->texture = buttonDownTexture;
-    buttonDown->width = 30;
-    buttonDown->height = 10;
+    buttonDown->width = 150;
+    buttonDown->height = 50;
     windowProperties->textures->buttonDown = buttonDown;
+
+    // button down hover
+    Texture *buttonDownHover = (Texture *)malloc(sizeof(Texture));
+    SDL_Texture *buttonDownHoverTexture = IMG_LoadTexture(renderer, "assets/images/button_down_hover.png");
+    buttonDownHover->texture = buttonDownHoverTexture;
+    buttonDownHover->width = 150;
+    buttonDownHover->height = 50;
+    windowProperties->textures->buttonDownHover = buttonDownHover;
 
     // paddle main menu
     int paddleStartPosition = (WINDOW_WIDTH * windowProperties->scale / 2) - 100;
@@ -239,8 +255,15 @@ int main(int argc, char **argv)
     SDL_DestroyTexture(windowProperties->textures->paddle->texture);
     SDL_DestroyTexture(windowProperties->textures->buttonUp->texture);
     SDL_DestroyTexture(windowProperties->textures->buttonDown->texture);
+    SDL_DestroyTexture(windowProperties->textures->buttonUpHover->texture);
+    SDL_DestroyTexture(windowProperties->textures->buttonDownHover->texture);
 
     free(windowProperties->textures->paddle);
+    free(windowProperties->textures->buttonUp);
+    free(windowProperties->textures->buttonDown);
+    free(windowProperties->textures->buttonUpHover);
+    free(windowProperties->textures->buttonDownHover);
+
     free(windowProperties->textures);
 
     free(windowProperties->colors);
