@@ -15,6 +15,9 @@
 typedef enum
 {
     MainMenu = 0,
+    Game = 1,
+    Settings = 2,
+    Highscore = 3,
 } MenuTypes;
 
 typedef struct Colors
@@ -40,7 +43,7 @@ typedef struct WindowProperties
     // Roboto Font
     TTF_Font *font;
     // current FPS text
-    char currentFPS[255];
+    char currentFPS[10];
     // colors
     Colors *colors;
     // current menu
@@ -49,16 +52,30 @@ typedef struct WindowProperties
     Textures *textures;
 } WindowProperties;
 
+typedef struct TextCoords
+{
+    int x;
+    int y;
+    int width;
+    int height;
+} TextCoords;
+
 // function ran on every SDL event
-void checkEvents(SDL_Event *e, bool *quit, float scale, WindowProperties *windowProperties, MainVariables *mainVars);
+void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, MainVariables *mainVars);
 
 // function run every frame
-void tick(int *frames, SDL_Renderer *renderer, float scale, WindowProperties *windowProperties, MainVariables *vars);
+void tick(int *frames, SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *vars);
 
 // calculate and display current FPS
 void calculateFPS(unsigned long *prevTime, int *frames, char *currentFPS, MainVariables *vars);
 
 // main menu
-void renderMainMenu(SDL_Renderer *renderer, float scale, WindowProperties *windowProperties, MainVariables *vars);
+void renderMainMenu(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *vars);
+
+// settings
+void renderSettings(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars);
+
+// render title function
+void renderTitle(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars, TextCoords *textCoords);
 
 #endif
