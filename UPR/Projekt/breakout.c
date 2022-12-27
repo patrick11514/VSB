@@ -363,7 +363,7 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
         int buttonUpY = highscoreY + highscoreHeight + 20;
 
         // if enabled render up button
-        if (!mainVars->highscoresUpButton)
+        if (mainVars->highscoresUpButton)
         {
 
             mainVars->highscoresPrevLT.x = buttonUpX;
@@ -683,6 +683,54 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
         }
         else if (windowProperties->currentMenu == Highscore)
         {
+            // prev button
+            if (mainVars->highscoresPrevHover)
+            {
+                if (mainVars->highscoresOffset > 0)
+                    // remove 1 from offset
+                    mainVars->highscoresOffset--;
+
+                // check if offset is 0
+                if (mainVars->highscoresOffset == 0)
+                {
+                    // hide button
+                    mainVars->highscoresUpButton = false;
+                    // stop hover
+                    mainVars->highscoresPrevHover = false;
+                }
+
+                // if next button is not active
+                if (!mainVars->highscoresDownButton)
+                {
+                    // activate next button
+                    mainVars->highscoresDownButton = true;
+                }
+            }
+
+            // next button
+            if (mainVars->highscoresNextHover)
+            {
+                if (mainVars->highscoresOffset < mainVars->highscores->count / HIGHSCORES_PER_PAGE)
+                    // add 1 to offset
+                    mainVars->highscoresOffset++;
+
+                // check if current page have less or equal to HIGHSCORES_PER_PAGE
+                if (mainVars->highscores->count - mainVars->highscoresOffset * HIGHSCORES_PER_PAGE <= HIGHSCORES_PER_PAGE)
+                {
+                    // hide button
+                    mainVars->highscoresDownButton = false;
+                    // stop hover
+                    mainVars->highscoresNextHover = false;
+                }
+
+                // if prev button is not active
+                if (!mainVars->highscoresUpButton)
+                {
+                    // activate prev button
+                    mainVars->highscoresUpButton = true;
+                }
+            }
+
             // back
             if (mainVars->highscoresBackHover)
             {
