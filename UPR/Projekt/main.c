@@ -180,14 +180,19 @@ int main(int argc, char **argv)
     Position paddlePosition = {.x = paddleStartPosition, .y = 0};
 
     MainVariables *vars = (MainVariables *)malloc(sizeof(MainVariables));
+    vars->window = window;
     vars->paddlePosition = paddlePosition;
     vars->FPS = 0;
     vars->paddleReverse = false;
 
     // set default false
+    // main menu
     vars->mainMenuPlayHover = false;
     vars->mainMenuSettingsHover = false;
+    vars->mainMenuHighscoreHover = false;
     vars->mainMenuExitHover = false;
+    // settings menu
+    vars->settingsScaleHover = false;
 
     // game loop
     while (!quit)
@@ -199,11 +204,11 @@ int main(int argc, char **argv)
                 quit = true;
             }
 
-            checkEvents(&e, &quit, SCALE, windowProperties, vars);
+            checkEvents(&e, &quit, windowProperties, vars);
         }
 
         calculateFPS(&prevTime, &frames, windowProperties->currentFPS, vars);
-        tick(&frames, renderer, SCALE, windowProperties, vars);
+        tick(&frames, renderer, windowProperties, vars);
     }
 
     // free textures
