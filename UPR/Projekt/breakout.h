@@ -6,6 +6,8 @@
 
 #define MOVE_FPS 60.0f
 
+#define HIGHSCORES_PER_PAGE 8
+
 // default includes
 #include <stdbool.h>
 
@@ -39,7 +41,9 @@ typedef struct Textures
 {
     Texture *paddle;
     Texture *buttonUp;
+    Texture *buttonUpHover;
     Texture *buttonDown;
+    Texture *buttonDownHover;
 } Textures;
 
 typedef struct WindowProperties
