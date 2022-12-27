@@ -29,4 +29,7 @@ void sortHighscores(Highscores *highscores);
 // write highscores to file
 void writeHighscores(Highscores *highscores);
 
+// free memory
+void freeHighscores(Highscores *highscores);
+
 #endif

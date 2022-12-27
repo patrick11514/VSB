@@ -130,8 +130,10 @@ void writeHighscores(Highscores *highscores)
 
     // close file
     fclose(file);
+}
 
-    // free memory
+void freeHighscores(Highscores *highscores)
+{
     // free data
     for (int i = 0; i < highscores->count; i++)
     {
