@@ -40,11 +40,6 @@ bool renderText(SDL_Renderer *renderer, char *text, TTF_Font *font, SDL_Color co
 
 bool renderTexture(SDL_Renderer *renderer, SDL_Texture *texture, int x, int y, int w, int h)
 {
-    if (SDL_QueryTexture(texture, NULL, NULL, &w, &h) != 0)
-    {
-        return false;
-    }
-
     SDL_Rect rect = {.x = x, .y = y, .w = w, .h = h};
 
     if (SDL_RenderCopy(renderer, texture, NULL, &rect) != 0)
