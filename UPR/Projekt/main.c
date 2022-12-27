@@ -139,6 +139,7 @@ int main(int argc, char **argv)
     colors->green = (SDL_Color){0, 255, 0, 255};
     colors->blue = (SDL_Color){0, 0, 255, 255};
     colors->yellow = (SDL_Color){255, 255, 0, 255};
+    colors->orange = (SDL_Color){255, 165, 0, 255};
 
     // allocate memory for Window Properties
     WindowProperties *windowProperties = (WindowProperties *)malloc(sizeof(WindowProperties));
@@ -178,7 +179,15 @@ int main(int argc, char **argv)
     int paddleStartPosition = (WINDOW_WIDTH * windowProperties->scale / 2) - 100;
     Position paddlePosition = {.x = paddleStartPosition, .y = 0};
 
-    MainVariables vars = {.paddlePosition = paddlePosition, .FPS = 0, .paddleReverse = false};
+    MainVariables *vars = (MainVariables *)malloc(sizeof(MainVariables));
+    vars->paddlePosition = paddlePosition;
+    vars->FPS = 0;
+    vars->paddleReverse = false;
+
+    // set default false
+    vars->mainMenuPlayHover = false;
+    vars->mainMenuSettingsHover = false;
+    vars->mainMenuExitHover = false;
 
     // game loop
     while (!quit)
@@ -190,20 +199,23 @@ int main(int argc, char **argv)
                 quit = true;
             }
 
-            checkEvents(&e, &quit, SCALE);
+            checkEvents(&e, &quit, SCALE, windowProperties, vars);
         }
 
-        calculateFPS(&prevTime, &frames, windowProperties->currentFPS, &vars);
-        tick(&frames, renderer, SCALE, windowProperties, &vars);
+        calculateFPS(&prevTime, &frames, windowProperties->currentFPS, vars);
+        tick(&frames, renderer, SCALE, windowProperties, vars);
     }
 
     // free textures
-    SDL_DestroyTexture(windowProperties->textures->paddle);
+    SDL_DestroyTexture(windowProperties->textures->paddle->texture);
 
+    free(windowProperties->textures->paddle);
     free(windowProperties->textures);
 
     free(windowProperties->colors);
     free(windowProperties);
+
+    free(vars);
 
     TTF_CloseFont(font);
     TTF_Quit();
