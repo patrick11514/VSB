@@ -46,6 +46,10 @@ void tick(int *frames, SDL_Renderer *renderer, WindowProperties *windowPropertie
     {
         renderSettings(renderer, windowProperties, mainVars);
     }
+    else if (windowProperties->currentMenu == Highscore)
+    {
+        renderHighscore(renderer, windowProperties, mainVars);
+    }
 
     // rerender
     SDL_RenderPresent(renderer);
@@ -110,25 +114,25 @@ void renderMainMenu(SDL_Renderer *renderer, WindowProperties *windowProperties, 
         printf("Error rendering text: %s", SDL_GetError());
     }
 
-    // highscore text
-    int highscoreWidth = 225 * scale;
-    int highscoreHeight = 75 * scale;
+    // highscores text
+    int highscoresWidth = 300 * scale;
+    int highscoresHeight = 75 * scale;
 
-    int highscoreX = (WINDOW_WIDTH * scale / 2) - (highscoreWidth / 2);
+    int highscoresX = (WINDOW_WIDTH * scale / 2) - (highscoresWidth / 2);
     // settings + settingsHeight + 50px
-    int highscoreY = settingsY + settingsHeight + 25 * scale;
-    mainVars->mainMenuHighscoreLT.x = highscoreX;
-    mainVars->mainMenuHighscoreLT.y = highscoreY;
-    mainVars->mainMenuHighscoreRB.x = highscoreX + highscoreWidth;
-    mainVars->mainMenuHighscoreRB.y = highscoreY + highscoreHeight;
+    int highscoresY = settingsY + settingsHeight + 25 * scale;
+    mainVars->mainMenuHighscoresLT.x = highscoresX;
+    mainVars->mainMenuHighscoresLT.y = highscoresY;
+    mainVars->mainMenuHighscoresRB.x = highscoresX + highscoresWidth;
+    mainVars->mainMenuHighscoresRB.y = highscoresY + highscoresHeight;
 
-    SDL_Color highscoreColor = windowProperties->colors->white;
-    if (mainVars->mainMenuHighscoreHover)
+    SDL_Color highscoresColor = windowProperties->colors->white;
+    if (mainVars->mainMenuHighscoresHover)
     {
-        highscoreColor = windowProperties->colors->orange;
+        highscoresColor = windowProperties->colors->orange;
     }
 
-    if (!renderText(renderer, "HIGHSCORE", windowProperties->font, highscoreColor, highscoreWidth, highscoreHeight, highscoreX, highscoreY))
+    if (!renderText(renderer, "HIGHSCORES", windowProperties->font, highscoresColor, highscoresWidth, highscoresHeight, highscoresX, highscoresY))
     {
         printf("Error rendering text: %s", SDL_GetError());
     }
@@ -138,8 +142,8 @@ void renderMainMenu(SDL_Renderer *renderer, WindowProperties *windowProperties, 
     int exitHeight = 75 * scale;
 
     int exitX = (WINDOW_WIDTH * scale / 2) - (exitWidth / 2);
-    // highscore + highscoreHeight + 50px
-    int exitY = highscoreY + highscoreHeight + 25 * scale;
+    // highscores + highscoreHeight + 50px
+    int exitY = highscoresY + highscoresHeight + 25 * scale;
     mainVars->mainMenuExitLT.x = exitX;
     mainVars->mainMenuExitLT.y = exitY;
     mainVars->mainMenuExitRB.x = exitX + exitWidth;
@@ -243,6 +247,210 @@ void renderSettings(SDL_Renderer *renderer, WindowProperties *windowProperties, 
     }
 }
 
+void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars)
+{
+    float scale = windowProperties->scale;
+
+    // title text
+    TextCoords titleCoords;
+    titleCoords.width = 350 * scale;
+    titleCoords.height = 100 * scale;
+    titleCoords.x = (WINDOW_WIDTH * scale / 2) - (titleCoords.width / 2);
+    titleCoords.y = 0;
+    renderTitle(renderer, windowProperties, mainVars, &titleCoords);
+
+    // highscores text
+    int highscoreWidth = 300 * scale;
+    int highscoreHeight = 75 * scale;
+
+    int highscoreX = (WINDOW_WIDTH * scale / 2) - (highscoreWidth / 2);
+    // title + titleHeight + 25px
+    int highscoreY = titleCoords.y + titleCoords.height + 25;
+
+    if (!renderText(renderer, "HIGHSCORES", windowProperties->font, windowProperties->colors->white, highscoreWidth, highscoreHeight, highscoreX, highscoreY))
+    {
+        printf("Error rendering text: %s", SDL_GetError());
+    }
+
+    Highscores *highscores = mainVars->highscores;
+
+    // Y coord for back button edited in if statement
+    int backY;
+    int backHeight = 65 * scale;
+
+    if (!highscores)
+    {
+        // read file
+        FILE *file = openFile("highscores.txt", "rt");
+
+        // if file doesn't exist, create new highscores
+        if (!file)
+        {
+            highscores = (Highscores *)malloc(sizeof(Highscores));
+            highscores->count = 0;
+            highscores->players = arrayInit(_VECTOR_DEFAULT_CAPACITY);
+            highscores->scores = arrayInit(_VECTOR_DEFAULT_CAPACITY);
+        }
+        else
+        {
+            // read highscores from file
+            highscores = readHighscores(file);
+            fclose(file);
+            sortHighscores(highscores);
+        }
+
+        // save loaded highscores
+        mainVars->highscores = highscores;
+
+        // init variables for highscore rendering
+        mainVars->highscoresOffset = 0;
+        mainVars->highscoresUpButton = false;
+        if (highscores->count > HIGHSCORES_PER_PAGE)
+        {
+            mainVars->highscoresDownButton = true;
+        }
+        else
+        {
+            mainVars->highscoresDownButton = false;
+        }
+    }
+
+    if (highscores->count == 0)
+    {
+        // no highscores
+        int noHighscoresWidth = 300 * scale;
+        int noHighscoresHeight = 50 * scale;
+
+        int noHighscoresX = (WINDOW_WIDTH * scale / 2) - (noHighscoresWidth / 2);
+        // highscore + highscoreHeight + 50px
+        int noHighscoresY = highscoreY + highscoreHeight + 50 * scale;
+
+        if (!renderText(renderer, "No highscores yet", windowProperties->font, windowProperties->colors->red, noHighscoresWidth, noHighscoresHeight, noHighscoresX, noHighscoresY))
+        {
+            printf("Error rendering text: %s", SDL_GetError());
+        }
+
+        // back button
+        // 40 pixels from down
+        backY = WINDOW_HEIGHT * scale - 40 * scale - backHeight;
+    }
+    else
+    {
+        // textures
+        Texture *buttonUp;
+        Texture *buttonDown;
+
+        if (mainVars->highscoresPrevHover)
+        {
+            buttonUp = windowProperties->textures->buttonUpHover;
+        }
+        else
+        {
+            buttonUp = windowProperties->textures->buttonUp;
+        }
+
+        if (mainVars->highscoresNextHover)
+        {
+            buttonDown = windowProperties->textures->buttonDownHover;
+        }
+        else
+        {
+            buttonDown = windowProperties->textures->buttonDown;
+        }
+
+        int buttonUpX = (WINDOW_WIDTH * scale / 2) - (buttonUp->width * scale / 2);
+        // highscore + highscoreHeight + 20px (spacing)
+        int buttonUpY = highscoreY + highscoreHeight + 20;
+
+        // if enabled render up button
+        if (!mainVars->highscoresUpButton)
+        {
+
+            mainVars->highscoresPrevLT.x = buttonUpX;
+            mainVars->highscoresPrevLT.y = buttonUpY;
+            mainVars->highscoresPrevRB.x = buttonUpX + buttonUp->width * scale;
+            mainVars->highscoresPrevRB.y = buttonUpY + buttonUp->height * scale;
+
+            if (!renderTexture(renderer, buttonUp->texture, buttonUpX, buttonUpY, buttonUp->width * scale, buttonUp->height * scale))
+            {
+                printf("Error rendering texture: %s", SDL_GetError());
+            }
+        }
+
+        // highscores
+        // buttonUp + buttonUpHeight + 10px
+        float highscoreY = buttonUpY + buttonUp->height * scale + 10 * scale;
+
+        int end = mainVars->highscoresOffset * HIGHSCORES_PER_PAGE + HIGHSCORES_PER_PAGE;
+
+        if (end > highscores->count)
+        {
+            end = highscores->count;
+        }
+
+        for (int i = mainVars->highscoresOffset * HIGHSCORES_PER_PAGE; i < end; i++)
+        {
+            char text[255];
+
+            snprintf(text, 255, "%s - %s", (char *)highscores->players->data[i], (char *)highscores->scores->data[i]);
+
+            // 25px per char
+            float x = (WINDOW_WIDTH * scale / 2) - (strlen(text) * 25 * scale / 2);
+
+            if (!renderText(renderer, text, windowProperties->font, windowProperties->colors->white, strlen(text) * 25 * scale, 50 * scale, x, highscoreY))
+            {
+                printf("Error rendering text: %s", SDL_GetError());
+            }
+
+            // 50px per highscore
+            highscoreY += 50 * scale;
+        }
+
+        int buttonDownX = (WINDOW_WIDTH * scale / 2) - (buttonDown->width * scale / 2);
+        // highscoreY - 50px (because of last highscore add 50px) + 10px (spacing) + buttonDownHeight
+        int buttonDownY = highscoreY - 50 + 10 + buttonDown->height;
+
+        // if enabled render down button
+        if (mainVars->highscoresDownButton)
+        {
+
+            mainVars->highscoresNextLT.x = buttonDownX;
+            mainVars->highscoresNextLT.y = buttonDownY;
+            mainVars->highscoresNextRB.x = buttonDownX + buttonDown->width * scale;
+            mainVars->highscoresNextRB.y = buttonDownY + buttonDown->height * scale;
+
+            if (!renderTexture(renderer, buttonDown->texture, buttonDownX, buttonDownY, buttonDown->width * scale, buttonDown->height * scale))
+            {
+                printf("Error rendering texture: %s", SDL_GetError());
+            }
+        }
+
+        // back button
+        //  buttonDown + buttonDownHeight + 20px (spacing)
+        backY = buttonDownY + buttonDown->height * scale + 20 * scale;
+    }
+
+    int backWidth = 125 * scale;
+    int backX = (WINDOW_WIDTH * scale / 2) - (backWidth / 2);
+
+    // back text
+    mainVars->highscoresBackLT.x = backX;
+    mainVars->highscoresBackLT.y = backY;
+    mainVars->highscoresBackRB.x = backX + backWidth;
+    mainVars->highscoresBackRB.y = backY + backHeight;
+
+    SDL_Color backColor = windowProperties->colors->white;
+    if (mainVars->highscoresBackHover)
+    {
+        backColor = windowProperties->colors->orange;
+    }
+
+    if (!renderText(renderer, "BACK", windowProperties->font, backColor, backWidth, backHeight, backX, backY))
+    {
+        printf("Error rendering text: %s", SDL_GetError());
+    }
+}
+
 void renderTitle(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars, TextCoords *textCoords)
 {
     float scale = windowProperties->scale;
@@ -258,7 +466,7 @@ void renderTitle(SDL_Renderer *renderer, WindowProperties *windowProperties, Mai
     mainVars->paddlePosition.y = 0 + textCoords->height - 10;
     mainVars->paddleStartPosition = (WINDOW_WIDTH * scale / 2) - (paddlePathWidth / 2);
 
-    int paddleEnd = mainVars->paddleStartPosition + paddlePathWidth - windowProperties->textures->paddle->width;
+    int paddleEnd = mainVars->paddleStartPosition + paddlePathWidth - windowProperties->textures->paddle->width * scale;
 
     // if paddle position is greater then paddle end + 10 px
     if (mainVars->paddlePosition.x > paddleEnd + 10)
@@ -286,18 +494,18 @@ void renderTitle(SDL_Renderer *renderer, WindowProperties *windowProperties, Mai
         {
             if (mainVars->paddleReverse)
             {
-                mainVars->paddlePosition.x -= (MOVE_FPS / mainVars->FPS);
+                mainVars->paddlePosition.x -= (MOVE_FPS / mainVars->FPS) * scale;
             }
             else
             {
-                mainVars->paddlePosition.x += (MOVE_FPS / mainVars->FPS);
+                mainVars->paddlePosition.x += (MOVE_FPS / mainVars->FPS) * scale;
             }
         }
     }
 
     // render paddle
     Texture *paddle = windowProperties->textures->paddle;
-    if (!renderTexture(renderer, paddle->texture, mainVars->paddlePosition.x, mainVars->paddlePosition.y, paddle->width, paddle->height))
+    if (!renderTexture(renderer, paddle->texture, mainVars->paddlePosition.x, mainVars->paddlePosition.y, paddle->width * scale, paddle->height * scale))
     {
         printf("Error rendering texture: %s\n", SDL_GetError());
     }
@@ -329,14 +537,14 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
                 mainVars->mainMenuSettingsHover = false;
             }
 
-            // highscore text
-            if (e->motion.x >= mainVars->mainMenuHighscoreLT.x && e->motion.x <= mainVars->mainMenuHighscoreRB.x && e->motion.y >= mainVars->mainMenuHighscoreLT.y && e->motion.y <= mainVars->mainMenuHighscoreRB.y)
+            // highscores text
+            if (e->motion.x >= mainVars->mainMenuHighscoresLT.x && e->motion.x <= mainVars->mainMenuHighscoresRB.x && e->motion.y >= mainVars->mainMenuHighscoresLT.y && e->motion.y <= mainVars->mainMenuHighscoresRB.y)
             {
-                mainVars->mainMenuHighscoreHover = true;
+                mainVars->mainMenuHighscoresHover = true;
             }
             else
             {
-                mainVars->mainMenuHighscoreHover = false;
+                mainVars->mainMenuHighscoresHover = false;
             }
 
             // exit text
@@ -371,6 +579,39 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
                 mainVars->settingsBackHover = false;
             }
         }
+        else if (windowProperties->currentMenu == Highscore)
+        {
+
+            // prev button
+            if (e->motion.x >= mainVars->highscoresPrevLT.x && e->motion.x <= mainVars->highscoresPrevRB.x && e->motion.y >= mainVars->highscoresPrevLT.y && e->motion.y <= mainVars->highscoresPrevRB.y)
+            {
+                mainVars->highscoresPrevHover = true;
+            }
+            else
+            {
+                mainVars->highscoresPrevHover = false;
+            }
+
+            // next button
+            if (e->motion.x >= mainVars->highscoresNextLT.x && e->motion.x <= mainVars->highscoresNextRB.x && e->motion.y >= mainVars->highscoresNextLT.y && e->motion.y <= mainVars->highscoresNextRB.y)
+            {
+                mainVars->highscoresNextHover = true;
+            }
+            else
+            {
+                mainVars->highscoresNextHover = false;
+            }
+
+            // back text
+            if (e->motion.x >= mainVars->highscoresBackLT.x && e->motion.x <= mainVars->highscoresBackRB.x && e->motion.y >= mainVars->highscoresBackLT.y && e->motion.y <= mainVars->highscoresBackRB.y)
+            {
+                mainVars->highscoresBackHover = true;
+            }
+            else
+            {
+                mainVars->highscoresBackHover = false;
+            }
+        }
     }
 
     if (e->type == SDL_MOUSEBUTTONDOWN)
@@ -382,6 +623,14 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
             if (mainVars->mainMenuSettingsHover)
             {
                 windowProperties->currentMenu = Settings;
+                mainVars->mainMenuSettingsHover = false;
+            }
+
+            // highscore
+            if (mainVars->mainMenuHighscoresHover)
+            {
+                windowProperties->currentMenu = Highscore;
+                mainVars->mainMenuHighscoresHover = false;
             }
 
             // quit
@@ -421,12 +670,24 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
                 // update window size
                 SDL_SetWindowSize(mainVars->window, WINDOW_WIDTH * currentScale, WINDOW_HEIGHT * currentScale);
                 windowProperties->scale = currentScale;
+
+                mainVars->settingsScaleHover = false;
             }
 
             // back
             if (mainVars->settingsBackHover)
             {
                 windowProperties->currentMenu = MainMenu;
+                mainVars->settingsBackHover = false;
+            }
+        }
+        else if (windowProperties->currentMenu == Highscore)
+        {
+            // back
+            if (mainVars->highscoresBackHover)
+            {
+                windowProperties->currentMenu = MainMenu;
+                mainVars->highscoresBackHover = false;
             }
         }
     }
