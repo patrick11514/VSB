@@ -56,11 +56,11 @@ typedef struct MainVariables
     // main menu settings button if hover
     bool mainMenuSettingsHover;
 
-    // main menu highscore button corners LeftTop + RightBottom
-    Position mainMenuHighscoreLT;
-    Position mainMenuHighscoreRB;
-    // main menu highscore button if hover
-    bool mainMenuHighscoreHover;
+    // main menu highscores button corners LeftTop + RightBottom
+    Position mainMenuHighscoresLT;
+    Position mainMenuHighscoresRB;
+    // main menu highscores button if hover
+    bool mainMenuHighscoresHover;
 
     // main menu exit button corners LeftTop + RightBottom
     Position mainMenuExitLT;
@@ -80,6 +80,32 @@ typedef struct MainVariables
     Position settingsBackRB;
     // back button if hover
     bool settingsBackHover;
+
+    // HIGHSCORES BUTTONS
+    // next button corners LeftTop + RightBottom
+    Position highscoresNextLT;
+    Position highscoresNextRB;
+    // next button if hover
+    bool highscoresNextHover;
+
+    // prev button corners LeftTop + RightBottom
+    Position highscoresPrevLT;
+    Position highscoresPrevRB;
+    // prev button if hover
+    bool highscoresPrevHover;
+
+    //  back button corners LeftTop + RightBottom
+    Position highscoresBackLT;
+    Position highscoresBackRB;
+    // back button if hover
+    bool highscoresBackHover;
+
+    // HIGHSCORE SCREEN
+    //  current offset for highscores
+    int highscoresOffset;
+    // buttons
+    bool highscoresUpButton;
+    bool highscoresDownButton;
 
 } MainVariables;
 
