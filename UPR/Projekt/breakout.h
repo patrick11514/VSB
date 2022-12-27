@@ -25,6 +25,7 @@ typedef struct Colors
     SDL_Color green;
     SDL_Color blue;
     SDL_Color black;
+    SDL_Color orange;
 } Colors;
 
 typedef struct Textures
@@ -49,7 +50,7 @@ typedef struct WindowProperties
 } WindowProperties;
 
 // function ran on every SDL event
-void checkEvents(SDL_Event *e, bool *quit, float scale);
+void checkEvents(SDL_Event *e, bool *quit, float scale, WindowProperties *windowProperties, MainVariables *mainVars);
 
 // function run every frame
 void tick(int *frames, SDL_Renderer *renderer, float scale, WindowProperties *windowProperties, MainVariables *vars);
