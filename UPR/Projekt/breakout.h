@@ -38,6 +38,8 @@ typedef struct Colors
 typedef struct Textures
 {
     Texture *paddle;
+    Texture *buttonUp;
+    Texture *buttonDown;
 } Textures;
 
 typedef struct WindowProperties
@@ -78,6 +80,9 @@ void renderMainMenu(SDL_Renderer *renderer, WindowProperties *windowProperties, 
 
 // settings
 void renderSettings(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars);
+
+// highscore screen
+void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars);
 
 // render title function
 void renderTitle(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars, TextCoords *textCoords);

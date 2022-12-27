@@ -173,6 +173,22 @@ int main(int argc, char **argv)
     paddle->height = 6;
     windowProperties->textures->paddle = paddle;
 
+    // button up
+    Texture *buttonUp = (Texture *)malloc(sizeof(Texture));
+    SDL_Texture *buttonUpTexture = IMG_LoadTexture(renderer, "assets/images/button_up.png");
+    buttonUp->texture = buttonUpTexture;
+    buttonUp->width = 30;
+    buttonUp->height = 10;
+    windowProperties->textures->buttonUp = buttonUp;
+
+    // button down
+    Texture *buttonDown = (Texture *)malloc(sizeof(Texture));
+    SDL_Texture *buttonDownTexture = IMG_LoadTexture(renderer, "assets/images/button_down.png");
+    buttonDown->texture = buttonDownTexture;
+    buttonDown->width = 30;
+    buttonDown->height = 10;
+    windowProperties->textures->buttonDown = buttonDown;
+
     // paddle main menu
     int paddleStartPosition = (WINDOW_WIDTH * windowProperties->scale / 2) - 100;
     Position paddlePosition = {.x = paddleStartPosition, .y = 0};
@@ -182,15 +198,19 @@ int main(int argc, char **argv)
     vars->paddlePosition = paddlePosition;
     vars->FPS = 0;
     vars->paddleReverse = false;
+    vars->highscores = NULL;
 
     // set default false
     // main menu
     vars->mainMenuPlayHover = false;
     vars->mainMenuSettingsHover = false;
-    vars->mainMenuHighscoreHover = false;
+    vars->mainMenuHighscoresHover = false;
     vars->mainMenuExitHover = false;
     // settings menu
     vars->settingsScaleHover = false;
+    vars->settingsBackHover = false;
+    // highscores menu
+    vars->highscoresBackHover = false;
 
     // game loop
     while (!quit)
@@ -209,8 +229,16 @@ int main(int argc, char **argv)
         tick(&frames, renderer, windowProperties, vars);
     }
 
+    // free highscores
+    if (vars->highscores != NULL)
+    {
+        freeHighscores(vars->highscores);
+    }
+
     // free textures
     SDL_DestroyTexture(windowProperties->textures->paddle->texture);
+    SDL_DestroyTexture(windowProperties->textures->buttonUp->texture);
+    SDL_DestroyTexture(windowProperties->textures->buttonDown->texture);
 
     free(windowProperties->textures->paddle);
     free(windowProperties->textures);
