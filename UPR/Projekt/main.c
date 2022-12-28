@@ -227,6 +227,8 @@ int main(int argc, char **argv)
     vars->settingsBackHover = false;
     // highscores menu
     vars->highscoresBackHover = false;
+    vars->highscoresNextHover = false;
+    vars->highscoresBackHover = false;
 
     // game loop
     while (!quit)
