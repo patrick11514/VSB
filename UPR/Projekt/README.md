@@ -5,9 +5,10 @@ Udávají:
 --[paramter]=hodnota
 
 Příklad:
-```BASH
+```JS
 ./main --help
 ./main --level=level1.txt
+./main --level=level2.txt --includeDefaultLevels=true
 ``` 
 
 * **help**:
@@ -19,7 +20,7 @@ Zobrazí parametry programu
 
     V každém levelu jdou použít tyto barevné cihly:
     * Žlutá (Yellow) ![Yellow Brick](https://upload.patrick115.eu/screenshot/brick_yellow.png)
-    * Zelená (Green) ![Green Brick](https://upload.patrick115.eu/screenshot/brick_green.png)
+    * Zelená (Lime) ![Lime Brick](https://upload.patrick115.eu/screenshot/brick_lime.png)
     * Šedá (Gray) ![Gray Brick](https://upload.patrick115.eu/screenshot/brick_gray.png)
     * Červená (Red) ![Red Brick](https://upload.patrick115.eu/screenshot/brick_red.png)
     * Fialová (Purple) ![Purple Brick](https://upload.patrick115.eu/screenshot/brick_purple.png)
@@ -36,7 +37,7 @@ Zobrazí parametry programu
 
     ![Gray Brick](https://upload.patrick115.eu/screenshot/brick_gray.png) 3 ![Hearth](https://upload.patrick115.eu/screenshot/hearth.png)
 
-    ![Green Brick](https://upload.patrick115.eu/screenshot/brick_green.png) 2 ![Hearth](https://upload.patrick115.eu/screenshot/hearth.png)
+    ![Lime Brick](https://upload.patrick115.eu/screenshot/brick_lime.png) 2 ![Hearth](https://upload.patrick115.eu/screenshot/hearth.png)
 
     ![Yellow Brick](https://upload.patrick115.eu/screenshot/brick_yellow.png) 1 ![Hearth](https://upload.patrick115.eu/screenshot/hearth.png)
 
@@ -46,11 +47,14 @@ Zobrazí parametry programu
 
     Nastavení levelu se vždy ukáže před hrou.
 
+    Level může mít jakoukoliv příponu, jen musí obsahovat správně zadaný text.
+
     * **Ukázkové nastavení**:
         Nastavení vždy začíná slovíčkem "%Settings" a končí slovíčkem "%EndSettings".
 
         Mezi těmito značkami se poté definuje nastavení:
-        * **Lives: číslo** definuje počet životů hráče
+        * **Lives: číslo** definuje počet životů hráče **(Požadováné)**
+        * **Description: text** Definuje krátký popisek levelu, který bude v seznamu levelů. (Max 20 znaků) **(Požadováné)**
         * **Barva Brick: číslo** definuje počet životů cihly
         * Nikdy nesmí existovat dvě cihly, které mají stejný počet životů.
         * Cihly, které nejsou definované v Settings nepůjdou použít
@@ -58,10 +62,11 @@ Zobrazí parametry programu
         ```YAML
         %Settings
         Lives: 5
+        Description: Level 2 (Těžší)
         Yellow Brick: 4
         Blue Brick: 5
         Gray Brick: 3
-        Green Brick: 2
+        Lime Brick: 2
         Yellow Brick: 1
         %EndSettings
         ```
@@ -86,13 +91,18 @@ Zobrazí parametry programu
         ```YAML
         %Settings
         Lives: 5
+        Description: Level 2 (Těžší)
         Yellow Brick: 4
         Blue Brick: 5
         Gray Brick: 3
-        Green Brick: 2
+        Lime Brick: 2
         Yellow Brick: 1
         %EndSettings
         %Level
         
         %EndLevel
         ```
+* **includeDefaultLevels**:
+    V základu je na false, takže pokud načtu nějaký svůj level, tak se načte pouze ten.
+
+    Pokud ale chci načíst zákaldní levely + moje, tak tento argument dám na **true**.
