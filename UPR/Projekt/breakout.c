@@ -272,7 +272,7 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
         printf("Error rendering text: %s", SDL_GetError());
     }
 
-    Highscores *highscores = mainVars->highscores;
+    Highscores *highscores = windowProperties->highscores;
 
     // Y coord for back button edited in if statement
     int backY;
@@ -288,8 +288,8 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
         {
             highscores = (Highscores *)malloc(sizeof(Highscores));
             highscores->count = 0;
-            highscores->players = arrayInit(_VECTOR_DEFAULT_CAPACITY);
-            highscores->scores = arrayInit(_VECTOR_DEFAULT_CAPACITY);
+            highscores->players = arrayInit(ARRAY_DEFAULT_CAPACITY);
+            highscores->scores = arrayInit(ARRAY_DEFAULT_CAPACITY);
         }
         else
         {
@@ -300,7 +300,7 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
         }
 
         // save loaded highscores
-        mainVars->highscores = highscores;
+        windowProperties->highscores = highscores;
 
         // init variables for highscore rendering
         mainVars->highscoresOffset = 0;
@@ -710,12 +710,12 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
             // next button
             if (mainVars->highscoresNextHover)
             {
-                if (mainVars->highscoresOffset < mainVars->highscores->count / HIGHSCORES_PER_PAGE)
+                if (mainVars->highscoresOffset < windowProperties->highscores->count / HIGHSCORES_PER_PAGE)
                     // add 1 to offset
                     mainVars->highscoresOffset++;
 
                 // check if current page have less or equal to HIGHSCORES_PER_PAGE
-                if (mainVars->highscores->count - mainVars->highscoresOffset * HIGHSCORES_PER_PAGE <= HIGHSCORES_PER_PAGE)
+                if (windowProperties->highscores->count - mainVars->highscoresOffset * HIGHSCORES_PER_PAGE <= HIGHSCORES_PER_PAGE)
                 {
                     // hide button
                     mainVars->highscoresDownButton = false;

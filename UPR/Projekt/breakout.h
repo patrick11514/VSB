@@ -17,6 +17,14 @@
 
 // my includes
 #include "assets.h"
+#include "dynamicarray.h"
+
+typedef struct Highscores
+{
+    int count;
+    Array *scores;
+    Array *players;
+} Highscores;
 
 typedef enum
 {
@@ -39,11 +47,20 @@ typedef struct Colors
 
 typedef struct Textures
 {
+    // paddle
     Texture *paddle;
+    // buttons
     Texture *buttonUp;
     Texture *buttonUpHover;
     Texture *buttonDown;
     Texture *buttonDownHover;
+    // bricks
+    Texture *brickYellow;
+    Texture *brickLime;
+    Texture *brickGray;
+    Texture *brickRed;
+    Texture *brickPurple;
+    Texture *brickBlue;
 } Textures;
 
 typedef struct WindowProperties
@@ -60,6 +77,10 @@ typedef struct WindowProperties
     MenuTypes currentMenu;
     // loaded textures
     Textures *textures;
+    // highscores
+    Highscores *highscores;
+    // levels
+    Array *levels;
 } WindowProperties;
 
 typedef struct TextCoords
@@ -69,6 +90,23 @@ typedef struct TextCoords
     int width;
     int height;
 } TextCoords;
+
+typedef struct Brick
+{
+    int x;
+    int y;
+    int lives;
+    Texture *texture;
+    bool destroyed;
+} Brick;
+
+typedef struct Level
+{
+    int score;
+    int health;
+    char *description;
+    Array *bricks;
+} Level;
 
 // function ran on every SDL event
 void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, MainVariables *mainVars);
