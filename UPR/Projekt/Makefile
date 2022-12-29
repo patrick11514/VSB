@@ -1,7 +1,7 @@
 COMPILER=gcc
 ARGS=-Wall -Wextra -g -O2 -fsanitize=address -lSDL2 -lSDL2_ttf -lSDL2_image
-OFILES=main.o dynamicarray.o breakout.o files.o global.o highscores.o assets.o
-HFILES=dynamicarray.h breakout.h files.h global.h highscores.h assets.h
+OFILES=dynamicarray.o breakout.o files.o global.o highscores.o assets.o vars.o args.o main.o
+HFILES=files.h highscores.h dynamicarray.h breakout.h global.h assets.h vars.h args.h
 EXEC=main
 
 $(EXEC): $(OFILES) $(HFILES)
