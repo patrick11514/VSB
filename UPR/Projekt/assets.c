@@ -10,6 +10,9 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
+// my includes
+#include "breakout.h"
+
 bool renderText(SDL_Renderer *renderer, char *text, TTF_Font *font, SDL_Color color, int width, int height, int x, int y)
 {
     SDL_Rect rect = {.x = x, .y = y, .w = width, .h = height};
@@ -65,4 +68,25 @@ bool renderRect(SDL_Renderer *renderer, int x, int y, int w, int h, SDL_Color co
     }
 
     return true;
+}
+
+void strToLower(char *string)
+{
+    int len = (int)strlen(string);
+
+    for (int i = 0; i < len; i++)
+    {
+        string[i] = tolower(string[i]);
+    }
+}
+
+void loadTexture(SDL_Renderer *renderer, Texture *texture, char *path)
+{
+    SDL_Texture *IMGTexture = IMG_LoadTexture(renderer, path);
+    int width, height;
+    SDL_QueryTexture(IMGTexture, NULL, NULL, &width, &height);
+
+    texture->texture = IMGTexture;
+    texture->width = width;
+    texture->height = height;
 }

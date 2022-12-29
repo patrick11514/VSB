@@ -8,9 +8,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-// my includes
-#include "highscores.h"
-
 // Position structure for X Y coordinates
 typedef struct Position
 {
@@ -41,7 +38,6 @@ typedef struct MainVariables
 
     // current fps
     int FPS;
-    Highscores *highscores;
 
     // MAIN MENU BUTTONS
     //  main menu play button corners LeftTop + RightBottom
@@ -117,5 +113,11 @@ bool renderTexture(SDL_Renderer *_renderer, SDL_Texture *_texture, int _x, int _
 
 // render rectangle on position _x and _y with _width and _height with color _color
 bool renderRect(SDL_Renderer *_renderer, int _x, int _y, int _width, int _height, SDL_Color _color);
+
+// string to lower
+void strToLower(char *string);
+
+// load texture
+void loadTexture(SDL_Renderer *_renderer, Texture *_texture, char *_path);
 
 #endif
