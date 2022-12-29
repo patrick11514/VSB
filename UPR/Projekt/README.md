@@ -14,7 +14,9 @@ Příklad:
 Zobrazí parametry programu
 
 * **level**:
+
     Načte jeden, nebo více levelů
+
     V každém levelu jdou použít tyto barevné cihly:
     * Žlutá (Yellow) ![Yellow Brick](https://upload.patrick115.eu/screenshot/brick_yellow.png)
     * Zelená (Green) ![Green Brick](https://upload.patrick115.eu/screenshot/brick_green.png)
@@ -23,19 +25,74 @@ Zobrazí parametry programu
     * Fialová (Purple) ![Purple Brick](https://upload.patrick115.eu/screenshot/brick_purple.png)
     * Modrá (Blue) ![Blue Brick](https://upload.patrick115.eu/screenshot/brick_blue.png)
 
+
     Ve vestavěných levelech mají životy od Modré po Žlutou sestupně, takže:
+    
     ![Blue Brick](https://upload.patrick115.eu/screenshot/brick_blue.png) 6 ![Hearth](https://upload.patrick115.eu/screenshot/hearth.png)
+    
     ![Purple Brick](https://upload.patrick115.eu/screenshot/brick_purple.png) 5 ![Hearth](https://upload.patrick115.eu/screenshot/hearth.png)
+
     ![Red Brick](https://upload.patrick115.eu/screenshot/brick_red.png) 4 ![Hearth](https://upload.patrick115.eu/screenshot/hearth.png)
+
     ![Gray Brick](https://upload.patrick115.eu/screenshot/brick_gray.png) 3 ![Hearth](https://upload.patrick115.eu/screenshot/hearth.png)
+
     ![Green Brick](https://upload.patrick115.eu/screenshot/brick_green.png) 2 ![Hearth](https://upload.patrick115.eu/screenshot/hearth.png)
+
     ![Yellow Brick](https://upload.patrick115.eu/screenshot/brick_yellow.png) 1 ![Hearth](https://upload.patrick115.eu/screenshot/hearth.png)
 
-    Po každém zásahu se cihla promnění na tu pod ní a žlutá poté zmizí.
+    Po každém zásahu se cihla promnění na tu pod ní a Žlutá po zásahu zmizí.
 
-    
+    V každém levlu jsou potom definované životy.
 
-    ```TXT
+    Nastavení levelu se vždy ukáže před hrou.
 
+    * **Ukázkové nastavení**:
+        Nastavení vždy začíná slovíčkem "%Settings" a končí slovíčkem "%EndSettings".
 
-    ```
+        Mezi těmito značkami se poté definuje nastavení:
+        * **Lives: číslo** definuje počet životů hráče
+        * **Barva Brick: číslo** definuje počet životů cihly
+        * Nikdy nesmí existovat dvě cihly, které mají stejný počet životů.
+        * Cihly, které nejsou definované v Settings nepůjdou použít
+
+        ```YAML
+        %Settings
+        Lives: 5
+        Yellow Brick: 4
+        Blue Brick: 5
+        Gray Brick: 3
+        Green Brick: 2
+        Yellow Brick: 1
+        %EndSettings
+        ```
+
+    * **Ukázkový level**:
+        Level vždy začíná slovíčkem "%Level" a končí slovíčkem "%EndLevel"
+
+        Mezi těmito značkami se poté definuje level:
+        * Level může mít maximální šířku <width>
+        * Level může mít maximální výšku <height>
+        * Pokud level bude v nějaké/obou velikostech menší, vycentruje se
+        * Do levelu se vždy píšou první velké písmeny cihy, kterou jsme definovali v nastavení
+        * Mezera = žádná cihla zde nebude
+
+        ```YAML
+        %Level
+        
+        %EndLevel
+        ```
+
+    * **Finální ukázkový soubor**:
+        ```YAML
+        %Settings
+        Lives: 5
+        Yellow Brick: 4
+        Blue Brick: 5
+        Gray Brick: 3
+        Green Brick: 2
+        Yellow Brick: 1
+        %EndSettings
+        %Level
+        
+        %EndLevel
+        ```
