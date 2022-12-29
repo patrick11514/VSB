@@ -20,8 +20,8 @@ Highscores *readHighscores(FILE *file)
         printf("Unabel to allocate memory for highscores");
         exit(1);
     }
-    highscores->scores = arrayInit(_VECTOR_DEFAULT_CAPACITY);
-    highscores->players = arrayInit(_VECTOR_DEFAULT_CAPACITY);
+    highscores->scores = arrayInit(ARRAY_DEFAULT_CAPACITY);
+    highscores->players = arrayInit(ARRAY_DEFAULT_CAPACITY);
     highscores->count = 0;
 
     while (fgets(row, 100, file) != NULL)

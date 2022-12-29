@@ -27,7 +27,7 @@ bool arrayAdd(Array *array, void *item)
     {
         if (array->capacity == 0)
         {
-            array->capacity = _VECTOR_DEFAULT_CAPACITY;
+            array->capacity = ARRAY_DEFAULT_CAPACITY;
         }
         else
         {

@@ -1,5 +1,5 @@
-#ifndef _VECTOR_H
-#define _VECTOR_H 1
+#ifndef ARRAY_H
+#define ARRAY_H 1
 
 // default includes
 #include <stdbool.h>
@@ -13,7 +13,7 @@ typedef struct Array
     void **data;
 } Array;
 
-#define _VECTOR_DEFAULT_CAPACITY 2
+#define ARRAY_DEFAULT_CAPACITY 2
 
 // functions
 

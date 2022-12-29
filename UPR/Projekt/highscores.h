@@ -6,13 +6,8 @@
 #include "global.h"
 #include "dynamicarray.h"
 
-// Highscores structure
-typedef struct Highscores
-{
-    int count;
-    Array *scores;
-    Array *players;
-} Highscores;
+// include Highscores struct, because if struct was here, it caused include loop
+#include "breakout.h"
 
 // read highscores from given file
 Highscores *readHighscores(FILE *file);
