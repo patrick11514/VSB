@@ -1,0 +1,13 @@
+%Settings
+Lives: 5
+Description: Level 1 (Lehké)
+Yellow Brick: 1
+Lime Brick: 2
+Gray Brick: 3
+Red Brick: 4
+Purple Brick: 5
+Blue Brick: 6
+%EndSettings
+%Level
+YLGRPB
+%EndLevel
