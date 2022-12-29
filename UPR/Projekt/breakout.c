@@ -23,7 +23,7 @@ void tick(int *frames, SDL_Renderer *renderer, WindowProperties *windowPropertie
     float scale = windowProperties->scale;
 
     // clear screen
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 26, 25, 24, 255);
     SDL_RenderClear(renderer);
 
     // for fix text
