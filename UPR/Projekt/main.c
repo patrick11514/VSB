@@ -16,236 +16,91 @@
 #include "highscores.h"
 #include "breakout.h"
 #include "assets.h"
-
-void addNewHigh()
-{
-    // read file
-    FILE *file = openFile("highscores.txt", "rt");
-
-    // initialize highscores
-    Highscores *highscores;
-
-    // if file doesn't exist, create new highscores
-    if (!file)
-    {
-        highscores = (Highscores *)malloc(sizeof(Highscores));
-        highscores->count = 0;
-        highscores->players = arrayInit(_VECTOR_DEFAULT_CAPACITY);
-        highscores->scores = arrayInit(_VECTOR_DEFAULT_CAPACITY);
-    }
-    else
-    {
-        // read highscores from file
-        highscores = readHighscores(file);
-        fclose(file);
-    }
-
-    char row[100];
-
-    printf("Enter new highscore (username;score):\n");
-
-    if (!fgets(row, 100, stdin))
-    {
-        printf("Can't read input");
-        exit(1);
-    }
-
-    char *username = splitInput(row);
-    char *score = splitInput(NULL);
-
-    // add new highscore
-    addHighscore(highscores, username, score);
-
-    // sort highscores
-    sortHighscores(highscores);
-
-    // write highscores to file
-    writeHighscores(highscores);
-}
+#include "vars.h"
+#include "args.h"
 
 int main(int argc, char **argv)
 {
-    // arguments
-    if (argc > 1)
+    // =========================================== [ ARGUMENTS ] ===========================================
+    bool levels = false;
+    bool includeDefaultLevels = false;
+
+    if (loadArgs(argc, argv, &levels, &includeDefaultLevels))
     {
-        // check if arguments contains --help
-        for (int i = 1; i < argc; i++)
-        {
-            if (strcmp(argv[i], "--help") == 0)
-            {
-                printf("Usage: %s --[OPTION]=[VALUE]...\n", argv[0]);
-                printf("Options:\n");
-                printf("help - show this message\n");
-                printf("level - load level from given file\n");
-                printf("      - Example: %s --level=level1.txt\n", argv[0]);
-                printf("      - You could also load more levels separated by semicolon\n");
-                printf("      - Example: %s --level=level1.txt,level2.txt\n", argv[0]);
-                printf("      - Otherwise it will load default levels\n");
-
-                return 0;
-            }
-
-            // check if arguments contains --level
-            else if (strncmp(argv[i], "--level=", 8) == 0)
-            {
-                // get level file
-                char *levelFiles = argv[i] + 8;
-                printf("%s\n", levelFiles);
-                return 0;
-            }
-            // otherwise just show warning
-            else
-            {
-                printf("Unknown argument: %s, skipping\n", argv[i]);
-            }
-        }
+        return 0;
     }
 
-    // SDL2 INIT
-    if (SDL_Init(SDL_INIT_VIDEO))
-    {
-        fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
-        return 1;
-    }
+    // =====================================================================================
 
-    // Calculate scale based on display resolution
+    // init sdl
+    SDL_Window *window = NULL;
+    SDL_Renderer *renderer = NULL;
     float SCALE;
-    SDL_DisplayMode DisplayMode;
-    if (SDL_GetCurrentDisplayMode(0, &DisplayMode) != 0)
+    if (!initSDL(&window, &renderer, &SCALE))
     {
-        fprintf(stderr, "Unable to get DisplaMode: %s\n", SDL_GetError());
         return 1;
     }
 
-    SCALE = getScale(DisplayMode.h);
-
-    // create window with scale
-    SDL_Window *window = SDL_CreateWindow("Breakout", 100, 100, WINDOW_WIDTH * SCALE, WINDOW_HEIGHT * SCALE, SDL_WINDOW_SHOWN);
-    if (!window)
-    {
-        fprintf(stderr, "SDL_CreateWindow Error: %s\n", SDL_GetError());
-        SDL_Quit();
-        return 1;
-    }
-
-    // disable resizing
-    SDL_SetWindowResizable(window, SDL_FALSE);
-
-    // create renderer
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (!renderer)
-    {
-        SDL_DestroyWindow(window);
-        fprintf(stderr, "SDL_CreateRenderer Error: %s", SDL_GetError());
-        SDL_Quit();
-        return 1;
-    }
+    // =========================================== [ VARIABLES ] ===========================================
 
     // some variables
     SDL_Event e;
     bool quit = false;
     int frames = 0;
+    unsigned long prevTime = time(NULL);
+
+    // =========================================== [ COLORS ] ===========================================
 
     // colors
     Colors *colors = (Colors *)malloc(sizeof(Colors));
-    colors->black = (SDL_Color){0, 0, 0, 255};
-    colors->white = (SDL_Color){255, 255, 255, 255};
-    colors->red = (SDL_Color){255, 0, 0, 255};
-    colors->green = (SDL_Color){0, 255, 0, 255};
-    colors->blue = (SDL_Color){0, 0, 255, 255};
-    colors->yellow = (SDL_Color){255, 255, 0, 255};
-    colors->orange = (SDL_Color){255, 165, 0, 255};
+    loadColors(colors);
+
+    // =====================================  [ WIDOW PROPERTIES] =====================================
 
     // allocate memory for Window Properties
     WindowProperties *windowProperties = (WindowProperties *)malloc(sizeof(WindowProperties));
-    windowProperties->colors = colors;
-    windowProperties->scale = SCALE;
-    windowProperties->currentMenu = MainMenu;
-
-    // default fps text
-    snprintf(windowProperties->currentFPS, 10, "FPS: ~~");
-    unsigned long prevTime = time(NULL);
-
-    // load fonts
-    TTF_Init();
-    TTF_Font *font = TTF_OpenFont("assets/fonts/Roboto-Bold.ttf", 24);
-    if (!font)
+    if (!loadWindowProperties(windowProperties, renderer, colors, SCALE, window))
     {
-        fprintf(stderr, "TTF_OpenFont Error: %s", TTF_GetError());
-        SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
         SDL_Quit();
         return 1;
     }
-    windowProperties->font = font;
+    // =========================================== [ TEXTURES ] ===========================================
 
     // load textures
-    windowProperties->textures = (Textures *)malloc(sizeof(Textures));
+    if (!loadTextures(windowProperties, renderer))
+    {
+        fprintf(stderr, "Unable to load textures.");
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return 1;
+    }
 
-    // paddle
-    Texture *paddle = (Texture *)malloc(sizeof(Texture));
-    SDL_Texture *paddleTexture = IMG_LoadTexture(renderer, "assets/images/paddle.png");
-    paddle->texture = paddleTexture;
-    paddle->width = 20;
-    paddle->height = 6;
-    windowProperties->textures->paddle = paddle;
+    // ========================================= [ DEFAULT LEVELS ] ===========================================
 
-    // button up
-    Texture *buttonUp = (Texture *)malloc(sizeof(Texture));
-    SDL_Texture *buttonUpTexture = IMG_LoadTexture(renderer, "assets/images/button_up.png");
-    buttonUp->texture = buttonUpTexture;
-    buttonUp->width = 150;
-    buttonUp->height = 50;
-    windowProperties->textures->buttonUp = buttonUp;
+    // levels
+    windowProperties->levels = arrayInit(ARRAY_DEFAULT_CAPACITY);
+    if (!windowProperties->levels)
+    {
+        fprintf(stderr, "Unable to allocate memory for levels Array.\n");
+        exit(1);
+    }
 
-    // button up hover
-    Texture *buttonUpHover = (Texture *)malloc(sizeof(Texture));
-    SDL_Texture *buttonUpHoverTexture = IMG_LoadTexture(renderer, "assets/images/button_up_hover.png");
-    buttonUpHover->texture = buttonUpHoverTexture;
-    buttonUpHover->width = 150;
-    buttonUpHover->height = 50;
-    windowProperties->textures->buttonUpHover = buttonUpHover;
+    // level 1
 
-    // button down
-    Texture *buttonDown = (Texture *)malloc(sizeof(Texture));
-    SDL_Texture *buttonDownTexture = IMG_LoadTexture(renderer, "assets/images/button_down.png");
-    buttonDown->texture = buttonDownTexture;
-    buttonDown->width = 150;
-    buttonDown->height = 50;
-    windowProperties->textures->buttonDown = buttonDown;
+    // Level *level1 = (Level *)malloc(sizeof(Level));
 
-    // button down hover
-    Texture *buttonDownHover = (Texture *)malloc(sizeof(Texture));
-    SDL_Texture *buttonDownHoverTexture = IMG_LoadTexture(renderer, "assets/images/button_down_hover.png");
-    buttonDownHover->texture = buttonDownHoverTexture;
-    buttonDownHover->width = 150;
-    buttonDownHover->height = 50;
-    windowProperties->textures->buttonDownHover = buttonDownHover;
+    if (!arrayAdd(windowProperties->levels, loadLevel(renderer, windowProperties, "assets/defaultLevels/level1.yml")))
+    {
+        fprintf(stderr, "Unable to add level to array.\n");
+        exit(1);
+    }
 
-    // paddle main menu
-    int paddleStartPosition = (WINDOW_WIDTH * windowProperties->scale / 2) - 100;
-    Position paddlePosition = {.x = paddleStartPosition, .y = 0};
+    // ========================================= [ MAIN VARIABLES ] ===========================================
 
     MainVariables *vars = (MainVariables *)malloc(sizeof(MainVariables));
-    vars->window = window;
-    vars->paddlePosition = paddlePosition;
-    vars->FPS = 0;
-    vars->paddleReverse = false;
-    vars->highscores = NULL;
 
-    // set default false
-    // main menu
-    vars->mainMenuPlayHover = false;
-    vars->mainMenuSettingsHover = false;
-    vars->mainMenuHighscoresHover = false;
-    vars->mainMenuExitHover = false;
-    // settings menu
-    vars->settingsScaleHover = false;
-    vars->settingsBackHover = false;
-    // highscores menu
-    vars->highscoresBackHover = false;
-    vars->highscoresNextHover = false;
-    vars->highscoresBackHover = false;
+    loadVars(windowProperties, vars, window);
 
     // game loop
     while (!quit)
@@ -264,34 +119,11 @@ int main(int argc, char **argv)
         tick(&frames, renderer, windowProperties, vars);
     }
 
-    // free highscores
-    if (vars->highscores != NULL)
-    {
-        freeHighscores(vars->highscores);
-    }
+    freeTextures(windowProperties);
 
-    // free textures
-    SDL_DestroyTexture(windowProperties->textures->paddle->texture);
-    SDL_DestroyTexture(windowProperties->textures->buttonUp->texture);
-    SDL_DestroyTexture(windowProperties->textures->buttonDown->texture);
-    SDL_DestroyTexture(windowProperties->textures->buttonUpHover->texture);
-    SDL_DestroyTexture(windowProperties->textures->buttonDownHover->texture);
-
-    free(windowProperties->textures->paddle);
-    free(windowProperties->textures->buttonUp);
-    free(windowProperties->textures->buttonDown);
-    free(windowProperties->textures->buttonUpHover);
-    free(windowProperties->textures->buttonDownHover);
-
-    free(windowProperties->textures);
-
-    free(windowProperties->colors);
-    free(windowProperties);
+    freeWindowProperties(windowProperties);
 
     free(vars);
-
-    TTF_CloseFont(font);
-    TTF_Quit();
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
