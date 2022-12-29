@@ -77,9 +77,26 @@ int main(int argc, char **argv)
                 printf("Options:\n");
                 printf("help - show this message\n");
                 printf("level - load level from given file\n");
-                printf("      - Example %s --level=level1.txt\n", argv[0]);
+                printf("      - Example: %s --level=level1.txt\n", argv[0]);
+                printf("      - You could also load more levels separated by semicolon\n");
+                printf("      - Example: %s --level=level1.txt,level2.txt\n", argv[0]);
+                printf("      - Otherwise it will load default levels\n");
 
                 return 0;
+            }
+
+            // check if arguments contains --level
+            else if (strncmp(argv[i], "--level=", 8) == 0)
+            {
+                // get level file
+                char *levelFiles = argv[i] + 8;
+                printf("%s\n", levelFiles);
+                return 0;
+            }
+            // otherwise just show warning
+            else
+            {
+                printf("Unknown argument: %s, skipping\n", argv[i]);
             }
         }
     }
