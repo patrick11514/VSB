@@ -108,10 +108,10 @@ void sortHighscores(Highscores *highscores)
     {
         for (int j = 0; j < count - i - 1; j++)
         {
-            if (atoi((char *)scores->data[j]) < atoi((char *)scores->data[j + 1]))
+            if (atoi((char *)arrayGet(scores, j)) < atoi((char *)arrayGet(scores, j + 1)))
             {
-                swap(((char **)scores->data + j), (char **)scores->data + j + 1);
-                swap((char **)names->data + j, (char **)names->data + j + 1);
+                swap((char **)arrayGetPTR(scores, j), (char **)arrayGetPTR(scores, j + 1));
+                swap((char **)arrayGetPTR(names, j), (char **)arrayGetPTR(names, j + 1));
             }
         }
     }
@@ -125,7 +125,7 @@ void writeHighscores(Highscores *highscores)
     // save scores to file
     for (int i = 0; i < highscores->count; i++)
     {
-        fprintf(file, "%s;%s\n", (char *)highscores->players->data[i], (char *)highscores->scores->data[i]);
+        fprintf(file, "%s;%s\n", (char *)arrayGet(highscores->players, i), (char *)arrayGet(highscores->scores, i));
     }
 
     // close file
@@ -137,8 +137,8 @@ void freeHighscores(Highscores *highscores)
     // free data
     for (int i = 0; i < highscores->count; i++)
     {
-        free(highscores->players->data[i]);
-        free(highscores->scores->data[i]);
+        free(arrayGet(highscores->players, i));
+        free(arrayGet(highscores->scores, i));
     }
 
     // free arrays
