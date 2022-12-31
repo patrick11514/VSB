@@ -28,10 +28,19 @@ typedef struct Highscores
 
 typedef enum
 {
+    // Main menu window
     MainMenu = 0,
+    // Game window
     Game = 1,
+    // Settings window
     Settings = 2,
+    // Highscores window
     Highscore = 3,
+    // Level select window
+    LevelSelect = 4,
+    GameOver = 5,
+    // Info after level is selected, but before actual game
+    LevelInfo = 6
 } MenuTypes;
 
 typedef struct Colors
@@ -95,16 +104,22 @@ typedef struct Brick
 {
     int x;
     int y;
-    int lives;
     Texture *texture;
     bool destroyed;
 } Brick;
+
+typedef struct BrickHealth
+{
+    int lives;
+    Texture *texture;
+} BrickHealth;
 
 typedef struct Level
 {
     int score;
     int health;
     char *description;
+    Array *brickHealths;
     Array *bricks;
 } Level;
 
@@ -125,6 +140,9 @@ void renderSettings(SDL_Renderer *renderer, WindowProperties *windowProperties, 
 
 // highscore screen
 void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars);
+
+// level select screen
+void renderLevelSelect(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars);
 
 // render title function
 void renderTitle(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars, TextCoords *textCoords);
