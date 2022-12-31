@@ -90,7 +90,7 @@ int main(int argc, char **argv)
 
     // Level *level1 = (Level *)malloc(sizeof(Level));
 
-    if (!arrayAdd(windowProperties->levels, loadLevel(renderer, windowProperties, "assets/defaultLevels/level1.yml")))
+    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level1.yml")))
     {
         fprintf(stderr, "Unable to add level to array.\n");
         exit(1);
@@ -118,6 +118,8 @@ int main(int argc, char **argv)
         calculateFPS(&prevTime, &frames, windowProperties->currentFPS, vars);
         tick(&frames, renderer, windowProperties, vars);
     }
+
+    freeLevels(windowProperties->levels);
 
     freeTextures(windowProperties);
 
