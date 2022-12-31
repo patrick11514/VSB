@@ -69,10 +69,23 @@ Level *loadLevel(WindowProperties *windowProperties, char *_fileName)
             {
                 levelData->health = atoi(row + 7);
             }
+            else if (strncmp(row, "Score: ", 7) == 0)
+            {
+                levelData->scorePerBrick = atoi(row + 7);
+            }
             else if (strncmp(row, "Description: ", 13) == 0)
             {
+                char *text = row + 13;
+                int len = count_utf8_code_points(text);
+
+                if (len > 20)
+                {
+                    fprintf(stderr, "Description is longer than 20 chars (%d).\n", len);
+                    exit(1);
+                }
+
                 levelData->description = (char *)malloc(sizeof(char) * (strlen(row) - 13) + 1);
-                strcpy(levelData->description, row + 13);
+                strcpy(levelData->description, text);
             }
             else if (strstr(row, " Brick: ") != NULL)
             {
@@ -248,17 +261,17 @@ void freeLevels(Array *levels)
 {
     for (int i = 0; i < levels->size; i++)
     {
-        Level *levelData = levels->data[i];
+        Level *levelData = arrayGet(levels, i);
 
         for (int i = 0; i < levelData->bricks->size; i++)
         {
-            Brick *brick = (Brick *)levelData->bricks->data[i];
+            Brick *brick = (Brick *)arrayGet(levelData->bricks, i);
             free(brick);
         }
 
         for (int i = 0; i < levelData->brickHealths->size; i++)
         {
-            BrickHealth *brickHealth = (BrickHealth *)levelData->brickHealths->data[i];
+            BrickHealth *brickHealth = (BrickHealth *)arrayGet(levelData->brickHealths, i);
             free(brickHealth);
         }
 
