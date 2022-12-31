@@ -101,6 +101,46 @@ int main(int argc, char **argv)
         fprintf(stderr, "Unable to add level to array.\n");
         exit(1);
     }
+    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level2.yml")))
+    {
+        fprintf(stderr, "Unable to add level to array.\n");
+        exit(1);
+    }
+    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level2.yml")))
+    {
+        fprintf(stderr, "Unable to add level to array.\n");
+        exit(1);
+    }
+    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level2.yml")))
+    {
+        fprintf(stderr, "Unable to add level to array.\n");
+        exit(1);
+    }
+    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level2.yml")))
+    {
+        fprintf(stderr, "Unable to add level to array.\n");
+        exit(1);
+    }
+    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level2.yml")))
+    {
+        fprintf(stderr, "Unable to add level to array.\n");
+        exit(1);
+    }
+    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level2.yml")))
+    {
+        fprintf(stderr, "Unable to add level to array.\n");
+        exit(1);
+    }
+    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level2.yml")))
+    {
+        fprintf(stderr, "Unable to add level to array.\n");
+        exit(1);
+    }
+    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level2.yml")))
+    {
+        fprintf(stderr, "Unable to add level to array.\n");
+        exit(1);
+    }
 
     // ========================================= [ MAIN VARIABLES ] ===========================================
 
@@ -131,7 +171,7 @@ int main(int argc, char **argv)
 
     freeWindowProperties(windowProperties);
 
-    free(vars);
+    freeVars(vars);
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

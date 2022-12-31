@@ -12,6 +12,7 @@
 #include "breakout.h"
 #include "vars.h"
 #include "assets.h"
+#include "dynamicarray.h"
 
 bool loadTextures(WindowProperties *windowProperties, SDL_Renderer *renderer)
 {
@@ -182,9 +183,19 @@ void loadVars(WindowProperties *windowProperties, MainVariables *vars, SDL_Windo
     vars->highscoresBackHover = false;
     // level select menu
     vars->levelSelectPrevHover = false;
-    vars->levelSelectBackHover = false;
+    vars->levelSelectNextHover = false;
     vars->levelSelectBackHover = false;
     vars->levelSelectOffset = 0;
+    vars->levelsTextCoords = arrayInit(LEVELS_PER_PAGE);
+}
+
+void freeVars(MainVariables *vars)
+{
+    if (!arrayFree(vars->levelsTextCoords, true))
+    {
+        fprintf(stderr, "Error freeing array\n");
+    }
+    free(vars);
 }
 
 void loadColors(Colors *colors)
