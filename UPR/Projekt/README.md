@@ -54,6 +54,7 @@ Zobrazí parametry programu
 
         Mezi těmito značkami se poté definuje nastavení:
         * **Lives: číslo** definuje počet životů hráče **(Požadováné)**
+        * **Score: číslo** definuje, kolik bodů dostane hráč za zničenou cihlu (počítá se i snížení životů) **(Požadované)**
         * **Description: text** Definuje krátký popisek levelu, který bude v seznamu levelů. (Max 20 znaků) **(Požadováné)**
         * **Barva Brick: číslo** definuje počet životů cihly
         * Nikdy nesmí existovat dvě cihly, které mají stejný počet životů.
@@ -62,6 +63,7 @@ Zobrazí parametry programu
         ```YAML
         %Settings
         Lives: 5
+        Score: 10
         Description: Level 2 (Těžší)
         Yellow Brick: 4
         Blue Brick: 5
@@ -91,6 +93,7 @@ Zobrazí parametry programu
         ```YAML
         %Settings
         Lives: 5
+        Score: 10
         Description: Level 2 (Těžší)
         Yellow Brick: 4
         Blue Brick: 5

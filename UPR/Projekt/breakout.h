@@ -73,32 +73,13 @@ typedef struct Textures
     Texture *brickBlue;
 } Textures;
 
-typedef struct WindowProperties
-{
-    // scale of window
-    float scale;
-    // Roboto Font
-    TTF_Font *font;
-    // current FPS text
-    char currentFPS[10];
-    // colors
-    Colors *colors;
-    // current menu
-    MenuTypes currentMenu;
-    // loaded textures
-    Textures *textures;
-    // highscores
-    Highscores *highscores;
-    // levels
-    Array *levels;
-} WindowProperties;
-
 typedef struct TextCoords
 {
     int x;
     int y;
     int width;
     int height;
+    bool hover;
 } TextCoords;
 
 typedef struct Brick
@@ -119,10 +100,33 @@ typedef struct Level
 {
     int score;
     int health;
+    int scorePerBrick;
     char *description;
     Array *brickHealths;
     Array *bricks;
 } Level;
+
+typedef struct WindowProperties
+{
+    // scale of window
+    float scale;
+    // Roboto Font
+    TTF_Font *font;
+    // current FPS text
+    char currentFPS[10];
+    // colors
+    Colors *colors;
+    // current menu
+    MenuTypes currentMenu;
+    // loaded textures
+    Textures *textures;
+    // highscores
+    Highscores *highscores;
+    // levels
+    Array *levels;
+    // current level
+    Level *currentLevel;
+} WindowProperties;
 
 // function ran on every SDL event
 void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, MainVariables *mainVars);
