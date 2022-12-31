@@ -56,6 +56,16 @@ void *arrayGet(Array *array, int index)
     return array->data[index];
 }
 
+void **arrayGetPTR(Array *array, int index)
+{
+    if (index > array->size || index < 0)
+    {
+        return NULL;
+    }
+
+    return array->data + index;
+}
+
 bool arrayFree(Array *array, bool arrayToo)
 {
     if ((array->size == 0 || array->capacity == 0) && !arrayToo)

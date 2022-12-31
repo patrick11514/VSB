@@ -29,6 +29,10 @@ bool arrayAdd(Array *__array, void *__item) __attribute_warn_unused_result__;
 // If __index is out of range return NULL
 void *arrayGet(Array *__array, int __index) __attribute_warn_unused_result__;
 
+// Get element's pointer on index __index from array __array
+// If __index is out of range return NULL
+void **arrayGetPTR(Array *__array, int __index) __attribute_warn_unused_result__;
+
 // Free data of array __array and ptr on it
 // if __array_too is True, it frees Array *
 // return True of success
