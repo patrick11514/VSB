@@ -35,7 +35,7 @@ void tick(int *frames, SDL_Renderer *renderer, WindowProperties *windowPropertie
     int FPSHeight = 16;
     if (!renderText(renderer, windowProperties->currentFPS, windowProperties->font, windowProperties->colors->white, 50, FPSHeight, 0, WINDOW_HEIGHT * scale - FPSHeight))
     {
-        printf("Error rendering text: %s", SDL_GetError());
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
     }
 
     if (windowProperties->currentMenu == MainMenu)
@@ -49,6 +49,10 @@ void tick(int *frames, SDL_Renderer *renderer, WindowProperties *windowPropertie
     else if (windowProperties->currentMenu == Highscore)
     {
         renderHighscore(renderer, windowProperties, mainVars);
+    }
+    else if (windowProperties->currentMenu == LevelSelect)
+    {
+        renderLevelSelect(renderer, windowProperties, mainVars);
     }
 
     // rerender
@@ -88,7 +92,7 @@ void renderMainMenu(SDL_Renderer *renderer, WindowProperties *windowProperties, 
 
     if (!renderText(renderer, "PLAY", windowProperties->font, playColor, playWidth, playHeight, playX, playY))
     {
-        printf("Error rendering text: %s", SDL_GetError());
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
     }
 
     // settings text
@@ -111,7 +115,7 @@ void renderMainMenu(SDL_Renderer *renderer, WindowProperties *windowProperties, 
 
     if (!renderText(renderer, "SETTINGS", windowProperties->font, settingsColor, settingsWidth, settingsHeight, settingsX, settingsY))
     {
-        printf("Error rendering text: %s", SDL_GetError());
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
     }
 
     // highscores text
@@ -134,7 +138,7 @@ void renderMainMenu(SDL_Renderer *renderer, WindowProperties *windowProperties, 
 
     if (!renderText(renderer, "HIGHSCORES", windowProperties->font, highscoresColor, highscoresWidth, highscoresHeight, highscoresX, highscoresY))
     {
-        printf("Error rendering text: %s", SDL_GetError());
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
     }
 
     // exit text
@@ -157,7 +161,7 @@ void renderMainMenu(SDL_Renderer *renderer, WindowProperties *windowProperties, 
 
     if (!renderText(renderer, "EXIT", windowProperties->font, exitColor, exitWidth, exitHeight, exitX, exitY))
     {
-        printf("Error rendering text: %s", SDL_GetError());
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
     }
 }
 
@@ -183,13 +187,13 @@ void renderSettings(SDL_Renderer *renderer, WindowProperties *windowProperties, 
 
     if (!renderText(renderer, "SETTINGS", windowProperties->font, windowProperties->colors->white, settingsWidth, settingsHeight, settingsX, settingsY))
     {
-        printf("Error rendering text: %s", SDL_GetError());
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
     }
 
     // line under settings
     if (!renderRect(renderer, settingsX, settingsY + settingsHeight, settingsWidth, 3, windowProperties->colors->white))
     {
-        printf("Error rendering rect: %s", SDL_GetError());
+        fprintf(stderr, "Error rendering rect: %s", SDL_GetError());
     }
 
     // scale text
@@ -220,7 +224,7 @@ void renderSettings(SDL_Renderer *renderer, WindowProperties *windowProperties, 
 
     if (!renderText(renderer, scaleText, windowProperties->font, scaleColor, scaleWidth, scaleHeight, scaleTextX, scaleTextY))
     {
-        printf("Error rendering text: %s", SDL_GetError());
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
     }
 
     // back text
@@ -243,7 +247,7 @@ void renderSettings(SDL_Renderer *renderer, WindowProperties *windowProperties, 
 
     if (!renderText(renderer, "BACK", windowProperties->font, backColor, backWidth, backHeight, backX, backY))
     {
-        printf("Error rendering text: %s", SDL_GetError());
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
     }
 }
 
@@ -269,7 +273,13 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
 
     if (!renderText(renderer, "HIGHSCORES", windowProperties->font, windowProperties->colors->white, highscoreWidth, highscoreHeight, highscoreX, highscoreY))
     {
-        printf("Error rendering text: %s", SDL_GetError());
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
+    }
+
+    // line under highscores
+    if (!renderRect(renderer, highscoreX, highscoreY + highscoreHeight, highscoreWidth, 3, windowProperties->colors->white))
+    {
+        fprintf(stderr, "Error rendering rect: %s", SDL_GetError());
     }
 
     Highscores *highscores = windowProperties->highscores;
@@ -327,7 +337,7 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
 
         if (!renderText(renderer, "No highscores yet", windowProperties->font, windowProperties->colors->red, noHighscoresWidth, noHighscoresHeight, noHighscoresX, noHighscoresY))
         {
-            printf("Error rendering text: %s", SDL_GetError());
+            fprintf(stderr, "Error rendering text: %s", SDL_GetError());
         }
 
         // back button
@@ -373,13 +383,13 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
 
             if (!renderTexture(renderer, buttonUp->texture, buttonUpX, buttonUpY, buttonUp->width * scale, buttonUp->height * scale))
             {
-                printf("Error rendering texture: %s", SDL_GetError());
+                fprintf(stderr, "Error rendering texture: %s", SDL_GetError());
             }
         }
 
         // highscores
         // buttonUp + buttonUpHeight + 10px
-        float highscoreY = buttonUpY + buttonUp->height * scale + 10 * scale;
+        int highscoreY = buttonUpY + buttonUp->height * scale + 10 * scale;
 
         int end = mainVars->highscoresOffset * HIGHSCORES_PER_PAGE + HIGHSCORES_PER_PAGE;
 
@@ -394,12 +404,14 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
 
             snprintf(text, 255, "%s - %s", (char *)highscores->players->data[i], (char *)highscores->scores->data[i]);
 
-            // 25px per char
-            float x = (WINDOW_WIDTH * scale / 2) - (strlen(text) * 25 * scale / 2);
+            int len = count_utf8_code_points(text);
 
-            if (!renderText(renderer, text, windowProperties->font, windowProperties->colors->white, strlen(text) * 25 * scale, 50 * scale, x, highscoreY))
+            // 20px per char
+            int x = (WINDOW_WIDTH * scale / 2) - (len * 20 * scale / 2);
+
+            if (!renderText(renderer, text, windowProperties->font, windowProperties->colors->white, len * 20 * scale, 50 * scale, x, highscoreY))
             {
-                printf("Error rendering text: %s", SDL_GetError());
+                fprintf(stderr, "Error rendering text: %s", SDL_GetError());
             }
 
             // 50px per highscore
@@ -421,7 +433,7 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
 
             if (!renderTexture(renderer, buttonDown->texture, buttonDownX, buttonDownY, buttonDown->width * scale, buttonDown->height * scale))
             {
-                printf("Error rendering texture: %s", SDL_GetError());
+                fprintf(stderr, "Error rendering texture: %s", SDL_GetError());
             }
         }
 
@@ -447,7 +459,161 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
 
     if (!renderText(renderer, "BACK", windowProperties->font, backColor, backWidth, backHeight, backX, backY))
     {
-        printf("Error rendering text: %s", SDL_GetError());
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
+    }
+}
+
+void renderLevelSelect(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars)
+{
+    float scale = windowProperties->scale;
+
+    // title text
+    TextCoords titleCoords;
+    titleCoords.width = 350 * scale;
+    titleCoords.height = 100 * scale;
+    titleCoords.x = (WINDOW_WIDTH * scale / 2) - (titleCoords.width / 2);
+    titleCoords.y = 0;
+    renderTitle(renderer, windowProperties, mainVars, &titleCoords);
+
+    // level select text
+    int levelWidth = 350 * scale;
+    int levelHeight = 85 * scale;
+
+    int levelX = (WINDOW_WIDTH * scale / 2) - (levelWidth / 2);
+    int levelY = titleCoords.y + titleCoords.height + 10 * scale;
+
+    if (!renderText(renderer, "LEVEL SELECT", windowProperties->font, windowProperties->colors->white, levelWidth, levelHeight, levelX, levelY))
+    {
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
+    }
+
+    // line under level select
+    if (!renderRect(renderer, levelX, levelY + levelHeight, levelWidth, 3, windowProperties->colors->white))
+    {
+        fprintf(stderr, "Error rendering rect: %s", SDL_GetError());
+    }
+
+    // levels
+    Array *levels = windowProperties->levels;
+
+    if (mainVars->levelSelectOffset > 0)
+    {
+        mainVars->levelSelectUpButton = true;
+    }
+    else
+    {
+        mainVars->levelSelectUpButton = false;
+    }
+
+    if (levels->size > mainVars->levelSelectOffset * LEVELS_PER_PAGE + LEVELS_PER_PAGE)
+    {
+        mainVars->levelSelectDownButton = true;
+    }
+    else
+    {
+        mainVars->levelSelectDownButton = false;
+    }
+
+    // buttons
+    int upButtonY = levelY + levelHeight + 10 * scale;
+
+    if (mainVars->levelSelectUpButton)
+    {
+        SDL_Texture *texture = windowProperties->textures->buttonUp->texture;
+        if (mainVars->levelSelectBackHover)
+        {
+            texture = windowProperties->textures->buttonUpHover->texture;
+        }
+
+        int upButtonX = (WINDOW_WIDTH * scale / 2) - (windowProperties->textures->buttonUp->width * scale / 2);
+
+        mainVars->levelSelectPrevLT.x = upButtonX;
+        mainVars->levelSelectPrevLT.y = upButtonY;
+        mainVars->levelSelectPrevRB.x = upButtonX + windowProperties->textures->buttonUp->width * scale;
+        mainVars->levelSelectPrevRB.y = upButtonY + windowProperties->textures->buttonUp->height * scale;
+
+        if (!renderTexture(renderer, texture, upButtonX, upButtonY, windowProperties->textures->buttonUp->width * scale, windowProperties->textures->buttonUp->height * scale))
+        {
+            fprintf(stderr, "Error rendering texture: %s", SDL_GetError());
+        }
+    }
+
+    // render levels
+    int end = mainVars->levelSelectOffset * LEVELS_PER_PAGE + LEVELS_PER_PAGE;
+
+    if (end > levels->size)
+    {
+        end = levels->size;
+    }
+
+    int levelTextY = upButtonY + windowProperties->textures->buttonUp->height * scale + 10 * scale;
+    for (int i = mainVars->levelSelectOffset * LEVELS_PER_PAGE; i < end; i++)
+    {
+        Level *level = levels->data[i];
+
+        char *text = level->description;
+        int len = count_utf8_code_points(text);
+
+        printf("'%s' - %d\n", text, len);
+
+        // 20px per char
+        int levelTextX = (WINDOW_WIDTH * scale / 2) - (len * 20 * scale / 2);
+
+        SDL_Color color = windowProperties->colors->white;
+
+        if (!renderText(renderer, level->description, windowProperties->font, color, len * 20 * scale, 50 * scale, levelTextX, levelTextY))
+        {
+            fprintf(stderr, "Error rendering text: %s", SDL_GetError());
+        }
+
+        // 50px per level
+        levelTextY += 50 * scale;
+    }
+
+    int downButtonY = levelTextY - +10 * scale;
+
+    if (mainVars->levelSelectDownButton)
+    {
+        int downButtonX = (WINDOW_WIDTH * scale / 2) - (windowProperties->textures->buttonDown->width * scale / 2);
+
+        SDL_Texture *texture = windowProperties->textures->buttonDown->texture;
+        if (mainVars->levelSelectNextHover)
+        {
+            texture = windowProperties->textures->buttonDownHover->texture;
+        }
+
+        mainVars->levelSelectBackLT.x = downButtonX;
+        mainVars->levelSelectBackLT.y = downButtonY;
+        mainVars->levelSelectBackRB.x = downButtonX + windowProperties->textures->buttonDown->width * scale;
+        mainVars->levelSelectBackRB.y = downButtonY + windowProperties->textures->buttonDown->height * scale;
+
+        if (!renderTexture(renderer, texture, downButtonX, downButtonY, windowProperties->textures->buttonDown->width * scale, windowProperties->textures->buttonDown->height * scale))
+        {
+            fprintf(stderr, "Error rendering texture: %s", SDL_GetError());
+        }
+    }
+
+    // back text
+    int backWidth = 125 * scale;
+    int backHeight = 65 * scale;
+
+    int backX = (WINDOW_WIDTH * scale / 2) - (backWidth / 2);
+    // scale + scaleHeight + 50px
+    int backY = downButtonY + windowProperties->textures->buttonDown->height * scale + 50 * scale;
+    mainVars->levelSelectBackLT.x = backX;
+    mainVars->levelSelectBackLT.y = backY;
+    mainVars->levelSelectBackRB.x = backX + backWidth;
+    mainVars->levelSelectBackRB.y = backY + backHeight;
+
+    SDL_Color backColor = windowProperties->colors->white;
+    if (mainVars->levelSelectBackHover)
+    {
+        backColor = windowProperties->colors->orange;
+    }
+
+    if (!renderText(renderer, "BACK", windowProperties->font, backColor, backWidth, backHeight, backX, backY))
+    {
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
     }
 }
 
@@ -457,7 +623,7 @@ void renderTitle(SDL_Renderer *renderer, WindowProperties *windowProperties, Mai
 
     if (!renderText(renderer, "BREAKOUT", windowProperties->font, windowProperties->colors->yellow, textCoords->width, textCoords->height, textCoords->x, textCoords->y))
     {
-        printf("Error rendering text: %s\n", SDL_GetError());
+        fprintf(stderr, "Error rendering text: %s\n", SDL_GetError());
     }
 
     // paddle
@@ -507,7 +673,7 @@ void renderTitle(SDL_Renderer *renderer, WindowProperties *windowProperties, Mai
     Texture *paddle = windowProperties->textures->paddle;
     if (!renderTexture(renderer, paddle->texture, mainVars->paddlePosition.x, mainVars->paddlePosition.y, paddle->width * scale, paddle->height * scale))
     {
-        printf("Error rendering texture: %s\n", SDL_GetError());
+        fprintf(stderr, "Error rendering texture: %s\n", SDL_GetError());
     }
 }
 
@@ -612,13 +778,50 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
                 mainVars->highscoresBackHover = false;
             }
         }
+        else if (windowProperties->currentMenu == LevelSelect)
+        {
+            // up button
+            if (e->motion.x >= mainVars->levelSelectPrevLT.x && e->motion.x <= mainVars->levelSelectPrevRB.x && e->motion.y >= mainVars->levelSelectPrevLT.y && e->motion.y <= mainVars->levelSelectPrevRB.y)
+            {
+                mainVars->levelSelectPrevHover = true;
+            }
+            else
+            {
+                mainVars->levelSelectPrevHover = false;
+            }
+
+            // down button
+            if (e->motion.x >= mainVars->levelSelectNextLT.x && e->motion.x <= mainVars->levelSelectNextRB.x && e->motion.y >= mainVars->levelSelectNextLT.y && e->motion.y <= mainVars->levelSelectNextRB.y)
+            {
+                mainVars->levelSelectNextHover = true;
+            }
+            else
+            {
+                mainVars->levelSelectNextHover = false;
+            }
+
+            // back button
+            if (e->motion.x >= mainVars->levelSelectBackLT.x && e->motion.x <= mainVars->levelSelectBackRB.x && e->motion.y >= mainVars->levelSelectBackLT.y && e->motion.y <= mainVars->levelSelectBackRB.y)
+            {
+                mainVars->levelSelectBackHover = true;
+            }
+            else
+            {
+                mainVars->levelSelectBackHover = false;
+            }
+        }
     }
 
     if (e->type == SDL_MOUSEBUTTONDOWN)
     {
         if (windowProperties->currentMenu == MainMenu)
         {
-
+            // play
+            if (mainVars->mainMenuPlayHover)
+            {
+                windowProperties->currentMenu = LevelSelect;
+                mainVars->mainMenuPlayHover = false;
+            }
             // settings
             if (mainVars->mainMenuSettingsHover)
             {
@@ -736,6 +939,15 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
             {
                 windowProperties->currentMenu = MainMenu;
                 mainVars->highscoresBackHover = false;
+            }
+        }
+        else if (windowProperties->currentMenu == LevelSelect)
+        {
+            // back button
+            if (mainVars->levelSelectBackHover)
+            {
+                windowProperties->currentMenu = MainMenu;
+                mainVars->levelSelectBackHover = false;
             }
         }
     }
