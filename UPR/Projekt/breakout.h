@@ -7,6 +7,7 @@
 #define MOVE_FPS 60.0f
 
 #define HIGHSCORES_PER_PAGE 8
+#define LEVELS_PER_PAGE 8
 
 // default includes
 #include <stdbool.h>
