@@ -692,9 +692,9 @@ void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainV
     int healthWidth = healthLen * 20 * scale;
     int healthHeight = 50 * scale;
 
-    // len of text - 10px spacing - width of heart
-    int healthX = (WINDOW_WIDTH * scale / 2) - (healthWidth / 2) - 10 + windowProperties->textures->heart->width * scale;
-    int healthY = levelNameY + levelNameHeight + 10 * scale;
+    // len of text - width of heart
+    int healthX = (WINDOW_WIDTH * scale / 2) - (healthWidth / 2) - (windowProperties->textures->heart->width / 2) * scale;
+    int healthY = levelNameY + levelNameHeight * scale;
 
     if (!renderText(renderer, health, windowProperties->font, windowProperties->colors->white, healthWidth, healthHeight, healthX, healthY))
     {
@@ -702,12 +702,18 @@ void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainV
     }
 
     // heart
-    int heartX = healthX - windowProperties->textures->heart->width * scale;
+    int heartX = healthX + healthWidth + (windowProperties->textures->heart->width / 2) * scale;
     int heartY = healthY;
 
     if (!renderTexture(renderer, windowProperties->textures->heart->texture, heartX, heartY, windowProperties->textures->heart->width * scale, windowProperties->textures->heart->height * scale))
     {
         fprintf(stderr, "Error rendering texture: %s", SDL_GetError());
+    }
+
+    // available bricks
+    for (int i = 0; i < level->brickHealths->size; i++)
+    {
+        BrickHealth *brickHealth = arrayGet(level->brickHealths, i);
     }
 }
 

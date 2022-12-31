@@ -95,6 +95,7 @@ void freeTextures(WindowProperties *windowProperties)
     SDL_DestroyTexture(windowProperties->textures->buttonDown->texture);
     SDL_DestroyTexture(windowProperties->textures->buttonUpHover->texture);
     SDL_DestroyTexture(windowProperties->textures->buttonDownHover->texture);
+    SDL_DestroyTexture(windowProperties->textures->heart->texture);
 
     // bricks
     SDL_DestroyTexture(windowProperties->textures->brickYellow->texture);
@@ -108,6 +109,7 @@ void freeTextures(WindowProperties *windowProperties)
     free(windowProperties->textures->buttonDown);
     free(windowProperties->textures->buttonUpHover);
     free(windowProperties->textures->buttonDownHover);
+    free(windowProperties->textures->heart);
 
     // bricks
     free(windowProperties->textures->brickYellow);
@@ -196,6 +198,11 @@ void loadVars(WindowProperties *windowProperties, MainVariables *vars, SDL_Windo
 
 void freeVars(MainVariables *vars)
 {
+    for (int i = 0; i < vars->levelsTextCoords->size; i++)
+    {
+        free(arrayGet(vars->levelsTextCoords, i));
+    }
+
     if (!arrayFree(vars->levelsTextCoords, true))
     {
         fprintf(stderr, "Error freeing array\n");
