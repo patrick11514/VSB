@@ -114,7 +114,7 @@ void freeTextures(WindowProperties *windowProperties)
     free(windowProperties->textures);
 }
 
-bool loadWindowProperties(WindowProperties *windowProperties, SDL_Renderer *renderer, Colors *colors, int SCALE, SDL_Window *window)
+bool loadWindowProperties(WindowProperties *windowProperties, SDL_Renderer *renderer, Colors *colors, float SCALE, SDL_Window *window)
 {
 
     windowProperties->colors = colors;
