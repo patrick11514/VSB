@@ -149,6 +149,9 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
 // level select screen
 void renderLevelSelect(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars);
 
+// level info before level starts
+void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars);
+
 // render title function
 void renderTitle(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars, TextCoords *textCoords);
 
