@@ -96,6 +96,12 @@ int main(int argc, char **argv)
         exit(1);
     }
 
+    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level2.yml")))
+    {
+        fprintf(stderr, "Unable to add level to array.\n");
+        exit(1);
+    }
+
     // ========================================= [ MAIN VARIABLES ] ===========================================
 
     MainVariables *vars = (MainVariables *)malloc(sizeof(MainVariables));
