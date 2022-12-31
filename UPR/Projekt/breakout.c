@@ -565,7 +565,7 @@ void renderLevelSelect(SDL_Renderer *renderer, WindowProperties *windowPropertie
         levelTextY += 50 * scale;
     }
 
-    int downButtonY = levelTextY - +10 * scale;
+    int downButtonY = levelTextY + 10 * scale;
 
     if (mainVars->levelSelectDownButton)
     {
