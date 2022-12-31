@@ -692,8 +692,8 @@ void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainV
     int healthWidth = healthLen * 20 * scale;
     int healthHeight = 50 * scale;
 
-    // len of text - width of heart
-    int healthX = (WINDOW_WIDTH * scale / 2) - (healthWidth / 2) - (windowProperties->textures->heart->width / 2) * scale;
+    // len of text + width of heart + 10px spacing
+    int healthX = (WINDOW_WIDTH * scale / 2) - ((healthWidth + windowProperties->textures->heart->width + 10) / 2);
     int healthY = levelNameY + levelNameHeight * scale;
 
     if (!renderText(renderer, health, windowProperties->font, windowProperties->colors->white, healthWidth, healthHeight, healthX, healthY))
@@ -702,7 +702,8 @@ void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainV
     }
 
     // heart
-    int heartX = healthX + healthWidth + (windowProperties->textures->heart->width / 2) * scale;
+    // 10px spacing
+    int heartX = healthX + healthWidth + 10;
     int heartY = healthY;
 
     if (!renderTexture(renderer, windowProperties->textures->heart->texture, heartX, heartY, windowProperties->textures->heart->width * scale, windowProperties->textures->heart->height * scale))
@@ -710,10 +711,97 @@ void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainV
         fprintf(stderr, "Error rendering texture: %s", SDL_GetError());
     }
 
+    int brickY = healthY + healthHeight * scale;
+
     // available bricks
     for (int i = 0; i < level->brickHealths->size; i++)
     {
         BrickHealth *brickHealth = arrayGet(level->brickHealths, i);
+
+        char text[5];
+        snprintf(text, 5, "%d", brickHealth->lives);
+        int len = count_utf8_code_points(text);
+
+        // Brick texture Text Heart icon
+        int brickHeight = 50 * scale;
+        int brickTextureScale = brickHeight / (brickHealth->texture->height * scale);
+        //  Brick Width + 10px spacing + text width (20px per char) + 10px spacing + heart width
+        int brickWidth = (len * 20 + windowProperties->textures->heart->width + 10 * 2) * scale + brickHealth->texture->width * brickTextureScale;
+
+        int brickX = (WINDOW_WIDTH * scale / 2) - (brickWidth / 2);
+
+        // render brick
+        // brickY + 5px for centering
+        if (!renderTexture(renderer, brickHealth->texture->texture, brickX, brickY + 5, brickHealth->texture->width * brickTextureScale, brickHealth->texture->height * scale * brickTextureScale))
+        {
+            fprintf(stderr, "Error rendering texture: %s", SDL_GetError());
+        }
+
+        int textX = brickX + brickHealth->texture->width * brickTextureScale + 10 * scale;
+
+        // render text
+        if (!renderText(renderer, text, windowProperties->font, windowProperties->colors->white, len * 20 * scale, brickHeight, textX, brickY))
+        {
+            fprintf(stderr, "Error rendering text: %s", SDL_GetError());
+        }
+
+        int heartX = textX + len * 20 * scale + 10 * scale;
+
+        // render heart
+        if (!renderTexture(renderer, windowProperties->textures->heart->texture, heartX, brickY, windowProperties->textures->heart->width * scale, windowProperties->textures->heart->height * scale))
+        {
+            fprintf(stderr, "Error rendering texture: %s", SDL_GetError());
+        }
+
+        brickY += brickHeight + 10 * scale;
+    }
+
+    // start text
+    int startWidth = 175 * scale;
+    int startHeight = 85 * scale;
+
+    int startX = (WINDOW_WIDTH * scale / 2) - (startWidth / 2);
+    int startY = brickY;
+
+    mainVars->levelInfoStartLT.x = startX;
+    mainVars->levelInfoStartLT.y = startY;
+    mainVars->levelInfoStartRB.x = startX + startWidth;
+    mainVars->levelInfoStartRB.y = startY + startHeight;
+
+    SDL_Color startColor = windowProperties->colors->white;
+
+    if (mainVars->levelInfoStartHover)
+    {
+        startColor = windowProperties->colors->orange;
+    }
+
+    if (!renderText(renderer, "START", windowProperties->font, startColor, startWidth, startHeight, startX, startY))
+    {
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
+    }
+
+    // back text
+    int backWidth = 175 * scale;
+    int backHeight = 85 * scale;
+
+    int backX = (WINDOW_WIDTH * scale / 2) - (backWidth / 2);
+    int backY = startY + startHeight * scale;
+
+    mainVars->levelInfoBackLT.x = backX;
+    mainVars->levelInfoBackLT.y = backY;
+    mainVars->levelInfoBackRB.x = backX + backWidth;
+    mainVars->levelInfoBackRB.y = backY + backHeight;
+
+    SDL_Color backColor = windowProperties->colors->white;
+
+    if (mainVars->levelInfoBackHover)
+    {
+        backColor = windowProperties->colors->orange;
+    }
+
+    if (!renderText(renderer, "BACK", windowProperties->font, backColor, backWidth, backHeight, backX, backY))
+    {
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
     }
 }
 
@@ -930,6 +1018,28 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
                 mainVars->levelSelectBackHover = false;
             }
         }
+        else if (windowProperties->currentMenu == LevelInfo)
+        {
+            // start button
+            if (e->motion.x >= mainVars->levelInfoStartLT.x && e->motion.x <= mainVars->levelInfoStartRB.x && e->motion.y >= mainVars->levelInfoStartLT.y && e->motion.y <= mainVars->levelInfoStartRB.y)
+            {
+                mainVars->levelInfoStartHover = true;
+            }
+            else
+            {
+                mainVars->levelInfoStartHover = false;
+            }
+
+            // back button
+            if (e->motion.x >= mainVars->levelInfoBackLT.x && e->motion.x <= mainVars->levelInfoBackRB.x && e->motion.y >= mainVars->levelInfoBackLT.y && e->motion.y <= mainVars->levelInfoBackRB.y)
+            {
+                mainVars->levelInfoBackHover = true;
+            }
+            else
+            {
+                mainVars->levelInfoBackHover = false;
+            }
+        }
     }
 
     if (e->type == SDL_MOUSEBUTTONDOWN)
@@ -1076,6 +1186,7 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
                 {
                     windowProperties->currentLevel = arrayGet(windowProperties->levels, i + mainVars->levelSelectOffset * LEVELS_PER_PAGE);
                     windowProperties->currentMenu = LevelInfo;
+                    textCoords->hover = false;
                     break;
                 }
             }
@@ -1165,6 +1276,22 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
                         fprintf(stderr, "Unable to free array");
                     }
                 }
+            }
+        }
+        else if (windowProperties->currentMenu == LevelInfo)
+        {
+            // back button
+            if (mainVars->levelInfoBackHover)
+            {
+                windowProperties->currentMenu = LevelSelect;
+                mainVars->levelInfoBackHover = false;
+            }
+
+            // play button
+            if (mainVars->levelInfoStartHover)
+            {
+                windowProperties->currentMenu = Game;
+                mainVars->levelInfoStartHover = false;
             }
         }
     }
