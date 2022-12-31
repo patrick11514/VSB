@@ -71,6 +71,8 @@ typedef struct Textures
     Texture *brickRed;
     Texture *brickPurple;
     Texture *brickBlue;
+    // other
+    Texture *heart;
 } Textures;
 
 typedef struct TextCoords

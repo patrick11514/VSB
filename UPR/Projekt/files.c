@@ -242,7 +242,7 @@ Level *loadLevel(WindowProperties *windowProperties, char *_fileName)
 
     if (levelData->health == -1)
     {
-        fprintf(stderr, "Level does not contains number of hearths.\n");
+        fprintf(stderr, "Level does not contains number of hearts.\n");
         exit(1);
     }
 

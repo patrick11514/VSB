@@ -671,9 +671,9 @@ void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainV
 
     // level name
     // 20px per char
-    int len = count_utf8_code_points(level->description);
+    int levelLen = count_utf8_code_points(level->description);
 
-    int levelNameWidth = len * 20 * scale;
+    int levelNameWidth = levelLen * 20 * scale;
     int levelNameHeight = 50 * scale;
 
     int levelNameX = (WINDOW_WIDTH * scale / 2) - (levelNameWidth / 2);
@@ -685,11 +685,30 @@ void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainV
     }
 
     // health
-    const char *healthText = "HEALTH"; // add snprintf for Health: %d (level->health)
-    int len = count_utf8_code_points(healthText);
+    char health[20];
+    snprintf(health, 20, "HEALTH: %d", level->health);
+    int healthLen = count_utf8_code_points(health);
 
-    int healthWidth = (len * 20 + /* ADD spacing + width of hearth symbol + value */) * scale;
+    int healthWidth = healthLen * 20 * scale;
     int healthHeight = 50 * scale;
+
+    // len of text - 10px spacing - width of heart
+    int healthX = (WINDOW_WIDTH * scale / 2) - (healthWidth / 2) - 10 + windowProperties->textures->heart->width * scale;
+    int healthY = levelNameY + levelNameHeight + 10 * scale;
+
+    if (!renderText(renderer, health, windowProperties->font, windowProperties->colors->white, healthWidth, healthHeight, healthX, healthY))
+    {
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
+    }
+
+    // heart
+    int heartX = healthX - windowProperties->textures->heart->width * scale;
+    int heartY = healthY;
+
+    if (!renderTexture(renderer, windowProperties->textures->heart->texture, heartX, heartY, windowProperties->textures->heart->width * scale, windowProperties->textures->heart->height * scale))
+    {
+        fprintf(stderr, "Error rendering texture: %s", SDL_GetError());
+    }
 }
 
 void renderTitle(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars, TextCoords *textCoords)

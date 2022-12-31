@@ -29,17 +29,17 @@ Zobrazí parametry programu
 
     Ve vestavěných levelech mají životy od Modré po Žlutou sestupně, takže:
     
-    ![Blue Brick](https://upload.patrick115.eu/screenshot/brick_blue.png) 6 ![Hearth](https://upload.patrick115.eu/screenshot/hearth.png)
+    ![Blue Brick](https://upload.patrick115.eu/screenshot/brick_blue.png) 6 ![Heart](https://upload.patrick115.eu/screenshot/hearth.png)
     
-    ![Purple Brick](https://upload.patrick115.eu/screenshot/brick_purple.png) 5 ![Hearth](https://upload.patrick115.eu/screenshot/hearth.png)
+    ![Purple Brick](https://upload.patrick115.eu/screenshot/brick_purple.png) 5 ![Heart](https://upload.patrick115.eu/screenshot/hearth.png)
 
-    ![Red Brick](https://upload.patrick115.eu/screenshot/brick_red.png) 4 ![Hearth](https://upload.patrick115.eu/screenshot/hearth.png)
+    ![Red Brick](https://upload.patrick115.eu/screenshot/brick_red.png) 4 ![Heart](https://upload.patrick115.eu/screenshot/hearth.png)
 
-    ![Gray Brick](https://upload.patrick115.eu/screenshot/brick_gray.png) 3 ![Hearth](https://upload.patrick115.eu/screenshot/hearth.png)
+    ![Gray Brick](https://upload.patrick115.eu/screenshot/brick_gray.png) 3 ![Heart](https://upload.patrick115.eu/screenshot/hearth.png)
 
-    ![Lime Brick](https://upload.patrick115.eu/screenshot/brick_lime.png) 2 ![Hearth](https://upload.patrick115.eu/screenshot/hearth.png)
+    ![Lime Brick](https://upload.patrick115.eu/screenshot/brick_lime.png) 2 ![Heart](https://upload.patrick115.eu/screenshot/hearth.png)
 
-    ![Yellow Brick](https://upload.patrick115.eu/screenshot/brick_yellow.png) 1 ![Hearth](https://upload.patrick115.eu/screenshot/hearth.png)
+    ![Yellow Brick](https://upload.patrick115.eu/screenshot/brick_yellow.png) 1 ![Heart](https://upload.patrick115.eu/screenshot/hearth.png)
 
     Po každém zásahu se cihla promnění na tu pod ní a Žlutá po zásahu zmizí.
 

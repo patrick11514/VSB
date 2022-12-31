@@ -79,6 +79,11 @@ bool loadTextures(WindowProperties *windowProperties, SDL_Renderer *renderer)
     loadTexture(renderer, brickBlue, "assets/images/brick_blue.png");
     windowProperties->textures->brickBlue = brickBlue;
 
+    // heart
+    Texture *heart = (Texture *)malloc(sizeof(Texture));
+    loadTexture(renderer, heart, "assets/images/heart.png");
+    windowProperties->textures->heart = heart;
+
     return true;
 }
 
