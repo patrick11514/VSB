@@ -135,6 +135,19 @@ typedef struct MainVariables
     // levels
     Array *levelsTextCoords;
 
+    // LEVEL INFO SCREEn
+    // start button corners LeftTop + RightBottom
+    Position levelInfoStartLT;
+    Position levelInfoStartRB;
+    // start button if hover
+    bool levelInfoStartHover;
+
+    // back button corners LeftTop + RightBottom
+    Position levelInfoBackLT;
+    Position levelInfoBackRB;
+    // back button if hover
+    bool levelInfoBackHover;
+
 } MainVariables;
 
 // function to render text _text with font _font and color _color on position _x and _y with SDL_Renderer _renderer

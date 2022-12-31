@@ -194,6 +194,9 @@ void loadVars(WindowProperties *windowProperties, MainVariables *vars, SDL_Windo
     vars->levelSelectBackHover = false;
     vars->levelSelectOffset = 0;
     vars->levelsTextCoords = arrayInit(LEVELS_PER_PAGE);
+    // leve linfo menu
+    vars->levelInfoStartHover = false;
+    vars->levelInfoBackHover = false;
 }
 
 void freeVars(MainVariables *vars)
