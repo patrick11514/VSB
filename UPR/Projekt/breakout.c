@@ -49,6 +49,10 @@ void tick(int *frames, SDL_Renderer *renderer, WindowProperties *windowPropertie
     {
         renderLevelSelect(renderer, windowProperties, mainVars);
     }
+    else if (windowProperties->currentMenu == LevelInfo)
+    {
+        levelInfo(renderer, windowProperties, mainVars);
+    }
 
     // rerender
     SDL_RenderPresent(renderer);
@@ -397,7 +401,7 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
         {
             char text[255];
 
-            snprintf(text, 255, "%s - %s", (char *)highscores->players->data[i], (char *)highscores->scores->data[i]);
+            snprintf(text, 255, "%s - %s", (char *)arrayGet(highscores->players, i), (char *)arrayGet(highscores->scores, i));
 
             int len = count_utf8_code_points(text);
 
@@ -471,7 +475,7 @@ void renderLevelSelect(SDL_Renderer *renderer, WindowProperties *windowPropertie
     renderTitle(renderer, windowProperties, mainVars, &titleCoords);
 
     // level select text
-    int levelWidth = 350 * scale;
+    int levelWidth = 375 * scale;
     int levelHeight = 85 * scale;
 
     int levelX = (WINDOW_WIDTH * scale / 2) - (levelWidth / 2);
@@ -515,7 +519,7 @@ void renderLevelSelect(SDL_Renderer *renderer, WindowProperties *windowPropertie
     if (mainVars->levelSelectUpButton)
     {
         SDL_Texture *texture = windowProperties->textures->buttonUp->texture;
-        if (mainVars->levelSelectBackHover)
+        if (mainVars->levelSelectPrevHover)
         {
             texture = windowProperties->textures->buttonUpHover->texture;
         }
@@ -544,17 +548,38 @@ void renderLevelSelect(SDL_Renderer *renderer, WindowProperties *windowPropertie
     int levelTextY = upButtonY + windowProperties->textures->buttonUp->height * scale + 10 * scale;
     for (int i = mainVars->levelSelectOffset * LEVELS_PER_PAGE; i < end; i++)
     {
-        Level *level = levels->data[i];
+        Level *level = arrayGet(levels, i);
 
         char *text = level->description;
         int len = count_utf8_code_points(text);
-
-        printf("'%s' - %d\n", text, len);
 
         // 20px per char
         int levelTextX = (WINDOW_WIDTH * scale / 2) - (len * 20 * scale / 2);
 
         SDL_Color color = windowProperties->colors->white;
+
+        // add data to array
+        if (mainVars->levelsTextCoords->size < i + 1)
+        {
+            TextCoords *coords = malloc(sizeof(TextCoords));
+            coords->x = levelTextX;
+            coords->y = levelTextY;
+            coords->width = len * 20 * scale;
+            coords->height = 50 * scale;
+            coords->hover = false;
+            if (!arrayAdd(mainVars->levelsTextCoords, coords))
+            {
+                fprintf(stderr, "Error adding to array: %s", SDL_GetError());
+            }
+        }
+        else
+        {
+            TextCoords *coords = arrayGet(mainVars->levelsTextCoords, i);
+            if (coords->hover)
+            {
+                color = windowProperties->colors->orange;
+            }
+        }
 
         if (!renderText(renderer, level->description, windowProperties->font, color, len * 20 * scale, 50 * scale, levelTextX, levelTextY))
         {
@@ -577,10 +602,10 @@ void renderLevelSelect(SDL_Renderer *renderer, WindowProperties *windowPropertie
             texture = windowProperties->textures->buttonDownHover->texture;
         }
 
-        mainVars->levelSelectBackLT.x = downButtonX;
-        mainVars->levelSelectBackLT.y = downButtonY;
-        mainVars->levelSelectBackRB.x = downButtonX + windowProperties->textures->buttonDown->width * scale;
-        mainVars->levelSelectBackRB.y = downButtonY + windowProperties->textures->buttonDown->height * scale;
+        mainVars->levelSelectNextLT.x = downButtonX;
+        mainVars->levelSelectNextLT.y = downButtonY;
+        mainVars->levelSelectNextRB.x = downButtonX + windowProperties->textures->buttonDown->width * scale;
+        mainVars->levelSelectNextRB.y = downButtonY + windowProperties->textures->buttonDown->height * scale;
 
         if (!renderTexture(renderer, texture, downButtonX, downButtonY, windowProperties->textures->buttonDown->width * scale, windowProperties->textures->buttonDown->height * scale))
         {
@@ -610,6 +635,61 @@ void renderLevelSelect(SDL_Renderer *renderer, WindowProperties *windowPropertie
     {
         fprintf(stderr, "Error rendering text: %s", SDL_GetError());
     }
+}
+
+void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars)
+{
+    float scale = windowProperties->scale;
+
+    Level *level = windowProperties->currentLevel;
+
+    // title text
+    TextCoords titleCoords;
+    titleCoords.width = 350 * scale;
+    titleCoords.height = 100 * scale;
+    titleCoords.x = (WINDOW_WIDTH * scale / 2) - (titleCoords.width / 2);
+    titleCoords.y = 0;
+    renderTitle(renderer, windowProperties, mainVars, &titleCoords);
+
+    // level info text
+    int levelWidth = 350 * scale;
+    int levelHeight = 85 * scale;
+
+    int levelX = (WINDOW_WIDTH * scale / 2) - (levelWidth / 2);
+    int levelY = titleCoords.y + titleCoords.height + 10 * scale;
+
+    if (!renderText(renderer, "LEVEL INFO", windowProperties->font, windowProperties->colors->white, levelWidth, levelHeight, levelX, levelY))
+    {
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
+    }
+
+    // line under level select
+    if (!renderRect(renderer, levelX, levelY + levelHeight, levelWidth, 3, windowProperties->colors->white))
+    {
+        fprintf(stderr, "Error rendering rect: %s", SDL_GetError());
+    }
+
+    // level name
+    // 20px per char
+    int len = count_utf8_code_points(level->description);
+
+    int levelNameWidth = len * 20 * scale;
+    int levelNameHeight = 50 * scale;
+
+    int levelNameX = (WINDOW_WIDTH * scale / 2) - (levelNameWidth / 2);
+    int levelNameY = levelY + levelHeight + 10 * scale;
+
+    if (!renderText(renderer, level->description, windowProperties->font, windowProperties->colors->white, levelNameWidth, levelNameHeight, levelNameX, levelNameY))
+    {
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
+    }
+
+    // health
+    const char *healthText = "HEALTH"; // add snprintf for Health: %d (level->health)
+    int len = count_utf8_code_points(healthText);
+
+    int healthWidth = (len * 20 + /* ADD spacing + width of hearth symbol + value */) * scale;
+    int healthHeight = 50 * scale;
 }
 
 void renderTitle(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars, TextCoords *textCoords)
@@ -775,6 +855,26 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
         }
         else if (windowProperties->currentMenu == LevelSelect)
         {
+            // texts
+            for (int i = 0; i < mainVars->levelsTextCoords->size; i++)
+            {
+                TextCoords *textCoords = arrayGet(mainVars->levelsTextCoords, i);
+
+                int leftTopX = textCoords->x;
+                int leftTopY = textCoords->y;
+                int rightBottomX = textCoords->x + textCoords->width;
+                int rightBottomY = textCoords->y + textCoords->height;
+
+                if (e->motion.x >= leftTopX && e->motion.x <= rightBottomX && e->motion.y >= leftTopY && e->motion.y <= rightBottomY)
+                {
+                    textCoords->hover = true;
+                }
+                else
+                {
+                    textCoords->hover = false;
+                }
+            }
+
             // up button
             if (e->motion.x >= mainVars->levelSelectPrevLT.x && e->motion.x <= mainVars->levelSelectPrevRB.x && e->motion.y >= mainVars->levelSelectPrevLT.y && e->motion.y <= mainVars->levelSelectPrevRB.y)
             {
@@ -934,15 +1034,112 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
             {
                 windowProperties->currentMenu = MainMenu;
                 mainVars->highscoresBackHover = false;
+                // reset offset
+                mainVars->highscoresOffset = 0;
+                // reset buttons
+                mainVars->highscoresUpButton = false;
+                mainVars->highscoresDownButton = true;
             }
         }
         else if (windowProperties->currentMenu == LevelSelect)
         {
+            // text
+            for (int i = 0; i < mainVars->levelsTextCoords->size; i++)
+            {
+                TextCoords *textCoords = arrayGet(mainVars->levelsTextCoords, i);
+                if (textCoords->hover)
+                {
+                    windowProperties->currentLevel = arrayGet(windowProperties->levels, i + mainVars->levelSelectOffset * LEVELS_PER_PAGE);
+                    windowProperties->currentMenu = LevelInfo;
+                    break;
+                }
+            }
+
+            // prev button
+            if (mainVars->levelSelectPrevHover)
+            {
+                if (mainVars->levelSelectOffset > 0)
+                    // remove 1 from offset
+                    mainVars->levelSelectOffset--;
+
+                // check if offset is 0
+                if (mainVars->levelSelectOffset == 0)
+                {
+                    // hide button
+                    mainVars->levelSelectUpButton = false;
+                    // stop hover
+                    mainVars->levelSelectPrevHover = false;
+                }
+
+                // if next button is not active
+                if (!mainVars->levelSelectDownButton)
+                {
+                    // activate next button
+                    mainVars->levelSelectDownButton = true;
+                }
+
+                // clear texts from array
+                for (int i = 0; i < mainVars->levelsTextCoords->size; i++)
+                {
+                    free(arrayGet(mainVars->levelsTextCoords, i));
+                    if (!arrayFree(mainVars->levelsTextCoords, false))
+                    {
+                        fprintf(stderr, "Unable to free array");
+                    }
+                }
+            }
+
+            // next button
+            if (mainVars->levelSelectNextHover)
+            {
+                if (mainVars->levelSelectOffset < windowProperties->levels->size / LEVELS_PER_PAGE)
+                    // add 1 to offset
+                    mainVars->levelSelectOffset++;
+
+                // check if current page have less or equal to LEVELS_PER_PAGE
+                if (windowProperties->levels->size - mainVars->levelSelectOffset * LEVELS_PER_PAGE <= LEVELS_PER_PAGE)
+                {
+                    // hide button
+                    mainVars->levelSelectDownButton = false;
+                    // stop hover
+                    mainVars->levelSelectNextHover = false;
+                }
+
+                // if prev button is not active
+                if (!mainVars->levelSelectUpButton)
+                {
+                    // activate prev button
+                    mainVars->levelSelectUpButton = true;
+                }
+
+                // clear texts from array
+                for (int i = 0; i < mainVars->levelsTextCoords->size; i++)
+                {
+                    free(arrayGet(mainVars->levelsTextCoords, i));
+                    if (!arrayFree(mainVars->levelsTextCoords, false))
+                    {
+                        fprintf(stderr, "Unable to free array");
+                    }
+                }
+            }
+
             // back button
             if (mainVars->levelSelectBackHover)
             {
                 windowProperties->currentMenu = MainMenu;
                 mainVars->levelSelectBackHover = false;
+                // reset offset
+                mainVars->levelSelectOffset = 0;
+
+                // clear texts from array
+                for (int i = 0; i < mainVars->levelsTextCoords->size; i++)
+                {
+                    free(arrayGet(mainVars->levelsTextCoords, i));
+                    if (!arrayFree(mainVars->levelsTextCoords, false))
+                    {
+                        fprintf(stderr, "Unable to free array");
+                    }
+                }
             }
         }
     }
