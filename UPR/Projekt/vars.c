@@ -180,6 +180,11 @@ void loadVars(WindowProperties *windowProperties, MainVariables *vars, SDL_Windo
     vars->highscoresBackHover = false;
     vars->highscoresNextHover = false;
     vars->highscoresBackHover = false;
+    // level select menu
+    vars->levelSelectPrevHover = false;
+    vars->levelSelectBackHover = false;
+    vars->levelSelectBackHover = false;
+    vars->levelSelectOffset = 0;
 }
 
 void loadColors(Colors *colors)
