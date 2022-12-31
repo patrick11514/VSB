@@ -18,12 +18,12 @@ FILE *openFile(char *filename, char *mode)
     FILE *file = fopen(filename, mode);
     if (!file)
     {
-        printf("Nepovedlo se otevřít soubor. (%d - %s)\n", errno, strerror(errno));
+        fprintf(stderr, "Unable to open file. (%d - %s)\n", errno, strerror(errno));
     }
     return file;
 }
 
-Level *loadLevel(SDL_Renderer *renderer, WindowProperties *windowProperties, char *_fileName)
+Level *loadLevel(WindowProperties *windowProperties, char *_fileName)
 {
     FILE *file = openFile(_fileName, "rt");
     if (!file)
@@ -39,15 +39,23 @@ Level *loadLevel(SDL_Renderer *renderer, WindowProperties *windowProperties, cha
     Level *levelData = (Level *)malloc(sizeof(Level));
     levelData->health = -1;
     levelData->description = NULL;
+    levelData->brickHealths = arrayInit(ARRAY_DEFAULT_CAPACITY);
+    if (!levelData->brickHealths)
+    {
+        fprintf(stderr, "Unable to allocate memory for brick health Array.\n");
+        exit(1);
+    }
     levelData->bricks = arrayInit(ARRAY_DEFAULT_CAPACITY);
     if (!levelData->bricks)
     {
-        printf("Unable to allocate memory for bricks Array.\n");
+        fprintf(stderr, "Unable to allocate memory for bricks Array.\n");
         exit(1);
     }
 
     int numbers[6];
     int numbersCount = 0;
+
+    int x = 0, y = 0;
 
     while (fgets(row, 255, file) != NULL)
     {
@@ -74,7 +82,7 @@ Level *loadLevel(SDL_Renderer *renderer, WindowProperties *windowProperties, cha
                 char *livesCh = strtok(NULL, " ");
                 if (!livesCh)
                 {
-                    printf("Unable to get value of lives for brick.\n");
+                    fprintf(stderr, "Unable to get value of lives for brick.\n");
                     exit(1);
                 }
 
@@ -84,7 +92,7 @@ Level *loadLevel(SDL_Renderer *renderer, WindowProperties *windowProperties, cha
                 {
                     if (numbers[i] == lives)
                     {
-                        printf("Lives of brick is already used.\n");
+                        fprintf(stderr, "Lives of brick is already used.\n");
                         exit(1);
                     }
                 }
@@ -92,9 +100,8 @@ Level *loadLevel(SDL_Renderer *renderer, WindowProperties *windowProperties, cha
                 numbers[numbersCount] = lives;
                 numbersCount++;
 
-                Brick *brick = (Brick *)malloc(sizeof(Brick));
+                BrickHealth *brick = (BrickHealth *)malloc(sizeof(Brick));
                 brick->lives = lives;
-                brick->destroyed = false;
 
                 // get filename
                 char *color = strtok(brickName, " ");
@@ -126,15 +133,20 @@ Level *loadLevel(SDL_Renderer *renderer, WindowProperties *windowProperties, cha
                 }
                 else
                 {
-                    printf("Unable to find texture for brick.\n");
+                    fprintf(stderr, "Unable to find texture for brick.\n");
                     exit(1);
                 }
 
-                if (!arrayAdd(levelData->bricks, brick))
+                if (!arrayAdd(levelData->brickHealths, brick))
                 {
-                    printf("Unable to add brick to array.\n");
+                    fprintf(stderr, "Unable to add brick to array.\n");
                     exit(1);
                 }
+            }
+            else if (strcmp(row, "%EndSettings") == 0)
+            {
+                settings = false;
+                continue;
             }
         }
 
@@ -144,28 +156,126 @@ Level *loadLevel(SDL_Renderer *renderer, WindowProperties *windowProperties, cha
             settings = true;
             continue;
         }
+
+        // if level
+        if (level)
+        {
+            if (strcmp(row, "%EndLevel") == 0)
+            {
+                level = false;
+                continue;
+            }
+
+            int rowLength = strlen(row);
+
+            for (int i = 0; i < rowLength; i++)
+            {
+                char brickChar = row[i];
+
+                Brick *brick = (Brick *)malloc(sizeof(Brick));
+                brick->destroyed = false;
+                brick->x = x;
+                brick->y = y;
+
+                if (brickChar == 'Y')
+                {
+                    brick->texture = windowProperties->textures->brickYellow;
+                }
+                else if (brickChar == 'L')
+                {
+                    brick->texture = windowProperties->textures->brickLime;
+                }
+                else if (brickChar == 'G')
+                {
+                    brick->texture = windowProperties->textures->brickGray;
+                }
+                else if (brickChar == 'R')
+                {
+                    brick->texture = windowProperties->textures->brickRed;
+                }
+                else if (brickChar == 'P')
+                {
+                    brick->texture = windowProperties->textures->brickPurple;
+                }
+                else if (brickChar == 'B')
+                {
+                    brick->texture = windowProperties->textures->brickBlue;
+                }
+                else
+                {
+                    fprintf(stderr, "Unable to find texture for brick.\n");
+                    exit(1);
+                }
+
+                if (!arrayAdd(levelData->bricks, brick))
+                {
+                    fprintf(stderr, "Unable to add brick to array.\n");
+                    exit(1);
+                }
+
+                x += 1;
+            }
+
+            y += 1;
+        }
+
+        // check if level starts
+        if (strcmp(row, "%Level") == 0)
+        {
+            level = true;
+            continue;
+        }
     }
 
     if (levelData->health == -1)
     {
-        printf("Level does not contains number of hearths.\n");
+        fprintf(stderr, "Level does not contains number of hearths.\n");
         exit(1);
     }
 
     if (levelData->description == NULL)
     {
-        printf("Level does not contains description.\n");
+        fprintf(stderr, "Level does not contains description.\n");
         exit(1);
     }
 
     fclose(file);
 
-    printf("%d\n", levelData->health);
-    printf("%s\n", levelData->description);
-
-    arrayFree(levelData->bricks, true);
-    free(levelData->description);
-    free(levelData);
-
     return levelData;
+}
+
+void freeLevels(Array *levels)
+{
+    for (int i = 0; i < levels->size; i++)
+    {
+        Level *levelData = levels->data[i];
+
+        for (int i = 0; i < levelData->bricks->size; i++)
+        {
+            Brick *brick = (Brick *)levelData->bricks->data[i];
+            free(brick);
+        }
+
+        for (int i = 0; i < levelData->brickHealths->size; i++)
+        {
+            BrickHealth *brickHealth = (BrickHealth *)levelData->brickHealths->data[i];
+            free(brickHealth);
+        }
+
+        if (!arrayFree(levelData->bricks, true))
+        {
+            fprintf(stderr, "Unable to free bricks array.\n");
+        }
+        if (!arrayFree(levelData->brickHealths, true))
+        {
+            fprintf(stderr, "Unable to free brickHealths array.\n");
+        }
+        free(levelData->description);
+        free(levelData);
+    }
+
+    if (!arrayFree(levels, true))
+    {
+        fprintf(stderr, "Unable to free levels array.\n");
+    }
 }
