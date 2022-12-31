@@ -14,6 +14,9 @@
 FILE *openFile(char *_fileName, char *_mode);
 
 // load level from give path
-Level *loadLevel(SDL_Renderer *renderer, WindowProperties *WindowProperties, char *fileName);
+Level *loadLevel(WindowProperties *WindowProperties, char *fileName);
+
+// free level
+void freeLevels(Array *levels);
 
 #endif
