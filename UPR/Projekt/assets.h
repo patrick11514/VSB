@@ -103,6 +103,32 @@ typedef struct MainVariables
     bool highscoresUpButton;
     bool highscoresDownButton;
 
+    // LEVEL SELECT BUTTONS
+    // next button corners LeftTop + RightBottom
+    Position levelSelectNextLT;
+    Position levelSelectNextRB;
+    // next button if hover
+    bool levelSelectNextHover;
+
+    // prev button corners LeftTop + RightBottom
+    Position levelSelectPrevLT;
+    Position levelSelectPrevRB;
+    // prev button if hover
+    bool levelSelectPrevHover;
+
+    //  back button corners LeftTop + RightBottom
+    Position levelSelectBackLT;
+    Position levelSelectBackRB;
+    // back button if hover
+    bool levelSelectBackHover;
+
+    // LEVEL SELECT SCREEN
+    //   current offset for levels
+    int levelSelectOffset;
+    // buttons
+    bool levelSelectUpButton;
+    bool levelSelectDownButton;
+
 } MainVariables;
 
 // function to render text _text with font _font and color _color on position _x and _y with SDL_Renderer _renderer
@@ -119,5 +145,9 @@ void strToLower(char *string);
 
 // load texture
 void loadTexture(SDL_Renderer *_renderer, Texture *_texture, char *_path);
+
+// get len of string, because strlen return wrong len for utf8
+// https://stackoverflow.com/a/32936928/13157719
+size_t count_utf8_code_points(const char *s);
 
 #endif
