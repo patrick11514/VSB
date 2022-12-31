@@ -26,11 +26,6 @@ void tick(int *frames, SDL_Renderer *renderer, WindowProperties *windowPropertie
     SDL_SetRenderDrawColor(renderer, 26, 25, 24, 255);
     SDL_RenderClear(renderer);
 
-    // for fix text
-    SDL_Rect r = {.x = 0, .y = 0, .w = 0, .h = 0};
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderDrawRect(renderer, &r);
-
     // FPS
     int FPSHeight = 16;
     if (!renderText(renderer, windowProperties->currentFPS, windowProperties->font, windowProperties->colors->white, 50, FPSHeight, 0, WINDOW_HEIGHT * scale - FPSHeight))
