@@ -17,7 +17,7 @@ bool renderText(SDL_Renderer *renderer, char *text, TTF_Font *font, SDL_Color co
 {
     SDL_Rect rect = {.x = x, .y = y, .w = width, .h = height};
 
-    SDL_Surface *surface = TTF_RenderText_Solid(font, text, color);
+    SDL_Surface *surface = TTF_RenderUTF8_Solid(font, text, color);
     if (!surface)
     {
         return false;
@@ -89,4 +89,15 @@ void loadTexture(SDL_Renderer *renderer, Texture *texture, char *path)
     texture->texture = IMGTexture;
     texture->width = width;
     texture->height = height;
+}
+
+// https://stackoverflow.com/a/32936928/13157719
+size_t count_utf8_code_points(const char *s)
+{
+    size_t count = 0;
+    while (*s)
+    {
+        count += (*s++ & 0xC0) != 0x80;
+    }
+    return count;
 }
