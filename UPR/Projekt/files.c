@@ -45,6 +45,7 @@ Level *loadLevel(WindowProperties *windowProperties, char *_fileName)
         fprintf(stderr, "Unable to allocate memory for brick health Array.\n");
         exit(1);
     }
+    // array for each line of bricks
     levelData->bricks = arrayInit(ARRAY_DEFAULT_CAPACITY);
     if (!levelData->bricks)
     {
@@ -181,6 +182,20 @@ Level *loadLevel(WindowProperties *windowProperties, char *_fileName)
 
             int rowLength = strlen(row);
 
+            if (rowLength > 17)
+            {
+                fprintf(stderr, "Row is longer than 17 chars (%d).\n", rowLength);
+                exit(1);
+            }
+
+            if (levelData->bricks->size == 24)
+            {
+                fprintf(stderr, "Level is longer than 24 rows.\n");
+                exit(1);
+            }
+
+            Array *bricksLine = arrayInit(rowLength);
+
             for (int i = 0; i < rowLength; i++)
             {
                 char brickChar = row[i];
@@ -220,13 +235,19 @@ Level *loadLevel(WindowProperties *windowProperties, char *_fileName)
                     exit(1);
                 }
 
-                if (!arrayAdd(levelData->bricks, brick))
+                if (!arrayAdd(bricksLine, brick))
                 {
                     fprintf(stderr, "Unable to add brick to array.\n");
                     exit(1);
                 }
 
                 x += 1;
+            }
+
+            if (!arrayAdd(levelData->bricks, bricksLine))
+            {
+                fprintf(stderr, "Unable to add brick line to array.\n");
+                exit(1);
             }
 
             y += 1;
@@ -265,8 +286,16 @@ void freeLevels(Array *levels)
 
         for (int i = 0; i < levelData->bricks->size; i++)
         {
-            Brick *brick = (Brick *)arrayGet(levelData->bricks, i);
-            free(brick);
+            Array *bricksLine = (Array *)arrayGet(levelData->bricks, i);
+            for (int i = 0; i < bricksLine->size; i++)
+            {
+                Brick *brick = (Brick *)arrayGet(bricksLine, i);
+                free(brick);
+            }
+            if (!arrayFree(bricksLine, true))
+            {
+                fprintf(stderr, "Unable to free brickLine array.\n");
+            }
         }
 
         for (int i = 0; i < levelData->brickHealths->size; i++)
