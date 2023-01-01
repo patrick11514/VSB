@@ -76,12 +76,12 @@ void renderMainMenu(SDL_Renderer *renderer, WindowProperties *windowProperties, 
     renderTitle(renderer, windowProperties, mainVars, &titleCoords);
 
     // Play text
-    int playWidth = 150 * scale;
-    int playHeight = 75 * scale;
+    float playWidth = 150 * scale;
+    float playHeight = 75 * scale;
 
-    int playX = (WINDOW_WIDTH * scale / 2) - (playWidth / 2);
+    float playX = (WINDOW_WIDTH * scale / 2) - (playWidth / 2);
     // title + titleHeight + 50px
-    int playY = titleCoords.y + titleCoords.height + 50 * scale;
+    float playY = titleCoords.y + titleCoords.height + 50 * scale;
     mainVars->mainMenuPlayLT.x = playX;
     mainVars->mainMenuPlayLT.y = playY;
     mainVars->mainMenuPlayRB.x = playX + playWidth;
@@ -99,12 +99,12 @@ void renderMainMenu(SDL_Renderer *renderer, WindowProperties *windowProperties, 
     }
 
     // settings text
-    int settingsWidth = 225 * scale;
-    int settingsHeight = 75 * scale;
+    float settingsWidth = 225 * scale;
+    float settingsHeight = 75 * scale;
 
-    int settingsX = (WINDOW_WIDTH * scale / 2) - (settingsWidth / 2);
+    float settingsX = (WINDOW_WIDTH * scale / 2) - (settingsWidth / 2);
     // play + playHeight + 50px
-    int settingsY = playY + playHeight + 25 * scale;
+    float settingsY = playY + playHeight + 25 * scale;
     mainVars->mainMenuSettingsLT.x = settingsX;
     mainVars->mainMenuSettingsLT.y = settingsY;
     mainVars->mainMenuSettingsRB.x = settingsX + settingsWidth;
@@ -122,12 +122,12 @@ void renderMainMenu(SDL_Renderer *renderer, WindowProperties *windowProperties, 
     }
 
     // highscores text
-    int highscoresWidth = 300 * scale;
-    int highscoresHeight = 75 * scale;
+    float highscoresWidth = 300 * scale;
+    float highscoresHeight = 75 * scale;
 
-    int highscoresX = (WINDOW_WIDTH * scale / 2) - (highscoresWidth / 2);
+    float highscoresX = (WINDOW_WIDTH * scale / 2) - (highscoresWidth / 2);
     // settings + settingsHeight + 50px
-    int highscoresY = settingsY + settingsHeight + 25 * scale;
+    float highscoresY = settingsY + settingsHeight + 25 * scale;
     mainVars->mainMenuHighscoresLT.x = highscoresX;
     mainVars->mainMenuHighscoresLT.y = highscoresY;
     mainVars->mainMenuHighscoresRB.x = highscoresX + highscoresWidth;
@@ -145,12 +145,12 @@ void renderMainMenu(SDL_Renderer *renderer, WindowProperties *windowProperties, 
     }
 
     // exit text
-    int exitWidth = 100 * scale;
-    int exitHeight = 75 * scale;
+    float exitWidth = 100 * scale;
+    float exitHeight = 75 * scale;
 
-    int exitX = (WINDOW_WIDTH * scale / 2) - (exitWidth / 2);
+    float exitX = (WINDOW_WIDTH * scale / 2) - (exitWidth / 2);
     // highscores + highscoreHeight + 50px
-    int exitY = highscoresY + highscoresHeight + 25 * scale;
+    float exitY = highscoresY + highscoresHeight + 25 * scale;
     mainVars->mainMenuExitLT.x = exitX;
     mainVars->mainMenuExitLT.y = exitY;
     mainVars->mainMenuExitRB.x = exitX + exitWidth;
@@ -181,12 +181,12 @@ void renderSettings(SDL_Renderer *renderer, WindowProperties *windowProperties, 
     renderTitle(renderer, windowProperties, mainVars, &titleCoords);
 
     // settings text
-    int settingsWidth = 225 * scale;
-    int settingsHeight = 75 * scale;
+    float settingsWidth = 225 * scale;
+    float settingsHeight = 75 * scale;
 
-    int settingsX = (WINDOW_WIDTH * scale / 2) - (settingsWidth / 2);
+    float settingsX = (WINDOW_WIDTH * scale / 2) - (settingsWidth / 2);
     // title + titleHeight + 25px
-    int settingsY = titleCoords.y + titleCoords.height + 25;
+    float settingsY = titleCoords.y + titleCoords.height + 25;
 
     if (!renderText(renderer, "SETTINGS", windowProperties->font, windowProperties->colors->white, settingsWidth, settingsHeight, settingsX, settingsY))
     {
@@ -200,16 +200,16 @@ void renderSettings(SDL_Renderer *renderer, WindowProperties *windowProperties, 
     }
 
     // scale text
-    int scaleWidth = 325 * scale;
+    float scaleWidth = 325 * scale;
     if (scale >= 1.0)
     {
         scaleWidth = 350 * scale;
     }
-    int scaleHeight = 50 * scale;
+    float scaleHeight = 50 * scale;
 
-    int scaleTextX = (WINDOW_WIDTH * scale / 2) - (scaleWidth / 2);
+    float scaleTextX = (WINDOW_WIDTH * scale / 2) - (scaleWidth / 2);
     // settings + settingsHeight + 50px
-    int scaleTextY = settingsY + settingsHeight + 50 * scale;
+    float scaleTextY = settingsY + settingsHeight + 50 * scale;
     mainVars->settingsScaleLT.x = scaleTextX;
     mainVars->settingsScaleLT.y = scaleTextY;
     mainVars->settingsScaleRB.x = scaleTextX + scaleWidth;
@@ -231,12 +231,12 @@ void renderSettings(SDL_Renderer *renderer, WindowProperties *windowProperties, 
     }
 
     // back text
-    int backWidth = 125 * scale;
-    int backHeight = 65 * scale;
+    float backWidth = 125 * scale;
+    float backHeight = 65 * scale;
 
-    int backX = (WINDOW_WIDTH * scale / 2) - (backWidth / 2);
+    float backX = (WINDOW_WIDTH * scale / 2) - (backWidth / 2);
     // scale + scaleHeight + 50px
-    int backY = scaleTextY + scaleHeight + 50 * scale;
+    float backY = scaleTextY + scaleHeight + 50 * scale;
     mainVars->settingsBackLT.x = backX;
     mainVars->settingsBackLT.y = backY;
     mainVars->settingsBackRB.x = backX + backWidth;
@@ -267,12 +267,12 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
     renderTitle(renderer, windowProperties, mainVars, &titleCoords);
 
     // highscores text
-    int highscoreWidth = 300 * scale;
-    int highscoreHeight = 75 * scale;
+    float highscoreWidth = 300 * scale;
+    float highscoreHeight = 75 * scale;
 
-    int highscoreX = (WINDOW_WIDTH * scale / 2) - (highscoreWidth / 2);
+    float highscoreX = (WINDOW_WIDTH * scale / 2) - (highscoreWidth / 2);
     // title + titleHeight + 25px
-    int highscoreY = titleCoords.y + titleCoords.height + 25;
+    float highscoreY = titleCoords.y + titleCoords.height + 25;
 
     if (!renderText(renderer, "HIGHSCORES", windowProperties->font, windowProperties->colors->white, highscoreWidth, highscoreHeight, highscoreX, highscoreY))
     {
@@ -288,8 +288,8 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
     Highscores *highscores = windowProperties->highscores;
 
     // Y coord for back button edited in if statement
-    int backY;
-    int backHeight = 65 * scale;
+    float backY;
+    float backHeight = 65 * scale;
 
     if (!highscores)
     {
@@ -331,12 +331,12 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
     if (highscores->count == 0)
     {
         // no highscores
-        int noHighscoresWidth = 300 * scale;
-        int noHighscoresHeight = 50 * scale;
+        float noHighscoresWidth = 300 * scale;
+        float noHighscoresHeight = 50 * scale;
 
-        int noHighscoresX = (WINDOW_WIDTH * scale / 2) - (noHighscoresWidth / 2);
+        float noHighscoresX = (WINDOW_WIDTH * scale / 2) - (noHighscoresWidth / 2);
         // highscore + highscoreHeight + 50px
-        int noHighscoresY = highscoreY + highscoreHeight + 50 * scale;
+        float noHighscoresY = highscoreY + highscoreHeight + 50 * scale;
 
         if (!renderText(renderer, "No highscores yet", windowProperties->font, windowProperties->colors->red, noHighscoresWidth, noHighscoresHeight, noHighscoresX, noHighscoresY))
         {
@@ -371,9 +371,9 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
             buttonDown = windowProperties->textures->buttonDown;
         }
 
-        int buttonUpX = (WINDOW_WIDTH * scale / 2) - (buttonUp->width * scale / 2);
+        float buttonUpX = (WINDOW_WIDTH * scale / 2) - (buttonUp->width * scale / 2);
         // highscore + highscoreHeight + 20px (spacing)
-        int buttonUpY = highscoreY + highscoreHeight + 20;
+        float buttonUpY = highscoreY + highscoreHeight + 20;
 
         // if enabled render up button
         if (mainVars->highscoresUpButton)
@@ -392,9 +392,9 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
 
         // highscores
         // buttonUp + buttonUpHeight + 10px
-        int highscoreY = buttonUpY + buttonUp->height * scale + 10 * scale;
+        float highscoreY = buttonUpY + buttonUp->height * scale + 10 * scale;
 
-        int end = mainVars->highscoresOffset * HIGHSCORES_PER_PAGE + HIGHSCORES_PER_PAGE;
+        float end = mainVars->highscoresOffset * HIGHSCORES_PER_PAGE + HIGHSCORES_PER_PAGE;
 
         if (end > highscores->count)
         {
@@ -410,7 +410,7 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
             int len = count_utf8_code_points(text);
 
             // 20px per char
-            int x = (WINDOW_WIDTH * scale / 2) - (len * 20 * scale / 2);
+            float x = (WINDOW_WIDTH * scale / 2) - (len * 20 * scale / 2);
 
             if (!renderText(renderer, text, windowProperties->font, windowProperties->colors->white, len * 20 * scale, 50 * scale, x, highscoreY))
             {
@@ -421,9 +421,9 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
             highscoreY += 50 * scale;
         }
 
-        int buttonDownX = (WINDOW_WIDTH * scale / 2) - (buttonDown->width * scale / 2);
+        float buttonDownX = (WINDOW_WIDTH * scale / 2) - (buttonDown->width * scale / 2);
         // highscoreY - 50px (because of last highscore add 50px) + 10px (spacing) + buttonDownHeight
-        int buttonDownY = highscoreY - 50 + 10 + buttonDown->height;
+        float buttonDownY = highscoreY - 50 + 10 + buttonDown->height;
 
         // if enabled render down button
         if (mainVars->highscoresDownButton)
@@ -445,8 +445,8 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
         backY = buttonDownY + buttonDown->height * scale + 20 * scale;
     }
 
-    int backWidth = 125 * scale;
-    int backX = (WINDOW_WIDTH * scale / 2) - (backWidth / 2);
+    float backWidth = 125 * scale;
+    float backX = (WINDOW_WIDTH * scale / 2) - (backWidth / 2);
 
     // back text
     mainVars->highscoresBackLT.x = backX;
@@ -479,11 +479,11 @@ void renderLevelSelect(SDL_Renderer *renderer, WindowProperties *windowPropertie
     renderTitle(renderer, windowProperties, mainVars, &titleCoords);
 
     // level select text
-    int levelWidth = 375 * scale;
-    int levelHeight = 85 * scale;
+    float levelWidth = 375 * scale;
+    float levelHeight = 85 * scale;
 
-    int levelX = (WINDOW_WIDTH * scale / 2) - (levelWidth / 2);
-    int levelY = titleCoords.y + titleCoords.height + 10 * scale;
+    float levelX = (WINDOW_WIDTH * scale / 2) - (levelWidth / 2);
+    float levelY = titleCoords.y + titleCoords.height + 10 * scale;
 
     if (!renderText(renderer, "LEVEL SELECT", windowProperties->font, windowProperties->colors->white, levelWidth, levelHeight, levelX, levelY))
     {
@@ -518,7 +518,7 @@ void renderLevelSelect(SDL_Renderer *renderer, WindowProperties *windowPropertie
     }
 
     // buttons
-    int upButtonY = levelY + levelHeight + 10 * scale;
+    float upButtonY = levelY + levelHeight + 10 * scale;
 
     if (mainVars->levelSelectUpButton)
     {
@@ -528,7 +528,7 @@ void renderLevelSelect(SDL_Renderer *renderer, WindowProperties *windowPropertie
             texture = windowProperties->textures->buttonUpHover->texture;
         }
 
-        int upButtonX = (WINDOW_WIDTH * scale / 2) - (windowProperties->textures->buttonUp->width * scale / 2);
+        float upButtonX = (WINDOW_WIDTH * scale / 2) - (windowProperties->textures->buttonUp->width * scale / 2);
 
         mainVars->levelSelectPrevLT.x = upButtonX;
         mainVars->levelSelectPrevLT.y = upButtonY;
@@ -542,14 +542,14 @@ void renderLevelSelect(SDL_Renderer *renderer, WindowProperties *windowPropertie
     }
 
     // render levels
-    int end = mainVars->levelSelectOffset * LEVELS_PER_PAGE + LEVELS_PER_PAGE;
+    float end = mainVars->levelSelectOffset * LEVELS_PER_PAGE + LEVELS_PER_PAGE;
 
     if (end > levels->size)
     {
         end = levels->size;
     }
 
-    int levelTextY = upButtonY + windowProperties->textures->buttonUp->height * scale + 10 * scale;
+    float levelTextY = upButtonY + windowProperties->textures->buttonUp->height * scale + 10 * scale;
     for (int i = mainVars->levelSelectOffset * LEVELS_PER_PAGE; i < end; i++)
     {
         Level *level = arrayGet(levels, i);
@@ -558,7 +558,7 @@ void renderLevelSelect(SDL_Renderer *renderer, WindowProperties *windowPropertie
         int len = count_utf8_code_points(text);
 
         // 20px per char
-        int levelTextX = (WINDOW_WIDTH * scale / 2) - (len * 20 * scale / 2);
+        float levelTextX = (WINDOW_WIDTH * scale / 2) - (len * 20 * scale / 2);
 
         SDL_Color color = windowProperties->colors->white;
 
@@ -594,11 +594,11 @@ void renderLevelSelect(SDL_Renderer *renderer, WindowProperties *windowPropertie
         levelTextY += 50 * scale;
     }
 
-    int downButtonY = levelTextY + 10 * scale;
+    float downButtonY = levelTextY + 10 * scale;
 
     if (mainVars->levelSelectDownButton)
     {
-        int downButtonX = (WINDOW_WIDTH * scale / 2) - (windowProperties->textures->buttonDown->width * scale / 2);
+        float downButtonX = (WINDOW_WIDTH * scale / 2) - (windowProperties->textures->buttonDown->width * scale / 2);
 
         SDL_Texture *texture = windowProperties->textures->buttonDown->texture;
         if (mainVars->levelSelectNextHover)
@@ -618,12 +618,12 @@ void renderLevelSelect(SDL_Renderer *renderer, WindowProperties *windowPropertie
     }
 
     // back text
-    int backWidth = 125 * scale;
-    int backHeight = 65 * scale;
+    float backWidth = 125 * scale;
+    float backHeight = 65 * scale;
 
-    int backX = (WINDOW_WIDTH * scale / 2) - (backWidth / 2);
+    float backX = (WINDOW_WIDTH * scale / 2) - (backWidth / 2);
     // scale + scaleHeight + 50px
-    int backY = downButtonY + windowProperties->textures->buttonDown->height * scale + 50 * scale;
+    float backY = downButtonY + windowProperties->textures->buttonDown->height * scale + 50 * scale;
     mainVars->levelSelectBackLT.x = backX;
     mainVars->levelSelectBackLT.y = backY;
     mainVars->levelSelectBackRB.x = backX + backWidth;
@@ -656,11 +656,11 @@ void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainV
     renderTitle(renderer, windowProperties, mainVars, &titleCoords);
 
     // level info text
-    int levelWidth = 350 * scale;
-    int levelHeight = 85 * scale;
+    float levelWidth = 350 * scale;
+    float levelHeight = 85 * scale;
 
-    int levelX = (WINDOW_WIDTH * scale / 2) - (levelWidth / 2);
-    int levelY = titleCoords.y + titleCoords.height + 10 * scale;
+    float levelX = (WINDOW_WIDTH * scale / 2) - (levelWidth / 2);
+    float levelY = titleCoords.y + titleCoords.height + 10 * scale;
 
     if (!renderText(renderer, "LEVEL INFO", windowProperties->font, windowProperties->colors->white, levelWidth, levelHeight, levelX, levelY))
     {
@@ -677,11 +677,11 @@ void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainV
     // 20px per char
     int levelLen = count_utf8_code_points(level->description);
 
-    int levelNameWidth = levelLen * 20 * scale;
-    int levelNameHeight = 50 * scale;
+    float levelNameWidth = levelLen * 20 * scale;
+    float levelNameHeight = 50 * scale;
 
-    int levelNameX = (WINDOW_WIDTH * scale / 2) - (levelNameWidth / 2);
-    int levelNameY = levelY + levelHeight + 10 * scale;
+    float levelNameX = (WINDOW_WIDTH * scale / 2) - (levelNameWidth / 2);
+    float levelNameY = levelY + levelHeight + 10 * scale;
 
     if (!renderText(renderer, level->description, windowProperties->font, windowProperties->colors->white, levelNameWidth, levelNameHeight, levelNameX, levelNameY))
     {
@@ -693,12 +693,12 @@ void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainV
     snprintf(health, 20, "HEALTH: %d", level->health);
     int healthLen = count_utf8_code_points(health);
 
-    int healthWidth = healthLen * 20 * scale;
-    int healthHeight = 50 * scale;
+    float healthWidth = healthLen * 20 * scale;
+    float healthHeight = 50 * scale;
 
     // len of text + width of heart + 10px spacing
-    int healthX = (WINDOW_WIDTH * scale / 2) - ((healthWidth + windowProperties->textures->heart->width + 10) / 2);
-    int healthY = levelNameY + levelNameHeight * scale;
+    float healthX = (WINDOW_WIDTH * scale / 2) - ((healthWidth + windowProperties->textures->heart->width + 10) / 2);
+    float healthY = levelNameY + levelNameHeight * scale;
 
     if (!renderText(renderer, health, windowProperties->font, windowProperties->colors->white, healthWidth, healthHeight, healthX, healthY))
     {
@@ -707,15 +707,15 @@ void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainV
 
     // heart
     // 10px spacing
-    int heartX = healthX + healthWidth + 10;
-    int heartY = healthY;
+    float heartX = healthX + healthWidth + 10;
+    float heartY = healthY;
 
     if (!renderTexture(renderer, windowProperties->textures->heart->texture, heartX, heartY, windowProperties->textures->heart->width * scale, windowProperties->textures->heart->height * scale))
     {
         fprintf(stderr, "Error rendering texture: %s", SDL_GetError());
     }
 
-    int brickY = healthY + healthHeight * scale;
+    float brickY = healthY + healthHeight * scale;
 
     // available bricks
     for (int i = 0; i < level->brickHealths->size; i++)
@@ -727,12 +727,12 @@ void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainV
         int len = count_utf8_code_points(text);
 
         // Brick texture Text Heart icon
-        int brickHeight = 50 * scale;
-        int brickTextureScale = brickHeight / (brickHealth->texture->height * scale);
+        float brickHeight = 50 * scale;
+        float brickTextureScale = brickHeight / (brickHealth->texture->height * scale);
         //  Brick Width + 10px spacing + text width (20px per char) + 10px spacing + heart width
-        int brickWidth = (len * 20 + windowProperties->textures->heart->width + 10 * 2) * scale + brickHealth->texture->width * brickTextureScale;
+        float brickWidth = (len * 20 + windowProperties->textures->heart->width + 10 * 2) * scale + brickHealth->texture->width * brickTextureScale;
 
-        int brickX = (WINDOW_WIDTH * scale / 2) - (brickWidth / 2);
+        float brickX = (WINDOW_WIDTH * scale / 2) - (brickWidth / 2);
 
         // render brick
         // brickY + 5px for centering
@@ -741,7 +741,7 @@ void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainV
             fprintf(stderr, "Error rendering texture: %s", SDL_GetError());
         }
 
-        int textX = brickX + brickHealth->texture->width * brickTextureScale + 10 * scale;
+        float textX = brickX + brickHealth->texture->width * brickTextureScale + 10 * scale;
 
         // render text
         if (!renderText(renderer, text, windowProperties->font, windowProperties->colors->white, len * 20 * scale, brickHeight, textX, brickY))
@@ -749,7 +749,7 @@ void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainV
             fprintf(stderr, "Error rendering text: %s", SDL_GetError());
         }
 
-        int heartX = textX + len * 20 * scale + 10 * scale;
+        float heartX = textX + len * 20 * scale + 10 * scale;
 
         // render heart
         if (!renderTexture(renderer, windowProperties->textures->heart->texture, heartX, brickY, windowProperties->textures->heart->width * scale, windowProperties->textures->heart->height * scale))
@@ -761,11 +761,11 @@ void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainV
     }
 
     // start text
-    int startWidth = 175 * scale;
-    int startHeight = 85 * scale;
+    float startWidth = 175 * scale;
+    float startHeight = 85 * scale;
 
-    int startX = (WINDOW_WIDTH * scale / 2) - (startWidth / 2);
-    int startY = brickY;
+    float startX = (WINDOW_WIDTH * scale / 2) - (startWidth / 2);
+    float startY = brickY;
 
     mainVars->levelInfoStartLT.x = startX;
     mainVars->levelInfoStartLT.y = startY;
@@ -785,11 +785,11 @@ void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainV
     }
 
     // back text
-    int backWidth = 175 * scale;
-    int backHeight = 85 * scale;
+    float backWidth = 175 * scale;
+    float backHeight = 85 * scale;
 
-    int backX = (WINDOW_WIDTH * scale / 2) - (backWidth / 2);
-    int backY = startY + startHeight * scale;
+    float backX = (WINDOW_WIDTH * scale / 2) - (backWidth / 2);
+    float backY = startY + startHeight * scale;
 
     mainVars->levelInfoBackLT.x = backX;
     mainVars->levelInfoBackLT.y = backY;
@@ -814,7 +814,7 @@ void renderGame(SDL_Renderer *renderer, WindowProperties *windowProperties, Main
     float scale = windowProperties->scale;
 
     // line at top
-    int topPadding = 120 * scale;
+    float topPadding = 120 * scale;
 
     if (!renderRect(renderer, 0, topPadding, WINDOW_WIDTH * scale, 3 * scale, windowProperties->colors->white))
     {
@@ -825,7 +825,7 @@ void renderGame(SDL_Renderer *renderer, WindowProperties *windowProperties, Main
      * Concept:
      * Numbers will be actually rendered by text and heart will be texture
      * ----------------------------------------
-     * |                  |                   |
+     * |     Score        |       Lives       |
      * |     0000         |    5555   0 0     |
      * |     0  0         |    5     0 0 0    |
      * |     0  0         |    555   0   0    |
@@ -841,11 +841,11 @@ void renderGame(SDL_Renderer *renderer, WindowProperties *windowProperties, Main
     }
 
     // score text
-    int scoreTextWidth = 80 * scale;
-    int scoreTextHeight = 35 * scale;
+    float scoreTextWidth = 80 * scale;
+    float scoreTextHeight = 35 * scale;
 
-    int scoreTextX = (WINDOW_WIDTH * scale / 4) - (scoreTextWidth / 2);
-    int scoreTextY = 0;
+    float scoreTextX = (WINDOW_WIDTH * scale / 4) - (scoreTextWidth / 2);
+    float scoreTextY = 0;
 
     if (!renderText(renderer, "Score", windowProperties->font, windowProperties->colors->white, scoreTextWidth, scoreTextHeight, scoreTextX, scoreTextY))
     {
@@ -858,12 +858,12 @@ void renderGame(SDL_Renderer *renderer, WindowProperties *windowProperties, Main
     int scoreLen = count_utf8_code_points(scoreText);
 
     // 20px per char
-    int scoreWidth = scoreLen * 20 * scale;
-    int scoreHeight = 50 * scale;
+    float scoreWidth = scoreLen * 20 * scale;
+    float scoreHeight = 50 * scale;
 
-    int scoreX = (WINDOW_WIDTH * scale / 4) - (scoreWidth / 2);
+    float scoreX = (WINDOW_WIDTH * scale / 4) - (scoreWidth / 2);
     // 120 is height of space between top and line
-    int scoreY = ((120 * scale - scoreTextHeight) / 2) - (scoreHeight / 2) + scoreTextHeight;
+    float scoreY = ((120 * scale - scoreTextHeight) / 2) - (scoreHeight / 2) + scoreTextHeight;
 
     if (!renderText(renderer, scoreText, windowProperties->font, windowProperties->colors->white, scoreWidth, scoreHeight, scoreX, scoreY))
     {
@@ -871,11 +871,11 @@ void renderGame(SDL_Renderer *renderer, WindowProperties *windowProperties, Main
     }
 
     // lives text
-    int livesTextWidth = 80 * scale;
-    int livesTextHeight = 35 * scale;
+    float livesTextWidth = 80 * scale;
+    float livesTextHeight = 35 * scale;
 
-    int livesTextX = (WINDOW_WIDTH * scale / 4) * 3 - (livesTextWidth / 2);
-    int livesTextY = 0;
+    float livesTextX = (WINDOW_WIDTH * scale / 4) * 3 - (livesTextWidth / 2);
+    float livesTextY = 0;
 
     if (!renderText(renderer, "Lives", windowProperties->font, windowProperties->colors->white, livesTextWidth, livesTextHeight, livesTextX, livesTextY))
     {
@@ -888,17 +888,17 @@ void renderGame(SDL_Renderer *renderer, WindowProperties *windowProperties, Main
     int len = count_utf8_code_points(livesText);
 
     // 20px per char
-    int livesWidth = len * 20 * scale;
-    int livesHeight = 35 * scale;
+    float livesWidth = len * 20 * scale;
+    float livesHeight = 35 * scale;
 
     Texture *hearthTexture = windowProperties->textures->heart;
 
     // scaling for heart texture
-    double scaling = (float)livesHeight / hearthTexture->height;
+    float scaling = (float)livesHeight / hearthTexture->height;
 
     //+ hearth + spacing 10px
-    int livesX = (WINDOW_WIDTH * scale / 4) * 3 - (livesWidth + windowProperties->textures->heart->width * scaling / 2) + 10 * scale;
-    int livesY = ((120 * scale - livesTextHeight) / 2) - (livesHeight / 2) + livesTextHeight;
+    float livesX = (WINDOW_WIDTH * scale / 4) * 3 - (livesWidth + windowProperties->textures->heart->width * scaling / 2) + 10 * scale;
+    float livesY = ((120 * scale - livesTextHeight) / 2) - (livesHeight / 2) + livesTextHeight;
 
     if (!renderText(renderer, livesText, windowProperties->font, windowProperties->colors->white, livesWidth, livesHeight, livesX, livesY))
     {
@@ -924,6 +924,157 @@ void renderGame(SDL_Renderer *renderer, WindowProperties *windowProperties, Main
     {
         fprintf(stderr, "Error rendering texture: %s", SDL_GetError());
     }
+
+    // rectangles for paddle and ball
+    SDL_Rect paddleRect = {windowProperties->paddleX, windowProperties->paddleY, windowProperties->textures->paddle->width * scale * 3, windowProperties->textures->paddle->height * scale * 3};
+    SDL_Rect ballRect = {windowProperties->ballX, windowProperties->ballY, windowProperties->textures->ball->width * scale * 0.66, windowProperties->textures->ball->height * scale * 0.66};
+
+    // ball
+    float ballX = windowProperties->ballX;
+    float ballY = windowProperties->ballY;
+    // check X position
+
+    ballX += windowProperties->ballSpeedX * (MOVE_FPS / mainVars->FPS) * windowProperties->ballSpeedModifier;
+    ballY += windowProperties->ballSpeedY * (MOVE_FPS / mainVars->FPS) * windowProperties->ballSpeedModifier;
+
+    if (windowProperties->ballSpeedModifier < BALL_MAX_SPEED)
+    {
+        windowProperties->ballSpeedModifier += (MOVE_FPS / mainVars->FPS) * BALL_SPEED_MODIFIER;
+    }
+
+    // if hit right wall
+    if (ballX > WINDOW_WIDTH * scale)
+    {
+        ballX = WINDOW_WIDTH * scale;
+
+        windowProperties->ballSpeedX = -1 * windowProperties->ballSpeedX;
+    }
+
+    // if hit top wall
+    // 120px is line under texts (score, lives)
+    if (ballY < 120 * scale)
+    {
+        ballY = 120 * scale;
+
+        windowProperties->ballSpeedY = -1 * windowProperties->ballSpeedY;
+    }
+
+    // if hit left wall
+    if (ballX < 0)
+    {
+        ballX = 0;
+
+        windowProperties->ballSpeedX = -1 * windowProperties->ballSpeedX;
+    }
+
+    // if hit bottom wall
+    // remove 1 life
+    // reset ball position and speedX speedY
+    if (ballY > WINDOW_HEIGHT * scale)
+    {
+        windowProperties->lives--;
+
+        // ball will start on paddle
+        ballX = windowProperties->paddleX + windowProperties->textures->paddle->width * scale * 3 / 2 - windowProperties->textures->ball->width * scale * 0.66 / 2;
+        ballY = windowProperties->paddleY - windowProperties->textures->ball->height * scale * 0.66;
+
+        // default ball direction is top-right
+        windowProperties->ballSpeedX = 1;
+        windowProperties->ballSpeedY = -1;
+        windowProperties->ballSpeedModifier = BALL_SPEED;
+    }
+
+    if (SDL_HasIntersection(&ballRect, &paddleRect))
+    {
+        ballY = windowProperties->paddleY - windowProperties->textures->ball->height * scale * 0.66;
+
+        windowProperties->ballSpeedY = -1 * windowProperties->ballSpeedY;
+    }
+
+    windowProperties->ballX = ballX;
+    windowProperties->ballY = ballY;
+
+    Array *bricks = windowProperties->currentLevel->bricks;
+
+    // 40 spacing from line which is 120px from top
+    float brickY = (120 + 40) * scale;
+
+    // bricks
+    // scale of brick is 1.3
+    float brickScale = 1.3;
+    for (int i = 0; i < bricks->size; i++)
+    {
+        Array *brickLine = (Array *)arrayGet(bricks, i);
+        // each brick have same width and height
+        float startX = (WINDOW_WIDTH * scale - brickLine->size * windowProperties->textures->brickYellow->width * scale * brickScale) / 2;
+
+        for (int l = 0; l < brickLine->size; l++)
+        {
+
+            Brick *brick = (Brick *)arrayGet(brickLine, l);
+            // if brick is not destroyed
+            Texture *texture = brick->texture;
+
+            float width = texture->width * brickScale * scale;
+            float height = texture->height * brickScale * scale;
+
+            if (!brick->destroyed)
+            {
+                // HANDLE INTERSECTIONS WITH BALL
+                SDL_Rect brickTopRect = {startX, brickY, width, 1};
+                SDL_Rect brickBottomRect = {startX, brickY + height, width, 1};
+                SDL_Rect brickLeftRect = {startX, brickY, 1, height};
+                SDL_Rect brickRightRect = {startX + width, brickY, 1, height};
+
+                // intersection with top of brick
+                if (SDL_HasIntersection(&ballRect, &brickTopRect))
+                {
+                    windowProperties->ballSpeedY = -1 * windowProperties->ballSpeedY;
+                    // move ball to top of brick
+                    ballY = brickY - windowProperties->textures->ball->height * scale * 0.66;
+                    // remove live and change texture
+                }
+
+                // intersection with bottom of brick
+                else if (SDL_HasIntersection(&ballRect, &brickBottomRect))
+                {
+                    windowProperties->ballSpeedY = -1 * windowProperties->ballSpeedY;
+                    // move ball to bottom of brick
+                    ballY = brickY + height + 1;
+
+                    // remove live and change texture
+                }
+
+                // intersection with left of brick
+                else if (SDL_HasIntersection(&ballRect, &brickLeftRect))
+                {
+                    windowProperties->ballSpeedX = -1 * windowProperties->ballSpeedX;
+                    // move ball to left of brick
+                    ballX = startX - windowProperties->textures->ball->width * scale * 0.66;
+                    // remove live and change texture
+                }
+
+                // intersection with right of brick
+                else if (SDL_HasIntersection(&ballRect, &brickRightRect))
+                {
+                    windowProperties->ballSpeedX = -1 * windowProperties->ballSpeedX;
+                    // move ball to right of brick
+                    ballX = startX + width;
+                    // remove live and change texture
+                }
+
+                //
+                if (!renderTexture(renderer, texture->texture, startX, brickY, width, height))
+                {
+                    fprintf(stderr, "Error rendering texture: %s", SDL_GetError());
+                }
+            }
+
+            startX += width;
+        }
+
+        brickY += windowProperties->textures->brickYellow->height * brickScale * scale;
+    }
 }
 
 void renderTitle(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars, TextCoords *textCoords)
@@ -936,12 +1087,12 @@ void renderTitle(SDL_Renderer *renderer, WindowProperties *windowProperties, Mai
     }
 
     // paddle
-    int paddlePathWidth = 250 * scale;
+    float paddlePathWidth = 250 * scale;
     // paddle is under title + 10 px up
     mainVars->paddlePosition.y = 0 + textCoords->height - 10;
     mainVars->paddleStartPosition = (WINDOW_WIDTH * scale / 2) - (paddlePathWidth / 2);
 
-    int paddleEnd = mainVars->paddleStartPosition + paddlePathWidth - windowProperties->textures->paddle->width * scale;
+    float paddleEnd = mainVars->paddleStartPosition + paddlePathWidth - windowProperties->textures->paddle->width * scale;
 
     // if paddle position is greater then paddle end + 10 px
     if (mainVars->paddlePosition.x > paddleEnd + 10)
@@ -1427,6 +1578,11 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
                 windowProperties->ballX = ((WINDOW_WIDTH * scale) - (windowProperties->textures->ball->width * scale * 0.66)) / 2;
                 windowProperties->ballY = windowProperties->paddleY - (windowProperties->textures->ball->height * scale * 0.66);
 
+                // default ball direction is top-right
+                windowProperties->ballSpeedX = 1;
+                windowProperties->ballSpeedY = -1;
+                windowProperties->ballSpeedModifier = BALL_SPEED;
+
                 windowProperties->pressingLeft = false;
                 windowProperties->pressingRight = false;
             }
@@ -1459,8 +1615,6 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
                         windowProperties->paddleX = 0;
                     }
                 }
-
-                printf("LEFT %f\n", windowProperties->paddleSpeed);
             }
             else if (e->key.keysym.sym == SDLK_RIGHT || e->key.keysym.sym == SDLK_d)
             {
@@ -1484,8 +1638,6 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
                         windowProperties->paddleX = WINDOW_WIDTH * scale - (windowProperties->textures->paddle->width * scale * 3);
                     }
                 }
-
-                printf("RIGHT %f\n", windowProperties->paddleSpeed);
             }
         }
         else if (e->type == SDL_KEYUP)
@@ -1494,13 +1646,11 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
             {
                 windowProperties->pressingLeft = false;
                 windowProperties->paddleSpeed = 0;
-                printf("LEFT UP\n");
             }
             else if (e->key.keysym.sym == SDLK_RIGHT || e->key.keysym.sym == SDLK_d)
             {
                 windowProperties->pressingRight = false;
                 windowProperties->paddleSpeed = 0;
-                printf("RIGHT UP\n");
             }
         }
     }
