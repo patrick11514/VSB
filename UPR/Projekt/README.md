@@ -77,8 +77,8 @@ Zobrazí parametry programu
         Level vždy začíná slovíčkem "%Level" a končí slovíčkem "%EndLevel"
 
         Mezi těmito značkami se poté definuje level:
-        * Level může mít maximální šířku <width>
-        * Level může mít maximální výšku <height>
+        * Level může mít maximální šířku 17 cihel
+        * Level může mít maximální výšku 24 cihel
         * Pokud level bude v nějaké/obou velikostech menší, vycentruje se
         * Do levelu se vždy píšou první velké písmeny cihy, kterou jsme definovali v nastavení
         * Mezera = žádná cihla zde nebude
