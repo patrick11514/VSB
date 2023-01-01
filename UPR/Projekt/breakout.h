@@ -13,6 +13,8 @@
 #define PADDLE_SPEED_MODIFIER 1.5f
 
 #define BALL_SPEED 5.0f
+#define BALL_SPEED_MODIFIER 0.005f
+#define BALL_MAX_SPEED 15.0f
 
 // default includes
 #include <stdbool.h>
@@ -138,6 +140,9 @@ typedef struct WindowProperties
     int lives;
     float ballX;
     float ballY;
+    float ballSpeedX;
+    float ballSpeedY;
+    double ballSpeedModifier;
     float paddleX;
     float paddleY;
     float paddleSpeed;
