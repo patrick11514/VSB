@@ -84,6 +84,11 @@ bool loadTextures(WindowProperties *windowProperties, SDL_Renderer *renderer)
     loadTexture(renderer, heart, "assets/images/heart.png");
     windowProperties->textures->heart = heart;
 
+    // ball
+    Texture *ball = (Texture *)malloc(sizeof(Texture));
+    loadTexture(renderer, ball, "assets/images/ball.png");
+    windowProperties->textures->ball = ball;
+
     return true;
 }
 
@@ -96,6 +101,7 @@ void freeTextures(WindowProperties *windowProperties)
     SDL_DestroyTexture(windowProperties->textures->buttonUpHover->texture);
     SDL_DestroyTexture(windowProperties->textures->buttonDownHover->texture);
     SDL_DestroyTexture(windowProperties->textures->heart->texture);
+    SDL_DestroyTexture(windowProperties->textures->ball->texture);
 
     // bricks
     SDL_DestroyTexture(windowProperties->textures->brickYellow->texture);
@@ -110,6 +116,7 @@ void freeTextures(WindowProperties *windowProperties)
     free(windowProperties->textures->buttonUpHover);
     free(windowProperties->textures->buttonDownHover);
     free(windowProperties->textures->heart);
+    free(windowProperties->textures->ball);
 
     // bricks
     free(windowProperties->textures->brickYellow);
