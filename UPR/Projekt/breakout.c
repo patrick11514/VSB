@@ -53,6 +53,10 @@ void tick(int *frames, SDL_Renderer *renderer, WindowProperties *windowPropertie
     {
         levelInfo(renderer, windowProperties, mainVars);
     }
+    else if (windowProperties->currentMenu == Game)
+    {
+        renderGame(renderer, windowProperties, mainVars);
+    }
 
     // rerender
     SDL_RenderPresent(renderer);
@@ -805,6 +809,123 @@ void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainV
     }
 }
 
+void renderGame(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars)
+{
+    float scale = windowProperties->scale;
+
+    // line at top
+    int topPadding = 120 * scale;
+
+    if (!renderRect(renderer, 0, topPadding, WINDOW_WIDTH * scale, 3 * scale, windowProperties->colors->white))
+    {
+        fprintf(stderr, "Error rendering rect: %s", SDL_GetError());
+    }
+
+    /**
+     * Concept:
+     * Numbers will be actually rendered by text and heart will be texture
+     * ----------------------------------------
+     * |                  |                   |
+     * |     0000         |    5555   0 0     |
+     * |     0  0         |    5     0 0 0    |
+     * |     0  0         |    555   0   0    |
+     * |     0  0         |      5    0 0     |
+     * |     0000         |    555     0      |
+     * ----------------------------------------
+     */
+
+    // vertical line
+    if (!renderRect(renderer, WINDOW_WIDTH * scale / 2 - 1.5, 0, 3, topPadding, windowProperties->colors->white))
+    {
+        fprintf(stderr, "Error rendering rect: %s", SDL_GetError());
+    }
+
+    // score text
+    int scoreTextWidth = 80 * scale;
+    int scoreTextHeight = 35 * scale;
+
+    int scoreTextX = (WINDOW_WIDTH * scale / 4) - (scoreTextWidth / 2);
+    int scoreTextY = 0;
+
+    if (!renderText(renderer, "Score", windowProperties->font, windowProperties->colors->white, scoreTextWidth, scoreTextHeight, scoreTextX, scoreTextY))
+    {
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
+    }
+
+    // score number
+    char scoreText[5];
+    snprintf(scoreText, 5, "%d", windowProperties->score);
+    int scoreLen = count_utf8_code_points(scoreText);
+
+    // 20px per char
+    int scoreWidth = scoreLen * 20 * scale;
+    int scoreHeight = 50 * scale;
+
+    int scoreX = (WINDOW_WIDTH * scale / 4) - (scoreWidth / 2);
+    // 120 is height of space between top and line
+    int scoreY = ((120 * scale - scoreTextHeight) / 2) - (scoreHeight / 2) + scoreTextHeight;
+
+    if (!renderText(renderer, scoreText, windowProperties->font, windowProperties->colors->white, scoreWidth, scoreHeight, scoreX, scoreY))
+    {
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
+    }
+
+    // lives text
+    int livesTextWidth = 80 * scale;
+    int livesTextHeight = 35 * scale;
+
+    int livesTextX = (WINDOW_WIDTH * scale / 4) * 3 - (livesTextWidth / 2);
+    int livesTextY = 0;
+
+    if (!renderText(renderer, "Lives", windowProperties->font, windowProperties->colors->white, livesTextWidth, livesTextHeight, livesTextX, livesTextY))
+    {
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
+    }
+
+    // lives number + heart texture
+    char livesText[5];
+    snprintf(livesText, 5, "%d", windowProperties->lives);
+    int len = count_utf8_code_points(livesText);
+
+    // 20px per char
+    int livesWidth = len * 20 * scale;
+    int livesHeight = 35 * scale;
+
+    Texture *hearthTexture = windowProperties->textures->heart;
+
+    // scaling for heart texture
+    double scaling = (float)livesHeight / hearthTexture->height;
+
+    //+ hearth + spacing 10px
+    int livesX = (WINDOW_WIDTH * scale / 4) * 3 - (livesWidth + windowProperties->textures->heart->width * scaling / 2) + 10 * scale;
+    int livesY = ((120 * scale - livesTextHeight) / 2) - (livesHeight / 2) + livesTextHeight;
+
+    if (!renderText(renderer, livesText, windowProperties->font, windowProperties->colors->white, livesWidth, livesHeight, livesX, livesY))
+    {
+        fprintf(stderr, "Error rendering text: %s", SDL_GetError());
+    }
+
+    // heart texture
+    if (!renderTexture(renderer, hearthTexture->texture, livesX + livesWidth + 10 * scale, livesY, hearthTexture->width * scaling, hearthTexture->height * scaling))
+    {
+        fprintf(stderr, "Error rendering texture: %s", SDL_GetError());
+    }
+
+    //******************** GAME ********************
+
+    // ball with 0.66 scale
+    if (!renderTexture(renderer, windowProperties->textures->ball->texture, windowProperties->ballX, windowProperties->ballY, windowProperties->textures->ball->width * scale * 0.66, windowProperties->textures->ball->height * scale * 0.66))
+    {
+        fprintf(stderr, "Error rendering texture: %s", SDL_GetError());
+    }
+
+    // paddle with scale 3
+    if (!renderTexture(renderer, windowProperties->textures->paddle->texture, windowProperties->paddleX, windowProperties->paddleY, windowProperties->textures->paddle->width * scale * 3, windowProperties->textures->paddle->height * scale * 3))
+    {
+        fprintf(stderr, "Error rendering texture: %s", SDL_GetError());
+    }
+}
+
 void renderTitle(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars, TextCoords *textCoords)
 {
     float scale = windowProperties->scale;
@@ -867,6 +988,8 @@ void renderTitle(SDL_Renderer *renderer, WindowProperties *windowProperties, Mai
 
 void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, MainVariables *mainVars)
 {
+    float scale = windowProperties->scale;
+
     if (e->type == SDL_MOUSEMOTION)
     {
         if (windowProperties->currentMenu == MainMenu)
@@ -1292,6 +1415,92 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
             {
                 windowProperties->currentMenu = Game;
                 mainVars->levelInfoStartHover = false;
+
+                // set defalt variables by level
+                windowProperties->score = 0;
+                windowProperties->lives = windowProperties->currentLevel->health;
+                windowProperties->paddleSpeed = 0;
+                windowProperties->paddleX = ((WINDOW_WIDTH * scale) - (windowProperties->textures->paddle->width * scale * 3)) / 2;
+                // 80 pixels from botton
+                windowProperties->paddleY = WINDOW_HEIGHT * scale - 80;
+                // ball
+                windowProperties->ballX = ((WINDOW_WIDTH * scale) - (windowProperties->textures->ball->width * scale * 0.66)) / 2;
+                windowProperties->ballY = windowProperties->paddleY - (windowProperties->textures->ball->height * scale * 0.66);
+
+                windowProperties->pressingLeft = false;
+                windowProperties->pressingRight = false;
+            }
+        }
+    }
+
+    if (windowProperties->currentMenu == Game)
+    {
+        if (e->type == SDL_KEYDOWN)
+        {
+            if (e->key.keysym.sym == SDLK_LEFT || e->key.keysym.sym == SDLK_a)
+            {
+                if (!windowProperties->pressingLeft)
+                {
+                    windowProperties->pressingLeft = true;
+                }
+
+                if (windowProperties->pressingLeft)
+                {
+                    if (windowProperties->paddleSpeed < PADDLE_MAX_SPEED)
+                    {
+                        windowProperties->paddleSpeed += PADDLE_SPEED_MODIFIER;
+                    }
+                    if (windowProperties->paddleX > 0)
+                    {
+                        windowProperties->paddleX -= windowProperties->paddleSpeed;
+                    }
+                    if (windowProperties->paddleX < 0)
+                    {
+                        windowProperties->paddleX = 0;
+                    }
+                }
+
+                printf("LEFT %f\n", windowProperties->paddleSpeed);
+            }
+            else if (e->key.keysym.sym == SDLK_RIGHT || e->key.keysym.sym == SDLK_d)
+            {
+                if (!windowProperties->pressingRight)
+                {
+                    windowProperties->pressingRight = true;
+                }
+
+                if (windowProperties->pressingRight)
+                {
+                    if (windowProperties->paddleSpeed < PADDLE_MAX_SPEED)
+                    {
+                        windowProperties->paddleSpeed += PADDLE_SPEED_MODIFIER;
+                    }
+                    if (windowProperties->paddleX < WINDOW_WIDTH * scale - (windowProperties->textures->paddle->width * scale * 3))
+                    {
+                        windowProperties->paddleX += windowProperties->paddleSpeed;
+                    }
+                    if (windowProperties->paddleX > WINDOW_WIDTH * scale - (windowProperties->textures->paddle->width * scale * 3))
+                    {
+                        windowProperties->paddleX = WINDOW_WIDTH * scale - (windowProperties->textures->paddle->width * scale * 3);
+                    }
+                }
+
+                printf("RIGHT %f\n", windowProperties->paddleSpeed);
+            }
+        }
+        else if (e->type == SDL_KEYUP)
+        {
+            if (e->key.keysym.sym == SDLK_LEFT || e->key.keysym.sym == SDLK_a)
+            {
+                windowProperties->pressingLeft = false;
+                windowProperties->paddleSpeed = 0;
+                printf("LEFT UP\n");
+            }
+            else if (e->key.keysym.sym == SDLK_RIGHT || e->key.keysym.sym == SDLK_d)
+            {
+                windowProperties->pressingRight = false;
+                windowProperties->paddleSpeed = 0;
+                printf("RIGHT UP\n");
             }
         }
     }
