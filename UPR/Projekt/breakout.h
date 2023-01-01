@@ -9,6 +9,11 @@
 #define HIGHSCORES_PER_PAGE 8
 #define LEVELS_PER_PAGE 8
 
+#define PADDLE_MAX_SPEED 15.0f
+#define PADDLE_SPEED_MODIFIER 1.5f
+
+#define BALL_SPEED 5.0f
+
 // default includes
 #include <stdbool.h>
 
@@ -73,6 +78,7 @@ typedef struct Textures
     Texture *brickBlue;
     // other
     Texture *heart;
+    Texture *ball;
 } Textures;
 
 typedef struct TextCoords
@@ -126,8 +132,17 @@ typedef struct WindowProperties
     Highscores *highscores;
     // levels
     Array *levels;
-    // current level
+    // the game
     Level *currentLevel;
+    int score;
+    int lives;
+    float ballX;
+    float ballY;
+    float paddleX;
+    float paddleY;
+    float paddleSpeed;
+    bool pressingLeft;
+    bool pressingRight;
 } WindowProperties;
 
 // function ran on every SDL event
@@ -153,6 +168,9 @@ void renderLevelSelect(SDL_Renderer *renderer, WindowProperties *windowPropertie
 
 // level info before level starts
 void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars);
+
+// the game
+void renderGame(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars);
 
 // render title function
 void renderTitle(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars, TextCoords *textCoords);
