@@ -90,7 +90,16 @@ Level *loadLevel(WindowProperties *windowProperties, char *_fileName)
                     exit(1);
                 }
 
-                levelData->description = strdup(text);
+                // here we need strlen, because we need the strlen's len of character, but not the len of utf8 code points
+                char *description = (char *)malloc(sizeof(char) * (strlen(text) + 1));
+
+                if (!description)
+                {
+                    fprintf(stderr, "Unable to allocate memory for description.\n");
+                    exit(1);
+                }
+
+                levelData->description = strcpy(description, text);
             }
             else if (strstr(row, " Brick: ") != NULL)
             {

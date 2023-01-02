@@ -2145,8 +2145,6 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
                     char *scoreText = (char *)malloc(sizeof(char) * 20);
                     sprintf(scoreText, "%d", score);
 
-                    printf("%s - %s\n", windowProperties->currentUserName, scoreText);
-
                     addHighscore(windowProperties->highscores, windowProperties->currentUserName, scoreText);
 
                     free(scoreText);
@@ -2237,7 +2235,7 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
                     char c = (e->key.keysym.sym - 'a') + 'A';
                     char temp[20];
                     strcpy(temp, windowProperties->currentUserName);
-                    snprintf(windowProperties->currentUserName, 20, "%s%c", temp, c);
+                    snprintf(windowProperties->currentUserName, 21, "%s%c", temp, c);
                 }
             }
             else if (e->key.keysym.sym >= SDLK_0 && e->key.keysym.sym <= SDLK_9)
@@ -2247,7 +2245,7 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
                     char c = e->key.keysym.sym;
                     char temp[20];
                     strcpy(temp, windowProperties->currentUserName);
-                    snprintf(windowProperties->currentUserName, 20, "%s%c", temp, c);
+                    snprintf(windowProperties->currentUserName, 21, "%s%c", temp, c);
                 }
             }
             else if (e->key.keysym.sym >= SDLK_KP_1 && e->key.keysym.sym <= SDLK_KP_0)
@@ -2258,7 +2256,7 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
                     char c = e->key.keysym.sym > SDLK_KP_9 ? '0' : e->key.keysym.sym - SDLK_KP_1 + '1';
                     char temp[20];
                     strcpy(temp, windowProperties->currentUserName);
-                    snprintf(windowProperties->currentUserName, 20, "%s%c", temp, c);
+                    snprintf(windowProperties->currentUserName, 21, "%s%c", temp, c);
                 }
             }
             else if (e->key.keysym.sym == SDLK_BACKSPACE && len > 0)

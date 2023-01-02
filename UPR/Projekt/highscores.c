@@ -35,6 +35,13 @@ Highscores *readHighscores(FILE *file)
             exit(1);
         }
 
+        char *newName = (char *)malloc(strlen(name) + 1);
+        if (!newName)
+        {
+            printf("Unable to allocate memory for name");
+            exit(1);
+        }
+
         char *score = splitInput(NULL);
 
         if (!score)
@@ -43,12 +50,14 @@ Highscores *readHighscores(FILE *file)
             exit(1);
         }
 
-        if (!arrayAdd(highscores->players, strdup(name)))
+        char *newScore = (char *)malloc(strlen(score) + 1);
+
+        if (!arrayAdd(highscores->players, strcpy(newName, name)))
         {
             printf("Unable to add player to array");
             exit(1);
         }
-        if (!arrayAdd(highscores->scores, strdup(score)))
+        if (!arrayAdd(highscores->scores, strcpy(newScore, score)))
         {
             printf("Unable to add score to array");
             exit(1);
@@ -62,28 +71,28 @@ Highscores *readHighscores(FILE *file)
 
 void addHighscore(Highscores *highscores, char *name, char *score)
 {
-    char *nameCopied = strdup(name);
+    char *nameCopied = (char *)malloc(strlen(name) + 1);
 
     if (!nameCopied)
     {
-        printf("Unable to copy name");
+        printf("Unable to allocate memory for name");
         exit(1);
     }
 
-    char *scoreCopied = strdup(score);
+    char *scoreCopied = (char *)malloc(strlen(score) + 1);
 
     if (!scoreCopied)
     {
-        printf("Unable to copy score");
+        printf("Unable to allocate memory for score");
         exit(1);
     }
 
-    if (!arrayAdd(highscores->players, nameCopied))
+    if (!arrayAdd(highscores->players, strcpy(nameCopied, name)))
     {
         printf("Unable to add player to array");
         exit(1);
     }
-    if (!arrayAdd(highscores->scores, scoreCopied))
+    if (!arrayAdd(highscores->scores, strcpy(scoreCopied, score)))
     {
         printf("Unable to add score to array");
         exit(1);
