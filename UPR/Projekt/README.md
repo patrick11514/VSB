@@ -2,7 +2,7 @@
 
 ### Parametry programu
 Udávají:
---[paramter]=hodnota
+--[parametr]=hodnota
 
 Příklad:
 ```JS
@@ -41,7 +41,7 @@ Zobrazí parametry programu
 
     ![Yellow Brick](https://upload.patrick115.eu/screenshot/brick_yellow.png) 1 ![Heart](https://upload.patrick115.eu/screenshot/hearth.png)
 
-    Po každém zásahu se cihla promnění na tu pod ní a Žlutá po zásahu zmizí.
+    Po každém zásahu se cihla promění na tu pod ní a Žlutá po zásahu zmizí.
 
     V každém levlu jsou potom definované životy.
 
