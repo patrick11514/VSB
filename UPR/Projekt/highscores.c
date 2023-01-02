@@ -6,6 +6,7 @@
 // my includes
 #include "highscores.h"
 #include "dynamicarray.h"
+#include "global.h"
 
 // ======================= [ HIGHSCORE FUNCTIONS ] =====================
 
@@ -89,14 +90,6 @@ void addHighscore(Highscores *highscores, char *name, char *score)
     }
     highscores->count++;
 }
-
-void swap(char **x, char **y)
-{
-    char *temp = *x;
-    *x = *y;
-    *y = temp;
-}
-
 void sortHighscores(Highscores *highscores)
 {
     Array *scores = highscores->scores;
@@ -110,8 +103,8 @@ void sortHighscores(Highscores *highscores)
         {
             if (atoi((char *)arrayGet(scores, j)) < atoi((char *)arrayGet(scores, j + 1)))
             {
-                swap((char **)arrayGetPTR(scores, j), (char **)arrayGetPTR(scores, j + 1));
-                swap((char **)arrayGetPTR(names, j), (char **)arrayGetPTR(names, j + 1));
+                swap(arrayGetPTR(scores, j), arrayGetPTR(scores, j + 1));
+                swap(arrayGetPTR(names, j), arrayGetPTR(names, j + 1));
             }
         }
     }

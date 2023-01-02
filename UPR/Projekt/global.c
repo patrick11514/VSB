@@ -28,4 +28,11 @@ float getScale(int displayHeight)
     return 1.0;
 }
 
+void swap(void **x, void **y)
+{
+    void *temp = *x;
+    *x = *y;
+    *y = temp;
+}
+
 // =====================================================================

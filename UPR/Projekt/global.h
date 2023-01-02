@@ -11,4 +11,7 @@ char *splitInput(char *input) __attribute_warn_unused_result__;
 // get default scale of application by current hight of display resolution
 float getScale(int displayHeight) __attribute_warn_unused_result__;
 
+// swap pointers
+void swap(void **x, void **y);
+
 #endif

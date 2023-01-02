@@ -18,9 +18,6 @@ Highscores *readHighscores(FILE *file) __attribute_warn_unused_result__;
 // Add new highscore to existings one
 void addHighscore(Highscores *highscores, char *name, char *score);
 
-// swap names between X and Y
-void swap(char **x, char **y);
-
 // sort from highest to lowest
 void sortHighscores(Highscores *highscores);
 
