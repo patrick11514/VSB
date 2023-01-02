@@ -55,6 +55,9 @@ Zobrazí parametry programu
         Mezi těmito značkami se poté definuje nastavení:
         * **Lives: číslo** definuje počet životů hráče **(Požadováné)**
         * **Score: číslo** definuje, kolik bodů dostane hráč za zničenou cihlu (počítá se i snížení životů) **(Požadované)**
+        * **BallSpeed: des. číslo (float)** určuje základní rychlost míčku **(Požadované)**
+        * **BallSpeedModifier: des. číslo (float)** určuje o kolik se zvětší rychlost míčků, každých 60 snímků **(Požadované)**
+        * **BallSpeedMax: des. číslo (float)** Určuje maximální rychlost míčku **(Požadované)**
         * **Description: text** Definuje krátký popisek levelu, který bude v seznamu levelů. (Max 20 znaků) **(Požadováné)**
         * **Barva Brick: číslo** definuje počet životů cihly
         * Nikdy nesmí existovat dvě cihly, které mají stejný počet životů.
@@ -64,6 +67,9 @@ Zobrazí parametry programu
         %Settings
         Lives: 5
         Score: 10
+        BallSpeed: 5.0
+        BallSpeedModifier: 0.005
+        BallSpeedMax: 10.0
         Description: Level 2 (Těžší)
         Yellow Brick: 4
         Blue Brick: 5
@@ -85,7 +91,12 @@ Zobrazí parametry programu
 
         ```YAML
         %Level
-        
+        LLLLLLLLLLLLLL
+        LLLLLLLLLLLLLL
+        LLYYYYYYYYYYLL
+        LLYLLYYYYLLYLL
+        LLYYYYLLYYYYLL
+        LLLLLLLLLLLLLL
         %EndLevel
         ```
 
@@ -94,6 +105,9 @@ Zobrazí parametry programu
         %Settings
         Lives: 5
         Score: 10
+        BallSpeed: 5.0
+        BallSpeedModifier: 0.005
+        BallSpeedMax: 10.0
         Description: Level 2 (Těžší)
         Yellow Brick: 4
         Blue Brick: 5
@@ -102,7 +116,12 @@ Zobrazí parametry programu
         Yellow Brick: 1
         %EndSettings
         %Level
-        
+        LLLLLLLLLLLLLL
+        LLLLLLLLLLLLLL
+        LLYYYYYYYYYYLL
+        LLYLLYYYYLLYLL
+        LLYYYYLLYYYYLL
+        LLLLLLLLLLLLLL
         %EndLevel
         ```
 * **includeDefaultLevels**:
