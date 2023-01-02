@@ -1405,19 +1405,19 @@ void renderControls(SDL_Renderer *renderer, WindowProperties *windowProperties, 
     }
 
     // ESC - back to menu select
-    float escWidth = 600 * scale;
+    float escWidth = 500 * scale;
     float escHeight = 50 * scale;
 
     float escX = (WINDOW_WIDTH * scale / 2) - (escWidth / 2);
     float escY = controlsY + controlsHeight + 10 * scale;
 
-    if (!renderText(renderer, "ESC - back to menu select (works in game)", windowProperties->font, windowProperties->colors->white, escWidth, escHeight, escX, escY))
+    if (!renderText(renderer, "ESC - back to menu select", windowProperties->font, windowProperties->colors->white, escWidth, escHeight, escX, escY))
     {
         fprintf(stderr, "Error rendering text: %s\n", SDL_GetError());
     }
 
     // A/Arrow left - move paddle left
-    float aWidth = 450 * scale;
+    float aWidth = 500 * scale;
     float aHeight = 50 * scale;
 
     float aX = (WINDOW_WIDTH * scale / 2) - (aWidth / 2);
@@ -1429,7 +1429,7 @@ void renderControls(SDL_Renderer *renderer, WindowProperties *windowProperties, 
     }
 
     // D/Arrow right - move paddle right
-    float dWidth = 475 * scale;
+    float dWidth = 525 * scale;
     float dHeight = 50 * scale;
 
     float dX = (WINDOW_WIDTH * scale / 2) - (dWidth / 2);
