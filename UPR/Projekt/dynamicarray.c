@@ -46,6 +46,17 @@ bool arrayAdd(Array *array, void *item)
     return true;
 }
 
+bool arraySet(Array *array, void *item, int index)
+{
+    if (index > array->size || index < 0)
+    {
+        return false;
+    }
+
+    array->data[index] = item;
+    return true;
+}
+
 void *arrayGet(Array *array, int index)
 {
     if (index > array->size || index < 0)
