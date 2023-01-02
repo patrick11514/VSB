@@ -21,16 +21,6 @@
 
 int main(int argc, char **argv)
 {
-    // =========================================== [ ARGUMENTS ] ===========================================
-    bool levels = false;
-    bool includeDefaultLevels = false;
-
-    if (loadArgs(argc, argv, &levels, &includeDefaultLevels))
-    {
-        return 0;
-    }
-
-    // =====================================================================================
 
     // init sdl
     SDL_Window *window = NULL;
@@ -71,6 +61,8 @@ int main(int argc, char **argv)
     if (!loadTextures(windowProperties, renderer))
     {
         fprintf(stderr, "Unable to load textures.");
+        freeTextures(windowProperties);
+        freeWindowProperties(windowProperties);
         SDL_DestroyWindow(window);
         SDL_Quit();
         return 1;
@@ -86,60 +78,24 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    // level 1
+    // =========================================== [ ARGUMENTS ] ===========================================
+    bool levels = false;
+    bool includeDefaultLevels = false;
 
-    // Level *level1 = (Level *)malloc(sizeof(Level));
-
-    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level1.yml")))
+    if (loadArgs(argc, argv, &levels, &includeDefaultLevels, windowProperties))
     {
-        fprintf(stderr, "Unable to add level to array.\n");
-        exit(1);
+        freeTextures(windowProperties);
+        freeWindowProperties(windowProperties);
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return 1;
     }
 
-    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level2.yml")))
+    // =====================================================================================
+
+    if (!levels || (levels && includeDefaultLevels))
     {
-        fprintf(stderr, "Unable to add level to array.\n");
-        exit(1);
-    }
-    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level2.yml")))
-    {
-        fprintf(stderr, "Unable to add level to array.\n");
-        exit(1);
-    }
-    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level2.yml")))
-    {
-        fprintf(stderr, "Unable to add level to array.\n");
-        exit(1);
-    }
-    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level2.yml")))
-    {
-        fprintf(stderr, "Unable to add level to array.\n");
-        exit(1);
-    }
-    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level2.yml")))
-    {
-        fprintf(stderr, "Unable to add level to array.\n");
-        exit(1);
-    }
-    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level2.yml")))
-    {
-        fprintf(stderr, "Unable to add level to array.\n");
-        exit(1);
-    }
-    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level2.yml")))
-    {
-        fprintf(stderr, "Unable to add level to array.\n");
-        exit(1);
-    }
-    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level2.yml")))
-    {
-        fprintf(stderr, "Unable to add level to array.\n");
-        exit(1);
-    }
-    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level2.yml")))
-    {
-        fprintf(stderr, "Unable to add level to array.\n");
-        exit(1);
+        loadDefaultLevels(windowProperties);
     }
 
     // ========================================= [ MAIN VARIABLES ] ===========================================
