@@ -1,0 +1,12 @@
+%Settings
+Lives: 5
+Score: 10
+BallSpeed: 5.0
+BallSpeedModifier: 0.005
+BallSpeedMax: 10.0
+Description: Ukázka 1
+Yellow Brick: 1
+%EndSettings
+%Level
+Y
+%EndLevel
