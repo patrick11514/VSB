@@ -5,8 +5,9 @@
 
 // my include
 #include "args.h"
+#include "files.h"
 
-bool loadArgs(int argc, char **argv, bool *levels, bool *includeDefaultLevels)
+bool loadArgs(int argc, char **argv, bool *levels, bool *includeDefaultLevels, WindowProperties *windowProperties)
 {
     if (argc > 1)
     {
@@ -34,11 +35,28 @@ bool loadArgs(int argc, char **argv, bool *levels, bool *includeDefaultLevels)
             {
                 // get level file
                 char *levelFiles = argv[i] + 8;
-                printf("%s\n", levelFiles);
+
+                char *name = strtok(levelFiles, ",");
+
+                while (name != NULL)
+                {
+                    // load level
+                    Level *level = loadLevel(windowProperties, name);
+                    if (level == NULL)
+                    {
+                        printf("Could not load level: %s, skipping\n", name);
+                    }
+                    else
+                    {
+                        if (!arrayAdd(windowProperties->levels, level))
+                        {
+                            printf("Could not add level: %s to array, skipping\n", name);
+                        }
+                    }
+                    name = strtok(NULL, ",");
+                }
 
                 *levels = true;
-
-                return true;
             }
 
             // load default levels beside given levels
@@ -52,7 +70,6 @@ bool loadArgs(int argc, char **argv, bool *levels, bool *includeDefaultLevels)
                 }
                 else
                 {
-                    printf("%s\n", includeDL);
 
                     if (strcmp(includeDL, "true") == 0)
                     {
