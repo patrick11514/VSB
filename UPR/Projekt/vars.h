@@ -34,4 +34,7 @@ void loadColors(Colors *colors);
 // init SDL
 bool initSDL(SDL_Window **window, SDL_Renderer **renderer, float *scale) __attribute_warn_unused_result__;
 
+// load default levels
+void loadDefaultLevels(WindowProperties *windowProperties);
+
 #endif
