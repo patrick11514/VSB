@@ -1442,7 +1442,7 @@ void renderControls(SDL_Renderer *renderer, WindowProperties *windowProperties, 
 
     // back button
     float backWidth = 125 * scale;
-    float backHeight = 50 * scale;
+    float backHeight = 80 * scale;
 
     float backX = (WINDOW_WIDTH * scale / 2) - (backWidth / 2);
     float backY = dY + dHeight + 10 * scale;
