@@ -39,6 +39,9 @@ Level *loadLevel(WindowProperties *windowProperties, char *_fileName)
 
     Level *levelData = (Level *)malloc(sizeof(Level));
     levelData->health = -1;
+    levelData->ballSpeed = -1.0;
+    levelData->ballSpeedModifier = -1.0;
+    levelData->ballSpeedMax = -1.0;
     levelData->description = NULL;
     levelData->brickHealths = arrayInit(ARRAY_DEFAULT_CAPACITY);
     if (!levelData->brickHealths)
@@ -163,6 +166,18 @@ Level *loadLevel(WindowProperties *windowProperties, char *_fileName)
                     fprintf(stderr, "Unable to add brick to array.\n");
                     exit(1);
                 }
+            }
+            else if (strncmp(row, "BallSpeed: ", 11) == 0)
+            {
+                levelData->ballSpeed = atof(row + 11);
+            }
+            else if (strncmp(row, "BallSpeedModifier: ", 19) == 0)
+            {
+                levelData->ballSpeedModifier = atof(row + 19);
+            }
+            else if (strncmp(row, "BallSpeedMax: ", 14) == 0)
+            {
+                levelData->ballSpeedMax = atof(row + 14);
             }
             else if (strcmp(row, "%EndSettings") == 0)
             {
@@ -332,6 +347,13 @@ Level *loadLevel(WindowProperties *windowProperties, char *_fileName)
                         exit(1);
                     }
                 }
+                else if (brickChar == ' ')
+                {
+                    // need some texture to leave spacing of width as brick
+                    brick->texture = windowProperties->textures->brickYellow;
+                    brick->lives = 0;
+                    brick->destroyed = true;
+                }
                 else
                 {
                     fprintf(stderr, "Unable to find texture for brick.\n");
@@ -370,6 +392,24 @@ Level *loadLevel(WindowProperties *windowProperties, char *_fileName)
         exit(1);
     }
 
+    if (levelData->ballSpeed == -1.0)
+    {
+        fprintf(stderr, "Level does not contains ball speed.\n");
+        exit(1);
+    }
+
+    if (levelData->ballSpeedMax == -1.0)
+    {
+        fprintf(stderr, "Level does not contains ball speed max.\n");
+        exit(1);
+    }
+
+    if (levelData->ballSpeedModifier == -1.0)
+    {
+        fprintf(stderr, "Level does not contains ball speed modifier.\n");
+        exit(1);
+    }
+
     if (levelData->description == NULL)
     {
         fprintf(stderr, "Level does not contains description.\n");
@@ -384,17 +424,11 @@ Level *loadLevel(WindowProperties *windowProperties, char *_fileName)
         for (int j = 0; j < levelData->brickHealths->size - i - 1; j++)
         {
 
-            if (((BrickHealth *)arrayGet(levelData->brickHealths, j))->lives < ((BrickHealth *)arrayGet(levelData->brickHealths, j + 1))->lives)
+            if (((BrickHealth *)arrayGet(levelData->brickHealths, j))->lives > ((BrickHealth *)arrayGet(levelData->brickHealths, j + 1))->lives)
             {
                 swap(arrayGetPTR(levelData->brickHealths, j), arrayGetPTR(levelData->brickHealths, j + 1));
             }
         }
-    }
-
-    for (int i = 0; i < levelData->brickHealths->size; i++)
-    {
-        BrickHealth *brickHealth = (BrickHealth *)arrayGet(levelData->brickHealths, i);
-        printf(" %d\n", brickHealth->lives);
     }
 
     return levelData;
