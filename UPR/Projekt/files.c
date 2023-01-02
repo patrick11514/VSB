@@ -12,6 +12,7 @@
 #include "breakout.h"
 #include "dynamicarray.h"
 #include "assets.h"
+#include "global.h"
 
 FILE *openFile(char *filename, char *mode)
 {
@@ -77,6 +78,7 @@ Level *loadLevel(WindowProperties *windowProperties, char *_fileName)
             else if (strncmp(row, "Description: ", 13) == 0)
             {
                 char *text = row + 13;
+
                 int len = count_utf8_code_points(text);
 
                 if (len > 20)
@@ -85,8 +87,7 @@ Level *loadLevel(WindowProperties *windowProperties, char *_fileName)
                     exit(1);
                 }
 
-                levelData->description = (char *)malloc(sizeof(char) * (strlen(row) - 13) + 1);
-                strcpy(levelData->description, text);
+                levelData->description = strdup(text);
             }
             else if (strstr(row, " Brick: ") != NULL)
             {
@@ -124,26 +125,32 @@ Level *loadLevel(WindowProperties *windowProperties, char *_fileName)
                 if (strcmp(color, "yellow") == 0)
                 {
                     brick->texture = windowProperties->textures->brickYellow;
+                    brick->identifier = 'Y';
                 }
                 else if (strcmp(color, "lime") == 0)
                 {
                     brick->texture = windowProperties->textures->brickLime;
+                    brick->identifier = 'L';
                 }
                 else if (strcmp(color, "gray") == 0)
                 {
                     brick->texture = windowProperties->textures->brickGray;
+                    brick->identifier = 'G';
                 }
                 else if (strcmp(color, "red") == 0)
                 {
                     brick->texture = windowProperties->textures->brickRed;
+                    brick->identifier = 'R';
                 }
                 else if (strcmp(color, "purple") == 0)
                 {
                     brick->texture = windowProperties->textures->brickPurple;
+                    brick->identifier = 'P';
                 }
                 else if (strcmp(color, "blue") == 0)
                 {
                     brick->texture = windowProperties->textures->brickBlue;
+                    brick->identifier = 'B';
                 }
                 else
                 {
@@ -208,26 +215,122 @@ Level *loadLevel(WindowProperties *windowProperties, char *_fileName)
                 if (brickChar == 'Y')
                 {
                     brick->texture = windowProperties->textures->brickYellow;
+                    brick->lives = -1;
+                    for (int i = 0; i < levelData->brickHealths->size; i++)
+                    {
+                        BrickHealth *brickHealth = (BrickHealth *)levelData->brickHealths->data[i];
+                        if (brickHealth->identifier == 'Y')
+                        {
+                            brick->lives = brickHealth->lives;
+                            break;
+                        }
+                    }
+
+                    if (brick->lives == -1)
+                    {
+                        fprintf(stderr, "Unable to find lives for brick.\n");
+                        exit(1);
+                    }
                 }
                 else if (brickChar == 'L')
                 {
                     brick->texture = windowProperties->textures->brickLime;
+                    brick->lives = -1;
+                    for (int i = 0; i < levelData->brickHealths->size; i++)
+                    {
+                        BrickHealth *brickHealth = (BrickHealth *)levelData->brickHealths->data[i];
+                        if (brickHealth->identifier == 'L')
+                        {
+                            brick->lives = brickHealth->lives;
+                            break;
+                        }
+                    }
+
+                    if (brick->lives == -1)
+                    {
+                        fprintf(stderr, "Unable to find lives for brick.\n");
+                        exit(1);
+                    }
                 }
                 else if (brickChar == 'G')
                 {
                     brick->texture = windowProperties->textures->brickGray;
+                    brick->lives = -1;
+                    for (int i = 0; i < levelData->brickHealths->size; i++)
+                    {
+                        BrickHealth *brickHealth = (BrickHealth *)levelData->brickHealths->data[i];
+                        if (brickHealth->identifier == 'G')
+                        {
+                            brick->lives = brickHealth->lives;
+                            break;
+                        }
+                    }
+
+                    if (brick->lives == -1)
+                    {
+                        fprintf(stderr, "Unable to find lives for brick.\n");
+                        exit(1);
+                    }
                 }
                 else if (brickChar == 'R')
                 {
                     brick->texture = windowProperties->textures->brickRed;
+                    brick->lives = -1;
+                    for (int i = 0; i < levelData->brickHealths->size; i++)
+                    {
+                        BrickHealth *brickHealth = (BrickHealth *)levelData->brickHealths->data[i];
+                        if (brickHealth->identifier == 'R')
+                        {
+                            brick->lives = brickHealth->lives;
+                            break;
+                        }
+                    }
+
+                    if (brick->lives == -1)
+                    {
+                        fprintf(stderr, "Unable to find lives for brick.\n");
+                        exit(1);
+                    }
                 }
                 else if (brickChar == 'P')
                 {
                     brick->texture = windowProperties->textures->brickPurple;
+                    brick->lives = -1;
+                    for (int i = 0; i < levelData->brickHealths->size; i++)
+                    {
+                        BrickHealth *brickHealth = (BrickHealth *)levelData->brickHealths->data[i];
+                        if (brickHealth->identifier == 'P')
+                        {
+                            brick->lives = brickHealth->lives;
+                            break;
+                        }
+                    }
+
+                    if (brick->lives == -1)
+                    {
+                        fprintf(stderr, "Unable to find lives for brick.\n");
+                        exit(1);
+                    }
                 }
                 else if (brickChar == 'B')
                 {
                     brick->texture = windowProperties->textures->brickBlue;
+                    brick->lives = -1;
+                    for (int i = 0; i < levelData->brickHealths->size; i++)
+                    {
+                        BrickHealth *brickHealth = (BrickHealth *)levelData->brickHealths->data[i];
+                        if (brickHealth->identifier == 'B')
+                        {
+                            brick->lives = brickHealth->lives;
+                            break;
+                        }
+                    }
+
+                    if (brick->lives == -1)
+                    {
+                        fprintf(stderr, "Unable to find lives for brick.\n");
+                        exit(1);
+                    }
                 }
                 else
                 {
@@ -274,6 +377,25 @@ Level *loadLevel(WindowProperties *windowProperties, char *_fileName)
     }
 
     fclose(file);
+
+    // sort brick lives by descending
+    for (int i = 0; i < levelData->brickHealths->size - 1; i++)
+    {
+        for (int j = 0; j < levelData->brickHealths->size - i - 1; j++)
+        {
+
+            if (((BrickHealth *)arrayGet(levelData->brickHealths, j))->lives < ((BrickHealth *)arrayGet(levelData->brickHealths, j + 1))->lives)
+            {
+                swap(arrayGetPTR(levelData->brickHealths, j), arrayGetPTR(levelData->brickHealths, j + 1));
+            }
+        }
+    }
+
+    for (int i = 0; i < levelData->brickHealths->size; i++)
+    {
+        BrickHealth *brickHealth = (BrickHealth *)arrayGet(levelData->brickHealths, i);
+        printf(" %d\n", brickHealth->lives);
+    }
 
     return levelData;
 }

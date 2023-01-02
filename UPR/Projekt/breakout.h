@@ -9,8 +9,7 @@
 #define HIGHSCORES_PER_PAGE 8
 #define LEVELS_PER_PAGE 8
 
-#define PADDLE_MAX_SPEED 15.0f
-#define PADDLE_SPEED_MODIFIER 1.5f
+#define PADDLE_SPEED 25.0f
 
 #define BALL_SPEED 5.0f
 #define BALL_SPEED_MODIFIER 0.005f
@@ -98,11 +97,13 @@ typedef struct Brick
     int y;
     Texture *texture;
     bool destroyed;
+    int lives;
 } Brick;
 
 typedef struct BrickHealth
 {
     int lives;
+    char identifier;
     Texture *texture;
 } BrickHealth;
 
@@ -146,8 +147,6 @@ typedef struct WindowProperties
     float paddleX;
     float paddleY;
     float paddleSpeed;
-    bool pressingLeft;
-    bool pressingRight;
 } WindowProperties;
 
 // function ran on every SDL event
