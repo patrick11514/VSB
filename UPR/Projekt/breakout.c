@@ -999,6 +999,8 @@ void renderGame(SDL_Renderer *renderer, WindowProperties *windowProperties, Main
     // 40 spacing from line which is 120px from top
     float brickY = (120 + 40) * scale;
 
+    bool alreadyIntersected = false;
+
     // bricks
     // scale of brick is 1.3
     float brickScale = 1.3;
@@ -1010,7 +1012,6 @@ void renderGame(SDL_Renderer *renderer, WindowProperties *windowProperties, Main
 
         for (int l = 0; l < brickLine->size; l++)
         {
-
             Brick *brick = (Brick *)arrayGet(brickLine, l);
             // if brick is not destroyed
             Texture *texture = brick->texture;
@@ -1021,48 +1022,81 @@ void renderGame(SDL_Renderer *renderer, WindowProperties *windowProperties, Main
             if (!brick->destroyed)
             {
                 // HANDLE INTERSECTIONS WITH BALL
-                SDL_Rect brickTopRect = {startX, brickY, width, 1};
-                SDL_Rect brickBottomRect = {startX, brickY + height, width, 1};
-                SDL_Rect brickLeftRect = {startX, brickY, 1, height};
-                SDL_Rect brickRightRect = {startX + width, brickY, 1, height};
-
-                // intersection with top of brick
-                if (SDL_HasIntersection(&ballRect, &brickTopRect))
+                if (!alreadyIntersected)
                 {
-                    windowProperties->ballSpeedY = -1 * windowProperties->ballSpeedY;
-                    // move ball to top of brick
-                    ballY = brickY - windowProperties->textures->ball->height * scale * 0.66;
-                    // remove live and change texture
+
+                    SDL_Rect brickTopRect = {startX, brickY, width, 1};
+                    SDL_Rect brickBottomRect = {startX, brickY + height, width, 1};
+                    SDL_Rect brickLeftRect = {startX, brickY, 1, height};
+                    SDL_Rect brickRightRect = {startX + width, brickY, 1, height};
+
+                    int intersected = false;
+
+                    // intersection with top of brick
+                    if (SDL_HasIntersection(&ballRect, &brickTopRect))
+                    {
+                        windowProperties->ballSpeedY = -1 * windowProperties->ballSpeedY;
+                        // move ball to top of brick
+                        windowProperties->ballY = brickY - windowProperties->textures->ball->height * scale * 0.66;
+                        alreadyIntersected = true;
+                        intersected = true;
+                    }
+
+                    // intersection with bottom of brick
+                    else if (SDL_HasIntersection(&ballRect, &brickBottomRect))
+                    {
+                        windowProperties->ballSpeedY = -1 * windowProperties->ballSpeedY;
+                        // move ball to bottom of brick
+                        windowProperties->ballY = brickY + height + 1;
+                        alreadyIntersected = true;
+                        intersected = true;
+                    }
+
+                    // intersection with left of brick
+                    else if (SDL_HasIntersection(&ballRect, &brickLeftRect))
+                    {
+                        windowProperties->ballSpeedX = -1 * windowProperties->ballSpeedX;
+                        // move ball to left of brick
+                        windowProperties->ballX = startX - windowProperties->textures->ball->width * scale * 0.66;
+                        alreadyIntersected = true;
+                        intersected = true;
+                    }
+
+                    // intersection with right of brick
+                    else if (SDL_HasIntersection(&ballRect, &brickRightRect))
+                    {
+                        windowProperties->ballSpeedX = -1 * windowProperties->ballSpeedX;
+                        // move ball to right of brick
+                        windowProperties->ballX = startX + width;
+                        alreadyIntersected = true;
+                        intersected = true;
+                    }
+
+                    if (intersected)
+                    {
+                        // remove live and change texture
+                        int newLive = brick->lives - 1;
+                        printf("Lives: %d -> %d\n", brick->lives, newLive);
+                        // add score
+                        windowProperties->score += windowProperties->currentLevel->scorePerBrick;
+
+                        if (newLive == 0)
+                        {
+                            brick->destroyed = true;
+                        }
+                        else
+                        {
+                            BrickHealth *brickHealth = (BrickHealth *)arrayGet(windowProperties->currentLevel->brickHealths, newLive - 1);
+                            brick->texture = brickHealth->texture;
+                            brick->lives = newLive;
+                            // set brick with new values
+                            if (!arraySet(brickLine, brick, l))
+                            {
+                                fprintf(stderr, "Error setting brick in array: %s", SDL_GetError());
+                            }
+                        }
+                    }
                 }
-
-                // intersection with bottom of brick
-                else if (SDL_HasIntersection(&ballRect, &brickBottomRect))
-                {
-                    windowProperties->ballSpeedY = -1 * windowProperties->ballSpeedY;
-                    // move ball to bottom of brick
-                    ballY = brickY + height + 1;
-
-                    // remove live and change texture
-                }
-
-                // intersection with left of brick
-                else if (SDL_HasIntersection(&ballRect, &brickLeftRect))
-                {
-                    windowProperties->ballSpeedX = -1 * windowProperties->ballSpeedX;
-                    // move ball to left of brick
-                    ballX = startX - windowProperties->textures->ball->width * scale * 0.66;
-                    // remove live and change texture
-                }
-
-                // intersection with right of brick
-                else if (SDL_HasIntersection(&ballRect, &brickRightRect))
-                {
-                    windowProperties->ballSpeedX = -1 * windowProperties->ballSpeedX;
-                    // move ball to right of brick
-                    ballX = startX + width;
-                    // remove live and change texture
-                }
-
                 //
                 if (!renderTexture(renderer, texture->texture, startX, brickY, width, height))
                 {
@@ -1073,8 +1107,17 @@ void renderGame(SDL_Renderer *renderer, WindowProperties *windowProperties, Main
             startX += width;
         }
 
+        // set brickLine if some bricks changes
+        if (!arraySet(bricks, brickLine, i))
+        {
+            fprintf(stderr, "Error setting brickLine in array: %s", SDL_GetError());
+        }
+
         brickY += windowProperties->textures->brickYellow->height * brickScale * scale;
     }
+
+    // update bricks in level
+    windowProperties->currentLevel->bricks = bricks;
 }
 
 void renderTitle(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars, TextCoords *textCoords)
@@ -1582,9 +1625,6 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
                 windowProperties->ballSpeedX = 1;
                 windowProperties->ballSpeedY = -1;
                 windowProperties->ballSpeedModifier = BALL_SPEED;
-
-                windowProperties->pressingLeft = false;
-                windowProperties->pressingRight = false;
             }
         }
     }
@@ -1595,48 +1635,30 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
         {
             if (e->key.keysym.sym == SDLK_LEFT || e->key.keysym.sym == SDLK_a)
             {
-                if (!windowProperties->pressingLeft)
-                {
-                    windowProperties->pressingLeft = true;
-                }
 
-                if (windowProperties->pressingLeft)
+                windowProperties->paddleSpeed = PADDLE_SPEED;
+
+                if (windowProperties->paddleX > 0)
                 {
-                    if (windowProperties->paddleSpeed < PADDLE_MAX_SPEED)
-                    {
-                        windowProperties->paddleSpeed += PADDLE_SPEED_MODIFIER;
-                    }
-                    if (windowProperties->paddleX > 0)
-                    {
-                        windowProperties->paddleX -= windowProperties->paddleSpeed;
-                    }
-                    if (windowProperties->paddleX < 0)
-                    {
-                        windowProperties->paddleX = 0;
-                    }
+                    windowProperties->paddleX -= windowProperties->paddleSpeed;
+                }
+                if (windowProperties->paddleX < 0)
+                {
+                    windowProperties->paddleX = 0;
                 }
             }
             else if (e->key.keysym.sym == SDLK_RIGHT || e->key.keysym.sym == SDLK_d)
             {
-                if (!windowProperties->pressingRight)
-                {
-                    windowProperties->pressingRight = true;
-                }
 
-                if (windowProperties->pressingRight)
+                windowProperties->paddleSpeed = PADDLE_SPEED;
+
+                if (windowProperties->paddleX < WINDOW_WIDTH * scale - (windowProperties->textures->paddle->width * scale * 3))
                 {
-                    if (windowProperties->paddleSpeed < PADDLE_MAX_SPEED)
-                    {
-                        windowProperties->paddleSpeed += PADDLE_SPEED_MODIFIER;
-                    }
-                    if (windowProperties->paddleX < WINDOW_WIDTH * scale - (windowProperties->textures->paddle->width * scale * 3))
-                    {
-                        windowProperties->paddleX += windowProperties->paddleSpeed;
-                    }
-                    if (windowProperties->paddleX > WINDOW_WIDTH * scale - (windowProperties->textures->paddle->width * scale * 3))
-                    {
-                        windowProperties->paddleX = WINDOW_WIDTH * scale - (windowProperties->textures->paddle->width * scale * 3);
-                    }
+                    windowProperties->paddleX += windowProperties->paddleSpeed;
+                }
+                if (windowProperties->paddleX > WINDOW_WIDTH * scale - (windowProperties->textures->paddle->width * scale * 3))
+                {
+                    windowProperties->paddleX = WINDOW_WIDTH * scale - (windowProperties->textures->paddle->width * scale * 3);
                 }
             }
         }
@@ -1644,12 +1666,10 @@ void checkEvents(SDL_Event *e, bool *quit, WindowProperties *windowProperties, M
         {
             if (e->key.keysym.sym == SDLK_LEFT || e->key.keysym.sym == SDLK_a)
             {
-                windowProperties->pressingLeft = false;
                 windowProperties->paddleSpeed = 0;
             }
             else if (e->key.keysym.sym == SDLK_RIGHT || e->key.keysym.sym == SDLK_d)
             {
-                windowProperties->pressingRight = false;
                 windowProperties->paddleSpeed = 0;
             }
         }
