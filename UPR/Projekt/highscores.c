@@ -6,6 +6,7 @@
 // my includes
 #include "highscores.h"
 #include "dynamicarray.h"
+#include "global.h"
 
 // ======================= [ HIGHSCORE FUNCTIONS ] =====================
 
@@ -34,6 +35,13 @@ Highscores *readHighscores(FILE *file)
             exit(1);
         }
 
+        char *newName = (char *)malloc(strlen(name) + 1);
+        if (!newName)
+        {
+            printf("Unable to allocate memory for name");
+            exit(1);
+        }
+
         char *score = splitInput(NULL);
 
         if (!score)
@@ -42,12 +50,14 @@ Highscores *readHighscores(FILE *file)
             exit(1);
         }
 
-        if (!arrayAdd(highscores->players, strdup(name)))
+        char *newScore = (char *)malloc(strlen(score) + 1);
+
+        if (!arrayAdd(highscores->players, strcpy(newName, name)))
         {
             printf("Unable to add player to array");
             exit(1);
         }
-        if (!arrayAdd(highscores->scores, strdup(score)))
+        if (!arrayAdd(highscores->scores, strcpy(newScore, score)))
         {
             printf("Unable to add score to array");
             exit(1);
@@ -61,42 +71,34 @@ Highscores *readHighscores(FILE *file)
 
 void addHighscore(Highscores *highscores, char *name, char *score)
 {
-    char *nameCopied = strdup(name);
+    char *nameCopied = (char *)malloc(strlen(name) + 1);
 
     if (!nameCopied)
     {
-        printf("Unable to copy name");
+        printf("Unable to allocate memory for name");
         exit(1);
     }
 
-    char *scoreCopied = strdup(score);
+    char *scoreCopied = (char *)malloc(strlen(score) + 1);
 
     if (!scoreCopied)
     {
-        printf("Unable to copy score");
+        printf("Unable to allocate memory for score");
         exit(1);
     }
 
-    if (!arrayAdd(highscores->players, nameCopied))
+    if (!arrayAdd(highscores->players, strcpy(nameCopied, name)))
     {
         printf("Unable to add player to array");
         exit(1);
     }
-    if (!arrayAdd(highscores->scores, scoreCopied))
+    if (!arrayAdd(highscores->scores, strcpy(scoreCopied, score)))
     {
         printf("Unable to add score to array");
         exit(1);
     }
     highscores->count++;
 }
-
-void swap(char **x, char **y)
-{
-    char *temp = *x;
-    *x = *y;
-    *y = temp;
-}
-
 void sortHighscores(Highscores *highscores)
 {
     Array *scores = highscores->scores;
@@ -110,8 +112,8 @@ void sortHighscores(Highscores *highscores)
         {
             if (atoi((char *)arrayGet(scores, j)) < atoi((char *)arrayGet(scores, j + 1)))
             {
-                swap((char **)arrayGetPTR(scores, j), (char **)arrayGetPTR(scores, j + 1));
-                swap((char **)arrayGetPTR(names, j), (char **)arrayGetPTR(names, j + 1));
+                swap(arrayGetPTR(scores, j), arrayGetPTR(scores, j + 1));
+                swap(arrayGetPTR(names, j), arrayGetPTR(names, j + 1));
             }
         }
     }

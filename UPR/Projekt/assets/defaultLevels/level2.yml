@@ -1,14 +1,22 @@
 %Settings
-Lives: 5
+Lives: 8
 Score: 15
+BallSpeed: 6.0
+BallSpeedModifier: 0.005
+BallSpeedMax: 15.0
 Description: Level 2 (Střední)
 Yellow Brick: 1
 Lime Brick: 2
 Gray Brick: 3
-Red Brick: 4
-Purple Brick: 5
-Blue Brick: 6
 %EndSettings
 %Level
-YLGRPB
+GGGGGGGGGGGGGG
+LLLLLLLLLLLLLL
+LLYYYYYYYYYYLL
+LLYLLYYYYLLYLL
+LLYYYYYYYYYYLL
+LLYLLYYYYLLYLL
+LLYYYLLLLYYYLL
+LLYYYYYYYYYYLL
+GGGGGGGGGGGGGG
 %EndLevel

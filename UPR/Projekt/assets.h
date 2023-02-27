@@ -68,6 +68,12 @@ typedef struct MainVariables
     // main menu exit button if hover
     bool mainMenuExitHover;
 
+    // controls button corners LeftTop + RightBottom
+    Position mainMenuControlsLT;
+    Position mainMenuControlsRB;
+    // controls button if hover
+    bool mainMenuControlsHover;
+
     // SETTING BUTTONS
     // scale button corners LeftTop + RightBottom
     Position settingsScaleLT;
@@ -134,6 +140,39 @@ typedef struct MainVariables
     bool levelSelectDownButton;
     // levels
     Array *levelsTextCoords;
+
+    // LEVEL INFO SCREEN
+    // start button corners LeftTop + RightBottom
+    Position levelInfoStartLT;
+    Position levelInfoStartRB;
+    // start button if hover
+    bool levelInfoStartHover;
+
+    // back button corners LeftTop + RightBottom
+    Position levelInfoBackLT;
+    Position levelInfoBackRB;
+    // back button if hover
+    bool levelInfoBackHover;
+
+    // GAME OVER SCREEN
+    //  save highscore button corners LeftTop + RightBottom
+    Position gameOverSaveLT;
+    Position gameOverSaveRB;
+    // save highscore button if hover
+    bool gameOverSaveHover;
+
+    // back button corners LeftTop + RightBottom
+    Position gameOverBackLT;
+    Position gameOverBackRB;
+    // back button if hover
+    bool gameOverBackHover;
+
+    // CONTROLLS SCREEN
+    // back button corners LeftTop + RightBottom
+    Position controlsBackLT;
+    Position controlsBackRB;
+    // back button if hover
+    bool controlsBackHover;
 
 } MainVariables;
 

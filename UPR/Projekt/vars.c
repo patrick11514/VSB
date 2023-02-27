@@ -84,6 +84,11 @@ bool loadTextures(WindowProperties *windowProperties, SDL_Renderer *renderer)
     loadTexture(renderer, heart, "assets/images/heart.png");
     windowProperties->textures->heart = heart;
 
+    // ball
+    Texture *ball = (Texture *)malloc(sizeof(Texture));
+    loadTexture(renderer, ball, "assets/images/ball.png");
+    windowProperties->textures->ball = ball;
+
     return true;
 }
 
@@ -95,6 +100,8 @@ void freeTextures(WindowProperties *windowProperties)
     SDL_DestroyTexture(windowProperties->textures->buttonDown->texture);
     SDL_DestroyTexture(windowProperties->textures->buttonUpHover->texture);
     SDL_DestroyTexture(windowProperties->textures->buttonDownHover->texture);
+    SDL_DestroyTexture(windowProperties->textures->heart->texture);
+    SDL_DestroyTexture(windowProperties->textures->ball->texture);
 
     // bricks
     SDL_DestroyTexture(windowProperties->textures->brickYellow->texture);
@@ -108,6 +115,8 @@ void freeTextures(WindowProperties *windowProperties)
     free(windowProperties->textures->buttonDown);
     free(windowProperties->textures->buttonUpHover);
     free(windowProperties->textures->buttonDownHover);
+    free(windowProperties->textures->heart);
+    free(windowProperties->textures->ball);
 
     // bricks
     free(windowProperties->textures->brickYellow);
@@ -144,6 +153,11 @@ bool loadWindowProperties(WindowProperties *windowProperties, SDL_Renderer *rend
     }
     windowProperties->font = font;
 
+    // set username to NULL, so we can check if it's set
+    windowProperties->currentUserName = NULL;
+    // set current level to null, so we can check if it's set
+    windowProperties->currentLevel = NULL;
+
     return true;
 }
 
@@ -158,6 +172,37 @@ void freeWindowProperties(WindowProperties *windowProperties)
     free(windowProperties->colors);
     TTF_CloseFont(windowProperties->font);
     TTF_Quit();
+
+    if (windowProperties->currentUserName != NULL)
+    {
+        free(windowProperties->currentUserName);
+    }
+
+    // if currentLevel is set, free bricks from it
+    if (windowProperties->currentLevel != NULL)
+    {
+        Level *levelData = windowProperties->currentLevel;
+
+        for (int i = 0; i < levelData->bricks->size; i++)
+        {
+            Array *bricksLine = (Array *)arrayGet(levelData->bricks, i);
+            for (int i = 0; i < bricksLine->size; i++)
+            {
+                Brick *brick = (Brick *)arrayGet(bricksLine, i);
+                free(brick);
+            }
+            if (!arrayFree(bricksLine, true))
+            {
+                fprintf(stderr, "Unable to free brickLine array.\n");
+            }
+        }
+
+        if (!arrayFree(levelData->bricks, true))
+        {
+            fprintf(stderr, "Unable to free bricks array.\n");
+        }
+        free(levelData);
+    }
 
     free(windowProperties);
 }
@@ -179,6 +224,7 @@ void loadVars(WindowProperties *windowProperties, MainVariables *vars, SDL_Windo
     vars->mainMenuSettingsHover = false;
     vars->mainMenuHighscoresHover = false;
     vars->mainMenuExitHover = false;
+    vars->mainMenuControlsHover = false;
     // settings menu
     vars->settingsScaleHover = false;
     vars->settingsBackHover = false;
@@ -192,10 +238,23 @@ void loadVars(WindowProperties *windowProperties, MainVariables *vars, SDL_Windo
     vars->levelSelectBackHover = false;
     vars->levelSelectOffset = 0;
     vars->levelsTextCoords = arrayInit(LEVELS_PER_PAGE);
+    // level info menu
+    vars->levelInfoStartHover = false;
+    vars->levelInfoBackHover = false;
+    // game over menu
+    vars->gameOverSaveHover = false;
+    vars->gameOverBackHover = false;
+    // controls menu
+    vars->controlsBackHover = false;
 }
 
 void freeVars(MainVariables *vars)
 {
+    for (int i = 0; i < vars->levelsTextCoords->size; i++)
+    {
+        free(arrayGet(vars->levelsTextCoords, i));
+    }
+
     if (!arrayFree(vars->levelsTextCoords, true))
     {
         fprintf(stderr, "Error freeing array\n");
@@ -250,10 +309,31 @@ bool initSDL(SDL_Window **window, SDL_Renderer **renderer, float *scale)
     if (!*renderer)
     {
         SDL_DestroyWindow(*window);
-        fprintf(stderr, "SDL_CreateRenderer Error: %s", SDL_GetError());
+        fprintf(stderr, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
         SDL_Quit();
         return false;
     }
 
     return true;
+}
+
+void loadDefaultLevels(WindowProperties *windowProperties)
+{
+    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level1.yml")))
+    {
+        fprintf(stderr, "Unable to add level to array.\n");
+        exit(1);
+    }
+
+    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level2.yml")))
+    {
+        fprintf(stderr, "Unable to add level to array.\n");
+        exit(1);
+    }
+
+    if (!arrayAdd(windowProperties->levels, loadLevel(windowProperties, "assets/defaultLevels/level3.yml")))
+    {
+        fprintf(stderr, "Unable to add level to array.\n");
+        exit(1);
+    }
 }

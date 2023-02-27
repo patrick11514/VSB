@@ -1,0 +1,17 @@
+%Settings
+Lives: 5
+Score: 10
+BallSpeed: 5.0
+BallSpeedModifier: 0.005
+BallSpeedMax: 10.0
+Description: Ukázka 2
+Yellow Brick: 1
+Blue Brick: 5
+Lime Brick: 3
+Red Brick: 2
+Gray Brick: 4
+Purple Brick: 6
+%EndSettings
+%Level
+Y    P
+%EndLevel

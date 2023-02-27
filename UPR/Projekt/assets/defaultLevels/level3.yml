@@ -1,0 +1,23 @@
+%Settings
+Lives: 10
+Score: 5
+BallSpeed: 8.0
+BallSpeedModifier: 0.008
+BallSpeedMax: 20.0
+Description: Level 3 (Těžký)
+Yellow Brick: 1
+Lime Brick: 2
+Gray Brick: 3
+Red Brick: 4
+%EndSettings
+%Level
+GGGGGGGGGGGGGG
+GLLRRLLLLRRLLG
+GLRLLRLLRLLRLG
+GLRLLLRRLLLRLG
+GLLRLLLLLLRLLG
+GLLLRLLLLRLLLG
+GLLLLRLLRLLLLG
+GLLLLLRRLLLLLG
+GGGGGGGGGGGGGG
+%EndLevel

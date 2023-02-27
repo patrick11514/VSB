@@ -25,6 +25,10 @@ Array *arrayInit(int __capacity) __attribute_warn_unused_result__;
 // return True on success
 bool arrayAdd(Array *__array, void *__item) __attribute_warn_unused_result__;
 
+// Set element on index __index to __item
+// return True on success
+bool arraySet(Array *__array, void *__item, int __index) __attribute_warn_unused_result__;
+
 // Get element on index __index from array __array
 // If __index is out of range return NULL
 void *arrayGet(Array *__array, int __index) __attribute_warn_unused_result__;

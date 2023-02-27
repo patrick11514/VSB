@@ -9,6 +9,8 @@
 #define HIGHSCORES_PER_PAGE 8
 #define LEVELS_PER_PAGE 8
 
+#define PADDLE_SPEED 35.0f
+
 // default includes
 #include <stdbool.h>
 
@@ -41,7 +43,9 @@ typedef enum
     LevelSelect = 4,
     GameOver = 5,
     // Info after level is selected, but before actual game
-    LevelInfo = 6
+    LevelInfo = 6,
+    // Controls menu
+    Controls = 7
 } MenuTypes;
 
 typedef struct Colors
@@ -73,6 +77,7 @@ typedef struct Textures
     Texture *brickBlue;
     // other
     Texture *heart;
+    Texture *ball;
 } Textures;
 
 typedef struct TextCoords
@@ -90,11 +95,13 @@ typedef struct Brick
     int y;
     Texture *texture;
     bool destroyed;
+    int lives;
 } Brick;
 
 typedef struct BrickHealth
 {
     int lives;
+    char identifier;
     Texture *texture;
 } BrickHealth;
 
@@ -106,6 +113,9 @@ typedef struct Level
     char *description;
     Array *brickHealths;
     Array *bricks;
+    int ballSpeed;
+    int ballSpeedModifier;
+    int ballSpeedMax;
 } Level;
 
 typedef struct WindowProperties
@@ -126,8 +136,19 @@ typedef struct WindowProperties
     Highscores *highscores;
     // levels
     Array *levels;
-    // current level
+    // the game
     Level *currentLevel;
+    int score;
+    int lives;
+    float ballX;
+    float ballY;
+    float ballSpeedX;
+    float ballSpeedY;
+    double ballSpeedModifier;
+    float paddleX;
+    float paddleY;
+    float paddleSpeed;
+    char *currentUserName;
 } WindowProperties;
 
 // function ran on every SDL event
@@ -152,7 +173,16 @@ void renderHighscore(SDL_Renderer *renderer, WindowProperties *windowProperties,
 void renderLevelSelect(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars);
 
 // level info before level starts
-void levelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars);
+void renderLevelInfo(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars);
+
+// the game
+void renderGame(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars);
+
+// the screen after winning or losing game
+void renderGameOver(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars);
+
+// controls menu
+void renderControls(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars);
 
 // render title function
 void renderTitle(SDL_Renderer *renderer, WindowProperties *windowProperties, MainVariables *mainVars, TextCoords *textCoords);
