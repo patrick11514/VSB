@@ -11,10 +11,12 @@
 
     section .data
 
-    ; variables
+    extern g_string
 
-    ;global g_some_asm_var
-    ;extern g_some_c_var
+    extern g_number
+
+    extern g_int
+    extern g_long
 
 ;g_some_asm_var dd ?
 
@@ -22,12 +24,31 @@
 
     section .text
 
-    ; functions
+    global fix_text
 
-    ;global some_asm_function
-    ;extern some_c_function
+fix_text:
+    mov byte [ g_string + 1 ], 'e'
+    mov byte [ g_string + 9 ], 'e'
+    mov byte [ g_string + 16 ], 'e'
+    ret
 
-;some_asm_function:
-    ;ret
+    global change_endianity
 
+change_endianity:
+    mov AL, [ g_number + 0 ]
+    mov BL, [ g_number + 3 ]
+    mov [ g_number + 3 ], AL
+    mov [ g_number + 0 ], BL
 
+    mov AL, [ g_number + 1 ]
+    mov BL, [ g_number + 2 ]
+    mov [ g_number + 2 ], AL
+    mov [ g_number + 1 ], BL
+    ret
+
+    global transfer_number
+
+transfer_number:
+    movsx RAX, dword [ g_int ]
+    mov [ g_long ], RAX
+    ret
