@@ -1,4 +1,4 @@
 #!/bin/bash
-mkdir $1
+mkdir -p $1
 cp main.cpp $1
-cp build.sh $1
+cp Makefile $1
