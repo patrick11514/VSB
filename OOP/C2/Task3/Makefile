@@ -1,6 +1,6 @@
 COMPILER=g++
 ARGS=
-OFILES=main.o
+OFILES=main.o Tree.o
 EXEC=main
 
 $(EXEC): $(OFILES)
