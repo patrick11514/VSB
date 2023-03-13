@@ -1,22 +1,6 @@
 #include <iostream>
 #include <string>
-
-using namespace std;
-
-class Example
-{
-private:
-    string test = "Hello World";
-
-public:
-    Example()
-    {
-    }
-    void hello()
-    {
-        cout << test << endl;
-    }
-};
+#include "class.h"
 
 int main()
 {
