@@ -1,0 +1,9 @@
+15:20:35 **** Clean-only build of configuration Debug for project i2c ****
+make -r -j4 mbedclean 
+rm -rf  ./i2c-lib.o ./main-i2c.o ./si4735-lib.o 
+rm -rf  ./i2c-lib.d ./main-i2c.d ./si4735-lib.d 
+rm -rf  empty-mbed-os.* linker-script-*.ld
+ 
+
+15:20:35 Build Finished. 0 errors, 0 warnings. (took 177ms)
+

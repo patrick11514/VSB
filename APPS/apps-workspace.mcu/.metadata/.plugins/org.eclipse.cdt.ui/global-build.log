@@ -1,0 +1,6 @@
+19:08:14 **** Clean-only build of configuration Debug for project leds ****
+make -r -j4 mbedclean 
+rm -rf  ./main-leds.o 
+rm -rf  ./main-leds.d 
+rm -rf  empty-mbed-os.* linker-script-*.ld
+ 

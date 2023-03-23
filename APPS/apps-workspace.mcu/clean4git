@@ -1,0 +1,5 @@
+find -name "*.pdom"
+find -name "*.pdom" -exec rm {} \;
+rm -rf */Debug
+rm */*.launch
+truncate -s 0 .metadata/.log

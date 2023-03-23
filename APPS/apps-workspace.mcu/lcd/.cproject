@@ -1,0 +1,1065 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+	<storageModule moduleId="org.eclipse.cdt.core.settings">
+		<cconfiguration id="com.crt.advproject.config.exe.debug.372110795">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.crt.advproject.config.exe.debug.372110795" moduleId="org.eclipse.cdt.core.settings" name="Debug">
+				<externalSettings/>
+				<extensions>
+					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration artifactExtension="axf" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="Debug build" errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser" id="com.crt.advproject.config.exe.debug.372110795" name="Debug" parent="com.crt.advproject.config.exe.debug" postannouncebuildStep="Performing post-build steps" postbuildStep="arm-none-eabi-size &quot;${BuildArtifactFileName}&quot; ; arm-none-eabi-objcopy -v -O binary &quot;${BuildArtifactFileName}&quot; &quot;${BuildArtifactFileBaseName}.bin&quot; ; checksum -p ${TargetChip} -d &quot;${BuildArtifactFileBaseName}.bin&quot;">
+					<folderInfo id="com.crt.advproject.config.exe.debug.372110795" name="/" resourcePath="">
+						<toolChain id="com.crt.advproject.toolchain.exe.debug.648932944" name="NXP MCU Tools" superClass="com.crt.advproject.toolchain.exe.debug">
+							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.GNU_ELF" id="com.crt.advproject.platform.exe.debug.581963420" name="ARM-based MCU (Debug)" superClass="com.crt.advproject.platform.exe.debug"/>
+							<builder buildPath="${workspace_loc:/empty-mbed-os}/Debug" cleanBuildTarget="mbedclean" id="com.crt.advproject.builder.exe.debug.079280327" incrementalBuildTarget="linker-script-debug.ld all" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="com.crt.advproject.builder.exe.debug"/>
+							<tool id="com.crt.advproject.cpp.exe.debug.253204851" name="MCU C++ Compiler" superClass="com.crt.advproject.cpp.exe.debug">
+								<option id="com.crt.advproject.cpp.specs.855712035" name="Specs" superClass="com.crt.advproject.cpp.specs" useByScannerDiscovery="false" value="com.crt.advproject.cpp.specs.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.cpp.arch.236548917" name="Architecture" superClass="com.crt.advproject.cpp.arch" useByScannerDiscovery="true" value="com.crt.advproject.cpp.target.cm4" valueType="enumerated"/>
+								<option id="com.crt.advproject.cpp.exe.debug.option.optimization.level.755654240" name="Optimization Level" superClass="com.crt.advproject.cpp.exe.debug.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.debug" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.optimization.flags.435919820" name="Other optimization flags" superClass="gnu.cpp.compiler.option.optimization.flags" useByScannerDiscovery="false" value="-fno-rtti -fmessage-length=0 -fno-exceptions -ffunction-sections -fdata-sections -funsigned-char -fomit-frame-pointer" valueType="string"/>
+								<option id="com.crt.advproject.cpp.misc.dialect.955987677" name="Language standard" superClass="com.crt.advproject.cpp.misc.dialect" useByScannerDiscovery="true" value="com.crt.advproject.misc.dialect.gnupp14" valueType="enumerated"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.preprocessor.def.143410125" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="TARGET_NAME=K64F"/>
+									<listOptionValue builtIn="false" value="COMPONENT_SD=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_RTC=1"/>
+									<listOptionValue builtIn="false" value="FSL_RTOS_MBED"/>
+									<listOptionValue builtIn="false" value="TOOLCHAIN_GCC"/>
+									<listOptionValue builtIn="false" value="TARGET_LIKE_CORTEX_M4"/>
+									<listOptionValue builtIn="false" value="TARGET_Freescale"/>
+									<listOptionValue builtIn="false" value="TARGET_MCUXpresso_MCUS"/>
+									<listOptionValue builtIn="false" value="TARGET_KPSDK_CODE"/>
+									<listOptionValue builtIn="false" value="TOOLCHAIN_GCC_ARM"/>
+									<listOptionValue builtIn="false" value="FEATURE_PSA=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_USTICKER=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_PORTIN=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_USBDEVICE=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_STDIO_MESSAGES=1"/>
+									<listOptionValue builtIn="false" value="COMPONENT_FLASHIAP=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_EMAC=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_TRNG=1"/>
+									<listOptionValue builtIn="false" value="MBED_SPLIT_HEAP"/>
+									<listOptionValue builtIn="false" value="TARGET_KPSDK_MCUS"/>
+									<listOptionValue builtIn="false" value="TARGET_MCU_K64F"/>
+									<listOptionValue builtIn="false" value="DEVICE_PORTOUT=1"/>
+									<listOptionValue builtIn="false" value="__MBED__=1"/>
+									<listOptionValue builtIn="false" value="TARGET_Freescale_EMAC"/>
+									<listOptionValue builtIn="false" value="MBED_TICKLESS"/>
+									<listOptionValue builtIn="false" value="DEVICE_SERIAL=1"/>
+									<listOptionValue builtIn="false" value="TARGET_PSA_Target"/>
+									<listOptionValue builtIn="false" value="DEVICE_PORTINOUT=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_LPTICKER=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_SERIAL_FC=1"/>
+									<listOptionValue builtIn="false" value="TARGET_KSDK2_MCUS"/>
+									<listOptionValue builtIn="false" value="DEVICE_WATCHDOG=1"/>
+									<listOptionValue builtIn="false" value="TARGET_PSA_V7_M"/>
+									<listOptionValue builtIn="false" value="DEVICE_ANALOGOUT=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_SPI_ASYNCH=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_ANALOGIN=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_I2C=1"/>
+									<listOptionValue builtIn="false" value="TARGET_M4"/>
+									<listOptionValue builtIn="false" value="DEVICE_SLEEP=1"/>
+									<listOptionValue builtIn="false" value="__CORTEX_M4"/>
+									<listOptionValue builtIn="false" value="__MBED_CMSIS_RTOS_CM"/>
+									<listOptionValue builtIn="false" value="DEVICE_FLASH=1"/>
+									<listOptionValue builtIn="false" value="TARGET_K64F"/>
+									<listOptionValue builtIn="false" value="ARM_MATH_CM4"/>
+									<listOptionValue builtIn="false" value="MBED_BUILD_TIMESTAMP=1645455281.1211684"/>
+									<listOptionValue builtIn="false" value="DEVICE_INTERRUPTIN=1"/>
+									<listOptionValue builtIn="false" value="TARGET_RELEASE"/>
+									<listOptionValue builtIn="false" value="TARGET_LIKE_MBED"/>
+									<listOptionValue builtIn="false" value="TARGET_RTOS_M4_M7"/>
+									<listOptionValue builtIn="false" value="__FPU_PRESENT=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_SERIAL_ASYNCH=1"/>
+									<listOptionValue builtIn="false" value="TARGET_FRDM"/>
+									<listOptionValue builtIn="false" value="DEVICE_SPI=1"/>
+									<listOptionValue builtIn="false" value="__CMSIS_RTOS"/>
+									<listOptionValue builtIn="false" value="TARGET_MBED_PSA_SRV"/>
+									<listOptionValue builtIn="false" value="DEVICE_RESET_REASON=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_SPISLAVE=1"/>
+									<listOptionValue builtIn="false" value="TARGET_CORTEX"/>
+									<listOptionValue builtIn="false" value="TARGET_CORTEX_M"/>
+									<listOptionValue builtIn="false" value="DEVICE_PWMOUT=1"/>
+									<listOptionValue builtIn="false" value="TARGET_FF_ARDUINO_UNO"/>
+									<listOptionValue builtIn="false" value="DEVICE_I2CSLAVE=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_CRC=1"/>
+									<listOptionValue builtIn="false" value="CPU_MK64FN1M0VMD12"/>
+									<listOptionValue builtIn="false" value="__NEWLIB__"/>
+								</option>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.include.paths.969104763" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/.&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS/TARGET_CORTEX_M&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS/TARGET_CORTEX_M/Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device/RTE&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device/RTE/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/include/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/include/drivers/interfaces&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features/frameworks&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/include/hal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/usb&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/usb/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/usb/include/usb&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/cxxsupport&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/include/platform&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/include/platform/internal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/mbed-trace&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/mbed-trace/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/mbed-trace/include/mbed-trace&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/source&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/source/minimal-printf&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/include/rtos&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/include/rtos/internal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/source&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/include/blockdevice&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/include/blockdevice/internal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/TARGET_FRDM&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/api&quot;"/>
+								</option>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.include.files.070972751" name="Include files (-include)" superClass="gnu.cpp.compiler.option.include.files" useByScannerDiscovery="false" valueType="includeFiles">
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed_config.h&quot;"/>
+								</option>
+								<option id="gnu.cpp.compiler.option.warnings.allwarn.817072973" name="All warnings (-Wall)" superClass="gnu.cpp.compiler.option.warnings.allwarn" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="gnu.cpp.compiler.option.warnings.extrawarn.659443192" name="Extra warnings (-Wextra)" superClass="gnu.cpp.compiler.option.warnings.extrawarn" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="com.crt.advproject.cpp.fpu.437926784" name="Floating point" superClass="com.crt.advproject.cpp.fpu" useByScannerDiscovery="false" value="com.crt.advproject.cpp.fpu.fpv4" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.other.other.339637412" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" useByScannerDiscovery="false" value="-c -DMBED_DEBUG -DMBED_TRAP_ERRORS_ENABLED=1 -DMBED_MINIMAL_PRINTF -c -g3 -Wno-unused-parameter -Wno-missing-field-initializers" valueType="string"/>
+								<option id="com.crt.advproject.cpp.thumb.1991642416" name="Thumb mode" superClass="com.crt.advproject.cpp.thumb" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="com.crt.advproject.cpp.hdrlib.1795334684" name="Library headers" superClass="com.crt.advproject.cpp.hdrlib" useByScannerDiscovery="false"/>
+								<inputType id="com.crt.advproject.compiler.cpp.input.883010578" superClass="com.crt.advproject.compiler.cpp.input"/>
+							</tool>
+							<tool id="com.crt.advproject.gcc.exe.debug.781721379" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug">
+								<option id="com.crt.advproject.gcc.hdrlib.152451151" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" useByScannerDiscovery="false" value="com.crt.advproject.gcc.hdrlib.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.specs.338175841" name="Specs" superClass="com.crt.advproject.gcc.specs" useByScannerDiscovery="false" value="com.crt.advproject.gcc.specs.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.arch.716618604" name="Architecture" superClass="com.crt.advproject.gcc.arch" useByScannerDiscovery="true" value="com.crt.advproject.gcc.target.cm4" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.313823738" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" useByScannerDiscovery="false" value="gnu.c.optimization.level.debug" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.optimization.flags.112964865" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" useByScannerDiscovery="false" value=" -fmessage-length=0 -fno-exceptions -ffunction-sections -fdata-sections -funsigned-char -fomit-frame-pointer" valueType="string"/>
+								<option id="com.crt.advproject.c.misc.dialect.155858102" name="Language standard" superClass="com.crt.advproject.c.misc.dialect" useByScannerDiscovery="true" value="com.crt.advproject.misc.dialect.gnu11" valueType="enumerated"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.compiler.option.preprocessor.def.symbols.912301892" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="TARGET_NAME=K64F"/>
+									<listOptionValue builtIn="false" value="COMPONENT_SD=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_RTC=1"/>
+									<listOptionValue builtIn="false" value="FSL_RTOS_MBED"/>
+									<listOptionValue builtIn="false" value="TOOLCHAIN_GCC"/>
+									<listOptionValue builtIn="false" value="TARGET_LIKE_CORTEX_M4"/>
+									<listOptionValue builtIn="false" value="TARGET_Freescale"/>
+									<listOptionValue builtIn="false" value="TARGET_MCUXpresso_MCUS"/>
+									<listOptionValue builtIn="false" value="TARGET_KPSDK_CODE"/>
+									<listOptionValue builtIn="false" value="TOOLCHAIN_GCC_ARM"/>
+									<listOptionValue builtIn="false" value="FEATURE_PSA=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_USTICKER=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_PORTIN=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_USBDEVICE=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_STDIO_MESSAGES=1"/>
+									<listOptionValue builtIn="false" value="COMPONENT_FLASHIAP=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_EMAC=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_TRNG=1"/>
+									<listOptionValue builtIn="false" value="MBED_SPLIT_HEAP"/>
+									<listOptionValue builtIn="false" value="TARGET_KPSDK_MCUS"/>
+									<listOptionValue builtIn="false" value="TARGET_MCU_K64F"/>
+									<listOptionValue builtIn="false" value="DEVICE_PORTOUT=1"/>
+									<listOptionValue builtIn="false" value="__MBED__=1"/>
+									<listOptionValue builtIn="false" value="TARGET_Freescale_EMAC"/>
+									<listOptionValue builtIn="false" value="MBED_TICKLESS"/>
+									<listOptionValue builtIn="false" value="DEVICE_SERIAL=1"/>
+									<listOptionValue builtIn="false" value="TARGET_PSA_Target"/>
+									<listOptionValue builtIn="false" value="DEVICE_PORTINOUT=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_LPTICKER=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_SERIAL_FC=1"/>
+									<listOptionValue builtIn="false" value="TARGET_KSDK2_MCUS"/>
+									<listOptionValue builtIn="false" value="DEVICE_WATCHDOG=1"/>
+									<listOptionValue builtIn="false" value="TARGET_PSA_V7_M"/>
+									<listOptionValue builtIn="false" value="DEVICE_ANALOGOUT=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_SPI_ASYNCH=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_ANALOGIN=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_I2C=1"/>
+									<listOptionValue builtIn="false" value="TARGET_M4"/>
+									<listOptionValue builtIn="false" value="DEVICE_SLEEP=1"/>
+									<listOptionValue builtIn="false" value="__CORTEX_M4"/>
+									<listOptionValue builtIn="false" value="__MBED_CMSIS_RTOS_CM"/>
+									<listOptionValue builtIn="false" value="DEVICE_FLASH=1"/>
+									<listOptionValue builtIn="false" value="TARGET_K64F"/>
+									<listOptionValue builtIn="false" value="ARM_MATH_CM4"/>
+									<listOptionValue builtIn="false" value="MBED_BUILD_TIMESTAMP=1645455281.1211684"/>
+									<listOptionValue builtIn="false" value="DEVICE_INTERRUPTIN=1"/>
+									<listOptionValue builtIn="false" value="TARGET_RELEASE"/>
+									<listOptionValue builtIn="false" value="TARGET_LIKE_MBED"/>
+									<listOptionValue builtIn="false" value="TARGET_RTOS_M4_M7"/>
+									<listOptionValue builtIn="false" value="__FPU_PRESENT=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_SERIAL_ASYNCH=1"/>
+									<listOptionValue builtIn="false" value="TARGET_FRDM"/>
+									<listOptionValue builtIn="false" value="DEVICE_SPI=1"/>
+									<listOptionValue builtIn="false" value="__CMSIS_RTOS"/>
+									<listOptionValue builtIn="false" value="TARGET_MBED_PSA_SRV"/>
+									<listOptionValue builtIn="false" value="DEVICE_RESET_REASON=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_SPISLAVE=1"/>
+									<listOptionValue builtIn="false" value="TARGET_CORTEX"/>
+									<listOptionValue builtIn="false" value="TARGET_CORTEX_M"/>
+									<listOptionValue builtIn="false" value="DEVICE_PWMOUT=1"/>
+									<listOptionValue builtIn="false" value="TARGET_FF_ARDUINO_UNO"/>
+									<listOptionValue builtIn="false" value="DEVICE_I2CSLAVE=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_CRC=1"/>
+									<listOptionValue builtIn="false" value="CPU_MK64FN1M0VMD12"/>
+									<listOptionValue builtIn="false" value="__NEWLIB__"/>
+								</option>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.compiler.option.include.paths.445069303" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/.&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS/TARGET_CORTEX_M&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS/TARGET_CORTEX_M/Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device/RTE&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device/RTE/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/include/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/include/drivers/interfaces&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features/frameworks&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/include/hal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/usb&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/usb/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/usb/include/usb&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/cxxsupport&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/include/platform&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/include/platform/internal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/mbed-trace&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/mbed-trace/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/mbed-trace/include/mbed-trace&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/source&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/source/minimal-printf&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/include/rtos&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/include/rtos/internal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/source&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/include/blockdevice&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/include/blockdevice/internal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/TARGET_FRDM&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/api&quot;"/>
+								</option>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.compiler.option.include.files.377185413" name="Include files (-include)" superClass="gnu.c.compiler.option.include.files" useByScannerDiscovery="false" valueType="includeFiles">
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed_config.h&quot;"/>
+								</option>
+								<option id="gnu.c.compiler.option.warnings.allwarn.820642855" name="All warnings (-Wall)" superClass="gnu.c.compiler.option.warnings.allwarn" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="gnu.c.compiler.option.warnings.extrawarn.420749320" name="Extra warnings (-Wextra)" superClass="gnu.c.compiler.option.warnings.extrawarn" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="com.crt.advproject.gcc.fpu.726377743" name="Floating point" superClass="com.crt.advproject.gcc.fpu" useByScannerDiscovery="false" value="com.crt.advproject.gcc.fpu.fpv4" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.misc.other.802426224" name="Other flags" superClass="gnu.c.compiler.option.misc.other" useByScannerDiscovery="false" value="-c -DMBED_DEBUG -DMBED_TRAP_ERRORS_ENABLED=1 -DMBED_MINIMAL_PRINTF -c -g3 -Wno-unused-parameter -Wno-missing-field-initializers" valueType="string"/>
+								<option id="com.crt.advproject.gcc.thumb.299221361" name="Thumb mode" superClass="com.crt.advproject.gcc.thumb" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<inputType id="com.crt.advproject.compiler.input.781721379" superClass="com.crt.advproject.compiler.input"/>
+							</tool>
+							<tool id="com.crt.advproject.gas.exe.debug.392417097" name="MCU Assembler" superClass="com.crt.advproject.gas.exe.debug">
+								<option id="com.crt.advproject.gas.hdrlib.514490923" name="Library headers" superClass="com.crt.advproject.gas.hdrlib" value="com.crt.advproject.gas.hdrlib.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gas.specs.460969077" name="Specs" superClass="com.crt.advproject.gas.specs" value="com.crt.advproject.gas.specs.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gas.arch.135472782" name="Architecture" superClass="com.crt.advproject.gas.arch" value="com.crt.advproject.gas.target.cm4" valueType="enumerated"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.both.asm.option.include.paths.012801226" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/.&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS/TARGET_CORTEX_M&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS/TARGET_CORTEX_M/Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device/RTE&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device/RTE/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/include/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/include/drivers/interfaces&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features/frameworks&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/include/hal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/usb&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/usb/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/usb/include/usb&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/cxxsupport&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/include/platform&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/include/platform/internal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/mbed-trace&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/mbed-trace/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/mbed-trace/include/mbed-trace&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/source&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/source/minimal-printf&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/include/rtos&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/include/rtos/internal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/source&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/include/blockdevice&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/include/blockdevice/internal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/TARGET_FRDM&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/api&quot;"/>
+								</option>
+								<option id="com.crt.advproject.gas.fpu.849143876" name="Floating point" superClass="com.crt.advproject.gas.fpu" useByScannerDiscovery="false" value="com.crt.advproject.gas.fpu.fpv4" valueType="enumerated"/>
+								<option id="gnu.both.asm.option.flags.crt.279183045" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" useByScannerDiscovery="false" value="-c -DMBED_DEBUG -DMBED_TRAP_ERRORS_ENABLED=1 -DMBED_MINIMAL_PRINTF -c -g3 -D__NEWLIB__" valueType="string"/>
+								<option id="com.crt.advproject.gas.thumb.1857195650" name="Thumb mode" superClass="com.crt.advproject.gas.thumb" value="true" valueType="boolean"/>
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.110688474" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+								<inputType id="com.crt.advproject.assembler.input.716518971" name="Additional Assembly Source Files" superClass="com.crt.advproject.assembler.input"/>
+							</tool>
+							<tool commandLinePattern="${COMMAND} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS} ${FLAGS}" id="com.crt.advproject.link.cpp.exe.debug.974202545" name="MCU C++ Linker" superClass="com.crt.advproject.link.cpp.exe.debug">
+								<option defaultValue="com.crt.advproject.heapAndStack.mcuXpressoStyle.cpp" id="com.crt.advproject.link.memory.heapAndStack.style.cpp.548820305" name="Heap and Stack placement" superClass="com.crt.advproject.link.memory.heapAndStack.style.cpp" useByScannerDiscovery="false" value="Default" valueType="enumerated"/>
+								<option id="com.crt.advproject.link.memory.heapAndStack.cpp.364928708" name="Heap and Stack options" superClass="com.crt.advproject.link.memory.heapAndStack.cpp" useByScannerDiscovery="false" value="&amp;Heap:Default;Post Data;Default&amp;Stack:Default;End;Default" valueType="string"/>
+								<option id="com.crt.advproject.link.cpp.multicore.master.615982835" name="Multicore master" superClass="com.crt.advproject.link.cpp.multicore.master" useByScannerDiscovery="false"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="true" id="com.crt.advproject.link.cpp.multicore.master.userobjs.964710725" name="Slave Objects (not visible)" superClass="com.crt.advproject.link.cpp.multicore.master.userobjs" useByScannerDiscovery="false" valueType="userObjs"/>
+								<option id="com.crt.advproject.link.cpp.arch.670962895" name="Architecture" superClass="com.crt.advproject.link.cpp.arch" useByScannerDiscovery="false" value="com.crt.advproject.link.cpp.target.cm4" valueType="enumerated"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.link.option.paths.420525715" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" useByScannerDiscovery="false" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/lib&quot;"/>
+								</option>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.link.option.libs.676387191" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" useByScannerDiscovery="false" valueType="libs">
+									<listOptionValue builtIn="false" value="mbed-os"/>
+									<listOptionValue builtIn="false" value="stdc++"/>
+									<listOptionValue builtIn="false" value="supc++"/>
+									<listOptionValue builtIn="false" value="m"/>
+									<listOptionValue builtIn="false" value="c"/>
+									<listOptionValue builtIn="false" value="gcc"/>
+									<listOptionValue builtIn="false" value="nosys"/>
+								</option>
+								<option id="gnu.cpp.link.option.userobjs.550766288" name="Other objects" superClass="gnu.cpp.link.option.userobjs" useByScannerDiscovery="false"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.link.option.other.796715803" name="Other options (-Xlinker [option])" superClass="gnu.cpp.link.option.other" useByScannerDiscovery="false" valueType="stringList">
+									<listOptionValue builtIn="false" value="-Map=&quot;${BuildArtifactFileBaseName}.map&quot;"/>
+									<listOptionValue builtIn="false" value="-print-memory-usage"/>
+									<listOptionValue builtIn="false" value="--gc-sections"/>
+									<listOptionValue builtIn="false" value="--wrap=main"/>
+									<listOptionValue builtIn="false" value="--wrap=_malloc_r"/>
+									<listOptionValue builtIn="false" value="--wrap=_free_r"/>
+									<listOptionValue builtIn="false" value="--wrap=_realloc_r"/>
+									<listOptionValue builtIn="false" value="--wrap=_memalign_r"/>
+									<listOptionValue builtIn="false" value="--wrap=_calloc_r"/>
+									<listOptionValue builtIn="false" value="--wrap=exit"/>
+									<listOptionValue builtIn="false" value="--wrap=atexit"/>
+									<listOptionValue builtIn="false" value="--wrap=printf"/>
+									<listOptionValue builtIn="false" value="--wrap=sprintf"/>
+									<listOptionValue builtIn="false" value="--wrap=snprintf"/>
+									<listOptionValue builtIn="false" value="--wrap=vprintf"/>
+									<listOptionValue builtIn="false" value="--wrap=vsprintf"/>
+									<listOptionValue builtIn="false" value="--wrap=vsnprintf"/>
+									<listOptionValue builtIn="false" value="--wrap=fprintf"/>
+									<listOptionValue builtIn="false" value="--wrap=vfprintf"/>
+								</option>
+								<option id="gnu.cpp.link.option.flags.870243400" name="Linker flags" superClass="gnu.cpp.link.option.flags" useByScannerDiscovery="false" value="-DMBED_DEBUG -DMBED_TRAP_ERRORS_ENABLED=1 -DMBED_MINIMAL_PRINTF -Wl,-n -Wl,--start-group -lstdc++ -lsupc++ -lm -lc -lgcc -lnosys -lmbed-os -Wl,--end-group" valueType="string"/>
+								<option id="com.crt.advproject.link.cpp.script.964601536" name="Linker script" superClass="com.crt.advproject.link.cpp.script" useByScannerDiscovery="false" value="${ProjDirPath}/Debug/linker-script-debug.ld" valueType="string"/>
+								<option id="com.crt.advproject.link.cpp.multicore.slave.849026537" name="Multicore configuration" superClass="com.crt.advproject.link.cpp.multicore.slave" useByScannerDiscovery="false"/>
+								<option id="com.crt.advproject.link.cpp.fpu.376562455" name="Floating point" superClass="com.crt.advproject.link.cpp.fpu" useByScannerDiscovery="false" value="com.crt.advproject.link.cpp.fpu.fpv4" valueType="enumerated"/>
+								<option id="com.crt.advproject.link.cpp.thumb.1148298306" name="Thumb mode" superClass="com.crt.advproject.link.cpp.thumb" value="true" valueType="boolean"/>
+								<option id="com.crt.advproject.link.memory.load.image.cpp.792268591" name="Plain load image" superClass="com.crt.advproject.link.memory.load.image.cpp" useByScannerDiscovery="false" value="" valueType="string"/>
+								<option id="com.crt.advproject.link.memory.data.cpp.520661122" name="Global data placement" superClass="com.crt.advproject.link.memory.data.cpp" useByScannerDiscovery="false" value="" valueType="string"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="true" id="com.crt.advproject.link.memory.sections.cpp.179067036" name="Extra linker script input sections" superClass="com.crt.advproject.link.memory.sections.cpp" useByScannerDiscovery="false" valueType="stringList"/>
+								<option id="com.crt.advproject.link.cpp.hdrlib.1105561099" name="Library" superClass="com.crt.advproject.link.cpp.hdrlib"/>
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.500514974" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
+									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+								</inputType>
+							</tool>
+							<tool id="com.crt.advproject.link.exe.debug.712693431" name="MCU Linker" superClass="com.crt.advproject.link.exe.debug">
+								<option id="com.crt.advproject.link.gcc.hdrlib.1352544825" name="Library" superClass="com.crt.advproject.link.gcc.hdrlib"/>
+							</tool>
+							<tool id="com.crt.advproject.tool.debug.debug.761535050" name="MCU Debugger" superClass="com.crt.advproject.tool.debug.debug"/>
+						</toolChain>
+					</folderInfo>
+					<sourceEntries>
+						<entry excluding="mbed-os/TESTS|mbed-os/storage/filesystem/fat/ChaN|mbed-os/docs/.gitignore|mbed-os/connectivity/cellular/.gitignore|mbed-os/hal/usb/TARGET_Templates|mbed-os/connectivity/lwipstack/lwip/test|mbed-os/connectivity/netsocket/tests/TESTS|mbed-os/connectivity/nanostack/coap-service/test|.git|mbed-os/connectivity/libraries/mbed-coap/.gitattributes|mbed-os/connectivity/drivers/lora/COMPONENT_SX126X|mbed-os/platform/mbed-trace/.mbedignore|mbed-os/storage/filesystem/littlefs/littlefs/.gitignore|mbed-os/platform/randlib/.yotta_ignore|mbed-os/hal/tests/pinvalidate/test_files|mbed-os/targets/TARGET_NUVOTON|mbed-os/connectivity/drivers/mbedtls/TARGET_Cypress|mbed-os/targets/TARGET_TOSHIBA|mbed-os/connectivity/libraries/nanostack-libservice/.yotta_ignore|mbed-os/storage/kvstore/kvstore_global_api|mbed-os/rtos/tests/.mbedignore|mbed-os/storage/kvstore/kv_config/tdb_internal|mbed-os/drivers/tests/UNITTESTS|BUILD|mbed-os/storage/filesystem/littlefsv2/littlefs/.travis.yml|mbed-os/connectivity/drivers/mbedtls/TARGET_STM|mbed-os/platform/source/TARGET_CORTEX_M/TOOLCHAIN_IAR|mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_ARM_STD|mbed-os/storage/kvstore/tdbstore/tests/UNITTESTS|mbed-os/.codecheckignore|mbed-os/storage/kvstore/filesystemstore/tests/UNITTESTS|mbed-os/targets/TARGET_Silicon_Labs|mbed-os/targets/TARGET_Freescale/TARGET_KLXX|mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/TARGET_HEXIWEAR|mbed-os/connectivity/lorawan/tests/.mbedignore|mbed-os/connectivity/nanostack/coap-service|mbed-os/connectivity/nanostack/sal-stack-nanostack-eventloop|mbed-os/platform/randlib/tests/unit|mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_KL43Z|mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2/RTX/Source/TOOLCHAIN_ARM|mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2/RTX/Source/TOOLCHAIN_IAR|mbed-os/connectivity/drivers/emac/COMPONENT_WHD|mbed-os/connectivity/drivers/cellular/COMPONENT_STMOD_CELLULAR|mbed-os/targets/TARGET_GigaDevice|mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/TARGET_SDT64B|mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_IAR|mbed-os/platform/randlib/.gitignore|mbed-os/features/frameworks/utest/TESTS|mbed-os/storage/filesystem/littlefs/littlefs/.travis.yml|mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2/RTX/Config/TARGET_CORTEX_A|mbed-os/cmsis/CMSIS_5/CMSIS/TARGET_CORTEX_A|mbed-os/features/deprecated_warnings/FEATURE_LWIP|mbed-os/storage/filesystem/littlefs/tests/TESTS|mbed-os/storage/blockdevice/tests/UNITTESTS|mbed-os/connectivity/drivers/mbedtls/TARGET_Samsung|mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2/RTX/Source/TOOLCHAIN_GCC/TARGET_M3|mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2/RTX/Source/TOOLCHAIN_GCC/TARGET_CORTEX_A|mbed-os/connectivity/drivers/802.15.4_RF/TARGET_Freescale/TARGET_KW41Z|mbed-os/connectivity/lwipstack/.mbedignore|mbed-os/storage/filesystem/littlefsv2/littlefs/bd|mbed-os/drivers/usb/tests/TESTS|mbed-os/targets/TARGET_ARM_SSG|mbed-os/connectivity/drivers/wifi/TARGET_WICED|mbed-os/connectivity/lwipstack/lwip/doc|mbed-os/storage/kvstore/kv_config/filesystem_no_rbp|mbed-os/connectivity/drivers/emac/TARGET_ARM_FM|mbed-os/platform/mbed-trace/.gitignore|mbed-os/.gitignore|mbed-os/storage/filesystem/tests/UNITTESTS|mbed-os/features/deprecated_warnings/FEATURE_NANOSTACK|mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2/RTX/Source/TOOLCHAIN_GCC/TARGET_M0|mbed-os/connectivity/mbedtls/tests/TESTS|mbed-os/connectivity/drivers/lora/TARGET_STM32WL|mbed-os/connectivity/nanostack/sal-stack-nanostack/source/Service_Libs/CCM_lib/mbedOS/aes_mbedtls.c|mbed-os/storage/kvstore/tdbstore|mbed-os/platform/FEATURE_EXPERIMENTAL_API|mbed-os/storage/filesystem/littlefsv2/.travis.yml|mbed-os/drivers/device_key/tests/TESTS|mbed-os/features/FEATURE_BOOTLOADER|mbed-os/connectivity/nanostack/mbed-mesh-api/.mbedignore|mbed-os/connectivity/mbedtls/tests/UNITTESTS|mbed-os/hal/tests/UNITTESTS|.github|mbed-os/storage/filesystem/tests/TESTS|mbed-os/cmsis/device/rtos/TOOLCHAIN_ARM_MICRO|mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_K66F|mbed-os/events/tests/UNITTESTS|mbed-os/platform/randlib/.mbedignore|mbed-os/connectivity/nanostack/sal-stack-nanostack/source/MLE/.gitignore|mbed-os/storage/filesystem/littlefsv2|mbed-os/.mergify.yml|mbed-os/storage/filesystem/littlefs/littlefs/tests|mbed-os/connectivity/nanostack/mbed-mesh-api|mbed-os/tools|mbed-os/cmsis/device/rtos/TOOLCHAIN_IAR|mbed-os/connectivity/lwipstack/lwip/src/apps|mbed-os/connectivity/drivers/emac/TARGET_Silicon_Labs|mbed-os/connectivity/drivers/ble/FEATURE_BLE|mbed-os/connectivity/drivers/wifi/COMPONENT_WHD|mbed-os/targets/TARGET_NORDIC|mbed-os/storage/kvstore/filesystemstore|mbed-os/drivers/tests/TESTS|mbed-os/platform/tests/TESTS|mbed-os/storage/kvstore/direct_access_devicekey|mbed-os/connectivity/libraries/tests/UNITTESTS|mbed-os/storage/filesystem/littlefsv2/tests/TESTS|mbed-os/storage/blockdevice/COMPONENT_FLASHIAP/tests/TESTS|mbed-os/storage/blockdevice/COMPONENT_SD/tests/TESTS|mbed-os/connectivity/lwipstack/lwip/src/include/compat/stdc|mbed-os/storage/blockdevice/COMPONENT_DATAFLASH|mbed-os/storage/kvstore/kv_config/tdb_external|mbed-os/connectivity/drivers/emac/TARGET_Cypress|mbed-os/storage/kvstore/securestore|mbed-os/events/tests/.mbedignore|mbed-os/.astylerc|mbed-os/connectivity/nanostack/sal-stack-nanostack-eventloop/.gitignore|mbed-os/connectivity/netsocket/tests/UNITTESTS|mbed-os/targets/TARGET_Ambiq_Micro|mbed-os/storage/blockdevice/COMPONENT_I2CEE|mbed-os/storage/platform|mbed-os/storage/filesystem/littlefs/.mbedignore|mbed-os/storage/filesystem/fat/tests/TESTS|mbed-os/storage/kvstore/direct_access_devicekey/tests/TESTS|mbed-os/targets/TARGET_RENESAS|mbed-os/connectivity/libraries/nanostack-libservice/test|mbed-os/storage/kvstore/kv_config/tdb_external_no_rbp|mbed-os/connectivity/drivers/lora/COMPONENT_SX1272|mbed-os/features/frameworks/COMPONENT_FPGA_CI_TEST_SHIELD|mbed-os/targets/TARGET_NXP|mbed-os/storage/blockdevice/tests/TESTS|mbed-os/.editorconfig|mbed-os/cmsis/device/rtos/TOOLCHAIN_ARM_STD|mbed-os/storage/filesystem/littlefsv2/littlefs/.gitignore|mbed-os/UNITTESTS|mbed-os/connectivity/drivers/emac/TARGET_RENESAS_EMAC|mbed-os/connectivity/nanostack/coap-service/.mbedignore|mbed-os/storage/kvstore/kv_config|mbed-os/connectivity/nanostack/nanostack-hal-mbed-cmsis-rtos/.mbedignore|mbed-os/connectivity/FEATURE_BLE|mbed-os/connectivity/drivers/emac/TARGET_NUVOTON_EMAC|mbed-os/platform/source/TARGET_CORTEX_A|mbed-os/storage/filesystem/littlefs/.travis.yml|mbed-os/storage/kvstore/securestore/tests/TESTS|mbed-os/platform/source/TARGET_CORTEX_M/TOOLCHAIN_ARM|mbed-os/connectivity/drivers/emac/TARGET_NXP_EMAC|mbed-os/cmsis/tests/UNITTESTS|mbed-os/connectivity/nanostack/sal-stack-nanostack/.gitignore|mbed-os/.coveragerc|mbed-os/connectivity/libraries/mbed-coap/.mbedignore|mbed-os/storage/kvstore/tests/TESTS|mbed-os/connectivity/cellular/tests/UNITTESTS|mbed-os/targets/TARGET_Maxim|mbed-os/connectivity/drivers/lora/COMPONENT_SX1276|mbed-os/storage/kvstore/tests/UNITTESTS|mbed-os/.gitattributes|mbed-os/.github|mbed-os/storage/blockdevice/COMPONENT_SPIF|mbed-os/events/tests/unit|mbed-os/connectivity/nanostack/mbed-mesh-api/.gitignore|mbed-os/connectivity/drivers/mbedtls/TARGET_Silicon_Labs|mbed-os/connectivity/drivers/emac/TARGET_GD_EMAC|mbed-os/connectivity/libraries/nanostack-libservice/.gitignore|mbed-os/storage/blockdevice/COMPONENT_QSPIF|mbed-os/connectivity/nanostack/nanostack-hal-mbed-cmsis-rtos/.gitattributes|mbed-os/hal/TARGET_FLASH_CMSIS_ALGO|mbed-os/connectivity/drivers/emac/TARGET_RDA_EMAC|mbed-os/.pylintrc|mbed-os/connectivity/drivers/emac/TARGET_ARM_SSG|mbed-os/connectivity/drivers/emac/TARGET_Freescale_EMAC/TARGET_K66F|mbed-os/connectivity/nanostack/nanostack-hal-mbed-cmsis-rtos|mbed-os/connectivity/nanostack/sal-stack-nanostack/.mbedignore|mbed-os/storage/filesystem/littlefs|mbed-os/storage/kvstore/filesystemstore/tests/TESTS|mbed-os/events/tests/TESTS|mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/middleware/wireless/TARGET_FRAMEWORK_5_3_3|mbed-os/connectivity/nfc/tests/TESTS|mbed-os/targets/TARGET_Analog_Devices|mbed-os/platform/tests/.mbedignore|mbed-os/connectivity/libraries/mbed-coap/.gitignore|mbed-os/rtos/tests/UNITTESTS|mbed-os/connectivity/lwipstack/lwip/src/include/lwip/apps|mbed-os/connectivity/lwipstack/lwip/src/netif/lwip_slipif.c|mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2/RTX/Source/TOOLCHAIN_GCC/TARGET_M33|mbed-os/storage/blockdevice/COMPONENT_OSPIF|mbed-os/connectivity/lorawan/tests/UNITTESTS|mbed-os/targets/TARGET_ARM_FM|.mbed|mbed-os/connectivity/lorawan/tests/TESTS|mbed-os/targets/TARGET_Samsung|mbed-os/targets/TARGET_Cypress|mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_K82F|mbed-os/connectivity/drivers/mbedtls/FEATURE_CRYPTOCELL310|mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2/RTX/Source/TOOLCHAIN_GCC/TARGET_M0P|mbed-os/connectivity/lwipstack/lwip/.gitattributes|mbed-os/connectivity/nanostack/sal-stack-nanostack/.gitattributes|mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2/RTX/Source/TOOLCHAIN_GCC/TARGET_M23|mbed-os/connectivity/mbedtls/tools/importer/TARGET_IGNORE|mbed-os/storage/kvstore/tdbstore/tests/TESTS|mbed-os/connectivity/libraries/mbed-coap/.settings|mbed-os/.git|mbed-os/storage/filesystem/littlefsv2/littlefs/tests|mbed-os/connectivity/nanostack/sal-stack-nanostack|mbed-os/.lgtm.yml|mbed-os/storage/kvstore/kv_config/global|mbed-os/drivers/tests/.mbedignore|mbed-os/storage/filesystem/littlefsv2/.mbedignore|mbed-os/platform/tests/UNITTESTS|mbed-os/connectivity/drivers/emac/TARGET_STM|mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_KW41Z|mbed-os/hal/tests/.mbedignore|mbed-os/hal/tests/TESTS|mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K22F|mbed-os/connectivity/lwipstack/lwip/.gitignore|mbed-os/connectivity/drivers/nfc/TARGET_M24SR|mbed-os/connectivity/drivers/mbedtls/TARGET_NUVOTON|mbed-os/targets/TARGET_STM|mbed-os/storage/kvstore/kv_config/filesystem|mbed-os/connectivity/nanostack/sal-stack-nanostack/source/MAC/IEEE802_15_4/.gitignore|mbed-os/rtos/tests/TESTS|mbed-os/connectivity/drivers/802.15.4_RF/TARGET_Silicon_Labs|mbed-os/storage/blockdevice/COMPONENT_SPINAND|mbed-os/connectivity/libraries/nanostack-libservice/.mbedignore|mbed-os/storage/filesystem/littlefs/littlefs/emubd|mbed-os/connectivity/nanostack/coap-service/.gitignore" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+					</sourceEntries>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+		</cconfiguration>
+		<cconfiguration id="com.crt.advproject.config.exe.release.232871611">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.crt.advproject.config.exe.release.232871611" moduleId="org.eclipse.cdt.core.settings" name="Release">
+				<externalSettings/>
+				<extensions>
+					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration artifactExtension="axf" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="Release build" errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser" id="com.crt.advproject.config.exe.release.232871611" name="Release" parent="com.crt.advproject.config.exe.release" postannouncebuildStep="Performing post-build steps" postbuildStep="arm-none-eabi-size &quot;${BuildArtifactFileName}&quot; ; arm-none-eabi-objcopy -v -O binary &quot;${BuildArtifactFileName}&quot; &quot;${BuildArtifactFileBaseName}.bin&quot; ; checksum -p ${TargetChip} -d &quot;${BuildArtifactFileBaseName}.bin&quot;">
+					<folderInfo id="com.crt.advproject.config.exe.release.232871611" name="/" resourcePath="">
+						<toolChain id="com.crt.advproject.toolchain.exe.release.662861406" name="NXP MCU Tools" superClass="com.crt.advproject.toolchain.exe.release">
+							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.GNU_ELF" id="com.crt.advproject.platform.exe.release.436140624" name="ARM-based MCU (Release)" superClass="com.crt.advproject.platform.exe.release"/>
+							<builder buildPath="${workspace_loc:/empty-mbed-os}/Release" cleanBuildTarget="mbedclean" id="com.crt.advproject.builder.exe.release.696357187" incrementalBuildTarget="linker-script-release.ld all" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="com.crt.advproject.builder.exe.release"/>
+							<tool id="com.crt.advproject.cpp.exe.release.329424513" name="MCU C++ Compiler" superClass="com.crt.advproject.cpp.exe.release">
+								<option id="com.crt.advproject.cpp.specs.945382525" name="Specs" superClass="com.crt.advproject.cpp.specs" useByScannerDiscovery="false" value="com.crt.advproject.cpp.specs.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.cpp.arch.554633585" name="Architecture" superClass="com.crt.advproject.cpp.arch" useByScannerDiscovery="true" value="com.crt.advproject.cpp.target.cm4" valueType="enumerated"/>
+								<option id="com.crt.advproject.cpp.exe.release.option.optimization.level.976732232" name="Optimization Level" superClass="com.crt.advproject.cpp.exe.release.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.size" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.optimization.flags.468623108" name="Other optimization flags" superClass="gnu.cpp.compiler.option.optimization.flags" useByScannerDiscovery="false" value="-fno-rtti -fmessage-length=0 -fno-exceptions -ffunction-sections -fdata-sections -funsigned-char -fomit-frame-pointer" valueType="string"/>
+								<option id="com.crt.advproject.cpp.misc.dialect.269289926" name="Language standard" superClass="com.crt.advproject.cpp.misc.dialect" useByScannerDiscovery="true" value="com.crt.advproject.misc.dialect.gnupp14" valueType="enumerated"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.preprocessor.def.705190919" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="TARGET_NAME=K64F"/>
+									<listOptionValue builtIn="false" value="COMPONENT_SD=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_RTC=1"/>
+									<listOptionValue builtIn="false" value="FSL_RTOS_MBED"/>
+									<listOptionValue builtIn="false" value="TOOLCHAIN_GCC"/>
+									<listOptionValue builtIn="false" value="TARGET_LIKE_CORTEX_M4"/>
+									<listOptionValue builtIn="false" value="TARGET_Freescale"/>
+									<listOptionValue builtIn="false" value="TARGET_MCUXpresso_MCUS"/>
+									<listOptionValue builtIn="false" value="TARGET_KPSDK_CODE"/>
+									<listOptionValue builtIn="false" value="TOOLCHAIN_GCC_ARM"/>
+									<listOptionValue builtIn="false" value="FEATURE_PSA=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_USTICKER=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_PORTIN=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_USBDEVICE=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_STDIO_MESSAGES=1"/>
+									<listOptionValue builtIn="false" value="COMPONENT_FLASHIAP=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_EMAC=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_TRNG=1"/>
+									<listOptionValue builtIn="false" value="MBED_SPLIT_HEAP"/>
+									<listOptionValue builtIn="false" value="TARGET_KPSDK_MCUS"/>
+									<listOptionValue builtIn="false" value="TARGET_MCU_K64F"/>
+									<listOptionValue builtIn="false" value="DEVICE_PORTOUT=1"/>
+									<listOptionValue builtIn="false" value="__MBED__=1"/>
+									<listOptionValue builtIn="false" value="TARGET_Freescale_EMAC"/>
+									<listOptionValue builtIn="false" value="MBED_TICKLESS"/>
+									<listOptionValue builtIn="false" value="DEVICE_SERIAL=1"/>
+									<listOptionValue builtIn="false" value="TARGET_PSA_Target"/>
+									<listOptionValue builtIn="false" value="DEVICE_PORTINOUT=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_LPTICKER=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_SERIAL_FC=1"/>
+									<listOptionValue builtIn="false" value="TARGET_KSDK2_MCUS"/>
+									<listOptionValue builtIn="false" value="DEVICE_WATCHDOG=1"/>
+									<listOptionValue builtIn="false" value="TARGET_PSA_V7_M"/>
+									<listOptionValue builtIn="false" value="DEVICE_ANALOGOUT=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_SPI_ASYNCH=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_ANALOGIN=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_I2C=1"/>
+									<listOptionValue builtIn="false" value="TARGET_M4"/>
+									<listOptionValue builtIn="false" value="DEVICE_SLEEP=1"/>
+									<listOptionValue builtIn="false" value="__CORTEX_M4"/>
+									<listOptionValue builtIn="false" value="__MBED_CMSIS_RTOS_CM"/>
+									<listOptionValue builtIn="false" value="DEVICE_FLASH=1"/>
+									<listOptionValue builtIn="false" value="TARGET_K64F"/>
+									<listOptionValue builtIn="false" value="ARM_MATH_CM4"/>
+									<listOptionValue builtIn="false" value="MBED_BUILD_TIMESTAMP=1645455281.1211684"/>
+									<listOptionValue builtIn="false" value="DEVICE_INTERRUPTIN=1"/>
+									<listOptionValue builtIn="false" value="TARGET_RELEASE"/>
+									<listOptionValue builtIn="false" value="TARGET_LIKE_MBED"/>
+									<listOptionValue builtIn="false" value="TARGET_RTOS_M4_M7"/>
+									<listOptionValue builtIn="false" value="__FPU_PRESENT=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_SERIAL_ASYNCH=1"/>
+									<listOptionValue builtIn="false" value="TARGET_FRDM"/>
+									<listOptionValue builtIn="false" value="DEVICE_SPI=1"/>
+									<listOptionValue builtIn="false" value="__CMSIS_RTOS"/>
+									<listOptionValue builtIn="false" value="TARGET_MBED_PSA_SRV"/>
+									<listOptionValue builtIn="false" value="DEVICE_RESET_REASON=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_SPISLAVE=1"/>
+									<listOptionValue builtIn="false" value="TARGET_CORTEX"/>
+									<listOptionValue builtIn="false" value="TARGET_CORTEX_M"/>
+									<listOptionValue builtIn="false" value="DEVICE_PWMOUT=1"/>
+									<listOptionValue builtIn="false" value="TARGET_FF_ARDUINO_UNO"/>
+									<listOptionValue builtIn="false" value="DEVICE_I2CSLAVE=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_CRC=1"/>
+									<listOptionValue builtIn="false" value="CPU_MK64FN1M0VMD12"/>
+									<listOptionValue builtIn="false" value="__NEWLIB__"/>
+								</option>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.include.paths.975452469" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/.&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS/TARGET_CORTEX_M&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS/TARGET_CORTEX_M/Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device/RTE&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device/RTE/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device/rtos&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/cellular&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/802.15.4_RF&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/802.15.4_RF/atmel-rf-driver&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/802.15.4_RF/mcr20a-rf-driver&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/802.15.4_RF/stm-s2lp-rf-driver&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/Altair&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/Altair/ALT1250&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/Altair/ALT1250/PPP&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/GEMALTO&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/GEMALTO/CINTERION&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/GENERIC&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/GENERIC/GENERIC_AT3GPP&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/MultiTech&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/MultiTech/DragonflyNano&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/MultiTech/DragonflyNano/PPP&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/QUECTEL&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/QUECTEL/BC95&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/QUECTEL/BG96&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/QUECTEL/EC2X&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/QUECTEL/M26&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/QUECTEL/UG96&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/RiotMicro&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/RiotMicro/AT&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/TELIT&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/TELIT/HE910&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/TELIT/ME310&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/TELIT/ME910&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/UBLOX&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/UBLOX/AT&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/UBLOX/N2XX&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/UBLOX/PPP&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/emac/TARGET_Freescale_EMAC&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/nfc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/nfc/PN512&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/wifi&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/wifi/esp8266-driver&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/libraries&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/libraries/mbed-coap&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/libraries/nanostack-libservice&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/libraries/ppp&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/lorawan&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/lwipstack&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/mbedtls&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/nanostack&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/netsocket&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/nfc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/device_key&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/include/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/include/drivers/interfaces&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/usb&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/events&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features/frameworks&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features/frameworks/greentea-client&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features/frameworks/mbed-client-cli&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features/frameworks/unity&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features/frameworks/utest&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/include/hal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/usb&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/usb/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/usb/include/usb&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/cxxsupport&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/include/platform&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/include/platform/internal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/mbed-trace&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/mbed-trace/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/mbed-trace/include/mbed-trace&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/randlib&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/source&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/source/minimal-printf&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/include/rtos&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/include/rtos/internal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/source&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/COMPONENT_FLASHIAP&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/COMPONENT_SD&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/include/blockdevice&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/include/blockdevice/internal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/filesystem&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/kvstore&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/TARGET_FRDM&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/api&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}//poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/mbed-os&quot;"/>
+								</option>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.include.files.565960764" name="Include files (-include)" superClass="gnu.cpp.compiler.option.include.files" useByScannerDiscovery="false" valueType="includeFiles">
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed_config.h&quot;"/>
+								</option>
+								<option id="gnu.cpp.compiler.option.warnings.allwarn.914679176" name="All warnings (-Wall)" superClass="gnu.cpp.compiler.option.warnings.allwarn" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="gnu.cpp.compiler.option.warnings.extrawarn.130497853" name="Extra warnings (-Wextra)" superClass="gnu.cpp.compiler.option.warnings.extrawarn" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="com.crt.advproject.cpp.fpu.003313258" name="Floating point" superClass="com.crt.advproject.cpp.fpu" useByScannerDiscovery="false" value="com.crt.advproject.cpp.fpu.fpv4" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.other.other.309953386" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" useByScannerDiscovery="false" value="-c -DNDEBUG -DMBED_MINIMAL_PRINTF -c -Wno-unused-parameter -Wno-missing-field-initializers" valueType="string"/>
+								<option id="com.crt.advproject.cpp.thumb.2104655832" name="Thumb mode" superClass="com.crt.advproject.cpp.thumb" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<inputType id="com.crt.advproject.compiler.cpp.input.127901717" superClass="com.crt.advproject.compiler.cpp.input"/>
+							</tool>
+							<tool id="com.crt.advproject.gcc.exe.release.370732018" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.release">
+								<option id="com.crt.advproject.gcc.hdrlib.040362894" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" useByScannerDiscovery="false" value="com.crt.advproject.gcc.hdrlib.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.specs.941065631" name="Specs" superClass="com.crt.advproject.gcc.specs" useByScannerDiscovery="false" value="com.crt.advproject.gcc.specs.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.arch.315894264" name="Architecture" superClass="com.crt.advproject.gcc.arch" useByScannerDiscovery="true" value="com.crt.advproject.gcc.target.cm4" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.exe.release.option.optimization.level.717694487" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.release.option.optimization.level" useByScannerDiscovery="false" value="gnu.c.optimization.level.size" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.optimization.flags.223116803" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" useByScannerDiscovery="false" value=" -fmessage-length=0 -fno-exceptions -ffunction-sections -fdata-sections -funsigned-char -fomit-frame-pointer" valueType="string"/>
+								<option id="com.crt.advproject.c.misc.dialect.757263757" name="Language standard" superClass="com.crt.advproject.c.misc.dialect" useByScannerDiscovery="true" value="com.crt.advproject.misc.dialect.gnu11" valueType="enumerated"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.compiler.option.preprocessor.def.symbols.028015701" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="TARGET_NAME=K64F"/>
+									<listOptionValue builtIn="false" value="COMPONENT_SD=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_RTC=1"/>
+									<listOptionValue builtIn="false" value="FSL_RTOS_MBED"/>
+									<listOptionValue builtIn="false" value="TOOLCHAIN_GCC"/>
+									<listOptionValue builtIn="false" value="TARGET_LIKE_CORTEX_M4"/>
+									<listOptionValue builtIn="false" value="TARGET_Freescale"/>
+									<listOptionValue builtIn="false" value="TARGET_MCUXpresso_MCUS"/>
+									<listOptionValue builtIn="false" value="TARGET_KPSDK_CODE"/>
+									<listOptionValue builtIn="false" value="TOOLCHAIN_GCC_ARM"/>
+									<listOptionValue builtIn="false" value="FEATURE_PSA=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_USTICKER=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_PORTIN=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_USBDEVICE=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_STDIO_MESSAGES=1"/>
+									<listOptionValue builtIn="false" value="COMPONENT_FLASHIAP=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_EMAC=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_TRNG=1"/>
+									<listOptionValue builtIn="false" value="MBED_SPLIT_HEAP"/>
+									<listOptionValue builtIn="false" value="TARGET_KPSDK_MCUS"/>
+									<listOptionValue builtIn="false" value="TARGET_MCU_K64F"/>
+									<listOptionValue builtIn="false" value="DEVICE_PORTOUT=1"/>
+									<listOptionValue builtIn="false" value="__MBED__=1"/>
+									<listOptionValue builtIn="false" value="TARGET_Freescale_EMAC"/>
+									<listOptionValue builtIn="false" value="MBED_TICKLESS"/>
+									<listOptionValue builtIn="false" value="DEVICE_SERIAL=1"/>
+									<listOptionValue builtIn="false" value="TARGET_PSA_Target"/>
+									<listOptionValue builtIn="false" value="DEVICE_PORTINOUT=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_LPTICKER=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_SERIAL_FC=1"/>
+									<listOptionValue builtIn="false" value="TARGET_KSDK2_MCUS"/>
+									<listOptionValue builtIn="false" value="DEVICE_WATCHDOG=1"/>
+									<listOptionValue builtIn="false" value="TARGET_PSA_V7_M"/>
+									<listOptionValue builtIn="false" value="DEVICE_ANALOGOUT=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_SPI_ASYNCH=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_ANALOGIN=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_I2C=1"/>
+									<listOptionValue builtIn="false" value="TARGET_M4"/>
+									<listOptionValue builtIn="false" value="DEVICE_SLEEP=1"/>
+									<listOptionValue builtIn="false" value="__CORTEX_M4"/>
+									<listOptionValue builtIn="false" value="__MBED_CMSIS_RTOS_CM"/>
+									<listOptionValue builtIn="false" value="DEVICE_FLASH=1"/>
+									<listOptionValue builtIn="false" value="TARGET_K64F"/>
+									<listOptionValue builtIn="false" value="ARM_MATH_CM4"/>
+									<listOptionValue builtIn="false" value="MBED_BUILD_TIMESTAMP=1645455281.1211684"/>
+									<listOptionValue builtIn="false" value="DEVICE_INTERRUPTIN=1"/>
+									<listOptionValue builtIn="false" value="TARGET_RELEASE"/>
+									<listOptionValue builtIn="false" value="TARGET_LIKE_MBED"/>
+									<listOptionValue builtIn="false" value="TARGET_RTOS_M4_M7"/>
+									<listOptionValue builtIn="false" value="__FPU_PRESENT=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_SERIAL_ASYNCH=1"/>
+									<listOptionValue builtIn="false" value="TARGET_FRDM"/>
+									<listOptionValue builtIn="false" value="DEVICE_SPI=1"/>
+									<listOptionValue builtIn="false" value="__CMSIS_RTOS"/>
+									<listOptionValue builtIn="false" value="TARGET_MBED_PSA_SRV"/>
+									<listOptionValue builtIn="false" value="DEVICE_RESET_REASON=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_SPISLAVE=1"/>
+									<listOptionValue builtIn="false" value="TARGET_CORTEX"/>
+									<listOptionValue builtIn="false" value="TARGET_CORTEX_M"/>
+									<listOptionValue builtIn="false" value="DEVICE_PWMOUT=1"/>
+									<listOptionValue builtIn="false" value="TARGET_FF_ARDUINO_UNO"/>
+									<listOptionValue builtIn="false" value="DEVICE_I2CSLAVE=1"/>
+									<listOptionValue builtIn="false" value="DEVICE_CRC=1"/>
+									<listOptionValue builtIn="false" value="CPU_MK64FN1M0VMD12"/>
+									<listOptionValue builtIn="false" value="__NEWLIB__"/>
+								</option>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.compiler.option.include.paths.381003650" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/.&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS/TARGET_CORTEX_M&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS/TARGET_CORTEX_M/Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device/RTE&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device/RTE/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device/rtos&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/cellular&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/802.15.4_RF&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/802.15.4_RF/atmel-rf-driver&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/802.15.4_RF/mcr20a-rf-driver&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/802.15.4_RF/stm-s2lp-rf-driver&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/Altair&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/Altair/ALT1250&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/Altair/ALT1250/PPP&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/GEMALTO&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/GEMALTO/CINTERION&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/GENERIC&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/GENERIC/GENERIC_AT3GPP&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/MultiTech&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/MultiTech/DragonflyNano&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/MultiTech/DragonflyNano/PPP&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/QUECTEL&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/QUECTEL/BC95&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/QUECTEL/BG96&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/QUECTEL/EC2X&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/QUECTEL/M26&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/QUECTEL/UG96&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/RiotMicro&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/RiotMicro/AT&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/TELIT&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/TELIT/HE910&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/TELIT/ME310&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/TELIT/ME910&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/UBLOX&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/UBLOX/AT&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/UBLOX/N2XX&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/UBLOX/PPP&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/emac/TARGET_Freescale_EMAC&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/nfc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/nfc/PN512&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/wifi&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/wifi/esp8266-driver&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/libraries&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/libraries/mbed-coap&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/libraries/nanostack-libservice&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/libraries/ppp&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/lorawan&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/lwipstack&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/mbedtls&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/nanostack&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/netsocket&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/nfc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/device_key&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/include/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/include/drivers/interfaces&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/usb&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/events&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features/frameworks&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features/frameworks/greentea-client&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features/frameworks/mbed-client-cli&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features/frameworks/unity&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features/frameworks/utest&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/include/hal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/usb&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/usb/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/usb/include/usb&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/cxxsupport&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/include/platform&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/include/platform/internal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/mbed-trace&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/mbed-trace/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/mbed-trace/include/mbed-trace&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/randlib&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/source&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/source/minimal-printf&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/include/rtos&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/include/rtos/internal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/source&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/COMPONENT_FLASHIAP&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/COMPONENT_SD&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/include/blockdevice&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/include/blockdevice/internal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/filesystem&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/kvstore&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/TARGET_FRDM&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/api&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}//poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/mbed-os&quot;"/>
+								</option>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.compiler.option.include.files.693730508" name="Include files (-include)" superClass="gnu.c.compiler.option.include.files" useByScannerDiscovery="false" valueType="includeFiles">
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed_config.h&quot;"/>
+								</option>
+								<option id="gnu.c.compiler.option.warnings.allwarn.246218317" name="All warnings (-Wall)" superClass="gnu.c.compiler.option.warnings.allwarn" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="gnu.c.compiler.option.warnings.extrawarn.768911722" name="Extra warnings (-Wextra)" superClass="gnu.c.compiler.option.warnings.extrawarn" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="com.crt.advproject.gcc.fpu.725208580" name="Floating point" superClass="com.crt.advproject.gcc.fpu" useByScannerDiscovery="false" value="com.crt.advproject.gcc.fpu.fpv4" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.misc.other.109852133" name="Other flags" superClass="gnu.c.compiler.option.misc.other" useByScannerDiscovery="false" value="-c -DNDEBUG -DMBED_MINIMAL_PRINTF -c -Wno-unused-parameter -Wno-missing-field-initializers" valueType="string"/>
+								<option id="com.crt.advproject.gcc.thumb.1950448059" name="Thumb mode" superClass="com.crt.advproject.gcc.thumb" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<inputType id="com.crt.advproject.compiler.input.370732018" superClass="com.crt.advproject.compiler.input"/>
+							</tool>
+							<tool id="com.crt.advproject.gas.exe.release.938872026" name="MCU Assembler" superClass="com.crt.advproject.gas.exe.release">
+								<option id="com.crt.advproject.gas.hdrlib.817939669" name="Library headers" superClass="com.crt.advproject.gas.hdrlib" value="com.crt.advproject.gas.hdrlib.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gas.specs.843011202" name="Specs" superClass="com.crt.advproject.gas.specs" value="com.crt.advproject.gas.specs.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gas.arch.506450167" name="Architecture" superClass="com.crt.advproject.gas.arch" value="com.crt.advproject.gas.target.cm4" valueType="enumerated"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.both.asm.option.include.paths.054651868" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/.&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS/TARGET_CORTEX_M&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/CMSIS_5/CMSIS/TARGET_CORTEX_M/Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device/RTE&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device/RTE/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/cmsis/device/rtos&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/cellular&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/802.15.4_RF&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/802.15.4_RF/atmel-rf-driver&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/802.15.4_RF/mcr20a-rf-driver&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/802.15.4_RF/stm-s2lp-rf-driver&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/Altair&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/Altair/ALT1250&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/Altair/ALT1250/PPP&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/GEMALTO&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/GEMALTO/CINTERION&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/GENERIC&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/GENERIC/GENERIC_AT3GPP&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/MultiTech&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/MultiTech/DragonflyNano&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/MultiTech/DragonflyNano/PPP&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/QUECTEL&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/QUECTEL/BC95&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/QUECTEL/BG96&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/QUECTEL/EC2X&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/QUECTEL/M26&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/QUECTEL/UG96&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/RiotMicro&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/RiotMicro/AT&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/TELIT&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/TELIT/HE910&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/TELIT/ME310&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/TELIT/ME910&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/UBLOX&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/UBLOX/AT&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/UBLOX/N2XX&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/cellular/UBLOX/PPP&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/emac/TARGET_Freescale_EMAC&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/nfc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/nfc/PN512&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/wifi&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/drivers/wifi/esp8266-driver&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/libraries&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/libraries/mbed-coap&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/libraries/nanostack-libservice&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/libraries/ppp&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/lorawan&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/lwipstack&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/mbedtls&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/nanostack&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/netsocket&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/connectivity/nfc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/device_key&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/include/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/include/drivers/interfaces&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/drivers/usb&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/events&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features/frameworks&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features/frameworks/greentea-client&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features/frameworks/mbed-client-cli&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features/frameworks/unity&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/features/frameworks/utest&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/include/hal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/usb&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/usb/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/hal/usb/include/usb&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/cxxsupport&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/include/platform&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/include/platform/internal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/mbed-trace&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/mbed-trace/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/mbed-trace/include/mbed-trace&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/randlib&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/source&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/platform/source/minimal-printf&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/include/rtos&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/include/rtos/internal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/rtos/source&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/COMPONENT_FLASHIAP&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/COMPONENT_SD&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/include/blockdevice&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/blockdevice/include/blockdevice/internal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/filesystem&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/storage/kvstore&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/TARGET_FRDM&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/drivers&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/api&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}//poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/mbed-os&quot;"/>
+								</option>
+								<option id="com.crt.advproject.gas.fpu.929609312" name="Floating point" superClass="com.crt.advproject.gas.fpu" useByScannerDiscovery="false" value="com.crt.advproject.gas.fpu.fpv4" valueType="enumerated"/>
+								<option id="gnu.both.asm.option.flags.crt.621635133" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" useByScannerDiscovery="false" value="-c -DNDEBUG -DMBED_MINIMAL_PRINTF -c -D__NEWLIB__" valueType="string"/>
+								<option id="com.crt.advproject.gas.thumb.1917005890" name="Thumb mode" superClass="com.crt.advproject.gas.thumb" value="true" valueType="boolean"/>
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.512634274" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+								<inputType id="com.crt.advproject.assembler.input.313944993" name="Additional Assembly Source Files" superClass="com.crt.advproject.assembler.input"/>
+							</tool>
+							<tool commandLinePattern="${COMMAND} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS} ${FLAGS}" id="com.crt.advproject.link.cpp.exe.release.547114069" name="MCU C++ Linker" superClass="com.crt.advproject.link.cpp.exe.release">
+								<option defaultValue="com.crt.advproject.heapAndStack.mcuXpressoStyle.cpp" id="com.crt.advproject.link.memory.heapAndStack.style.cpp.929415833" name="Heap and Stack placement" superClass="com.crt.advproject.link.memory.heapAndStack.style.cpp" useByScannerDiscovery="false" value="Default" valueType="enumerated"/>
+								<option id="com.crt.advproject.link.memory.heapAndStack.cpp.631633749" name="Heap and Stack options" superClass="com.crt.advproject.link.memory.heapAndStack.cpp" useByScannerDiscovery="false" value="&amp;Heap:Default;Post Data;Default&amp;Stack:Default;End;Default" valueType="string"/>
+								<option id="com.crt.advproject.link.cpp.multicore.master.133706449" name="Multicore master" superClass="com.crt.advproject.link.cpp.multicore.master" useByScannerDiscovery="false"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="true" id="com.crt.advproject.link.cpp.multicore.master.userobjs.772426048" name="Slave Objects (not visible)" superClass="com.crt.advproject.link.cpp.multicore.master.userobjs" useByScannerDiscovery="false" valueType="userObjs"/>
+								<option id="com.crt.advproject.link.cpp.arch.967418790" name="Architecture" superClass="com.crt.advproject.link.cpp.arch" useByScannerDiscovery="false" value="com.crt.advproject.link.cpp.target.cm4" valueType="enumerated"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.link.option.paths.827604960" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" useByScannerDiscovery="false" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/mbed-os/lib&quot;"/>
+								</option>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.link.option.libs.438963817" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" useByScannerDiscovery="false" valueType="libs">
+									<listOptionValue builtIn="false" value="mbed-os"/>
+									<listOptionValue builtIn="false" value="stdc++"/>
+									<listOptionValue builtIn="false" value="supc++"/>
+									<listOptionValue builtIn="false" value="m"/>
+									<listOptionValue builtIn="false" value="c"/>
+									<listOptionValue builtIn="false" value="gcc"/>
+									<listOptionValue builtIn="false" value="nosys"/>
+								</option>
+								<option id="gnu.cpp.link.option.userobjs.250726280" name="Other objects" superClass="gnu.cpp.link.option.userobjs" useByScannerDiscovery="false"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.link.option.other.934989731" name="Other options (-Xlinker [option])" superClass="gnu.cpp.link.option.other" useByScannerDiscovery="false" valueType="stringList">
+									<listOptionValue builtIn="false" value="-Map=&quot;${BuildArtifactFileBaseName}.map&quot;"/>
+									<listOptionValue builtIn="false" value="-print-memory-usage"/>
+									<listOptionValue builtIn="false" value="--gc-sections"/>
+									<listOptionValue builtIn="false" value="--wrap=main"/>
+									<listOptionValue builtIn="false" value="--wrap=_malloc_r"/>
+									<listOptionValue builtIn="false" value="--wrap=_free_r"/>
+									<listOptionValue builtIn="false" value="--wrap=_realloc_r"/>
+									<listOptionValue builtIn="false" value="--wrap=_memalign_r"/>
+									<listOptionValue builtIn="false" value="--wrap=_calloc_r"/>
+									<listOptionValue builtIn="false" value="--wrap=exit"/>
+									<listOptionValue builtIn="false" value="--wrap=atexit"/>
+									<listOptionValue builtIn="false" value="--wrap=printf"/>
+									<listOptionValue builtIn="false" value="--wrap=sprintf"/>
+									<listOptionValue builtIn="false" value="--wrap=snprintf"/>
+									<listOptionValue builtIn="false" value="--wrap=vprintf"/>
+									<listOptionValue builtIn="false" value="--wrap=vsprintf"/>
+									<listOptionValue builtIn="false" value="--wrap=vsnprintf"/>
+									<listOptionValue builtIn="false" value="--wrap=fprintf"/>
+									<listOptionValue builtIn="false" value="--wrap=vfprintf"/>
+								</option>
+								<option id="gnu.cpp.link.option.flags.395175052" name="Linker flags" superClass="gnu.cpp.link.option.flags" useByScannerDiscovery="false" value="-DNDEBUG -DMBED_MINIMAL_PRINTF -Wl,-n -Wl,--start-group -lstdc++ -lsupc++ -lm -lc -lgcc -lnosys -lmbed-os -Wl,--end-group" valueType="string"/>
+								<option id="com.crt.advproject.link.cpp.script.666023901" name="Linker script" superClass="com.crt.advproject.link.cpp.script" useByScannerDiscovery="false" value="${ProjDirPath}/Release/linker-script-release.ld" valueType="string"/>
+								<option id="com.crt.advproject.link.cpp.multicore.slave.547917469" name="Multicore configuration" superClass="com.crt.advproject.link.cpp.multicore.slave" useByScannerDiscovery="false"/>
+								<option id="com.crt.advproject.link.cpp.fpu.383124934" name="Floating point" superClass="com.crt.advproject.link.cpp.fpu" useByScannerDiscovery="false" value="com.crt.advproject.link.cpp.fpu.fpv4" valueType="enumerated"/>
+								<option id="com.crt.advproject.link.cpp.thumb.2051869887" name="Thumb mode" superClass="com.crt.advproject.link.cpp.thumb" value="true" valueType="boolean"/>
+								<option id="com.crt.advproject.link.memory.load.image.cpp.970370283" name="Plain load image" superClass="com.crt.advproject.link.memory.load.image.cpp" value="" valueType="string"/>
+								<option id="com.crt.advproject.link.memory.data.cpp.1340671515" name="Global data placement" superClass="com.crt.advproject.link.memory.data.cpp" value="" valueType="string"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="true" id="com.crt.advproject.link.memory.sections.cpp.1682416852" name="Extra linker script input sections" superClass="com.crt.advproject.link.memory.sections.cpp" valueType="stringList"/>
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.381416418" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
+									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+								</inputType>
+							</tool>
+							<tool id="com.crt.advproject.link.exe.release.094599858" name="MCU Linker" superClass="com.crt.advproject.link.exe.release"/>
+							<tool id="com.crt.advproject.tool.debug.release.626195794" name="MCU Debugger" superClass="com.crt.advproject.tool.debug.release"/>
+						</toolChain>
+					</folderInfo>
+					<sourceEntries>
+						<entry excluding="mbed-os/TESTS|mbed-os/storage/filesystem/fat/ChaN|mbed-os/docs/.gitignore|mbed-os/connectivity/cellular/.gitignore|mbed-os/hal/usb/TARGET_Templates|mbed-os/connectivity/lwipstack/lwip/test|mbed-os/connectivity/netsocket/tests/TESTS|mbed-os/connectivity/nanostack/coap-service/test|.git|mbed-os/connectivity/libraries/mbed-coap/.gitattributes|mbed-os/connectivity/drivers/lora/COMPONENT_SX126X|mbed-os/platform/mbed-trace/.mbedignore|mbed-os/storage/filesystem/littlefs/littlefs/.gitignore|mbed-os/platform/randlib/.yotta_ignore|mbed-os/hal/tests/pinvalidate/test_files|mbed-os/targets/TARGET_NUVOTON|mbed-os/connectivity/drivers/mbedtls/TARGET_Cypress|mbed-os/targets/TARGET_TOSHIBA|mbed-os/connectivity/libraries/nanostack-libservice/.yotta_ignore|mbed-os/storage/kvstore/kvstore_global_api|mbed-os/rtos/tests/.mbedignore|mbed-os/storage/kvstore/kv_config/tdb_internal|mbed-os/drivers/tests/UNITTESTS|BUILD|mbed-os/storage/filesystem/littlefsv2/littlefs/.travis.yml|mbed-os/connectivity/drivers/mbedtls/TARGET_STM|mbed-os/platform/source/TARGET_CORTEX_M/TOOLCHAIN_IAR|mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_ARM_STD|mbed-os/storage/kvstore/tdbstore/tests/UNITTESTS|mbed-os/.codecheckignore|mbed-os/storage/kvstore/filesystemstore/tests/UNITTESTS|mbed-os/targets/TARGET_Silicon_Labs|mbed-os/targets/TARGET_Freescale/TARGET_KLXX|mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/TARGET_HEXIWEAR|mbed-os/connectivity/lorawan/tests/.mbedignore|mbed-os/connectivity/nanostack/coap-service|mbed-os/connectivity/nanostack/sal-stack-nanostack-eventloop|mbed-os/platform/randlib/tests/unit|mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_KL43Z|mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2/RTX/Source/TOOLCHAIN_ARM|mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2/RTX/Source/TOOLCHAIN_IAR|mbed-os/connectivity/drivers/emac/COMPONENT_WHD|mbed-os/connectivity/drivers/cellular/COMPONENT_STMOD_CELLULAR|mbed-os/targets/TARGET_GigaDevice|mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/TARGET_SDT64B|mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_IAR|mbed-os/platform/randlib/.gitignore|mbed-os/features/frameworks/utest/TESTS|mbed-os/storage/filesystem/littlefs/littlefs/.travis.yml|mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2/RTX/Config/TARGET_CORTEX_A|mbed-os/cmsis/CMSIS_5/CMSIS/TARGET_CORTEX_A|mbed-os/features/deprecated_warnings/FEATURE_LWIP|mbed-os/storage/filesystem/littlefs/tests/TESTS|mbed-os/storage/blockdevice/tests/UNITTESTS|mbed-os/connectivity/drivers/mbedtls/TARGET_Samsung|mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2/RTX/Source/TOOLCHAIN_GCC/TARGET_M3|mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2/RTX/Source/TOOLCHAIN_GCC/TARGET_CORTEX_A|mbed-os/connectivity/drivers/802.15.4_RF/TARGET_Freescale/TARGET_KW41Z|mbed-os/connectivity/lwipstack/.mbedignore|mbed-os/storage/filesystem/littlefsv2/littlefs/bd|mbed-os/drivers/usb/tests/TESTS|mbed-os/targets/TARGET_ARM_SSG|mbed-os/connectivity/drivers/wifi/TARGET_WICED|mbed-os/connectivity/lwipstack/lwip/doc|mbed-os/storage/kvstore/kv_config/filesystem_no_rbp|mbed-os/connectivity/drivers/emac/TARGET_ARM_FM|mbed-os/platform/mbed-trace/.gitignore|mbed-os/.gitignore|mbed-os/storage/filesystem/tests/UNITTESTS|mbed-os/features/deprecated_warnings/FEATURE_NANOSTACK|mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2/RTX/Source/TOOLCHAIN_GCC/TARGET_M0|mbed-os/connectivity/mbedtls/tests/TESTS|mbed-os/connectivity/drivers/lora/TARGET_STM32WL|mbed-os/connectivity/nanostack/sal-stack-nanostack/source/Service_Libs/CCM_lib/mbedOS/aes_mbedtls.c|mbed-os/storage/kvstore/tdbstore|mbed-os/platform/FEATURE_EXPERIMENTAL_API|mbed-os/storage/filesystem/littlefsv2/.travis.yml|mbed-os/drivers/device_key/tests/TESTS|mbed-os/features/FEATURE_BOOTLOADER|mbed-os/connectivity/nanostack/mbed-mesh-api/.mbedignore|mbed-os/connectivity/mbedtls/tests/UNITTESTS|mbed-os/hal/tests/UNITTESTS|.github|mbed-os/storage/filesystem/tests/TESTS|mbed-os/cmsis/device/rtos/TOOLCHAIN_ARM_MICRO|mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_K66F|mbed-os/events/tests/UNITTESTS|mbed-os/platform/randlib/.mbedignore|mbed-os/connectivity/nanostack/sal-stack-nanostack/source/MLE/.gitignore|mbed-os/storage/filesystem/littlefsv2|mbed-os/.mergify.yml|mbed-os/storage/filesystem/littlefs/littlefs/tests|mbed-os/connectivity/nanostack/mbed-mesh-api|mbed-os/tools|mbed-os/cmsis/device/rtos/TOOLCHAIN_IAR|mbed-os/connectivity/lwipstack/lwip/src/apps|mbed-os/connectivity/drivers/emac/TARGET_Silicon_Labs|mbed-os/connectivity/drivers/ble/FEATURE_BLE|mbed-os/connectivity/drivers/wifi/COMPONENT_WHD|mbed-os/targets/TARGET_NORDIC|mbed-os/storage/kvstore/filesystemstore|mbed-os/drivers/tests/TESTS|mbed-os/platform/tests/TESTS|mbed-os/storage/kvstore/direct_access_devicekey|mbed-os/connectivity/libraries/tests/UNITTESTS|mbed-os/storage/filesystem/littlefsv2/tests/TESTS|mbed-os/storage/blockdevice/COMPONENT_FLASHIAP/tests/TESTS|mbed-os/storage/blockdevice/COMPONENT_SD/tests/TESTS|mbed-os/connectivity/lwipstack/lwip/src/include/compat/stdc|mbed-os/storage/blockdevice/COMPONENT_DATAFLASH|mbed-os/storage/kvstore/kv_config/tdb_external|mbed-os/connectivity/drivers/emac/TARGET_Cypress|mbed-os/storage/kvstore/securestore|mbed-os/events/tests/.mbedignore|mbed-os/.astylerc|mbed-os/connectivity/nanostack/sal-stack-nanostack-eventloop/.gitignore|mbed-os/connectivity/netsocket/tests/UNITTESTS|mbed-os/targets/TARGET_Ambiq_Micro|mbed-os/storage/blockdevice/COMPONENT_I2CEE|mbed-os/storage/platform|mbed-os/storage/filesystem/littlefs/.mbedignore|mbed-os/storage/filesystem/fat/tests/TESTS|mbed-os/storage/kvstore/direct_access_devicekey/tests/TESTS|mbed-os/targets/TARGET_RENESAS|mbed-os/connectivity/libraries/nanostack-libservice/test|mbed-os/storage/kvstore/kv_config/tdb_external_no_rbp|mbed-os/connectivity/drivers/lora/COMPONENT_SX1272|mbed-os/features/frameworks/COMPONENT_FPGA_CI_TEST_SHIELD|mbed-os/targets/TARGET_NXP|mbed-os/storage/blockdevice/tests/TESTS|mbed-os/.editorconfig|mbed-os/cmsis/device/rtos/TOOLCHAIN_ARM_STD|mbed-os/storage/filesystem/littlefsv2/littlefs/.gitignore|mbed-os/UNITTESTS|mbed-os/connectivity/drivers/emac/TARGET_RENESAS_EMAC|mbed-os/connectivity/nanostack/coap-service/.mbedignore|mbed-os/storage/kvstore/kv_config|mbed-os/connectivity/nanostack/nanostack-hal-mbed-cmsis-rtos/.mbedignore|mbed-os/connectivity/FEATURE_BLE|mbed-os/connectivity/drivers/emac/TARGET_NUVOTON_EMAC|mbed-os/platform/source/TARGET_CORTEX_A|mbed-os/storage/filesystem/littlefs/.travis.yml|mbed-os/storage/kvstore/securestore/tests/TESTS|mbed-os/platform/source/TARGET_CORTEX_M/TOOLCHAIN_ARM|mbed-os/connectivity/drivers/emac/TARGET_NXP_EMAC|mbed-os/cmsis/tests/UNITTESTS|mbed-os/connectivity/nanostack/sal-stack-nanostack/.gitignore|mbed-os/.coveragerc|mbed-os/connectivity/libraries/mbed-coap/.mbedignore|mbed-os/storage/kvstore/tests/TESTS|mbed-os/connectivity/cellular/tests/UNITTESTS|mbed-os/targets/TARGET_Maxim|mbed-os/connectivity/drivers/lora/COMPONENT_SX1276|mbed-os/storage/kvstore/tests/UNITTESTS|mbed-os/.gitattributes|mbed-os/.github|mbed-os/storage/blockdevice/COMPONENT_SPIF|mbed-os/events/tests/unit|mbed-os/connectivity/nanostack/mbed-mesh-api/.gitignore|mbed-os/connectivity/drivers/mbedtls/TARGET_Silicon_Labs|mbed-os/connectivity/drivers/emac/TARGET_GD_EMAC|mbed-os/connectivity/libraries/nanostack-libservice/.gitignore|mbed-os/storage/blockdevice/COMPONENT_QSPIF|mbed-os/connectivity/nanostack/nanostack-hal-mbed-cmsis-rtos/.gitattributes|mbed-os/hal/TARGET_FLASH_CMSIS_ALGO|mbed-os/connectivity/drivers/emac/TARGET_RDA_EMAC|mbed-os/.pylintrc|mbed-os/connectivity/drivers/emac/TARGET_ARM_SSG|mbed-os/connectivity/drivers/emac/TARGET_Freescale_EMAC/TARGET_K66F|mbed-os/connectivity/nanostack/nanostack-hal-mbed-cmsis-rtos|mbed-os/connectivity/nanostack/sal-stack-nanostack/.mbedignore|mbed-os/storage/filesystem/littlefs|mbed-os/storage/kvstore/filesystemstore/tests/TESTS|mbed-os/events/tests/TESTS|mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/middleware/wireless/TARGET_FRAMEWORK_5_3_3|mbed-os/connectivity/nfc/tests/TESTS|mbed-os/targets/TARGET_Analog_Devices|mbed-os/platform/tests/.mbedignore|mbed-os/connectivity/libraries/mbed-coap/.gitignore|mbed-os/rtos/tests/UNITTESTS|mbed-os/connectivity/lwipstack/lwip/src/include/lwip/apps|mbed-os/connectivity/lwipstack/lwip/src/netif/lwip_slipif.c|mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2/RTX/Source/TOOLCHAIN_GCC/TARGET_M33|mbed-os/storage/blockdevice/COMPONENT_OSPIF|mbed-os/connectivity/lorawan/tests/UNITTESTS|mbed-os/targets/TARGET_ARM_FM|.mbed|mbed-os/connectivity/lorawan/tests/TESTS|mbed-os/targets/TARGET_Samsung|mbed-os/targets/TARGET_Cypress|mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_K82F|mbed-os/connectivity/drivers/mbedtls/FEATURE_CRYPTOCELL310|mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2/RTX/Source/TOOLCHAIN_GCC/TARGET_M0P|mbed-os/connectivity/lwipstack/lwip/.gitattributes|mbed-os/connectivity/nanostack/sal-stack-nanostack/.gitattributes|mbed-os/cmsis/CMSIS_5/CMSIS/RTOS2/RTX/Source/TOOLCHAIN_GCC/TARGET_M23|mbed-os/connectivity/mbedtls/tools/importer/TARGET_IGNORE|mbed-os/storage/kvstore/tdbstore/tests/TESTS|mbed-os/connectivity/libraries/mbed-coap/.settings|mbed-os/.git|mbed-os/storage/filesystem/littlefsv2/littlefs/tests|mbed-os/connectivity/nanostack/sal-stack-nanostack|mbed-os/.lgtm.yml|mbed-os/storage/kvstore/kv_config/global|mbed-os/drivers/tests/.mbedignore|mbed-os/storage/filesystem/littlefsv2/.mbedignore|mbed-os/platform/tests/UNITTESTS|mbed-os/connectivity/drivers/emac/TARGET_STM|mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_KW41Z|mbed-os/hal/tests/.mbedignore|mbed-os/hal/tests/TESTS|mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K22F|mbed-os/connectivity/lwipstack/lwip/.gitignore|mbed-os/connectivity/drivers/nfc/TARGET_M24SR|mbed-os/connectivity/drivers/mbedtls/TARGET_NUVOTON|mbed-os/targets/TARGET_STM|mbed-os/storage/kvstore/kv_config/filesystem|mbed-os/connectivity/nanostack/sal-stack-nanostack/source/MAC/IEEE802_15_4/.gitignore|mbed-os/rtos/tests/TESTS|mbed-os/connectivity/drivers/802.15.4_RF/TARGET_Silicon_Labs|mbed-os/storage/blockdevice/COMPONENT_SPINAND|mbed-os/connectivity/libraries/nanostack-libservice/.mbedignore|mbed-os/storage/filesystem/littlefs/littlefs/emubd|mbed-os/connectivity/nanostack/coap-service/.gitignore" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+					</sourceEntries>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+		</cconfiguration>
+	</storageModule>
+	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+		<project id="empty-mbed-os.com.crt.advproject.projecttype.exe.033963418" name="Executable" projectType="com.crt.advproject.projecttype.exe"/>
+	</storageModule>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="com.crt.config">
+		<projectStorage>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;TargetConfig&gt;
+&lt;Properties property_3="NXP" property_4="MK64FN1M0xxx12" property_count="5" version="100300"/&gt;
+&lt;infoList vendor="NXP"&gt;
+&lt;info chip="MK64FN1M0xxx12" name="MK64FN1M0xxx12"&gt;
+&lt;chip&gt;
+&lt;name&gt;MK64FN1M0xxx12&lt;/name&gt;
+&lt;family&gt;K6x&lt;/family&gt;
+&lt;vendor&gt;NXP&lt;/vendor&gt;
+&lt;memory can_program="true" id="Flash" is_ro="true" size="1024" type="Flash"/&gt;
+&lt;memory id="RAM" size="4" type="RAM"/&gt;
+&lt;memoryInstance derived_from="Flash" driver="FTFE_4K.cfx" id="PROGRAM_FLASH" location="0x00000000" size="0x00100000"/&gt;
+&lt;memoryInstance derived_from="RAM" id="SRAM_UPPER" location="0x20000000" size="0x00030000"/&gt;
+&lt;memoryInstance derived_from="RAM" id="SRAM_LOWER" location="0x1FFF0000" size="0x00010000"/&gt;
+&lt;memoryInstance derived_from="RAM" id="FLEX_RAM" location="0x14000000" size="0x00001000"/&gt;
+&lt;/chip&gt;
+&lt;processor&gt;
+&lt;name gcc_name="cortex-m4"&gt;Cortex-M4&lt;/name&gt;
+&lt;family&gt;Cortex-M&lt;/family&gt;
+&lt;/processor&gt;
+&lt;/info&gt;
+&lt;/infoList&gt;
+&lt;/TargetConfig&gt;</projectStorage>
+	</storageModule>
+	<storageModule moduleId="com.nxp.mcuxpresso.core.datamodels">
+		<sdkName>SDK_2.x_FRDM-K64F</sdkName>
+		<sdkVersion>2.11.0</sdkVersion>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+	<storageModule moduleId="refreshScope"/>
+</cproject>

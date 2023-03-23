@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdk-packages>
+<package hash="1645455420206" path="/poli/home/vyuka/apps/git/apps-workspace.mcu/empty-mbed-os/part-support" schema="manifest-schema/sdk_manifest_v3.9.xsd"/>
+<package hash="1641921508000" path="/usr/local/mcuxpressoide-11.5.0_7232/ide/plugins/com.nxp.mcuxpresso.core.datamodels.resources_11.5.0.202107051138/override" schema="manifest-schema/sdk_manifest_v3.3.xsd"/>
+<package hash="1645455420206" path="/poli/home/vyuka/apps/workspace-full.mcu/i2c/part-support" schema="manifest-schema/sdk_manifest_v3.9.xsd"/>
+<package hash="1645455420206" path="/poli/home/vyuka/apps/workspace-full.mcu/demo-all/part-support" schema="manifest-schema/sdk_manifest_v3.9.xsd"/>
+<package hash="1645455420206" path="/poli/home/vyuka/apps/git/apps-workspace.mcu/i2c/part-support" schema="manifest-schema/sdk_manifest_v3.9.xsd"/>
+<package hash="1645455420206" path="/poli/home/vyuka/apps/workspace-full.mcu/lcd/part-support" schema="manifest-schema/sdk_manifest_v3.9.xsd"/>
+<package hash="1645455420206" path="/poli/home/vyuka/apps/workspace-full.mcu/leds/part-support" schema="manifest-schema/sdk_manifest_v3.9.xsd"/>
+<package hash="1645455420206" path="/poli/home/vyuka/apps/git/apps-workspace.mcu/leds/part-support" schema="manifest-schema/sdk_manifest_v3.9.xsd"/>
+<package hash="1645455420206" path="/poli/home/vyuka/apps/git/apps-workspace.mcu/demo-all/part-support" schema="manifest-schema/sdk_manifest_v3.9.xsd"/>
+<package hash="1645455420206" path="/poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/part-support" schema="manifest-schema/sdk_manifest_v3.9.xsd"/>
+<package hash="1645455420206" path="/poli/home/vyuka/apps/git/apps-workspace.mcu/demo/part-support" schema="manifest-schema/sdk_manifest_v3.9.xsd"/>
+<package hash="1645455420206" path="/poli/home/vyuka/apps/git/apps-workspace.mcu/lcd/part-support" schema="manifest-schema/sdk_manifest_v3.9.xsd"/>
+<package hash="1641921508000" path="/usr/local/mcuxpressoide-11.5.0_7232/ide/plugins/com.nxp.mcuxpresso.core.datamodels.resources_11.5.0.202107051138/fragments" schema="manifest-schema/sdk_manifest_v3.3.xsd"/>
+<package hash="1645455420206" path="/poli/home/vyuka/apps/workspace-full.mcu/demo/part-support" schema="manifest-schema/sdk_manifest_v3.9.xsd"/>
+</sdk-packages>

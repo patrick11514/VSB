@@ -1,0 +1,9 @@
+14:47:02 **** Clean-only build of configuration Debug for project demo-all ****
+make -r -j4 mbedclean 
+rm -rf  ./demo-i2c.o ./demo-lcd.o ./demo-leds.o ./font8x8.o ./i2c-lib.o ./lcd_lib.o ./main-demo.o ./si4735-lib.o 
+rm -rf  ./demo-i2c.d ./demo-lcd.d ./demo-leds.d ./font8x8.d ./i2c-lib.d ./lcd_lib.d ./main-demo.d ./si4735-lib.d 
+rm -rf  empty-mbed-os.* linker-script-*.ld
+ 
+
+14:47:02 Build Finished. 0 errors, 0 warnings. (took 117ms)
+

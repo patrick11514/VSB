@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item key="selection" value=" }"/>
+		<item key="wrap" value="true"/>
+		<item key="casesensitive" value="false"/>
+		<item key="wholeword" value="false"/>
+		<item key="incremental" value="false"/>
+		<item key="isRegEx" value="false"/>
+		<list key="findhistory">
+			<item value="}"/>
+			<item value="{&#x09;"/>
+			<item value="{"/>
+			<item value="{ "/>
+			<item value="l_freq"/>
+			<item value="_g_pcadr"/>
+			<item value="ack"/>
+			<item value="CAP"/>
+			<item value="MULT"/>
+			<item value="SNR"/>
+			<item value="RSSI"/>
+			<item value="S2"/>
+			<item value="S1"/>
+			<item value="check_rds"/>
+			<item value="uchar"/>
+		</list>
+		<list key="replacehistory">
+			<item value=" }"/>
+			<item value="{ "/>
+			<item value="{"/>
+			<item value="l_ack"/>
+			<item value="l_CAP"/>
+			<item value="l_MULT"/>
+			<item value="l_SNR"/>
+			<item value="l_RSSI"/>
+			<item value="l_S2"/>
+			<item value="l_S1"/>
+			<item value="uint8_t"/>
+			<item value=""/>
+			<item value=" )"/>
+			<item value="( "/>
+			<item value="LCD_HEIGHT"/>
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item key="DIALOG_X_ORIGIN" value="1386"/>
+		<item key="DIALOG_Y_ORIGIN" value="305"/>
+		<item key="DIALOG_WIDTH" value="346"/>
+		<item key="DIALOG_HEIGHT" value="395"/>
+		<item key="DIALOG_FONT_NAME" value="1|Noto Sans|10.0|0|GTK|1|"/>
+	</section>
+	<section name="org.eclipse.ui.texteditor.GotoLineAction$GotoLineDialog_dialogBounds">
+		<item key="DIALOG_X_ORIGIN" value="704"/>
+		<item key="DIALOG_Y_ORIGIN" value="395"/>
+	</section>
+</section>

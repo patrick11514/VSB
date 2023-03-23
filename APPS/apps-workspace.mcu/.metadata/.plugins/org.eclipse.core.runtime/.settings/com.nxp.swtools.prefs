@@ -1,0 +1,8 @@
+checkToolUpdateOnStartup=false
+componentTemplatesFolder=
+downloadOnNewSdk=false
+eclipse.preferences.version=1
+lineEndsStyle=defaultStyle
+offline=true
+proxy=NATIVE
+undoHistorySize=10
