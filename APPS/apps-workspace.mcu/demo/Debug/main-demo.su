@@ -1,0 +1,14 @@
+/usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/arm-none-eabi/thumb/v7e-m+fp/softfp/bits/gthr-default.h:229:1:int __gthread_key_delete(__gthread_key_t)	8	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/demo/mbed-os/drivers/include/drivers/DigitalIn.h:67:5:mbed::DigitalIn::DigitalIn(PinName)	16	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/demo/mbed-os/drivers/include/drivers/DigitalIn.h:86:5:mbed::DigitalIn::~DigitalIn()	16	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/demo/mbed-os/drivers/include/drivers/DigitalIn.h:97:9:int mbed::DigitalIn::read()	16	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/demo/mbed-os/drivers/include/drivers/DigitalIn.h:128:5:mbed::DigitalIn::operator int()	16	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/demo/mbed-os/drivers/include/drivers/DigitalOut.h:73:5:mbed::DigitalOut::DigitalOut(PinName, int)	24	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/demo/mbed-os/drivers/include/drivers/DigitalOut.h:84:10:void mbed::DigitalOut::write(int)	16	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/demo/mbed-os/drivers/include/drivers/DigitalOut.h:96:9:int mbed::DigitalOut::read()	16	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/demo/mbed-os/drivers/include/drivers/DigitalOut.h:122:17:mbed::DigitalOut& mbed::DigitalOut::operator=(int)	16	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/demo/mbed-os/drivers/include/drivers/DigitalOut.h:143:5:mbed::DigitalOut::operator int()	16	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/demo/mbed-os/platform/include/platform/mbed_wait_api.h:132:13:void _wait_us_inline(unsigned int)	32	static
+../main-demo.cpp:28:5:int main()	8	static
+../main-demo.cpp:49:1:void __static_initialization_and_destruction_0(int, int)	16	static
+../main-demo.cpp:49:1:cpp)	8	static

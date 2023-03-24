@@ -16,6 +16,14 @@
 // LEDs on K64F-KIT - instances of class DigitalOut
 DigitalOut g_led_PTA1( PTA1 );
 DigitalOut g_led_PTA2( PTA2 );
+DigitalOut g_led_PTC0(PTC0);
+DigitalOut g_led_PTC1(PTC1);
+DigitalOut g_led_PTC2(PTC2);
+DigitalOut g_led_PTC3(PTC3);
+DigitalOut g_led_PTC4(PTC4);
+DigitalOut g_led_PTC5(PTC5);
+DigitalOut g_led_PTC7(PTC7);
+DigitalOut g_led_PTC8(PTC8);
 
 // Button on K64F-KIT - instance of class DigitalIn
 DigitalIn g_but_PTC9( PTC9 );
@@ -36,7 +44,7 @@ void control_from_ticker()
 
 	if ( l_ticks >= l_periode / 2 )	// time to switch on?
 	{
-		g_led_PTA1 = 1;				// LED On
+		g_led_PTA2 = 1;				// LED On
 	}
 
 	l_ticks++;						// milliseconds counter
@@ -45,7 +53,227 @@ void control_from_ticker()
 	{
 		l_ticks = 0;				// start periode again
 
-		g_led_PTA1 = 0;				// LED Off
+		g_led_PTA2 = 0;				// LED Off
+	}
+}
+
+
+void test1() {
+	static int tick = 0;
+	static int percentage = 100;
+	static bool firstPressed = false;
+	static bool secondPressed = false;
+
+	int32_t l_periode = 20;
+
+	printf("%d\n", percentage);
+	printf("%d %d\n", firstPressed, secondPressed);
+
+	if (g_but_PTC9 == 0 && !firstPressed) {
+		if (percentage != 0) {
+			firstPressed = true;
+			percentage -= 10;
+		}
+	}
+
+	if (g_but_PTC9 == 1){
+		firstPressed = false;
+	}
+
+	if (g_but_PTC10 == 0 && !secondPressed) {
+		if (percentage != 100) {
+			secondPressed = true;
+			percentage += 10;
+		}
+	}
+
+	if (g_but_PTC10 == 1){
+		secondPressed = false;
+	}
+
+	if (tick >= ((l_periode * percentage) / 100)) {
+		g_led_PTA1 = 0;
+	}
+
+	tick++;
+
+	if (tick >= l_periode) {
+		tick = 0;
+		if (percentage > 0)
+			g_led_PTA1 = 1;
+	}
+}
+
+void changeLed(int index, bool status) {
+	switch (index) {
+	case 0:
+		g_led_PTC0 = status;
+		break;
+	case 1:
+		g_led_PTC1 = status;
+		break;
+	case 2:
+		g_led_PTC2 = status;
+		break;
+	case 3:
+		g_led_PTC3 = status;
+		break;
+	case 4:
+		g_led_PTC4 = status;
+		break;
+	case 5:
+		g_led_PTC5 = status;
+		break;
+	case 6:
+		g_led_PTC7 = status;
+		break;
+	case 7:
+		g_led_PTC8 = status;
+		break;
+	}
+}
+
+void sus() {
+	static int tick = 0;
+	static int t_switch = 0;
+	static int percentage = 100;
+	static bool firstPressed = false;
+	static bool secondPressed = false;
+	static bool thirdPressed = false;
+	static bool fourthPressed = false;
+	static bool reverse = false;
+	static int index = 0;
+
+	int32_t l_periode = 20;
+	int32_t l_switch = 100;
+
+	printf("%d\n", percentage);
+	printf("%d", index);
+
+	if (g_but_PTC9 == 0 && !firstPressed) {
+		if (percentage != 0) {
+			firstPressed = true;
+			percentage -= 10;
+		}
+	}
+
+	if (g_but_PTC9 == 1){
+		firstPressed = false;
+	}
+
+	if (g_but_PTC10 == 0 && !secondPressed) {
+		if (percentage != 100) {
+			secondPressed = true;
+			percentage += 10;
+		}
+	}
+
+	if (g_but_PTC10 == 1){
+		secondPressed = false;
+	}
+
+
+
+	if (tick >= ((l_periode * percentage) / 100)) {
+		changeLed(index, false);
+	}
+
+	tick++;
+	t_switch++;
+
+	if (tick >= l_periode) {
+		tick = 0;
+		if (percentage > 0)
+			changeLed(index, true);
+	}
+
+	if (t_switch >= l_switch) {
+		t_switch = 0;
+		if (!reverse)
+			if (index == 7) {
+				index = 0;
+			} else {
+				index++;
+			}
+		else
+			if (index == 0) {
+				index = 7;
+			} else {
+				index--;
+			}
+	}
+}
+
+void test2() {
+	static int tick = 0;
+	static int t_switch = 0;
+	static int percentage = 100;
+	static bool firstPressed = false;
+	static bool secondPressed = false;
+	static bool thirdPressed = false;
+	static bool fourthPressed = false;
+	static bool reverse = false;
+	static int index = 0;
+
+	int32_t l_periode = 20;
+	int32_t l_switch = 1500;
+
+	printf("%d\n", percentage);
+	printf("%d", index);
+
+	if (g_but_PTC9 == 0 && !firstPressed) {
+		if (percentage != 0) {
+			firstPressed = true;
+			percentage -= 10;
+		}
+	}
+
+	if (g_but_PTC9 == 1){
+		firstPressed = false;
+	}
+
+	if (g_but_PTC10 == 0 && !secondPressed) {
+		if (percentage != 100) {
+			secondPressed = true;
+			percentage += 10;
+		}
+	}
+
+	if (g_but_PTC10 == 1){
+		secondPressed = false;
+	}
+
+
+
+	if (tick >= ((l_periode * percentage) / 100)) {
+		changeLed(index, false);
+	}
+
+	tick++;
+	t_switch++;
+
+	if (tick >= l_periode) {
+		tick = 0;
+		if (percentage > 0) {
+			changeLed(index, true);
+		}
+	}
+
+	if (t_switch >= l_switch) {
+		t_switch = 0;
+		changeLed(index, false);
+		if (!reverse)
+			if (index == 7) {
+				index = 0;
+			} else {
+				index++;
+			}
+		else
+			if (index == 0) {
+				index = 7;
+			} else {
+				index--;
+			}
 	}
 }
 
@@ -58,7 +286,7 @@ int main()
 	Ticker l_ticker;
 	std::chrono::milliseconds l_tout( 1 );
 
-	l_ticker.attach( control_from_ticker, l_tout );
+	l_ticker.attach( test2, l_tout );
 
 	while ( 1 )
 	{ // infinite loop

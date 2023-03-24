@@ -1,9 +1,15 @@
-15:20:48 **** Clean-only build of configuration Debug for project demo ****
-make -r -j4 mbedclean 
-rm -rf  ./main-demo.o 
-rm -rf  ./main-demo.d 
-rm -rf  empty-mbed-os.* linker-script-*.ld
+10:13:37 **** Incremental Build of configuration Debug for project demo ****
+make -r -j12 linker-script-debug.ld all 
+make: 'linker-script-debug.ld' is up to date.
+make[1]: Nothing to be done for 'main-build'.
+Performing post-build steps
+arm-none-eabi-size "demo.axf" ; arm-none-eabi-objcopy -v -O binary "demo.axf" "demo.bin" ; checksum -p MK64FN1M0xxx12 -d "demo.bin"
+   text	   data	    bss	    dec	    hex	filename
+  31176	   2784	 258352	 292312	  475d8	demo.axf
+copy from `demo.axf' [elf32-littlearm] to `demo.bin' [binary]
+Written checksum 0xdffce0b2 at offset 0x1c in file demo.bin
+Previous value 0x00000000 at offset 0x1c in file demo.bin
  
 
-15:20:49 Build Finished. 0 errors, 0 warnings. (took 178ms)
+10:13:38 Build Finished. 0 errors, 0 warnings. (took 531ms)
 
