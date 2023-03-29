@@ -13,6 +13,8 @@
 
 #include "mbed.h"
 
+
+/*
 // LEDs on K64F-KIT - instances of class DigitalOut
 DigitalOut g_led_PTA1( PTA1 );
 DigitalOut g_led_PTA2( PTA2 );
@@ -276,38 +278,75 @@ void test2() {
 			}
 	}
 }
+*/
+#define T 20
+
+class PWMLed
+{
+private:
+    Ticker ticker;
+    DigitalOut led;
+    uint8_t brightness_percent;
+    uint32_t on_period;
+    uint32_t ticks;
+
+
+public:
+    PWMLed(PinName pin_name) : led(pin_name)
+    {
+    	std::chrono::milliseconds l_tout( 1 );
+
+        this->ticker.attach(callback(this, &PWMLed::run_pwm), l_tout);
+    }
+
+    void set_brightness(uint8_t new_percent)
+    {
+    	if (new_percent <= 100) {
+
+    		this->brightness_percent = new_percent;
+
+    		this->on_period = (T * this->brightness_percent) / 100;
+    	}
+    }
+
+    void run_pwm()
+    {
+        if (this->ticks < this->on_period) {
+        	this->led = 1;
+        } else {
+        	this->led = 0;
+        }
+
+        this->ticks++;
+        if (this->ticks >= T)
+            this->ticks = 0;
+    }
+};
+
+PWMLed leds[] = {
+    { PTC0 },
+    { PTC1 },
+	{ PTC2 },
+	{ PTC3 },
+	{ PTC4 },
+	{ PTC5 },
+	{ PTC7 },
+	{ PTC8 },
+	{ PTA1 },
+	{ PTA2 }
+};
 
 int main()
 {
 	printf( "LED demo program started...\n" );
 
-#if 1
-	// modern approach with timer (and interrupt)
-	Ticker l_ticker;
-	std::chrono::milliseconds l_tout( 1 );
+	for (int i = 0; i < 10; i++) {
+		leds[i].set_brightness(i * 10);
+	}
 
-	l_ticker.attach( test2, l_tout );
 
 	while ( 1 )
 	{ // infinite loop
 	}
 
-#else
-
-	// lazy (conservative) approach
-	while ( 1 )
-	{
-		int32_t l_periode_2 = 500000;// T/2 = 0.5 sec
-
-		g_led_PTA1 = !g_led_PTA1; 	// invert LED_PTA1 state
-
-		if (g_but_PTC9 == 0) 		// button pressed?
-		{
-			l_periode_2 /= 10;	    // speed up blinking
-		}
-
-		wait_us( l_periode_2 );
-	}
-
-#endif
 }
