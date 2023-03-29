@@ -344,7 +344,7 @@ void blink() {
 	static int timer = 0;
 
 	for (int i = 0; i < 10; i++) {
-		if (i <= timer) {
+		if (i == timer) {
 			int bright = leds[i].get_brightness();
 			leds[i].set_brightness(bright == 100 ? 0 : 100);
 		}

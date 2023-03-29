@@ -309,10 +309,6 @@ public:
     	}
     }
 
-    uint8_t get_brightness() {
-    	return this->brightness_percent;
-    }
-
     void run_pwm()
     {
         if (this->ticks < this->on_period) {
@@ -341,38 +337,32 @@ PWMLed leds[] = {
 };
 
 void blink() {
-	static int timer = 0;
+	static bool invert = false;
 
 	for (int i = 0; i < 10; i++) {
-		if (i <= timer) {
-			int bright = leds[i].get_brightness();
-			leds[i].set_brightness(bright == 100 ? 0 : 100);
+		if (i % 2 == 0) {
+			leds[i].set_brightness(100 * (invert == false ? 1 : 0));
+		} else {
+			leds[i].set_brightness(0 + (invert == false ? 0 : 100));
 		}
 	}
 
-	timer++;
-
-	if (timer >= 10) {
-		timer = 0;
+	if (invert == false) {
+		invert = true;
+	} else {
+		invert = true;
 	}
 }
 
 int main()
 {
 	printf( "LED demo program started...\n" );
+
 	Ticker ticker;
 
 	std::chrono::seconds time(1);
 
 	ticker.attach(blink, time);
-
-	for (int i = 0; i < 10; i++) {
-		if (i % 2 == 0) {
-			leds[i].set_brightness(100);
-		} else {
-			leds[i].set_brightness(0);
-		}
-	}
 
 
 	while ( 1 )

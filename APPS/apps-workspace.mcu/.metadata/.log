@@ -3300,3 +3300,84 @@ Caused by: java.io.IOException: The provided location '/home/patrick115/mcuxpres
 
 !ENTRY org.eclipse.cdt.dsf 4 10001 2023-03-29 09:36:58.931
 !MESSAGE Target not available.
+
+!ENTRY com.crt.utils 1 0 2023-03-29 09:49:22.106
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-03-29 09:49:22.329
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-03-29 09:49:22.935
+!MESSAGE Telnet session connected on port 2335->40952 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-03-29 09:49:23.930
+!MESSAGE Target not available.
+
+!ENTRY com.crt.utils 1 0 2023-03-29 09:51:10.282
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-03-29 09:51:10.438
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-03-29 09:51:11.119
+!MESSAGE Telnet session connected on port 2335->51896 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-03-29 09:51:11.520
+!MESSAGE Target not available.
+
+!ENTRY com.crt.utils 1 0 2023-03-29 09:55:39.331
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-03-29 09:55:39.501
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-03-29 09:55:40.145
+!MESSAGE Telnet session connected on port 2335->33390 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2023-03-29 09:56:09.131
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-03-29 09:56:09.307
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-03-29 09:56:09.958
+!MESSAGE Telnet session connected on port 2335->46070 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-03-29 09:56:10.014
+!MESSAGE Target not available.
+
+!ENTRY com.crt.utils 1 0 2023-03-29 09:56:40.565
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-03-29 09:56:40.722
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-03-29 09:56:41.404
+!MESSAGE Telnet session connected on port 2335->59908 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-03-29 09:56:45.123
+!MESSAGE Target not available.
+
+!ENTRY com.crt.utils 1 0 2023-03-29 10:06:15.849
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-03-29 10:06:15.860
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-03-29 10:06:16.657
+!MESSAGE Telnet session connected on port 2335->35824 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-03-29 10:06:16.672
+!MESSAGE Target not available.
+
+!ENTRY com.crt.utils 1 0 2023-03-29 10:07:05.964
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-03-29 10:07:06.158
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-03-29 10:07:06.788
+!MESSAGE Telnet session connected on port 2335->58240 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-03-29 10:07:07.929
+!MESSAGE Target not available.

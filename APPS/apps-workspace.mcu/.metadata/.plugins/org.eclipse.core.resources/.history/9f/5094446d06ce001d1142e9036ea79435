@@ -309,10 +309,6 @@ public:
     	}
     }
 
-    uint8_t get_brightness() {
-    	return this->brightness_percent;
-    }
-
     void run_pwm()
     {
         if (this->ticks < this->on_period) {
@@ -340,39 +336,33 @@ PWMLed leds[] = {
 	{ PTA2 }
 };
 
-void blink() {
-	static int timer = 0;
+void snake() {
+	static int offset = 0;
 
 	for (int i = 0; i < 10; i++) {
-		if (i <= timer) {
-			int bright = leds[i].get_brightness();
-			leds[i].set_brightness(bright == 100 ? 0 : 100);
+		int bright = (i + offset) * 10;
+		if (bright > 100) {
+			bright -= 100;
 		}
+		leds[i].set_brightness(bright);
 	}
 
-	timer++;
+	offset++;
 
-	if (timer >= 10) {
-		timer = 0;
+	if (offset > 10) {
+		offset = 0;
 	}
 }
 
 int main()
 {
 	printf( "LED demo program started...\n" );
+
+	std::chrono::seconds l_tout( 1 );
+
 	Ticker ticker;
 
-	std::chrono::seconds time(1);
-
-	ticker.attach(blink, time);
-
-	for (int i = 0; i < 10; i++) {
-		if (i % 2 == 0) {
-			leds[i].set_brightness(100);
-		} else {
-			leds[i].set_brightness(0);
-		}
-	}
+	ticker.attach(snake, l_tout);
 
 
 	while ( 1 )

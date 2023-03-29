@@ -1,6 +1,8 @@
 /usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/new:174:33:void* operator new(std::size_t, void*)	8	static
 /usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/chrono:486:2:constexpr std::chrono::duration<_Rep, _Period>::rep std::chrono::duration<_Rep, _Period>::count() const [with _Rep = long long int; _Period = std::ratio<1, 1000000>]	8	static
 /usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/arm-none-eabi/thumb/v7e-m+fp/softfp/bits/gthr-default.h:229:1:int __gthread_key_delete(__gthread_key_t)	8	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/platform/include/platform/Callback.h:209:14:void (*& mbed::detail::CallbackBase::control())()	8	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/platform/include/platform/Callback.h:237:10:void mbed::detail::CallbackBase::clear()	16	static
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/drivers/include/drivers/DigitalOut.h:62:5:mbed::DigitalOut::DigitalOut(PinName)	16	static
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/drivers/include/drivers/DigitalOut.h:84:10:void mbed::DigitalOut::write(int)	16	static
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/drivers/include/drivers/DigitalOut.h:122:17:mbed::DigitalOut& mbed::DigitalOut::operator=(int)	16	static
@@ -8,29 +10,43 @@
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/drivers/include/drivers/Ticker.h:161:7:mbed::Ticker::~Ticker()	16	static
 ../main-leds.cpp:295:5:PWMLed::PWMLed(PinName)	72	static
 ../main-leds.cpp:302:10:void PWMLed::set_brightness(uint8_t)	8	static
-../main-leds.cpp:312:10:void PWMLed::run_pwm()	16	static
+../main-leds.cpp:312:13:uint8_t PWMLed::get_brightness()	8	static
+../main-leds.cpp:316:10:void PWMLed::run_pwm()	16	static
 ../main-leds.cpp:284:7:PWMLed::~PWMLed()	16	static
-../main-leds.cpp:339:5:int main()	16	static
+../main-leds.cpp:343:6:void blink()	16	static
+../main-leds.cpp:360:5:int main()	128	static
+/usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/chrono:486:2:constexpr std::chrono::duration<_Rep, _Period>::rep std::chrono::duration<_Rep, _Period>::count() const [with _Rep = long long int; _Period = std::ratio<1>]	8	static
+/usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/bits/move.h:101:5:constexpr typename std::remove_reference<_Tp>::type&& std::move(_Tp&&) [with _Tp = void (*&)()]	8	static
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/platform/include/platform/Callback.h:712:23:)) [with T = PWMLed; U = PWMLed; R = void; ArgTs = {}]	24	static
 /usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/chrono:478:14:constexpr std::chrono::duration<_Rep, _Period>::duration(const std::chrono::duration<_Rep, _Period>&) [with _Rep2 = long long int; _Period2 = std::ratio<1, 1000>; <template-parameter-2-3> = void; _Rep = long long int; _Period = std::ratio<1, 1000000>]	24	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/platform/include/platform/Callback.h:392:5:>::value), int>::type <anonymous> = 0; R = void; ArgTs = {}]	16	static
+/usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/chrono:478:14:constexpr std::chrono::duration<_Rep, _Period>::duration(const std::chrono::duration<_Rep, _Period>&) [with _Rep2 = long long int; _Period2 = std::ratio<1>; <template-parameter-2-3> = void; _Rep = long long int; _Period = std::ratio<1, 1000000>]	24	static
 /usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/chrono:486:2:constexpr std::chrono::duration<_Rep, _Period>::rep std::chrono::duration<_Rep, _Period>::count() const [with _Rep = long long int; _Period = std::ratio<1, 1000>]	8	static
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/platform/include/platform/Callback.h:353:18:)>::Callback<PWMLed*, void (PWMLed::*)(), 0>::<lambda()>	16	static
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/platform/include/platform/Callback.h:351:5:>::value, int>::type <anonymous> = 0; R = void; ArgTs = {}]	40	static
 /usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/chrono:254:7:constexpr std::chrono::__enable_if_is_duration<_ToDur> std::chrono::duration_cast(const std::chrono::duration<_Rep, _Period>&) [with _ToDur = std::chrono::duration<long long int, std::ratio<1, 1000000> >; _Rep = long long int; _Period = std::ratio<1, 1000>]	16	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/platform/include/platform/Callback.h:612:10:)>::generate(F&&) [with F = void (*)(); <template-parameter-2-2> = void; R = void; ArgTs = {}]	16	static
+/usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/chrono:254:7:constexpr std::chrono::__enable_if_is_duration<_ToDur> std::chrono::duration_cast(const std::chrono::duration<_Rep, _Period>&) [with _ToDur = std::chrono::duration<long long int, std::ratio<1, 1000000> >; _Rep = long long int; _Period = std::ratio<1>]	16	static
 /usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/chrono:470:23:constexpr std::chrono::duration<_Rep, _Period>::duration(const _Rep2&) [with _Rep2 = long long int; <template-parameter-2-2> = void; _Rep = long long int; _Period = std::ratio<1, 1000000>]	8	static
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/platform/include/platform/Callback.h:120:3:) [with R = void; F = void (PWMLed::* const&)(); Args = {PWMLed* const&}; typename std::enable_if<std::is_void< <template-parameter-1-1> >::value, int>::type <anonymous> = 0]	16	static
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/platform/include/platform/Callback.h:612:10:)>::Callback<PWMLed*, void (PWMLed::*)(), 0>::<lambda()>; <template-parameter-2-2> = void; R = void; ArgTs = {}]	16	static
 /usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/chrono:223:4:static constexpr _ToDur std::chrono::__duration_cast_impl<_ToDur, _CF, _CR, false, true>::__cast(const std::chrono::duration<_Rep, _Period>&) [with _Rep = long long int; _Period = std::ratio<1, 1000>; _ToDur = std::chrono::duration<long long int, std::ratio<1, 1000000> >; _CF = std::ratio<1000, 1>; _CR = long long int]	48	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/platform/include/platform/Callback.h:655:14:) [with F = void (*)(); R = void; ArgTs = {}]	24	static
+/usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/chrono:223:4:static constexpr _ToDur std::chrono::__duration_cast_impl<_ToDur, _CF, _CR, false, true>::__cast(const std::chrono::duration<_Rep, _Period>&) [with _Rep = long long int; _Period = std::ratio<1>; _ToDur = std::chrono::duration<long long int, std::ratio<1, 1000000> >; _CF = std::ratio<1000000, 1>; _CR = long long int]	64	static
 /usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/bits/move.h:76:5:constexpr _Tp&& std::forward(typename std::remove_reference<_Tp>::type&) [with _Tp = void (PWMLed::* const&)()]	8	static
 /usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/bits/move.h:76:5:constexpr _Tp&& std::forward(typename std::remove_reference<_Tp>::type&) [with _Tp = PWMLed* const&]	8	static
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/platform/cxxsupport/mstd_functional:42:29:) [with F = void (PWMLed::* const&)(); Args = {PWMLed* const&}]	16	static
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/platform/include/platform/Callback.h:655:14:)>::Callback<PWMLed*, void (PWMLed::*)(), 0>::<lambda()>; R = void; ArgTs = {}]	24	static
 /usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/bits/move.h:101:5:)>::Callback<PWMLed*, void (PWMLed::*)(), 0>::<lambda()>&]	8	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/platform/include/platform/Callback.h:120:3:) [with R = void; F = void (*&)(); Args = {}; typename std::enable_if<std::is_void< <template-parameter-1-1> >::value, int>::type <anonymous> = 0]	16	static
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/platform/cxxsupport/mstd_type_traits:343:6:) [with Base = PWMLed; F = void(); T1 = PWMLed* const&; Args = {}]	24	static
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/platform/include/platform/Callback.h:120:3:)>::Callback<PWMLed*, void (PWMLed::*)(), 0>::<lambda()>&; Args = {}; typename std::enable_if<std::is_void< <template-parameter-1-1> >::value, int>::type <anonymous> = 0]	16	static
+/usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/bits/move.h:76:5:constexpr _Tp&& std::forward(typename std::remove_reference<_Tp>::type&) [with _Tp = void (*&)()]	8	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/platform/cxxsupport/mstd_functional:42:29:) [with F = void (*&)(); Args = {}]	16	static
 /usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/bits/move.h:76:5:)>::Callback<PWMLed*, void (PWMLed::*)(), 0>::<lambda()>&]	8	static
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/platform/cxxsupport/mstd_functional:42:29:)>::Callback<PWMLed*, void (PWMLed::*)(), 0>::<lambda()>&; Args = {}]	16	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/platform/cxxsupport/mstd_type_traits:385:6:) [with F = void (*&)(); Args = {}]	16	static
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/platform/cxxsupport/mstd_type_traits:385:6:)>::Callback<PWMLed*, void (PWMLed::*)(), 0>::<lambda()>&; Args = {}]	16	static
-../main-leds.cpp:326:8:void __tcf_0(void*)	16	static
-../main-leds.cpp:352:1:void __static_initialization_and_destruction_0(int, int)	16	static
-../main-leds.cpp:352:1:cpp)	8	static
+../main-leds.cpp:330:8:void __tcf_0(void*)	16	static
+../main-leds.cpp:382:1:void __static_initialization_and_destruction_0(int, int)	16	static
+../main-leds.cpp:382:1:cpp)	8	static
