@@ -3381,3 +3381,54 @@ Caused by: java.io.IOException: The provided location '/home/patrick115/mcuxpres
 
 !ENTRY org.eclipse.cdt.dsf 4 10001 2023-03-29 10:07:07.929
 !MESSAGE Target not available.
+
+!ENTRY com.crt.utils 1 0 2023-03-29 10:20:10.909
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-03-29 10:20:11.078
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-03-29 10:20:11.739
+!MESSAGE Telnet session connected on port 2335->35000 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-03-29 10:20:12.450
+!MESSAGE Target not available.
+
+!ENTRY com.crt.utils 1 0 2023-03-29 10:21:41.520
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-03-29 10:21:41.729
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-03-29 10:21:42.297
+!MESSAGE Telnet session connected on port 2335->54402 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-03-29 10:21:42.811
+!MESSAGE Target not available.
+
+!ENTRY com.crt.utils 1 0 2023-03-29 10:23:04.302
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-03-29 10:23:04.489
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-03-29 10:23:05.111
+!MESSAGE Telnet session connected on port 2335->38290 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-03-29 10:23:28.574
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.cdt.dsf 4 10005 2023-03-29 10:24:38.792
+!MESSAGE Request for monitor: 'RequestMonitor (org.eclipse.cdt.dsf.mi.service.MIMemory$4@4e486ee8): Status ERROR: org.eclipse.cdt.dsf.gdb code=10004 Failed to execute MI command:
+-data-evaluate-expression &(100)
+Error message from debugger back end:
+Attempt to take address of value not located in memory. java.lang.Exception: Attempt to take address of value not located in memory.' resulted in an error.
+!SUBENTRY 1 org.eclipse.cdt.dsf.gdb 4 10004 2023-03-29 10:24:38.792
+!MESSAGE Failed to execute MI command:
+-data-evaluate-expression &(100)
+Error message from debugger back end:
+Attempt to take address of value not located in memory.
+!STACK 0
+java.lang.Exception: Attempt to take address of value not located in memory.
+	at org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl$RxThread.processMIOutput(AbstractMIControl.java:1013)
+	at org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl$RxThread.run(AbstractMIControl.java:842)

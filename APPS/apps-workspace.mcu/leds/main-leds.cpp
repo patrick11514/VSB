@@ -327,6 +327,41 @@ public:
     }
 };
 
+#define TB 50
+
+class Button {
+private:
+	DigitalIn button;
+	Ticker ticker;
+	uint32_t ticks;
+	bool status;
+
+public:
+	Button(PinName pin_name) : button(pin_name) {
+		this->status = false;
+
+		std::chrono::milliseconds l_tout( 1 );
+
+		this->ticker.attach(callback(this, &Button::run_pwm), l_tout);
+	}
+
+	void run_pwm() {
+		this->ticks++;
+		if (this->ticks >= TB) {
+		   this->ticks = 0;
+		   if (this->button == 0) {
+			   this->status = true;
+		   } else {
+			   this->status = false;
+		   }
+		}
+	}
+
+	bool get_status() {
+		return this->status;
+	}
+};
+
 PWMLed leds[] = {
     { PTC0 },
     { PTC1 },
@@ -338,6 +373,13 @@ PWMLed leds[] = {
 	{ PTC8 },
 	{ PTA1 },
 	{ PTA2 }
+};
+
+Button buttons[] = {
+	{ PTC9  },
+	{ PTC10 },
+	{ PTC11 },
+	{ PTC12 }
 };
 
 void blink() {
@@ -357,22 +399,51 @@ void blink() {
 	}
 }
 
+void checkButtons() {
+	static int selected = 0;
+
+	if (buttons[0].get_status()) {
+		selected--;
+		if (selected < 0) {
+			selected = 9;
+		}
+	}
+
+	if (buttons[1].get_status()) {
+		selected++;
+		if (selected >= 10) {
+			selected = 0;
+		}
+	}
+
+	if (buttons[2].get_status()) {
+		int bright = leds[selected].get_brightness() - 10;
+		if (bright < 0) {
+			bright = 0;
+		}
+
+		leds[selected].set_brightness(bright);
+	}
+
+	if (buttons[3].get_status()) {
+		int bright = leds[selected].get_brightness() + 10;
+		if (bright > 100) {
+			bright = 100;
+		}
+
+		leds[selected].set_brightness(bright);
+	}
+
+}
+
 int main()
 {
 	printf( "LED demo program started...\n" );
 	Ticker ticker;
 
-	std::chrono::seconds time(1);
+	std::chrono::milliseconds time(100);
 
-	ticker.attach(blink, time);
-
-	for (int i = 0; i < 10; i++) {
-		if (i % 2 == 0) {
-			leds[i].set_brightness(100);
-		} else {
-			leds[i].set_brightness(0);
-		}
-	}
+	ticker.attach(checkButtons, time);
 
 
 	while ( 1 )

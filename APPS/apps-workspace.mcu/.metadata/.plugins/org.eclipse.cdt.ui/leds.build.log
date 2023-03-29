@@ -1,4 +1,4 @@
-10:06:51 **** Incremental Build of configuration Debug for project leds ****
+10:22:49 **** Incremental Build of configuration Debug for project leds ****
 make -r -j12 linker-script-debug.ld all 
 make: 'linker-script-debug.ld' is up to date.
 Building file: ../main-leds.cpp
@@ -12,7 +12,7 @@ arm-none-eabi-c++ -o "leds.axf"  ./main-leds.o   -lmbed-os -lstdc++ -lsupc++ -lm
 Memory region         Used Size  Region Size  %age Used
     m_interrupts:          1 KB         1 KB    100.00%
   m_flash_config:          16 B         16 B    100.00%
-          m_text:       31132 B    1047536 B      2.97%
+          m_text:       32428 B    1047536 B      3.10%
           m_data:         64 KB        64 KB    100.00%
         m_data_2:        191 KB       192 KB     99.48%
 Finished building target: leds.axf
@@ -20,11 +20,11 @@ Finished building target: leds.axf
 Performing post-build steps
 arm-none-eabi-size "leds.axf" ; arm-none-eabi-objcopy -v -O binary "leds.axf" "leds.bin" ; checksum -p MK64FN1M0xxx12 -d "leds.bin"
    text	   data	    bss	    dec	    hex	filename
-  29360	   2764	 258368	 290492	  46ebc	leds.axf
+  30656	   2764	 258368	 291788	  473cc	leds.axf
 copy from `leds.axf' [elf32-littlearm] to `leds.bin' [binary]
 Written checksum 0xdffce0b2 at offset 0x1c in file leds.bin
 Previous value 0x00000000 at offset 0x1c in file leds.bin
  
 
-10:07:02 Build Finished. 0 errors, 0 warnings. (took 11s.606ms)
+10:23:01 Build Finished. 0 errors, 0 warnings. (took 11s.951ms)
 
