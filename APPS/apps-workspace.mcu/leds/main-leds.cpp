@@ -14,7 +14,7 @@
 #include "mbed.h"
 
 
-/*
+
 // LEDs on K64F-KIT - instances of class DigitalOut
 DigitalOut g_led_PTA1( PTA1 );
 DigitalOut g_led_PTA2( PTA2 );
@@ -278,7 +278,7 @@ void test2() {
 			}
 	}
 }
-*/
+
 #define T 20
 
 class PWMLed
@@ -327,6 +327,78 @@ public:
     }
 };
 
+
+class RGBLed
+{
+private:
+    Ticker ticker;
+    DigitalOut r;
+    DigitalOut g;
+    DigitalOut b;
+    uint8_t brightness_percent;
+    uint32_t on_period;
+    uint32_t ticks;
+
+    uint8_t r_value;
+    uint8_t g_value;
+    uint8_t b_value;
+
+public:
+    RGBLed(PinName r, PinName g, PinName b) : r(r), g(g), b(b)
+    {
+    	std::chrono::milliseconds l_tout( 1 );
+
+        this->ticker.attach(callback(this, &RGBLed::run_pwm), l_tout);
+    }
+
+    void set_brightness(uint8_t new_percent)
+    {
+    	if (new_percent <= 100) {
+
+    		this->brightness_percent = new_percent;
+
+    		this->on_period = (T * this->brightness_percent) / 100;
+    	}
+    }
+
+    uint8_t get_brightness() {
+    	return this->brightness_percent;
+    }
+
+    void set_rgb(uint8_t r, uint8_t g, uint8_t b) {
+    	this->r_value = r;
+    	this->g_value = g;
+    	this->b_value = b;
+    }
+
+    void run_pwm()
+    {
+
+        if (this->ticks < (((T * this->r_value) / 255) * this->brightness_percent) / 100) {
+        	this->r = 1;
+        } else {
+        	this->r = 0;
+        }
+
+        if (this->ticks < (((T * this->g_value) / 255) * this->brightness_percent) / 100) {
+			this->g = 1;
+		} else {
+			this->g = 0;
+		}
+
+        if (this->ticks < (((T * this->b_value) / 255) * this->brightness_percent) / 100) {
+			this->b = 1;
+		} else {
+			this->b = 0;
+		}
+
+        this->ticks++;
+        if (this->ticks >= T)
+            this->ticks = 0;
+    }
+};
+
+
 #define TB 50
 
 class Button {
@@ -335,10 +407,12 @@ private:
 	Ticker ticker;
 	uint32_t ticks;
 	bool status;
+	bool last_status;
 
 public:
 	Button(PinName pin_name) : button(pin_name) {
 		this->status = false;
+		this->last_status = false;
 
 		std::chrono::milliseconds l_tout( 1 );
 
@@ -359,6 +433,14 @@ public:
 
 	bool get_status() {
 		return this->status;
+	}
+
+	bool get_change() {
+		if (this->last_status != this->status) {
+			this->last_status = this->status;
+			return this->status;
+		}
+		return false;
 	}
 };
 
@@ -382,6 +464,12 @@ Button buttons[] = {
 	{ PTC12 }
 };
 
+RGBLed rgbLeds[] = {
+		{PTB2, PTB3, PTB9},
+		{PTB10, PTB11, PTB18},
+		{PTB19, PTB20, PTB23},
+};
+
 void blink() {
 	static int timer = 0;
 
@@ -402,14 +490,14 @@ void blink() {
 void checkButtons() {
 	static int selected = 0;
 
-	if (buttons[0].get_status()) {
+	if (buttons[0].get_change()) {
 		selected--;
 		if (selected < 0) {
 			selected = 9;
 		}
 	}
 
-	if (buttons[1].get_status()) {
+	if (buttons[1].get_change()) {
 		selected++;
 		if (selected >= 10) {
 			selected = 0;
@@ -436,18 +524,37 @@ void checkButtons() {
 
 }
 
+void change_brightness() {
+	static int b1 = 100;
+	static int b2 = 50;
+	static int b3 = 0;
+
+	b1 += 5;
+	b2 += 5;
+	b3 += 5;
+
+	if (b1 >= 100) b1 = 0;
+	if (b2 >= 100) b2 = 0;
+	if (b3 >= 100) b3 = 0;
+
+	rgbLeds[0].set_brightness(b1);
+	rgbLeds[1].set_brightness(b2);
+	rgbLeds[2].set_brightness(b3);
+}
+
 int main()
 {
 	printf( "LED demo program started...\n" );
 	Ticker ticker;
 
-	std::chrono::milliseconds time(100);
+	std::chrono::milliseconds time(1);
 
-	ticker.attach(checkButtons, time);
+	ticker.attach(sus, time);
 
 
 	while ( 1 )
 	{ // infinite loop
+
 	}
 
 }
