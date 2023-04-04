@@ -14,7 +14,7 @@
 #include "mbed.h"
 
 
-
+/*
 // LEDs on K64F-KIT - instances of class DigitalOut
 DigitalOut g_led_PTA1( PTA1 );
 DigitalOut g_led_PTA2( PTA2 );
@@ -326,7 +326,7 @@ public:
             this->ticks = 0;
     }
 };
-
+*/
 
 class RGBLed
 {
@@ -545,11 +545,11 @@ void change_brightness() {
 int main()
 {
 	printf( "LED demo program started...\n" );
-	Ticker ticker;
+	//Ticker ticker;
 
-	std::chrono::milliseconds time(1);
+	//std::chrono::milliseconds time(1);
 
-	ticker.attach(sus, time);
+	//ticker.attach(sus, time);
 
 
 	while ( 1 )
