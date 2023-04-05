@@ -8978,3 +8978,150 @@ Caused by: java.util.ConcurrentModificationException
 	at org.eclipse.ui.internal.WorkbenchPage.findView(WorkbenchPage.java:1954)
 	at com.nxp.mcuxpresso.addons.docsupport.ui.decorators.ProjectDecorator.setup(ProjectDecorator.java:57)
 	... 9 more
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:48:14.264
+!MESSAGE Telnet session connected on port 2333->47854 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:48:15.354
+!MESSAGE Connected to localhost on port 2332.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:48:15.581
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:48:18.004
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 10004 2023-04-05 09:50:41.962
+!MESSAGE Failed to execute MI command:
+-stack-list-frames 0 0
+Error message from debugger back end:
+Invalid thread id: 1
+!STACK 0
+java.lang.Exception: Invalid thread id: 1
+	at org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl$RxThread.processMIOutput(AbstractMIControl.java:1013)
+	at org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl$RxThread.run(AbstractMIControl.java:842)
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:50:52.429
+!MESSAGE Telnet session connected on port 2333->35294 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:50:53.608
+!MESSAGE Connected to localhost on port 2332.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:50:53.845
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:50:56.276
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:50:56.425
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.cdt.dsf 4 10005 2023-04-05 09:51:42.161
+!MESSAGE Request for monitor: 'RequestMonitor (org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor@532d3cd9): Status ERROR: org.eclipse.cdt.dsf.gdb code=10004 Suspend operation timeout.' resulted in an error.
+!SUBENTRY 1 org.eclipse.cdt.dsf.gdb 4 10004 2023-04-05 09:51:42.161
+!MESSAGE Suspend operation timeout.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:52:14.903
+!MESSAGE Telnet session connected on port 2333->55752 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:52:16.093
+!MESSAGE Connected to localhost on port 2332.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:52:16.337
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:52:18.626
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:52:18.678
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:54:09.748
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/platform/source/mbed_retarget.cpp
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:54:15.245
+!MESSAGE Target not available.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:54:28.522
+!MESSAGE Telnet session connected on port 2333->54790 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:54:29.894
+!MESSAGE Connected to localhost on port 2332.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:54:30.139
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:54:36.970
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.cdt.dsf 4 10005 2023-04-05 10:04:09.403
+!MESSAGE Request for monitor: 'RequestMonitor (org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor@3a14c82): Status ERROR: org.eclipse.cdt.dsf.gdb code=10004 Suspend operation timeout.' resulted in an error.
+!SUBENTRY 1 org.eclipse.cdt.dsf.gdb 4 10004 2023-04-05 10:04:09.403
+!MESSAGE Suspend operation timeout.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 10:04:30.655
+!MESSAGE Telnet session connected on port 2333->58156 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2023-04-05 10:04:31.894
+!MESSAGE Connected to localhost on port 2332.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 10:04:32.179
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 10:04:37.117
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.tm.terminal.connector.cdtserial 4 0 2023-04-05 10:05:02.730
+!MESSAGE Error opening : No such file or directory
+!STACK 0
+java.io.IOException: Error opening : No such file or directory
+	at org.eclipse.cdt.serial.SerialPort.open0(Native Method)
+	at org.eclipse.cdt.serial.SerialPort.open(SerialPort.java:316)
+	at org.eclipse.tm.terminal.connector.cdtserial.connector.SerialConnector.connect(SerialConnector.java:80)
+	at org.eclipse.tm.internal.terminal.connector.TerminalConnector.connect(TerminalConnector.java:182)
+	at org.eclipse.tm.internal.terminal.emulator.VT100TerminalControl.connectTerminal(VT100TerminalControl.java:420)
+	at org.eclipse.tm.terminal.view.ui.tabs.TabFolderManager.createTabItem(TabFolderManager.java:330)
+	at org.eclipse.tm.terminal.view.ui.manager.ConsoleManager.openConsole(ConsoleManager.java:489)
+	at org.eclipse.tm.terminal.view.ui.services.TerminalService$2.doRun(TerminalService.java:298)
+	at org.eclipse.tm.terminal.view.ui.services.TerminalService$2.lambda$0(TerminalService.java:274)
+	at org.eclipse.swt.widgets.RunnableLock.run(RunnableLock.java:40)
+	at org.eclipse.swt.widgets.Synchronizer.runAsyncMessages(Synchronizer.java:185)
+	at org.eclipse.swt.widgets.Display.runAsyncMessages(Display.java:5101)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:4584)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$5.run(PartRenderingEngine.java:1154)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:338)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:1045)
+	at org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:155)
+	at org.eclipse.ui.internal.Workbench.lambda$3(Workbench.java:644)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:338)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:551)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:156)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:152)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:203)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:136)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:104)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:401)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:255)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:659)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:596)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1467)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1440)
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 10:05:21.151
+!MESSAGE Telnet session connected on port 2333->34834 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2023-04-05 10:05:22.308
+!MESSAGE Connected to localhost on port 2332.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 10:05:22.541
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 10:05:24.780
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 10:05:24.907
+!MESSAGE Target not available.

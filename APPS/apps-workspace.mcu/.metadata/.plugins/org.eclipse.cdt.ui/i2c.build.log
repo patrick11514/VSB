@@ -1,9 +1,15 @@
-15:20:35 **** Clean-only build of configuration Debug for project i2c ****
-make -r -j4 mbedclean 
-rm -rf  ./i2c-lib.o ./main-i2c.o ./si4735-lib.o 
-rm -rf  ./i2c-lib.d ./main-i2c.d ./si4735-lib.d 
-rm -rf  empty-mbed-os.* linker-script-*.ld
+10:05:15 **** Incremental Build of configuration Debug for project i2c ****
+make -r -j12 linker-script-debug.ld all 
+make: 'linker-script-debug.ld' is up to date.
+make[1]: Nothing to be done for 'main-build'.
+Performing post-build steps
+arm-none-eabi-size "i2c.axf" ; arm-none-eabi-objcopy -v -O binary "i2c.axf" "i2c.bin" ; checksum -p MK64FN1M0xxx12 -d "i2c.bin"
+   text	   data	    bss	    dec	    hex	filename
+  30976	   2768	 258368	 292112	  47510	i2c.axf
+copy from `i2c.axf' [elf32-littlearm] to `i2c.bin' [binary]
+Written checksum 0xdffce0b2 at offset 0x1c in file i2c.bin
+Previous value 0x00000000 at offset 0x1c in file i2c.bin
  
 
-15:20:35 Build Finished. 0 errors, 0 warnings. (took 177ms)
+10:05:16 Build Finished. 0 errors, 0 warnings. (took 929ms)
 

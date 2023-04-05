@@ -1,0 +1,5 @@
+/usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/arm-none-eabi/thumb/v7e-m+fp/softfp/bits/gthr-default.h:229:1:int __gthread_key_delete(__gthread_key_t)	8	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/i2c/mbed-os/platform/include/platform/mbed_wait_api.h:132:13:void _wait_us_inline(unsigned int)	32	static
+../si4735-lib.cpp:21:13:void fm_print(const char*)	8	static
+../si4735-lib.cpp:28:13:char fm_check(char)	16	static
+../si4735-lib.cpp:38:6:char si4735_init()	16	static

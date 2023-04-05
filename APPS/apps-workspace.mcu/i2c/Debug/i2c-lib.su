@@ -1,0 +1,21 @@
+/usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/arm-none-eabi/thumb/v7e-m+fp/softfp/bits/gthr-default.h:229:1:int __gthread_key_delete(__gthread_key_t)	8	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/i2c/mbed-os/drivers/include/drivers/DigitalInOut.h:60:5:mbed::DigitalInOut::DigitalInOut(PinName, PinDirection, PinMode, int)	32	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/i2c/mbed-os/drivers/include/drivers/DigitalInOut.h:71:10:void mbed::DigitalInOut::write(int)	16	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/i2c/mbed-os/drivers/include/drivers/DigitalInOut.h:83:9:int mbed::DigitalInOut::read()	16	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/i2c/mbed-os/drivers/include/drivers/DigitalInOut.h:125:19:mbed::DigitalInOut& mbed::DigitalInOut::operator=(int)	16	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/i2c/mbed-os/drivers/include/drivers/DigitalInOut.h:148:5:mbed::DigitalInOut::operator int()	16	static
+/home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/i2c/mbed-os/platform/include/platform/mbed_wait_api.h:132:13:void _wait_us_inline(unsigned int)	32	static
+../i2c-lib.cpp:24:6:void _i2c_delay()	8	static
+../i2c-lib.cpp:30:13:void _i2c_sda(uint8_t)	16	static
+../i2c-lib.cpp:37:9:uint8_t _i2c_get_sda()	8	static
+../i2c-lib.cpp:44:6:void _i2c_scl(uint8_t)	16	static
+../i2c-lib.cpp:55:6:void i2c_init()	8	static
+../i2c-lib.cpp:69:6:void i2c_start()	8	static
+../i2c-lib.cpp:78:6:void i2c_stop()	8	static
+../i2c-lib.cpp:87:6:void i2c_ack()	8	static
+../i2c-lib.cpp:96:6:void i2c_nack()	8	static
+../i2c-lib.cpp:105:9:uint8_t i2c_get_ack()	16	static
+../i2c-lib.cpp:117:9:uint8_t i2c_output(uint8_t)	24	static
+../i2c-lib.cpp:132:9:uint8_t i2c_input()	16	static
+../i2c-lib.cpp:155:1:void __static_initialization_and_destruction_0(int, int)	24	static
+../i2c-lib.cpp:155:1:cpp)	8	static
