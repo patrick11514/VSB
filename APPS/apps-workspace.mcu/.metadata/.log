@@ -8108,3 +8108,873 @@ Caused by: org.eclipse.equinox.p2.core.ProvisionException: No repository found a
 	at org.eclipse.equinox.internal.p2.artifact.repository.ArtifactRepositoryManager.refreshRepository(ArtifactRepositoryManager.java:136)
 	at com.nxp.mcuxpresso.core.datamodels.ui.jobs.RefreshSDKRepoJob.run(RefreshSDKRepoJob.java:168)
 	... 1 more
+!SESSION 2023-04-05 08:59:55.252 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=11.0.11
+java.vendor=AdoptOpenJDK
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY org.eclipse.core.resources 4 567 2023-04-05 09:00:03.246
+!MESSAGE Workspace restored, but some problems occurred.
+!SUBENTRY 1 org.eclipse.core.resources 4 567 2023-04-05 09:00:03.246
+!MESSAGE Could not read metadata for '.org.eclipse.egit.core.cmp'.
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException(/.org.eclipse.egit.core.cmp)[567]: java.lang.Exception: The project description file (.project) for '.org.eclipse.egit.core.cmp' is missing.  This file contains important information about the project.  The project will not function properly until this file is restored.
+	at org.eclipse.core.internal.resources.ResourceException.provideStackTrace(ResourceException.java:42)
+	at org.eclipse.core.internal.resources.ResourceException.<init>(ResourceException.java:38)
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.read(FileSystemResourceManager.java:908)
+	at org.eclipse.core.internal.resources.SaveManager.restoreMetaInfo(SaveManager.java:888)
+	at org.eclipse.core.internal.resources.SaveManager.restoreMetaInfo(SaveManager.java:868)
+	at org.eclipse.core.internal.resources.SaveManager.restore(SaveManager.java:724)
+	at org.eclipse.core.internal.resources.SaveManager.startup(SaveManager.java:1555)
+	at org.eclipse.core.internal.resources.Workspace.startup(Workspace.java:2480)
+	at org.eclipse.core.internal.resources.Workspace.open(Workspace.java:2231)
+	at org.eclipse.core.resources.ResourcesPlugin.start(ResourcesPlugin.java:475)
+	at org.eclipse.osgi.internal.framework.BundleContextImpl.lambda$2(BundleContextImpl.java:808)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at org.eclipse.osgi.internal.framework.BundleContextImpl.startActivator(BundleContextImpl.java:802)
+	at org.eclipse.osgi.internal.framework.BundleContextImpl.start(BundleContextImpl.java:759)
+	at org.eclipse.osgi.internal.framework.EquinoxBundle.startWorker0(EquinoxBundle.java:1019)
+	at org.eclipse.osgi.internal.framework.EquinoxBundle$EquinoxModule.startWorker(EquinoxBundle.java:365)
+	at org.eclipse.osgi.container.Module.doStart(Module.java:605)
+	at org.eclipse.osgi.container.Module.start(Module.java:468)
+	at org.eclipse.osgi.framework.util.SecureAction.start(SecureAction.java:404)
+	at org.eclipse.osgi.internal.hooks.EclipseLazyStarter.postFindLocalClass(EclipseLazyStarter.java:117)
+	at org.eclipse.osgi.internal.loader.classpath.ClasspathManager.findLocalClass(ClasspathManager.java:570)
+	at org.eclipse.osgi.internal.loader.ModuleClassLoader.findLocalClass(ModuleClassLoader.java:335)
+	at org.eclipse.osgi.internal.loader.BundleLoader.findLocalClass(BundleLoader.java:384)
+	at org.eclipse.osgi.internal.loader.sources.SingleSourcePackage.loadClass(SingleSourcePackage.java:41)
+	at org.eclipse.osgi.internal.loader.BundleLoader.findClass0(BundleLoader.java:471)
+	at org.eclipse.osgi.internal.loader.BundleLoader.findClass(BundleLoader.java:403)
+	at org.eclipse.osgi.internal.loader.ModuleClassLoader.loadClass(ModuleClassLoader.java:168)
+	at java.base/java.lang.ClassLoader.loadClass(Unknown Source)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:153)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:203)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:136)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:104)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:401)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:255)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:659)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:596)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1467)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1440)
+!SUBENTRY 2 org.eclipse.core.resources 4 567 2023-04-05 09:00:03.247
+!MESSAGE The project description file (.project) for '.org.eclipse.egit.core.cmp' is missing.  This file contains important information about the project.  The project will not function properly until this file is restored.
+!STACK 0
+java.lang.Exception: The project description file (.project) for '.org.eclipse.egit.core.cmp' is missing.  This file contains important information about the project.  The project will not function properly until this file is restored.
+	at org.eclipse.core.internal.resources.ResourceException.provideStackTrace(ResourceException.java:42)
+	at org.eclipse.core.internal.resources.ResourceException.<init>(ResourceException.java:38)
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.read(FileSystemResourceManager.java:908)
+	at org.eclipse.core.internal.resources.SaveManager.restoreMetaInfo(SaveManager.java:888)
+	at org.eclipse.core.internal.resources.SaveManager.restoreMetaInfo(SaveManager.java:868)
+	at org.eclipse.core.internal.resources.SaveManager.restore(SaveManager.java:724)
+	at org.eclipse.core.internal.resources.SaveManager.startup(SaveManager.java:1555)
+	at org.eclipse.core.internal.resources.Workspace.startup(Workspace.java:2480)
+	at org.eclipse.core.internal.resources.Workspace.open(Workspace.java:2231)
+	at org.eclipse.core.resources.ResourcesPlugin.start(ResourcesPlugin.java:475)
+	at org.eclipse.osgi.internal.framework.BundleContextImpl.lambda$2(BundleContextImpl.java:808)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at org.eclipse.osgi.internal.framework.BundleContextImpl.startActivator(BundleContextImpl.java:802)
+	at org.eclipse.osgi.internal.framework.BundleContextImpl.start(BundleContextImpl.java:759)
+	at org.eclipse.osgi.internal.framework.EquinoxBundle.startWorker0(EquinoxBundle.java:1019)
+	at org.eclipse.osgi.internal.framework.EquinoxBundle$EquinoxModule.startWorker(EquinoxBundle.java:365)
+	at org.eclipse.osgi.container.Module.doStart(Module.java:605)
+	at org.eclipse.osgi.container.Module.start(Module.java:468)
+	at org.eclipse.osgi.framework.util.SecureAction.start(SecureAction.java:404)
+	at org.eclipse.osgi.internal.hooks.EclipseLazyStarter.postFindLocalClass(EclipseLazyStarter.java:117)
+	at org.eclipse.osgi.internal.loader.classpath.ClasspathManager.findLocalClass(ClasspathManager.java:570)
+	at org.eclipse.osgi.internal.loader.ModuleClassLoader.findLocalClass(ModuleClassLoader.java:335)
+	at org.eclipse.osgi.internal.loader.BundleLoader.findLocalClass(BundleLoader.java:384)
+	at org.eclipse.osgi.internal.loader.sources.SingleSourcePackage.loadClass(SingleSourcePackage.java:41)
+	at org.eclipse.osgi.internal.loader.BundleLoader.findClass0(BundleLoader.java:471)
+	at org.eclipse.osgi.internal.loader.BundleLoader.findClass(BundleLoader.java:403)
+	at org.eclipse.osgi.internal.loader.ModuleClassLoader.loadClass(ModuleClassLoader.java:168)
+	at java.base/java.lang.ClassLoader.loadClass(Unknown Source)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:153)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:203)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:136)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:104)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:401)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:255)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:659)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:596)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1467)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1440)
+
+!ENTRY com.crt.log 4 -1 2023-04-05 09:00:09.589
+!MESSAGE The provided location '/poli/home/mcuxpresso/02/SDKPackages' is not a valid location.
+!STACK 0
+java.lang.Exception: java.io.IOException: The provided location '/poli/home/mcuxpresso/02/SDKPackages' is not a valid location.
+	at com.crt.utils.general.Reporter.log(Reporter.java:591)
+	at com.nxp.mcuxpresso.core.datamodels.providers.SDKManifestProvider.getInstance(SDKManifestProvider.java:522)
+	at com.nxp.mcuxpresso.core.datamodels.SDKChipVendorDatabase.<init>(SDKChipVendorDatabase.java:294)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(Unknown Source)
+	at java.base/java.lang.reflect.Constructor.newInstance(Unknown Source)
+	at org.eclipse.core.internal.registry.osgi.RegistryStrategyOSGI.createExecutableExtension(RegistryStrategyOSGI.java:204)
+	at org.eclipse.core.internal.registry.ExtensionRegistry.createExecutableExtension(ExtensionRegistry.java:920)
+	at org.eclipse.core.internal.registry.ConfigurationElement.createExecutableExtension(ConfigurationElement.java:246)
+	at org.eclipse.core.internal.registry.ConfigurationElementHandle.createExecutableExtension(ConfigurationElementHandle.java:63)
+	at com.crt.config.database.partssupport.PartSupportConfiguration.buildDataBases(PartSupportConfiguration.java:96)
+	at com.crt.config.database.partssupport.PartSupportConfiguration.<init>(PartSupportConfiguration.java:49)
+	at com.crt.config.database.partssupport.PartSupportConfiguration.getInstance(PartSupportConfiguration.java:72)
+	at com.crt.config.database.TargetConfig.getCore(TargetConfig.java:707)
+	at com.crt.config.database.TargetConfig.initFromString(TargetConfig.java:1336)
+	at com.crt.config.database.TargetConfig.init(TargetConfig.java:1227)
+	at com.crt.config.database.TargetConfig.<init>(TargetConfig.java:680)
+	at com.crt.config.database.TargetConfig.loadTargetConfig(TargetConfig.java:354)
+	at com.crt.config.database.TargetConfigDatabase.load(TargetConfigDatabase.java:73)
+	at com.crt.config.database.TargetConfigDatabase.findTargetConfig(TargetConfigDatabase.java:136)
+	at com.crt.config.database.TargetConfig.findTargetConfig(TargetConfig.java:107)
+	at com.crt.config.database.partssupport.AbstractLinkerScriptHandler.findEntry(AbstractLinkerScriptHandler.java:83)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsApplies.getLinkerScriptExtension(CRPOptionsApplies.java:41)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsApplies.isOptionValid(CRPOptionsApplies.java:67)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsApplies.isOptionVisible(CRPOptionsApplies.java:110)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsHandler.setCRPeDefines(CRPOptionsHandler.java:153)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsHandler.apply(CRPOptionsHandler.java:52)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsHandler.open(CRPOptionsHandler.java:128)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsHandler.handleValue(CRPOptionsHandler.java:99)
+	at org.eclipse.cdt.managedbuilder.core.ManagedBuildManager.performValueHandlerEvent(ManagedBuildManager.java:3183)
+	at org.eclipse.cdt.managedbuilder.core.ManagedBuildManager.performValueHandlerEvent(ManagedBuildManager.java:3139)
+	at org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider.load(ConfigurationDataProvider.java:406)
+	at org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider.loadConfiguration(ConfigurationDataProvider.java:573)
+	at org.eclipse.cdt.internal.core.settings.model.CConfigurationDescriptionCache.loadData(CConfigurationDescriptionCache.java:139)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescription.loadDatas(CProjectDescription.java:199)
+	at org.eclipse.cdt.internal.core.settings.model.xml.XmlProjectDescriptionStorage.loadProjectDescription(XmlProjectDescriptionStorage.java:510)
+	at org.eclipse.cdt.internal.core.settings.model.xml.XmlProjectDescriptionStorage.getProjectDescription(XmlProjectDescriptionStorage.java:240)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.getProjectDescriptionInternal(CProjectDescriptionManager.java:427)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.getProjectDescription(CProjectDescriptionManager.java:409)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.getProjectDescription(CProjectDescriptionManager.java:403)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.getProjectDescription(CProjectDescriptionManager.java:396)
+	at com.crt.utils.general.ProjectUtils.isCDTProject(ProjectUtils.java:69)
+	at com.crt.config.database.TargetConfig.loadTargetConfig(TargetConfig.java:347)
+	at com.crt.config.database.TargetConfigDatabase.load(TargetConfigDatabase.java:73)
+	at com.crt.config.database.TargetConfigDatabase.load(TargetConfigDatabase.java:57)
+	at com.crt.config.database.TargetConfigDatabase.getDefault(TargetConfigDatabase.java:36)
+	at com.crt.config.database.TargetConfig.findTargetConfig(TargetConfig.java:107)
+	at com.crt.config.database.partssupport.AbstractLinkerScriptHandler.findEntry(AbstractLinkerScriptHandler.java:83)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsApplies.getLinkerScriptExtension(CRPOptionsApplies.java:41)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsApplies.isOptionValid(CRPOptionsApplies.java:67)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsApplies.isOptionVisible(CRPOptionsApplies.java:110)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsHandler.setCRPeDefines(CRPOptionsHandler.java:153)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsHandler.apply(CRPOptionsHandler.java:52)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsHandler.open(CRPOptionsHandler.java:128)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsHandler.handleValue(CRPOptionsHandler.java:99)
+	at org.eclipse.cdt.managedbuilder.core.ManagedBuildManager.performValueHandlerEvent(ManagedBuildManager.java:3183)
+	at org.eclipse.cdt.managedbuilder.core.ManagedBuildManager.performValueHandlerEvent(ManagedBuildManager.java:3139)
+	at org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider.load(ConfigurationDataProvider.java:406)
+	at org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider.loadConfiguration(ConfigurationDataProvider.java:573)
+	at org.eclipse.cdt.internal.core.settings.model.CConfigurationDescriptionCache.loadData(CConfigurationDescriptionCache.java:139)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescription.loadDatas(CProjectDescription.java:199)
+	at org.eclipse.cdt.internal.core.settings.model.xml.XmlProjectDescriptionStorage.loadProjectDescription(XmlProjectDescriptionStorage.java:510)
+	at org.eclipse.cdt.internal.core.settings.model.xml.XmlProjectDescriptionStorage.getProjectDescription(XmlProjectDescriptionStorage.java:240)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.getProjectDescriptionInternal(CProjectDescriptionManager.java:427)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.getProjectDescription(CProjectDescriptionManager.java:409)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.getProjectDescription(CProjectDescriptionManager.java:403)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.getProjectDescription(CProjectDescriptionManager.java:396)
+	at org.eclipse.cdt.internal.core.model.CProject.computeSourceRoots(CProject.java:610)
+	at org.eclipse.cdt.internal.core.model.CProject.computeChildren(CProject.java:631)
+	at org.eclipse.cdt.internal.core.model.CProject.buildStructure(CProject.java:595)
+	at org.eclipse.cdt.internal.core.model.Openable.generateInfos(Openable.java:264)
+	at org.eclipse.cdt.internal.core.model.CElement.openWhenClosed(CElement.java:428)
+	at org.eclipse.cdt.internal.core.model.CElement.getElementInfo(CElement.java:306)
+	at org.eclipse.cdt.internal.core.model.CElement.getElementInfo(CElement.java:296)
+	at org.eclipse.cdt.internal.core.model.Parent.getChildren(Parent.java:57)
+	at org.eclipse.cdt.internal.core.model.CProject.getSourceRoots(CProject.java:471)
+	at org.eclipse.cdt.internal.core.model.CModelManager.create(CModelManager.java:342)
+	at org.eclipse.cdt.core.model.CoreModel.create(CoreModel.java:124)
+	at org.eclipse.cdt.internal.ui.editor.CDocumentProvider.createTranslationUnit(CDocumentProvider.java:739)
+	at org.eclipse.cdt.internal.ui.editor.CDocumentProvider.createFileInfo(CDocumentProvider.java:771)
+	at org.eclipse.ui.editors.text.TextFileDocumentProvider.connect(TextFileDocumentProvider.java:481)
+	at org.eclipse.cdt.internal.ui.editor.CDocumentProvider.connect(CDocumentProvider.java:724)
+	at org.eclipse.ui.texteditor.AbstractTextEditor.doSetInput(AbstractTextEditor.java:4178)
+	at org.eclipse.ui.texteditor.StatusTextEditor.doSetInput(StatusTextEditor.java:262)
+	at org.eclipse.ui.texteditor.AbstractDecoratedTextEditor.doSetInput(AbstractDecoratedTextEditor.java:1479)
+	at org.eclipse.ui.editors.text.TextEditor.doSetInput(TextEditor.java:153)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.internalDoSetInput(CEditor.java:1445)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.doSetInput(CEditor.java:1409)
+	at org.eclipse.ui.texteditor.AbstractTextEditor.lambda$1(AbstractTextEditor.java:3168)
+	at org.eclipse.ui.internal.WorkbenchWindow.run(WorkbenchWindow.java:2290)
+	at org.eclipse.ui.texteditor.AbstractTextEditor.internalInit(AbstractTextEditor.java:3185)
+	at org.eclipse.ui.texteditor.AbstractTextEditor.init(AbstractTextEditor.java:3210)
+	at org.eclipse.ui.internal.EditorReference.initialize(EditorReference.java:353)
+	at org.eclipse.ui.internal.e4.compatibility.CompatibilityPart.create(CompatibilityPart.java:344)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.e4.core.internal.di.MethodRequestor.execute(MethodRequestor.java:58)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.processAnnotated(InjectorImpl.java:995)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.processAnnotated(InjectorImpl.java:960)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.internalInject(InjectorImpl.java:140)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.internalMake(InjectorImpl.java:403)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.make(InjectorImpl.java:330)
+	at org.eclipse.e4.core.contexts.ContextInjectionFactory.make(ContextInjectionFactory.java:202)
+	at org.eclipse.e4.ui.internal.workbench.ReflectionContributionFactory.createFromBundle(ReflectionContributionFactory.java:91)
+	at org.eclipse.e4.ui.internal.workbench.ReflectionContributionFactory.doCreate(ReflectionContributionFactory.java:60)
+	at org.eclipse.e4.ui.internal.workbench.ReflectionContributionFactory.create(ReflectionContributionFactory.java:42)
+	at org.eclipse.e4.ui.workbench.renderers.swt.ContributedPartRenderer.createWidget(ContributedPartRenderer.java:132)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createWidget(PartRenderingEngine.java:994)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:658)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer.showTab(StackRenderer.java:1209)
+	at org.eclipse.e4.ui.workbench.renderers.swt.LazyStackRenderer.postProcess(LazyStackRenderer.java:116)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:676)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer.processContents(SWTPartRenderer.java:72)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:672)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$1.run(PartRenderingEngine.java:543)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:527)
+	at org.eclipse.e4.ui.workbench.renderers.swt.ElementReferenceRenderer.createWidget(ElementReferenceRenderer.java:73)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createWidget(PartRenderingEngine.java:994)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:658)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer.processContents(SWTPartRenderer.java:72)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SashRenderer.processContents(SashRenderer.java:150)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:672)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer.processContents(SWTPartRenderer.java:72)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SashRenderer.processContents(SashRenderer.java:150)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:672)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer.processContents(SWTPartRenderer.java:72)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SashRenderer.processContents(SashRenderer.java:150)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:672)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer.processContents(SWTPartRenderer.java:72)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SashRenderer.processContents(SashRenderer.java:150)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:672)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer.processContents(SWTPartRenderer.java:72)
+	at org.eclipse.e4.ui.workbench.renderers.swt.PerspectiveRenderer.processContents(PerspectiveRenderer.java:51)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:672)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.workbench.renderers.swt.PerspectiveStackRenderer.showTab(PerspectiveStackRenderer.java:82)
+	at org.eclipse.e4.ui.workbench.renderers.swt.LazyStackRenderer.postProcess(LazyStackRenderer.java:116)
+	at org.eclipse.e4.ui.workbench.renderers.swt.PerspectiveStackRenderer.postProcess(PerspectiveStackRenderer.java:64)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:676)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer.processContents(SWTPartRenderer.java:72)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SashRenderer.processContents(SashRenderer.java:150)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:672)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer.processContents(SWTPartRenderer.java:72)
+	at org.eclipse.e4.ui.workbench.renderers.swt.WBWRenderer.processContents(WBWRenderer.java:658)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:672)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$5.run(PartRenderingEngine.java:1082)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:338)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:1045)
+	at org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:155)
+	at org.eclipse.ui.internal.Workbench.lambda$3(Workbench.java:644)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:338)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:551)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:156)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:152)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:203)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:136)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:104)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:401)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:255)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:659)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:596)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1467)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1440)
+Caused by: java.io.IOException: The provided location '/poli/home/mcuxpresso/02/SDKPackages' is not a valid location.
+	at com.nxp.mcuxpresso.core.datamodels.providers.SDKManifestProvider.<init>(SDKManifestProvider.java:413)
+	at com.nxp.mcuxpresso.core.datamodels.providers.SDKManifestProvider.getInstance(SDKManifestProvider.java:508)
+	... 212 more
+
+!ENTRY com.crt.log 4 -1 2023-04-05 09:00:09.604
+!MESSAGE The provided location '/home/patrick115/mcuxpresso/02/SDKPackages' is not a valid location.
+!STACK 0
+java.lang.Exception: java.io.IOException: The provided location '/home/patrick115/mcuxpresso/02/SDKPackages' is not a valid location.
+	at com.crt.utils.general.Reporter.log(Reporter.java:591)
+	at com.nxp.mcuxpresso.core.datamodels.providers.SDKManifestProvider.getInstance(SDKManifestProvider.java:522)
+	at com.nxp.mcuxpresso.core.datamodels.SDKChipVendorDatabase.<init>(SDKChipVendorDatabase.java:294)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(Unknown Source)
+	at java.base/java.lang.reflect.Constructor.newInstance(Unknown Source)
+	at org.eclipse.core.internal.registry.osgi.RegistryStrategyOSGI.createExecutableExtension(RegistryStrategyOSGI.java:204)
+	at org.eclipse.core.internal.registry.ExtensionRegistry.createExecutableExtension(ExtensionRegistry.java:920)
+	at org.eclipse.core.internal.registry.ConfigurationElement.createExecutableExtension(ConfigurationElement.java:246)
+	at org.eclipse.core.internal.registry.ConfigurationElementHandle.createExecutableExtension(ConfigurationElementHandle.java:63)
+	at com.crt.config.database.partssupport.PartSupportConfiguration.buildDataBases(PartSupportConfiguration.java:96)
+	at com.crt.config.database.partssupport.PartSupportConfiguration.<init>(PartSupportConfiguration.java:49)
+	at com.crt.config.database.partssupport.PartSupportConfiguration.getInstance(PartSupportConfiguration.java:72)
+	at com.crt.config.database.TargetConfig.getCore(TargetConfig.java:707)
+	at com.crt.config.database.TargetConfig.initFromString(TargetConfig.java:1336)
+	at com.crt.config.database.TargetConfig.init(TargetConfig.java:1227)
+	at com.crt.config.database.TargetConfig.<init>(TargetConfig.java:680)
+	at com.crt.config.database.TargetConfig.loadTargetConfig(TargetConfig.java:354)
+	at com.crt.config.database.TargetConfigDatabase.load(TargetConfigDatabase.java:73)
+	at com.crt.config.database.TargetConfigDatabase.findTargetConfig(TargetConfigDatabase.java:136)
+	at com.crt.config.database.TargetConfig.findTargetConfig(TargetConfig.java:107)
+	at com.crt.config.database.partssupport.AbstractLinkerScriptHandler.findEntry(AbstractLinkerScriptHandler.java:83)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsApplies.getLinkerScriptExtension(CRPOptionsApplies.java:41)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsApplies.isOptionValid(CRPOptionsApplies.java:67)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsApplies.isOptionVisible(CRPOptionsApplies.java:110)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsHandler.setCRPeDefines(CRPOptionsHandler.java:153)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsHandler.apply(CRPOptionsHandler.java:52)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsHandler.open(CRPOptionsHandler.java:128)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsHandler.handleValue(CRPOptionsHandler.java:99)
+	at org.eclipse.cdt.managedbuilder.core.ManagedBuildManager.performValueHandlerEvent(ManagedBuildManager.java:3183)
+	at org.eclipse.cdt.managedbuilder.core.ManagedBuildManager.performValueHandlerEvent(ManagedBuildManager.java:3139)
+	at org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider.load(ConfigurationDataProvider.java:406)
+	at org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider.loadConfiguration(ConfigurationDataProvider.java:573)
+	at org.eclipse.cdt.internal.core.settings.model.CConfigurationDescriptionCache.loadData(CConfigurationDescriptionCache.java:139)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescription.loadDatas(CProjectDescription.java:199)
+	at org.eclipse.cdt.internal.core.settings.model.xml.XmlProjectDescriptionStorage.loadProjectDescription(XmlProjectDescriptionStorage.java:510)
+	at org.eclipse.cdt.internal.core.settings.model.xml.XmlProjectDescriptionStorage.getProjectDescription(XmlProjectDescriptionStorage.java:240)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.getProjectDescriptionInternal(CProjectDescriptionManager.java:427)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.getProjectDescription(CProjectDescriptionManager.java:409)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.getProjectDescription(CProjectDescriptionManager.java:403)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.getProjectDescription(CProjectDescriptionManager.java:396)
+	at com.crt.utils.general.ProjectUtils.isCDTProject(ProjectUtils.java:69)
+	at com.crt.config.database.TargetConfig.loadTargetConfig(TargetConfig.java:347)
+	at com.crt.config.database.TargetConfigDatabase.load(TargetConfigDatabase.java:73)
+	at com.crt.config.database.TargetConfigDatabase.load(TargetConfigDatabase.java:57)
+	at com.crt.config.database.TargetConfigDatabase.getDefault(TargetConfigDatabase.java:36)
+	at com.crt.config.database.TargetConfig.findTargetConfig(TargetConfig.java:107)
+	at com.crt.config.database.partssupport.AbstractLinkerScriptHandler.findEntry(AbstractLinkerScriptHandler.java:83)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsApplies.getLinkerScriptExtension(CRPOptionsApplies.java:41)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsApplies.isOptionValid(CRPOptionsApplies.java:67)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsApplies.isOptionVisible(CRPOptionsApplies.java:110)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsHandler.setCRPeDefines(CRPOptionsHandler.java:153)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsHandler.apply(CRPOptionsHandler.java:52)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsHandler.open(CRPOptionsHandler.java:128)
+	at com.crt.advproject.custom.optionhandlers.CRPOptionsHandler.handleValue(CRPOptionsHandler.java:99)
+	at org.eclipse.cdt.managedbuilder.core.ManagedBuildManager.performValueHandlerEvent(ManagedBuildManager.java:3183)
+	at org.eclipse.cdt.managedbuilder.core.ManagedBuildManager.performValueHandlerEvent(ManagedBuildManager.java:3139)
+	at org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider.load(ConfigurationDataProvider.java:406)
+	at org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider.loadConfiguration(ConfigurationDataProvider.java:573)
+	at org.eclipse.cdt.internal.core.settings.model.CConfigurationDescriptionCache.loadData(CConfigurationDescriptionCache.java:139)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescription.loadDatas(CProjectDescription.java:199)
+	at org.eclipse.cdt.internal.core.settings.model.xml.XmlProjectDescriptionStorage.loadProjectDescription(XmlProjectDescriptionStorage.java:510)
+	at org.eclipse.cdt.internal.core.settings.model.xml.XmlProjectDescriptionStorage.getProjectDescription(XmlProjectDescriptionStorage.java:240)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.getProjectDescriptionInternal(CProjectDescriptionManager.java:427)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.getProjectDescription(CProjectDescriptionManager.java:409)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.getProjectDescription(CProjectDescriptionManager.java:403)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.getProjectDescription(CProjectDescriptionManager.java:396)
+	at org.eclipse.cdt.internal.core.model.CProject.computeSourceRoots(CProject.java:610)
+	at org.eclipse.cdt.internal.core.model.CProject.computeChildren(CProject.java:631)
+	at org.eclipse.cdt.internal.core.model.CProject.buildStructure(CProject.java:595)
+	at org.eclipse.cdt.internal.core.model.Openable.generateInfos(Openable.java:264)
+	at org.eclipse.cdt.internal.core.model.CElement.openWhenClosed(CElement.java:428)
+	at org.eclipse.cdt.internal.core.model.CElement.getElementInfo(CElement.java:306)
+	at org.eclipse.cdt.internal.core.model.CElement.getElementInfo(CElement.java:296)
+	at org.eclipse.cdt.internal.core.model.Parent.getChildren(Parent.java:57)
+	at org.eclipse.cdt.internal.core.model.CProject.getSourceRoots(CProject.java:471)
+	at org.eclipse.cdt.internal.core.model.CModelManager.create(CModelManager.java:342)
+	at org.eclipse.cdt.core.model.CoreModel.create(CoreModel.java:124)
+	at org.eclipse.cdt.internal.ui.editor.CDocumentProvider.createTranslationUnit(CDocumentProvider.java:739)
+	at org.eclipse.cdt.internal.ui.editor.CDocumentProvider.createFileInfo(CDocumentProvider.java:771)
+	at org.eclipse.ui.editors.text.TextFileDocumentProvider.connect(TextFileDocumentProvider.java:481)
+	at org.eclipse.cdt.internal.ui.editor.CDocumentProvider.connect(CDocumentProvider.java:724)
+	at org.eclipse.ui.texteditor.AbstractTextEditor.doSetInput(AbstractTextEditor.java:4178)
+	at org.eclipse.ui.texteditor.StatusTextEditor.doSetInput(StatusTextEditor.java:262)
+	at org.eclipse.ui.texteditor.AbstractDecoratedTextEditor.doSetInput(AbstractDecoratedTextEditor.java:1479)
+	at org.eclipse.ui.editors.text.TextEditor.doSetInput(TextEditor.java:153)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.internalDoSetInput(CEditor.java:1445)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.doSetInput(CEditor.java:1409)
+	at org.eclipse.ui.texteditor.AbstractTextEditor.lambda$1(AbstractTextEditor.java:3168)
+	at org.eclipse.ui.internal.WorkbenchWindow.run(WorkbenchWindow.java:2290)
+	at org.eclipse.ui.texteditor.AbstractTextEditor.internalInit(AbstractTextEditor.java:3185)
+	at org.eclipse.ui.texteditor.AbstractTextEditor.init(AbstractTextEditor.java:3210)
+	at org.eclipse.ui.internal.EditorReference.initialize(EditorReference.java:353)
+	at org.eclipse.ui.internal.e4.compatibility.CompatibilityPart.create(CompatibilityPart.java:344)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.e4.core.internal.di.MethodRequestor.execute(MethodRequestor.java:58)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.processAnnotated(InjectorImpl.java:995)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.processAnnotated(InjectorImpl.java:960)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.internalInject(InjectorImpl.java:140)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.internalMake(InjectorImpl.java:403)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.make(InjectorImpl.java:330)
+	at org.eclipse.e4.core.contexts.ContextInjectionFactory.make(ContextInjectionFactory.java:202)
+	at org.eclipse.e4.ui.internal.workbench.ReflectionContributionFactory.createFromBundle(ReflectionContributionFactory.java:91)
+	at org.eclipse.e4.ui.internal.workbench.ReflectionContributionFactory.doCreate(ReflectionContributionFactory.java:60)
+	at org.eclipse.e4.ui.internal.workbench.ReflectionContributionFactory.create(ReflectionContributionFactory.java:42)
+	at org.eclipse.e4.ui.workbench.renderers.swt.ContributedPartRenderer.createWidget(ContributedPartRenderer.java:132)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createWidget(PartRenderingEngine.java:994)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:658)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer.showTab(StackRenderer.java:1209)
+	at org.eclipse.e4.ui.workbench.renderers.swt.LazyStackRenderer.postProcess(LazyStackRenderer.java:116)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:676)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer.processContents(SWTPartRenderer.java:72)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:672)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$1.run(PartRenderingEngine.java:543)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:527)
+	at org.eclipse.e4.ui.workbench.renderers.swt.ElementReferenceRenderer.createWidget(ElementReferenceRenderer.java:73)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createWidget(PartRenderingEngine.java:994)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:658)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer.processContents(SWTPartRenderer.java:72)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SashRenderer.processContents(SashRenderer.java:150)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:672)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer.processContents(SWTPartRenderer.java:72)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SashRenderer.processContents(SashRenderer.java:150)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:672)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer.processContents(SWTPartRenderer.java:72)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SashRenderer.processContents(SashRenderer.java:150)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:672)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer.processContents(SWTPartRenderer.java:72)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SashRenderer.processContents(SashRenderer.java:150)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:672)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer.processContents(SWTPartRenderer.java:72)
+	at org.eclipse.e4.ui.workbench.renderers.swt.PerspectiveRenderer.processContents(PerspectiveRenderer.java:51)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:672)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.workbench.renderers.swt.PerspectiveStackRenderer.showTab(PerspectiveStackRenderer.java:82)
+	at org.eclipse.e4.ui.workbench.renderers.swt.LazyStackRenderer.postProcess(LazyStackRenderer.java:116)
+	at org.eclipse.e4.ui.workbench.renderers.swt.PerspectiveStackRenderer.postProcess(PerspectiveStackRenderer.java:64)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:676)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer.processContents(SWTPartRenderer.java:72)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SashRenderer.processContents(SashRenderer.java:150)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:672)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer.processContents(SWTPartRenderer.java:72)
+	at org.eclipse.e4.ui.workbench.renderers.swt.WBWRenderer.processContents(WBWRenderer.java:658)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:672)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:762)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:727)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:711)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$5.run(PartRenderingEngine.java:1082)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:338)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:1045)
+	at org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:155)
+	at org.eclipse.ui.internal.Workbench.lambda$3(Workbench.java:644)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:338)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:551)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:156)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:152)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:203)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:136)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:104)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:401)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:255)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:659)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:596)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1467)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1440)
+Caused by: java.io.IOException: The provided location '/home/patrick115/mcuxpresso/02/SDKPackages' is not a valid location.
+	at com.nxp.mcuxpresso.core.datamodels.providers.SDKManifestProvider.<init>(SDKManifestProvider.java:413)
+	at com.nxp.mcuxpresso.core.datamodels.providers.SDKManifestProvider.getInstance(SDKManifestProvider.java:508)
+	... 212 more
+
+!ENTRY org.eclipse.e4.ui.workbench 2 0 2023-04-05 09:00:12.435
+!MESSAGE Removing PartDescriptorImpl with the "com.arm.cmsis.pack.installer.ui.views.PacksView" id and the "Packs" label.It points to the non available "bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" class. Bundle might have been uninstalled
+
+!ENTRY org.eclipse.e4.ui.workbench 2 0 2023-04-05 09:00:12.441
+!MESSAGE Removing PartDescriptorImpl with the "com.arm.cmsis.pack.installer.ui.views.DevicesView" id and the "Devices" label.It points to the non available "bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" class. Bundle might have been uninstalled
+
+!ENTRY org.eclipse.e4.ui.workbench 2 0 2023-04-05 09:00:12.446
+!MESSAGE Removing PartDescriptorImpl with the "com.arm.cmsis.pack.installer.ui.views.BoardsView" id and the "Boards" label.It points to the non available "bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" class. Bundle might have been uninstalled
+
+!ENTRY org.eclipse.e4.ui.workbench 2 0 2023-04-05 09:00:12.450
+!MESSAGE Removing PartDescriptorImpl with the "com.arm.cmsis.pack.installer.ui.views.ExamplesView" id and the "Examples" label.It points to the non available "bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" class. Bundle might have been uninstalled
+
+!ENTRY org.eclipse.e4.ui.workbench 2 0 2023-04-05 09:00:12.455
+!MESSAGE Removing PartDescriptorImpl with the "com.arm.cmsis.pack.installer.ui.views.PackPropertyView" id and the "Pack Properties" label.It points to the non available "bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" class. Bundle might have been uninstalled
+
+!ENTRY com.nxp.swtools.framework 4 0 2023-04-05 09:00:14.365
+!MESSAGE Could not copy default offline data to data directory. Trying to unzip:'/usr/local/mcuxpressoide-11.6.1_8255/mcu_data/offline_data.zip' to: '/usr/local/mcuxpressoide-11.6.1_8255/mcu_data'. Reason: 
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:09:01.863
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:09:02.133
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:09:02.577
+!MESSAGE Telnet session connected on port 2335->33882 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 4 2023-04-05 09:09:15.894
+!MESSAGE NullPointerException while trying to calculated source lookup path. This can be ignored if it occurs while terminating a debug session. See Bug 500988.
+!STACK 0
+java.lang.NullPointerException
+	at org.eclipse.cdt.dsf.gdb.launching.GdbSourceLookupDirector.collectSubstitutionsPaths(GdbSourceLookupDirector.java:102)
+	at org.eclipse.cdt.dsf.gdb.launching.GdbSourceLookupDirector.collectSubstitutionsPaths(GdbSourceLookupDirector.java:146)
+	at org.eclipse.cdt.dsf.gdb.launching.GdbSourceLookupDirector.getSubstitutionsPaths(GdbSourceLookupDirector.java:72)
+	at org.eclipse.cdt.dsf.gdb.service.GDBSourceLookup.getSubstitutionsPaths(GDBSourceLookup.java:124)
+	at org.eclipse.cdt.dsf.gdb.service.GDBSourceLookup.sourceContainersChanged(GDBSourceLookup.java:139)
+	at org.eclipse.cdt.dsf.gdb.launching.GdbSourceLookupParticipant.sourceContainersChangedOnDispatchThread(GdbSourceLookupParticipant.java:120)
+	at org.eclipse.cdt.dsf.gdb.launching.GdbSourceLookupParticipant$1.run(GdbSourceLookupParticipant.java:85)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)
+	at java.base/java.util.concurrent.FutureTask.run(Unknown Source)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+
+!ENTRY com.nxp.mcuxpresso.core.debug 4 0 2023-04-05 09:09:15.906
+!MESSAGE There is already a running debug session for the launch configuration 'leds JLink Debug'.
+
+!ENTRY org.eclipse.cdt.dsf 4 10005 2023-04-05 09:09:19.706
+!MESSAGE Composite status
+!SUBENTRY 1 org.eclipse.cdt.dsf.gdb.ui 4 0 2023-04-05 09:09:19.706
+!MESSAGE Task java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask@daadcfc[Not completed, task = java.util.concurrent.Executors$RunnableAdapter@396e50c0[Wrapped task = org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbDisconnectCommand$4@5b5752a]] rejected from org.eclipse.cdt.dsf.concurrent.DefaultDsfExecutor@4da9ddf5[Terminated, pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 4664]
+!SUBENTRY 1 org.eclipse.cdt.dsf 4 10005 2023-04-05 09:09:19.706
+!MESSAGE Request for monitor: 'RequestMonitor (org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbDisconnectCommand$1@2838450e): Status ERROR: org.eclipse.cdt.dsf.gdb.ui code=0 Task java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask@daadcfc[Not completed, task = java.util.concurrent.Executors$RunnableAdapter@396e50c0[Wrapped task = org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbDisconnectCommand$4@5b5752a]] rejected from org.eclipse.cdt.dsf.concurrent.DefaultDsfExecutor@4da9ddf5[Terminated, pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 4664]' resulted in a rejected execution exception.
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:09:45.451
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:09:45.513
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:09:46.261
+!MESSAGE Telnet session connected on port 2335->52272 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:09:47.130
+!MESSAGE Target not available.
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:15:51.882
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:15:52.148
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:15:52.653
+!MESSAGE Telnet session connected on port 2335->54176 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:15:53.213
+!MESSAGE Target not available.
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:16:52.639
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:16:52.893
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:16:53.264
+!MESSAGE Target not available.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:16:53.406
+!MESSAGE Telnet session connected on port 2335->34906 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:17:58.197
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:17:58.445
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:17:58.680
+!MESSAGE Target not available.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:17:59.010
+!MESSAGE Telnet session connected on port 2335->40576 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:19:27.667
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:19:27.963
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:19:28.487
+!MESSAGE Telnet session connected on port 2335->57458 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:19:29.699
+!MESSAGE Target not available.
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:21:32.786
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:21:33.079
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:21:33.123
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:21:33.132
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:21:33.147
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:21:33.171
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:21:33.184
+!MESSAGE Target not available.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:21:33.602
+!MESSAGE Telnet session connected on port 2335->56880 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:22:34.551
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:22:34.824
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:22:35.315
+!MESSAGE Telnet session connected on port 2335->56086 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:22:38.098
+!MESSAGE Target not available.
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:28:48.222
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:28:48.512
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:28:49.036
+!MESSAGE Telnet session connected on port 2335->35664 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:28:49.082
+!MESSAGE Target not available.
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:30:16.542
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:30:16.847
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:30:17.305
+!MESSAGE Telnet session connected on port 2335->35768 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:30:23.648
+!MESSAGE Target not available.
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:31:17.314
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:31:17.624
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:31:18.121
+!MESSAGE Telnet session connected on port 2335->52086 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:31:19.446
+!MESSAGE Target not available.
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:32:08.101
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:32:08.392
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:32:08.908
+!MESSAGE Telnet session connected on port 2335->49094 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:32:10.622
+!MESSAGE Target not available.
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:34:57.185
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:34:57.482
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:34:57.523
+!MESSAGE Target not available.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:34:57.956
+!MESSAGE Telnet session connected on port 2335->36846 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:35:45.598
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:35:45.899
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:35:46.141
+!MESSAGE Target not available.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:35:46.365
+!MESSAGE Telnet session connected on port 2335->58990 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:37:11.515
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:37:11.793
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:37:12.273
+!MESSAGE Telnet session connected on port 2335->45996 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:37:14.563
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:38:27.533
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:38:29.993
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:38:32.626
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:38:59.248
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.cdt.dsf 4 10005 2023-04-05 09:38:59.259
+!MESSAGE Request for monitor: 'RequestMonitor (org.eclipse.cdt.dsf.mi.service.MIMemory$4@3d357e00): Status ERROR: org.eclipse.cdt.dsf.gdb code=10004 Failed to execute MI command:
+-data-evaluate-expression "&(selected > 7)"
+Error message from debugger back end:
+Attempt to take address of value not located in memory. java.lang.Exception: Attempt to take address of value not located in memory.' resulted in an error.
+!SUBENTRY 1 org.eclipse.cdt.dsf.gdb 4 10004 2023-04-05 09:38:59.259
+!MESSAGE Failed to execute MI command:
+-data-evaluate-expression "&(selected > 7)"
+Error message from debugger back end:
+Attempt to take address of value not located in memory.
+!STACK 0
+java.lang.Exception: Attempt to take address of value not located in memory.
+	at org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl$RxThread.processMIOutput(AbstractMIControl.java:1013)
+	at org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl$RxThread.run(AbstractMIControl.java:842)
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:39:01.697
+!MESSAGE Target not available.
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:39:52.244
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:39:52.459
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:39:53.039
+!MESSAGE Telnet session connected on port 2335->56876 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:40:19.534
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:40:32.761
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:40:33.785
+!MESSAGE Target not available.
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:40:35.828
+!MESSAGE Target not available.
+
+!ENTRY com.crt.utils 1 0 2023-04-05 09:41:47.162
+!MESSAGE Connected to localhost on port 2334.
+
+!ENTRY org.eclipse.cdt.dsf.ui 2 0 2023-04-05 09:41:47.433
+!MESSAGE Unable to locate file: /poli/home/vyuka/apps/workspace-full.mcu/empty-mbed-os/./mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/device/TOOLCHAIN_GCC_ARM/startup_MK64F12.S
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2023-04-05 09:41:47.920
+!MESSAGE Telnet session connected on port 2335->59032 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf 4 10001 2023-04-05 09:41:48.751
+!MESSAGE Target not available.
+
+!ENTRY com.crt.log 4 -1 2023-04-05 09:43:18.615
+!MESSAGE Exception
+!STACK 0
+java.lang.Exception: java.util.ConcurrentModificationException
+	at com.crt.utils.general.Reporter.log(Reporter.java:591)
+	at com.nxp.mcuxpresso.addons.docsupport.ui.decorators.ProjectDecorator.setup(ProjectDecorator.java:69)
+	at com.nxp.mcuxpresso.addons.docsupport.ui.decorators.ProjectDecorator.decorate(ProjectDecorator.java:119)
+	at org.eclipse.ui.internal.decorators.LightweightDecoratorDefinition.decorate(LightweightDecoratorDefinition.java:250)
+	at org.eclipse.ui.internal.decorators.LightweightDecoratorManager$LightweightRunnable.run(LightweightDecoratorManager.java:105)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.ui.internal.decorators.LightweightDecoratorManager.decorate(LightweightDecoratorManager.java:360)
+	at org.eclipse.ui.internal.decorators.LightweightDecoratorManager.getDecorations(LightweightDecoratorManager.java:346)
+	at org.eclipse.ui.internal.decorators.DecorationScheduler$1.ensureResultCached(DecorationScheduler.java:412)
+	at org.eclipse.ui.internal.decorators.DecorationScheduler$1.run(DecorationScheduler.java:388)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+Caused by: java.util.ConcurrentModificationException
+	at java.base/java.util.ArrayList$Itr.checkForComodification(Unknown Source)
+	at java.base/java.util.ArrayList$Itr.next(Unknown Source)
+	at org.eclipse.ui.internal.WorkbenchPage.getViewReferences(WorkbenchPage.java:2510)
+	at org.eclipse.ui.internal.WorkbenchPage.getViewReferences(WorkbenchPage.java:2498)
+	at org.eclipse.ui.internal.WorkbenchPage.findViewReference(WorkbenchPage.java:1963)
+	at org.eclipse.ui.internal.WorkbenchPage.findView(WorkbenchPage.java:1954)
+	at com.nxp.mcuxpresso.addons.docsupport.ui.decorators.ProjectDecorator.setup(ProjectDecorator.java:57)
+	... 9 more

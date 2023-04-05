@@ -278,7 +278,7 @@ void test2() {
 			}
 	}
 }
-
+*/
 #define T 20
 
 class PWMLed
@@ -326,7 +326,7 @@ public:
             this->ticks = 0;
     }
 };
-*/
+
 
 class RGBLed
 {
@@ -470,6 +470,7 @@ RGBLed rgbLeds[] = {
 		{PTB19, PTB20, PTB23},
 };
 
+//LEDS2
 void blink() {
 	static int timer = 0;
 
@@ -487,6 +488,7 @@ void blink() {
 	}
 }
 
+//PREPARATION
 void checkButtons() {
 	static int selected = 0;
 
@@ -542,14 +544,132 @@ void change_brightness() {
 	rgbLeds[2].set_brightness(b3);
 }
 
+//LEDS2
+void randomLed() {
+	static int turned = -1;
+	static int selected = 0;
+
+	if(buttons[0].get_status()) {
+		turned = selected;
+		leds[turned].set_brightness(100);
+	} else {
+		leds[turned].set_brightness(0);
+		turned = -1;
+	}
+
+	if (turned == -1)
+		selected++;
+
+	if (selected > 7) {
+		selected = 0;
+	}
+}
+
+void knightRider() {
+	static bool running = false;
+	static int timer = 0;
+	static int current = 0;
+	static bool reverse = false;
+
+	int maxTimer = 500;
+
+	if (buttons[0].get_change()) {
+		//if turning off, turn off current led
+		leds[current].set_brightness(0);
+
+		//reverse
+		running = !running;
+		//set current to -1, because if we want to start with led 0
+		current = -1;
+		timer = maxTimer;
+		//reset reverse
+		reverse = false;
+	}
+
+
+	timer++;
+
+	if (timer >= maxTimer) {
+		timer = 0;
+
+		if (running) {
+			leds[current].set_brightness(0);
+
+			if (reverse){
+				current--;
+				if (current <= 0) {
+					reverse = !reverse;
+				}
+			} else {
+				current++;
+				if (current >= 7) {
+					reverse = !reverse;
+				}
+			}
+
+			leds[current].set_brightness(100);
+		}
+	}
+}
+
+void blinker() {
+	static int timer = 0;
+	static bool status = false;
+	static bool runningLeft = false;
+	static bool runningRight = false;
+
+	int max = 750;
+
+	if (buttons[0].get_change()) {
+		runningLeft = !runningLeft;
+
+		rgbLeds[0].set_brightness(0);
+	}
+
+	if (buttons[1].get_change()) {
+		runningRight = !runningRight;
+
+		rgbLeds[2].set_brightness(0);
+	}
+
+	timer++;
+
+	if (timer >= max) {
+		timer = 0;
+
+		if (runningLeft || runningRight) {
+			status = !status;
+		}
+
+		if (runningLeft) {
+			if (status) {
+				rgbLeds[0].set_brightness(100);
+			} else {
+				rgbLeds[0].set_brightness(0);
+			}
+		}
+
+		if (runningRight) {
+			if (status) {
+				rgbLeds[2].set_brightness(100);
+			} else {
+				rgbLeds[2].set_brightness(0);
+			}
+		}
+	}
+}
+
 int main()
 {
 	printf( "LED demo program started...\n" );
-	//Ticker ticker;
+	Ticker ticker;
 
-	//std::chrono::milliseconds time(1);
+	std::chrono::milliseconds time(1);
 
-	//ticker.attach(sus, time);
+	rgbLeds[0].set_rgb(255, 100, 0);
+	rgbLeds[2].set_rgb(255, 100, 0);
+
+	ticker.attach(knightRider, time);
 
 
 	while ( 1 )

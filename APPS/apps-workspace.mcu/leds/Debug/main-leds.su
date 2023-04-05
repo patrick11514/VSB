@@ -11,11 +11,6 @@
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/drivers/include/drivers/DigitalOut.h:84:10:void mbed::DigitalOut::write(int)	16	static
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/drivers/include/drivers/DigitalOut.h:122:17:mbed::DigitalOut& mbed::DigitalOut::operator=(int)	16	static
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/drivers/include/drivers/Ticker.h:133:5:mbed::TickerBase::~TickerBase()	16	static
-../main-leds.cpp:36:6:void control_from_ticker()	16	static
-../main-leds.cpp:63:6:void test1()	16	static
-../main-leds.cpp:109:6:void changeLed(int, bool)	16	static
-../main-leds.cpp:138:6:void sus()	16	static
-../main-leds.cpp:209:6:void test2()	16	static
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/drivers/include/drivers/Ticker.h:161:7:mbed::Ticker::~Ticker()	16	static
 ../main-leds.cpp:295:5:PWMLed::PWMLed(PinName)	72	static
 ../main-leds.cpp:302:10:void PWMLed::set_brightness(uint8_t)	8	static
@@ -23,6 +18,7 @@
 ../main-leds.cpp:316:10:void PWMLed::run_pwm()	16	static
 ../main-leds.cpp:347:5:RGBLed::RGBLed(PinName, PinName, PinName)	80	static
 ../main-leds.cpp:354:10:void RGBLed::set_brightness(uint8_t)	8	static
+../main-leds.cpp:368:10:void RGBLed::set_rgb(uint8_t, uint8_t, uint8_t)	8	static
 ../main-leds.cpp:374:10:void RGBLed::run_pwm()	16	static
 ../main-leds.cpp:413:2:Button::Button(PinName)	72	static
 ../main-leds.cpp:422:7:void Button::run_pwm()	16	static
@@ -31,10 +27,13 @@
 ../main-leds.cpp:284:7:PWMLed::~PWMLed()	16	static
 ../main-leds.cpp:404:7:Button::~Button()	16	static
 ../main-leds.cpp:331:7:RGBLed::~RGBLed()	16	static
-../main-leds.cpp:473:6:void blink()	16	static
-../main-leds.cpp:490:6:void checkButtons()	16	static
-../main-leds.cpp:527:6:void change_brightness()	8	static
-../main-leds.cpp:545:5:int main()	120	static
+../main-leds.cpp:474:6:void blink()	16	static
+../main-leds.cpp:492:6:void checkButtons()	16	static
+../main-leds.cpp:529:6:void change_brightness()	8	static
+../main-leds.cpp:548:6:void randomLed()	8	static
+../main-leds.cpp:568:6:void knightRider()	16	static
+../main-leds.cpp:615:6:void blinker()	16	static
+../main-leds.cpp:662:5:int main()	120	static
 /usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/bits/move.h:101:5:constexpr typename std::remove_reference<_Tp>::type&& std::move(_Tp&&) [with _Tp = void (*&)()]	8	static
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/leds/mbed-os/platform/include/platform/Callback.h:712:23:)) [with T = PWMLed; U = PWMLed; R = void; ArgTs = {}]	24	static
 /usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/chrono:478:14:constexpr std::chrono::duration<_Rep, _Period>::duration(const std::chrono::duration<_Rep, _Period>&) [with _Rep2 = long long int; _Period2 = std::ratio<1, 1000>; <template-parameter-2-3> = void; _Rep = long long int; _Period = std::ratio<1, 1000000>]	24	static
@@ -96,5 +95,5 @@
 ../main-leds.cpp:447:8:void __tcf_0(void*)	16	static
 ../main-leds.cpp:460:8:void __tcf_1(void*)	16	static
 ../main-leds.cpp:467:8:void __tcf_2(void*)	16	static
-../main-leds.cpp:560:1:void __static_initialization_and_destruction_0(int, int)	16	static
-../main-leds.cpp:560:1:cpp)	8	static
+../main-leds.cpp:680:1:void __static_initialization_and_destruction_0(int, int)	16	static
+../main-leds.cpp:680:1:cpp)	8	static
