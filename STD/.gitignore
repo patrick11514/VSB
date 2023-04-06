@@ -1,0 +1,5 @@
+#Gitignore for TEX compiler output
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
