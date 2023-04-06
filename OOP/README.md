@@ -18,3 +18,5 @@
 ![Task 4](https://upload.patrick115.eu/screenshot/OOP_c4.4.png)
 * **[Task 5](https://github.com/patrick11514/VSB/tree/main/OOP/C5)**
 ![Task 5](https://upload.patrick115.eu/screenshot/OOP_c5.png)
+* **[Task 6](https://gituhub.com/patrick11514/VSB/tree/main/OOP/C6)**
+![Task 6](https://upload.patrick115.eu/screenshot/OOP_c6.png)
