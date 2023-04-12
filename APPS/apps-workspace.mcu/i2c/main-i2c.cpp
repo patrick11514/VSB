@@ -24,16 +24,207 @@
 
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 
-DigitalOut g_led_PTA1( PTA1, 0 );
-DigitalOut g_led_PTA2( PTA2, 0 );
+#define HWADR_PCF8574 0b01000000
 
-DigitalIn g_but_PTC9( PTC9 );
-DigitalIn g_but_PTC10( PTC10 );
-DigitalIn g_but_PTC11( PTC11 );
-DigitalIn g_but_PTC12( PTC12 );
+
+#define TB 50
+
+class Button {
+private:
+	DigitalIn button;
+	Ticker ticker;
+	uint32_t ticks;
+	bool status;
+	bool last_status;
+
+public:
+	Button(PinName pin_name) : button(pin_name) {
+		this->status = false;
+		this->last_status = false;
+
+		std::chrono::milliseconds l_tout( 1 );
+
+		this->ticker.attach(callback(this, &Button::run_pwm), l_tout);
+	}
+
+	void run_pwm() {
+		this->ticks++;
+		if (this->ticks >= TB) {
+		   this->ticks = 0;
+		   if (this->button == 0) {
+			   this->status = true;
+		   } else {
+			   this->status = false;
+		   }
+		}
+	}
+
+	bool get_status() {
+		return this->status;
+	}
+
+	bool get_change() {
+		if (this->last_status != this->status) {
+			this->last_status = this->status;
+			return this->status;
+		}
+		return false;
+	}
+};
+
+Button buttons[] = {
+	{ PTC9  },
+	{ PTC10 },
+	{ PTC11 },
+	{ PTC12 }
+};
+
+class Expander
+{
+private:
+    uint8_t address;
+    uint8_t leds_status;
+public:
+    Expander(uint8_t dip_switches) : address(HWADR_PCF8574 | (dip_switches << 1) | W), leds_status(0)
+    {
+        i2c_init();
+    }
+
+    void toggle_led(uint8_t index)
+    {
+      i2c_start();
+
+      uint8_t status = 0;
+
+      status = i2c_output(this->address);
+
+      this->leds_status = this->leds_status ^ (1 << index);
+
+      status |= i2c_output(this->leds_status);
+      i2c_stop();
+
+      //status could be used for check etc..
+    }
+
+    void turn_on_count(uint8_t count)
+	{
+    if (count > 7) return;
+
+	  i2c_start();
+
+	  uint8_t status = 0;
+
+	  status = i2c_output(this->address);
+
+	  uint8_t leds = 0b00000000;
+
+	  for (int i = 0; i < count; i++) {
+		  leds = leds | (1 << i);
+	  }
+
+	  this->leds_status = leds;
+
+	  status |= i2c_output(this->leds_status);
+	  i2c_stop();
+
+	  //status could be used for check etc..
+	}
+};
+
+class Radio
+{
+private:
+    int frequency;
+    uint8_t address;
+    uint8_t volume;
+
+public:
+    Radio(): address(SI4735_ADDRESS)
+    {
+        if (si4735_init() != 0)
+        {
+            fprintf(stderr, "ERROR: Initialization of SI4735 finished with error...");
+            return;
+        }
+
+        set_volume(10);
+    }
+
+    uint8_t sendCommand(uint8_t id, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint8_t arg4, uint8_t arg5 ) {
+    	i2c_start();
+    	uint8_t status = i2c_output(this->address | W);
+    	status |= i2c_output(id);
+    	status |= i2c_output(arg1);
+    	status |= i2c_output(arg2);
+    	status |= i2c_output(arg3);
+    	status |= i2c_output(arg4);
+    	if (arg5 != 0x00) {
+    		status |= i2c_output(arg5);
+    	}
+    	i2c_stop();
+    	return status;
+    }
+
+    void tune(int frequency)
+    {
+    	uint8_t status = this->sendCommand(0x20, 0x00, frequency >> 8, frequency & 0xff, 0x00, 0x00);
+    	printf("Freq Status %d\n", status);
+    }
+
+    void set_volume(uint8_t volume)
+    {
+    	if (volume > 63) {
+    		volume = 63;
+    	}
+        this->volume = volume;
+
+        uint8_t status = this->sendCommand(0x12, 0x00, 0x40, 0x00, 0x00, 0x00 | volume);
+        printf("Volume Status %d\n", status);
+    }
+
+    void volume_up()
+    {
+        set_volume(volume+1);
+    }
+
+    void volume_down()
+    {
+        set_volume(volume-1);
+    }
+
+    void status_fetch()
+    {
+        // TODO: Print some stats
+    }
+
+    void seek_station()
+    {
+    	uint8_t status = this->sendCommand(0x21, 0x00, 0b00001100, 0x00, 0x00, 0x00);
+    	printf("Seek Status %d\n", status);
+    }
+};
 
 int main( void )
 {
+	Expander exp(0b000);
+
+	//turn on
+	exp.toggle_led(0);
+	exp.toggle_led(1);
+	exp.toggle_led(3);
+	exp.toggle_led(7);
+	//turn off 4rd led (index 3)
+	exp.toggle_led(3);
+
+	//turn on specific count of leds
+	exp.turn_on_count(3);
+
+	Radio radio;
+
+	radio.tune(10140);
+	radio.set_volume(20);
+
+/*
 	uint8_t l_S1, l_S2, l_RSSI, l_SNR, l_MULT, l_CAP;
 	uint8_t l_ack = 0;
 
@@ -120,7 +311,7 @@ int main( void )
 		printf( "Communication error!\r\n" );
 	else
 		printf( "Current tuned frequency: %d.%dMHz\r\n", l_freq / 100, l_freq % 100 );
-
+*/
 	return 0;
 }
 
