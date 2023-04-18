@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
-		<item key="selection" value=""/>
+		<item key="selection" value="l_freq"/>
 		<item key="wrap" value="true"/>
 		<item key="casesensitive" value="false"/>
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
+			<item value="l_freq"/>
+			<item value="wait_us"/>
+			<item value="exp"/>
 			<item value="volume"/>
 			<item value="volue"/>
 			<item value="volu"/>
@@ -15,14 +18,11 @@
 			<item value="{&#x09;"/>
 			<item value="{"/>
 			<item value="{ "/>
-			<item value="l_freq"/>
 			<item value="_g_pcadr"/>
 			<item value="ack"/>
 			<item value="CAP"/>
 			<item value="MULT"/>
 			<item value="SNR"/>
-			<item value="RSSI"/>
-			<item value="S2"/>
 		</list>
 		<list key="replacehistory">
 			<item value=" }"/>
