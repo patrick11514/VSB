@@ -1,5 +1,5 @@
 COMPILER=g++
-ARGS=
+ARGS=-O3
 OFILES=main.o
 EXEC=main
 
