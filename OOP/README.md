@@ -20,3 +20,12 @@
 ![Task 5](https://upload.patrick115.eu/screenshot/OOP_c5.png)
 * **[Task 6](https://gituhub.com/patrick11514/VSB/tree/main/OOP/C6)**
 ![Task 6](https://upload.patrick115.eu/screenshot/OOP_c6.png)
+* **[Task 7](https://github.com/patrick11514/VSB/tree/main/OOP/C7)**
+![Task 7](https://upload.patrick115.eu/screenshot/OOP_c7.png)
+* **[Task 8](https://github.com/patrick11514/VSB/tree/main/OOP/C8)**
+![Task 8](https://upload.patrick115.eu/screenshot/OOP_c8.1.png)
+![Task 8](https://upload.patrick115.eu/screenshot/OOP_c8.2.png)
+![Task 8](https://upload.patrick115.eu/screenshot/OOP_c8.3.png)
+![Task 8](https://upload.patrick115.eu/screenshot/OOP_c8.4.png)
+![Task 8](https://upload.patrick115.eu/screenshot/OOP_c8.5.png)
+![Task 8](https://upload.patrick115.eu/screenshot/OOP_c8.6.png)
