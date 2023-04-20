@@ -13,3 +13,5 @@
 ![Task 6](https://upload.patrick115.eu/.storage/kelvin_ALG_c6.png)
 * **[Task 7](https://gitub.com/patrick11514/VSB/tree/main/ALG/C7)**
 ![Task 7](https://upload.patrick115.eu/.storage/kelvin_ALG_c7.png)
+* **[Task 8](https://github.com/patrick11514/VSB/tree/main/ALG/C8)**
+![Task 8](https://upload.patrick115.eu/.storage/kelvin_ALG_c8.png)
