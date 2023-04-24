@@ -17,21 +17,22 @@
 ../main-i2c.cpp:88:5:Expander::Expander(uint8_t)	16	static
 ../main-i2c.cpp:109:10:void Expander::turn_on_count(uint8_t)	32	static
 ../main-i2c.cpp:146:5:Radio::Radio()	16	static
-../main-i2c.cpp:157:13:uint8_t Radio::sendCommand(uint8_t, uint8_t)	24	static
-../main-i2c.cpp:174:13:uint8_t Radio::sendCommand(uint8_t, uint8_t, uint8_t, uint8_t)	24	static
-../main-i2c.cpp:195:13:uint8_t Radio::sendCommand(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t)	24	static
-../main-i2c.cpp:208:10:void Radio::tune(int)	32	static
-../main-i2c.cpp:214:10:void Radio::set_volume(uint8_t)	40	static
-../main-i2c.cpp:225:10:void Radio::volume_up()	16	static
-../main-i2c.cpp:231:10:void Radio::volume_down()	16	static
-../main-i2c.cpp:237:13:uint8_t Radio::get_volume()	8	static
-../main-i2c.cpp:241:13:uint8_t Radio::get_signal()	24	static
-../main-i2c.cpp:288:13:uint8_t Radio::get_tuned_data()	24	static
-../main-i2c.cpp:337:13:uint8_t Radio::get_signal_strength()	8	static
-../main-i2c.cpp:341:9:int Radio::get_freqency()	8	static
-../main-i2c.cpp:351:10:void Radio::seek_station()	24	static
-../main-i2c.cpp:363:6:void loop()	16	static
-../main-i2c.cpp:414:6:int main()	120	static
+../main-i2c.cpp:157:13:uint8_t Radio::sendCommand(uint8_t, uint8_t, bool)	24	static
+../main-i2c.cpp:176:13:uint8_t Radio::sendCommand(uint8_t, uint8_t, uint8_t, uint8_t, bool)	24	static
+../main-i2c.cpp:199:13:uint8_t Radio::sendCommand(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, bool)	24	static
+../main-i2c.cpp:213:10:void Radio::tune(int)	32	static
+../main-i2c.cpp:221:10:void Radio::set_volume(uint8_t)	40	static
+../main-i2c.cpp:232:10:void Radio::volume_up()	16	static
+../main-i2c.cpp:238:10:void Radio::volume_down()	16	static
+../main-i2c.cpp:244:13:uint8_t Radio::get_volume()	8	static
+../main-i2c.cpp:248:13:uint8_t Radio::get_signal()	24	static
+../main-i2c.cpp:290:13:uint8_t Radio::get_tuned_data()	24	static
+../main-i2c.cpp:334:10:void Radio::get_station_name()	56	static
+../main-i2c.cpp:394:13:uint8_t Radio::get_signal_strength()	8	static
+../main-i2c.cpp:398:9:int Radio::get_freqency()	8	static
+../main-i2c.cpp:402:10:void Radio::seek_station()	24	static
+../main-i2c.cpp:414:6:void loop()	16	static
+../main-i2c.cpp:471:6:int main()	120	static
 /usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/bits/move.h:101:5:constexpr typename std::remove_reference<_Tp>::type&& std::move(_Tp&&) [with _Tp = void (*&)()]	8	static
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/i2c/mbed-os/platform/include/platform/Callback.h:712:23:)) [with T = Button; U = Button; R = void; ArgTs = {}]	24	static
 /usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.6.1.202207200623/tools/arm-none-eabi/include/c++/10.3.1/chrono:478:14:constexpr std::chrono::duration<_Rep, _Period>::duration(const std::chrono::duration<_Rep, _Period>&) [with _Rep2 = long long int; _Period2 = std::ratio<1, 1000>; <template-parameter-2-3> = void; _Rep = long long int; _Period = std::ratio<1, 1000000>]	24	static
@@ -61,5 +62,6 @@
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/i2c/mbed-os/platform/cxxsupport/mstd_type_traits:385:6:) [with F = void (*&)(); Args = {}]	16	static
 /home/fei/min0150/Projects/VSB/APPS/apps-workspace.mcu/i2c/mbed-os/platform/cxxsupport/mstd_type_traits:385:6:)>::Callback<Button*, void (Button::*)(), 0>::<lambda()>&; Args = {}]	16	static
 ../main-i2c.cpp:75:8:void __tcf_0(void*)	16	static
-../main-i2c.cpp:521:1:void __static_initialization_and_destruction_0(int, int)	16	static
-../main-i2c.cpp:521:1:cpp)	8	static
+../main-i2c.cpp:134:7:Radio::~Radio()	16	static
+../main-i2c.cpp:577:1:void __static_initialization_and_destruction_0(int, int)	16	static
+../main-i2c.cpp:577:1:cpp)	8	static

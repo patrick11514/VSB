@@ -1,4 +1,4 @@
-16:02:20 **** Incremental Build of configuration Debug for project i2c ****
+10:14:19 **** Incremental Build of configuration Debug for project i2c ****
 make -r -j12 linker-script-debug.ld all 
 make: 'linker-script-debug.ld' is up to date.
 Building file: ../main-i2c.cpp
@@ -12,7 +12,7 @@ arm-none-eabi-c++ -o "i2c.axf"  ./i2c-lib.o ./main-i2c.o ./si4735-lib.o   -lmbed
 Memory region         Used Size  Region Size  %age Used
     m_interrupts:          1 KB         1 KB    100.00%
   m_flash_config:          16 B         16 B    100.00%
-          m_text:       39232 B    1047536 B      3.75%
+          m_text:       39652 B    1047536 B      3.79%
           m_data:         64 KB        64 KB    100.00%
         m_data_2:        191 KB       192 KB     99.48%
 Finished building target: i2c.axf
@@ -20,11 +20,11 @@ Finished building target: i2c.axf
 Performing post-build steps
 arm-none-eabi-size "i2c.axf" ; arm-none-eabi-objcopy -v -O binary "i2c.axf" "i2c.bin" ; checksum -p MK64FN1M0xxx12 -d "i2c.bin"
    text	   data	    bss	    dec	    hex	filename
-  37456	   2768	 258368	 298592	  48e60	i2c.axf
+  37872	   2772	 258368	 299012	  49004	i2c.axf
 copy from `i2c.axf' [elf32-littlearm] to `i2c.bin' [binary]
 Written checksum 0xdffce0b2 at offset 0x1c in file i2c.bin
 Previous value 0x00000000 at offset 0x1c in file i2c.bin
  
 
-16:02:44 Build Finished. 0 errors, 0 warnings. (took 24s.147ms)
+10:14:43 Build Finished. 0 errors, 0 warnings. (took 24s.137ms)
 

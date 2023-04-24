@@ -1,0 +1,564 @@
+// **************************************************************************
+//
+//               Demo program for APPS labs
+//
+// Subject:      Computer Architectures and Parallel systems
+// Author:       Petr Olivka, petr.olivka@vsb.cz, 02/2022
+// Organization: Department of Computer Science, FEECS,
+//               VSB-Technical University of Ostrava, CZ
+//
+// File:         Main program for I2C bus
+//
+// **************************************************************************
+
+#include <mbed.h>
+
+#include "i2c-lib.h"
+#include "si4735-lib.h"
+
+//************************************************************************
+
+// Direction of I2C communication
+#define R	0b00000001
+#define W	0b00000000
+
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+
+#define HWADR_PCF8574 0b01000000
+
+
+#define TB 50
+
+class Button {
+private:
+	DigitalIn button;
+	Ticker ticker;
+	uint32_t ticks;
+	bool status;
+	bool last_status;
+
+public:
+	Button(PinName pin_name) : button(pin_name) {
+		this->status = false;
+		this->last_status = false;
+
+		std::chrono::milliseconds l_tout( 1 );
+
+		this->ticker.attach(callback(this, &Button::run_pwm), l_tout);
+	}
+
+	void run_pwm() {
+		this->ticks++;
+		if (this->ticks >= TB) {
+		   this->ticks = 0;
+		   if (this->button == 0) {
+			   this->status = true;
+		   } else {
+			   this->status = false;
+		   }
+		}
+	}
+
+	bool get_status() {
+		return this->status;
+	}
+
+	bool get_change() {
+		if (this->last_status != this->status) {
+			this->last_status = this->status;
+			return this->status;
+		}
+		return false;
+	}
+};
+
+Button buttons[] = {
+	{ PTC9  },
+	{ PTC10 },
+	{ PTC11 },
+	{ PTC12 }
+};
+
+class Expander
+{
+private:
+    uint8_t address;
+    uint8_t leds_status;
+public:
+    Expander(uint8_t dip_switches) : address(HWADR_PCF8574 | (dip_switches << 1) | W), leds_status(0)
+    {
+        i2c_init();
+    }
+
+    void toggle_led(uint8_t index)
+    {
+      i2c_start();
+
+      uint8_t status = 0;
+
+      status = i2c_output(this->address);
+
+      this->leds_status = this->leds_status ^ (1 << index);
+
+      status |= i2c_output(this->leds_status);
+      i2c_stop();
+
+      //status could be used for check etc..
+    }
+
+    void turn_on_count(uint8_t count)
+	{
+    if (count > 8) return;
+
+	  i2c_start();
+
+	  uint8_t status = 0;
+
+	  status = i2c_output(this->address);
+
+	  uint8_t leds = 0b00000000;
+
+	  for (int i = 0; i < count; i++) {
+		  leds = leds | (1 << i);
+	  }
+
+	  this->leds_status = leds;
+
+	  status |= i2c_output(this->leds_status);
+	  i2c_stop();
+
+	  //status could be used for check etc..
+	}
+};
+
+class Radio
+{
+private:
+    int frequency;
+    uint8_t address;
+    uint8_t volume;
+    uint8_t RSSI;
+    uint8_t SNR;
+    int FREQ;
+    std::string stationName;
+    std::string textData;
+public:
+    Radio(): address(SI4735_ADDRESS)
+    {
+        if (si4735_init() != 0)
+        {
+            fprintf(stderr, "ERROR: Initialization of SI4735 finished with error...");
+            return;
+        }
+
+        set_volume(10);
+    }
+
+    uint8_t sendCommand(uint8_t id, uint8_t arg1, bool end) {
+		i2c_start();
+		uint8_t status = i2c_output(this->address | W);
+		status |= i2c_output(id);
+		status |= i2c_output(arg1);
+		if (end)
+		i2c_stop();
+		return status;
+	}
+    uint8_t sendCommand(uint8_t id, uint8_t arg1, uint8_t arg2, bool end) {
+    	i2c_start();
+    	uint8_t status = i2c_output(this->address | W);
+    	status |= i2c_output(id);
+    	status |= i2c_output(arg1);
+    	status |= i2c_output(arg2);
+    	if (end)
+    	i2c_stop();
+    	return status;
+    }
+    uint8_t sendCommand(uint8_t id, uint8_t arg1, uint8_t arg2, uint8_t arg3, bool end) {
+		i2c_start();
+		uint8_t status = i2c_output(this->address | W);
+		status |= i2c_output(id);
+		status |= i2c_output(arg1);
+		status |= i2c_output(arg2);
+		status |= i2c_output(arg3);
+		if (end)
+		i2c_stop();
+		return status;
+	}
+    uint8_t sendCommand(uint8_t id, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint8_t arg4, bool end) {
+		i2c_start();
+		uint8_t status = i2c_output(this->address | W);
+		status |= i2c_output(id);
+		status |= i2c_output(arg1);
+		status |= i2c_output(arg2);
+		status |= i2c_output(arg3);
+		status |= i2c_output(arg4);
+		if (end)
+		i2c_stop();
+		return status;
+	}
+    uint8_t sendCommand(uint8_t id, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint8_t arg4, uint8_t arg5, bool end) {
+		i2c_start();
+		uint8_t status = i2c_output(this->address | W);
+		status |= i2c_output(id);
+		status |= i2c_output(arg1);
+		status |= i2c_output(arg2);
+		status |= i2c_output(arg3);
+		status |= i2c_output(arg4);
+		status |= i2c_output(arg5);
+		if (end)
+		i2c_stop();
+		return status;
+	}
+
+    void tune(int frequency)
+    {
+    	uint8_t status = this->sendCommand(0x20, 0x00, frequency >> 8, frequency & 0xff, true);
+    	printf("Freq Status %d\n", status);
+    }
+
+    void set_volume(uint8_t volume)
+    {
+    	if (volume > 63) {
+    		volume = 63;
+    	}
+        this->volume = volume;
+
+        uint8_t status = this->sendCommand(0x12, 0x00, 0x40, 0x00, 0x00, 0x00 | volume, true);
+        printf("Volume Status %d\n", status);
+    }
+
+    void volume_up()
+    {
+        set_volume(volume+1);
+        printf("Current volume: %d\n", volume);
+    }
+
+    void volume_down()
+    {
+        set_volume(volume-1);
+        printf("Current volume: %d\n", volume);
+    }
+
+    uint8_t get_volume() {
+    	return volume;
+    }
+
+    uint8_t get_signal() {
+    	printf("==================================================\n");
+    	uint8_t status = this->sendCommand(0x23, 0x00, false);
+
+    	//repeated start
+    	i2c_start();
+    	status |= i2c_output(this->address | R);
+    	printf("Send Read:%d\n", status);
+
+    	i2c_input();
+    	i2c_ack();
+    	i2c_input();
+    	i2c_ack();
+    	i2c_input();
+    	i2c_ack();
+    	i2c_input();
+    	i2c_ack();
+    	RSSI = i2c_input();
+    	printf("RSSI: %d\n", RSSI);
+    	i2c_ack();
+    	SNR = i2c_input();
+    	printf("SNR: %d\n", SNR);
+    	i2c_ack();
+    	i2c_input();
+    	i2c_ack();
+    	i2c_input();
+    	i2c_nack();
+    	i2c_stop();
+
+    	/*for (int i = 0; i < 7; i++) {
+    		uint8_t val = i2c_input();
+			printf("Byte %d:%d\n", i , i2c_input());
+
+    	}
+    	printf("Byte %d:%d\n", 7 , i2c_input());
+    	*/
+
+    	printf("==================================================\n");
+
+    	return status;
+    }
+
+    uint8_t get_tuned_data() {
+		printf("==================================================\n");
+		uint8_t status = this->sendCommand(0x22, 0x00, false);
+
+		//repeated start
+		i2c_start();
+		status |= i2c_output(this->address | R);
+		printf("Send Read:%d\n", status);
+
+		int frequency = 0;
+
+		i2c_input();
+		i2c_ack();
+		i2c_input();
+		i2c_ack();
+		frequency = ( uint32_t ) i2c_input() << 8;
+		i2c_ack();
+		frequency |= i2c_input();
+		i2c_ack();
+		i2c_input();
+		i2c_ack();
+		i2c_input();
+		i2c_ack();
+		i2c_input();
+		i2c_ack();
+		i2c_input();
+		i2c_nack();
+		i2c_stop();
+
+		FREQ = frequency;
+
+		/*for (int i = 0; i < 7; i++) {
+			uint8_t val = i2c_input();
+			printf("Byte %d:%d\n", i , i2c_input());
+
+		}
+		printf("Byte %d:%d\n", 7 , i2c_input());
+		*/
+
+		printf("==================================================\n");
+
+		return status;
+	}
+
+    void get_station_name() {
+    	uint8_t status = this->sendCommand(0x24, 0b00000111, false);
+
+    	//repeted start
+    	i2c_start();
+    	status |= i2c_output(this->address | R);
+
+    	printf("Send Read:%d\n", status);
+
+    	int block1;
+    	int block2;
+    	int block3;
+    	int block4;
+    	int end;
+		i2c_input();
+		i2c_ack();
+		i2c_input();
+		i2c_ack();
+		block1 = i2c_input() << 8;
+		i2c_ack();
+		block1 |= i2c_input();
+		i2c_ack();
+		block2 = i2c_input() << 8;
+		i2c_ack();
+		block2 |= i2c_input();
+		i2c_ack();
+		block3 = i2c_input() << 8;
+		i2c_ack();
+		block3 |= i2c_input();
+		i2c_ack();
+		block4 = i2c_input() << 8;
+		i2c_ack();
+		block4 |= i2c_input();
+		i2c_ack();
+		end = i2c_input() << 8;
+		i2c_ack();
+		end |= i2c_input();
+		i2c_nack();
+
+		if ()
+
+		printf("Block1: %d\n", block1);
+		printf("Block2: %d\n", block2);
+		printf("Block3: %d\n", block3);
+		printf("Block4: %d\n", block4);
+		printf("End: %d\n", end);
+
+    	i2c_stop();
+
+    }
+
+    uint8_t get_signal_strength() {
+    	return RSSI;
+    }
+
+    int get_freqency() {
+    	return FREQ;
+    }
+
+    void seek_station()
+    {
+    	uint8_t status = this->sendCommand(0x21, 0b00001100, true);
+    	wait_us(100000);
+    	printf("Seek Status %d\n", status);
+    	this->get_tuned_data();
+    }
+};
+
+Radio radio;
+Expander expand(0b000);
+
+void loop() {
+	int timer = 2000;
+	static int current = 0;
+	static int display = 0;
+	static int volumePercentage = radio.get_volume() / 63.0 * 8;
+	static int strengthPercentage = 0;
+	static int frequency = 0;
+
+	if (buttons[0].get_change()) {
+		radio.volume_down();
+
+	}
+	if (buttons[1].get_change()) {
+		radio.volume_up();
+	}
+
+	if (buttons[2].get_change()) {
+		radio.seek_station();
+	}
+
+	if (buttons[3].get_change()) {
+		display++;
+		if (display > 2) {
+			display = 0;
+		}
+		current = timer - 1;
+	}
+
+	current++;
+
+	if (current % 20 == 0) {
+		if (display == 0) {
+			volumePercentage = radio.get_volume() / 63.0 * 8;
+			expand.turn_on_count(volumePercentage);
+		}
+	}
+
+	if (current % timer == 0) {
+		current = 0;
+		if (display == 1) {
+			radio.get_signal();
+			strengthPercentage = radio.get_signal_strength() / 40.0 * 8; //max could be 128
+			expand.turn_on_count(strengthPercentage);
+		}  else if (display == 2) {
+			expand.turn_on_count(0);
+			frequency = radio.get_freqency();
+			printf("Current frequency: %d.%d\n", frequency / 100, frequency % 100);
+
+			radio.get_station_name();
+		}
+	}
+}
+
+ int main( void )
+{
+	expand.turn_on_count(0);
+
+	radio.tune(10140);
+	radio.set_volume(40);
+
+	wait_us(100000);
+
+
+	std::chrono::milliseconds time(1);
+	Ticker ticker;
+	ticker.attach(&loop, time);
+
+
+	while (true) {
+
+	}
+/*
+	uint8_t l_S1, l_S2, l_RSSI, l_SNR, l_MULT, l_CAP;
+	uint8_t l_ack = 0;
+
+	printf( "K64F-KIT ready...\r\n" );
+
+	i2c_init();
+
+	// communication with 8 bit expander PCF8574
+
+	// start communication
+	i2c_start();
+
+	// PCF8574 addressing
+	// The address is composed from 3 parts!
+	//l_ack = i2c_output( HWADR_PCF8574 | A012 | W );
+
+	// Check l_ack! Return value must be 0!
+	// ....
+
+	//l_ack = i2c_output( Any_8_bit_value );
+	// selected LEDs should light
+
+	// stop communication
+	i2c_stop();
+
+	if ( ( l_ack = si4735_init() ) != 0 )
+	{
+		printf( "Initialization of SI4735 finish with error (%d)\r\n", l_ack );
+		return 0;
+	}
+	else
+		printf( "SI4735 initialized.\r\n" );
+
+	printf( "\nTunig of radio station...\r\n" );
+
+	// Required frequency in MHz * 100
+	int l_freq = 10140; // Radiozurnal
+
+	// Tuning of radio station
+	i2c_start();
+	l_ack |= i2c_output( SI4735_ADDRESS | W);
+	l_ack |= i2c_output( 0x20 );			// FM_TUNE_FREQ
+	l_ack |= i2c_output( 0x00 );			// ARG1
+	l_ack |= i2c_output( l_freq >> 8 );		// ARG2 - FreqHi
+	l_ack |= i2c_output( l_freq & 0xff );	// ARG3 - FreqLo
+	l_ack |= i2c_output( 0x00 );			// ARG4
+	i2c_stop();
+	// Check l_ack!
+	// if...
+
+	// Tuning process inside SI4735
+	wait_us( 100000 );
+	printf( "... station tuned.\r\n\n" );
+
+	// Example of reading of tuned frequency
+	i2c_start();
+	l_ack |= i2c_output( SI4735_ADDRESS | W );
+	l_ack |= i2c_output( 0x22 );			// FM_TUNE_STATUS
+	l_ack |= i2c_output( 0x00 );			// ARG1
+	// repeated start
+	i2c_start();
+	// change direction of communication
+	l_ack |= i2c_output( SI4735_ADDRESS | R );
+	// read data
+	l_S1 = i2c_input();
+	i2c_ack();
+	l_S2 = i2c_input();
+	i2c_ack();
+	l_freq = ( uint32_t ) i2c_input() << 8;
+	i2c_ack();
+	l_freq |= i2c_input();
+	i2c_ack();
+	l_RSSI = i2c_input();
+	i2c_ack();
+	l_SNR = i2c_input();
+	i2c_ack();
+	l_MULT = i2c_input();
+	i2c_ack();
+	l_CAP = i2c_input();
+	i2c_nack();
+	i2c_stop();
+
+	if ( l_ack != 0 )
+		printf( "Communication error!\r\n" );
+	else
+		printf( "Current tuned frequency: %d.%dMHz\r\n", l_freq / 100, l_freq % 100 );
+*/
+	return 0;
+}
+

@@ -140,8 +140,8 @@ private:
     uint8_t RSSI;
     uint8_t SNR;
     int FREQ;
-
-
+    std::string stationName;
+    std::string textData;
 public:
     Radio(): address(SI4735_ADDRESS)
     {
@@ -154,34 +154,37 @@ public:
         set_volume(10);
     }
 
-    uint8_t sendCommand(uint8_t id, uint8_t arg1) {
+    uint8_t sendCommand(uint8_t id, uint8_t arg1, bool end) {
 		i2c_start();
 		uint8_t status = i2c_output(this->address | W);
 		status |= i2c_output(id);
 		status |= i2c_output(arg1);
+		if (end)
 		i2c_stop();
 		return status;
 	}
-    uint8_t sendCommand(uint8_t id, uint8_t arg1, uint8_t arg2) {
+    uint8_t sendCommand(uint8_t id, uint8_t arg1, uint8_t arg2, bool end) {
     	i2c_start();
     	uint8_t status = i2c_output(this->address | W);
     	status |= i2c_output(id);
     	status |= i2c_output(arg1);
     	status |= i2c_output(arg2);
+    	if (end)
     	i2c_stop();
     	return status;
     }
-    uint8_t sendCommand(uint8_t id, uint8_t arg1, uint8_t arg2, uint8_t arg3) {
+    uint8_t sendCommand(uint8_t id, uint8_t arg1, uint8_t arg2, uint8_t arg3, bool end) {
 		i2c_start();
 		uint8_t status = i2c_output(this->address | W);
 		status |= i2c_output(id);
 		status |= i2c_output(arg1);
 		status |= i2c_output(arg2);
 		status |= i2c_output(arg3);
+		if (end)
 		i2c_stop();
 		return status;
 	}
-    uint8_t sendCommand(uint8_t id, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint8_t arg4) {
+    uint8_t sendCommand(uint8_t id, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint8_t arg4, bool end) {
 		i2c_start();
 		uint8_t status = i2c_output(this->address | W);
 		status |= i2c_output(id);
@@ -189,10 +192,11 @@ public:
 		status |= i2c_output(arg2);
 		status |= i2c_output(arg3);
 		status |= i2c_output(arg4);
+		if (end)
 		i2c_stop();
 		return status;
 	}
-    uint8_t sendCommand(uint8_t id, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint8_t arg4, uint8_t arg5) {
+    uint8_t sendCommand(uint8_t id, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint8_t arg4, uint8_t arg5, bool end) {
 		i2c_start();
 		uint8_t status = i2c_output(this->address | W);
 		status |= i2c_output(id);
@@ -201,14 +205,17 @@ public:
 		status |= i2c_output(arg3);
 		status |= i2c_output(arg4);
 		status |= i2c_output(arg5);
+		if (end)
 		i2c_stop();
 		return status;
 	}
 
     void tune(int frequency)
     {
-    	uint8_t status = this->sendCommand(0x20, 0x00, frequency >> 8, frequency & 0xff);
+    	uint8_t status = this->sendCommand(0x20, 0x00, frequency >> 8, frequency & 0xff, true);
     	printf("Freq Status %d\n", status);
+    	this->get_tuned_data();
+    	this->get_station_name();
     }
 
     void set_volume(uint8_t volume)
@@ -218,7 +225,7 @@ public:
     	}
         this->volume = volume;
 
-        uint8_t status = this->sendCommand(0x12, 0x00, 0x40, 0x00, 0x00, 0x00 | volume);
+        uint8_t status = this->sendCommand(0x12, 0x00, 0x40, 0x00, 0x00, 0x00 | volume, true);
         printf("Volume Status %d\n", status);
     }
 
@@ -240,14 +247,9 @@ public:
 
     uint8_t get_signal() {
     	printf("==================================================\n");
-    	i2c_start();
-		uint8_t status = i2c_output(this->address | W);
-		printf("Send Write: %d\n", status);
-		status |= i2c_output(0x23);
-		printf("Send Command: %d\n", status);
-		status |= i2c_output(0x00);
-		printf("Send Argument: %d\n", status);
+    	uint8_t status = this->sendCommand(0x23, 0x00, false);
 
+    	//repeated start
     	i2c_start();
     	status |= i2c_output(this->address | R);
     	printf("Send Read:%d\n", status);
@@ -286,53 +288,114 @@ public:
     }
 
     uint8_t get_tuned_data() {
-        	printf("==================================================\n");
-        	i2c_start();
-    		uint8_t status = i2c_output(this->address | W);
-    		printf("Send Write: %d\n", status);
-    		status |= i2c_output(0x22);
-    		printf("Send Command: %d\n", status);
-    		status |= i2c_output(0x00);
-    		printf("Send Argument: %d\n", status);
+		printf("==================================================\n");
+		uint8_t status = this->sendCommand(0x22, 0x00, false);
 
-        	i2c_start();
-        	status |= i2c_output(this->address | R);
-        	printf("Send Read:%d\n", status);
+		//repeated start
+		i2c_start();
+		status |= i2c_output(this->address | R);
+		printf("Send Read:%d\n", status);
 
-        	int frequency = 0;
+		int frequency = 0;
 
-        	i2c_input();
-        	i2c_ack();
-        	i2c_input();
-        	i2c_ack();
-        	frequency = ( uint32_t ) i2c_input() << 8;
-        	i2c_ack();
-        	frequency |= i2c_input();
-        	i2c_ack();
-        	i2c_input();
-        	i2c_ack();
-        	i2c_input();
-        	i2c_ack();
-        	i2c_input();
-        	i2c_ack();
-        	i2c_input();
-        	i2c_nack();
-        	i2c_stop();
+		i2c_input();
+		i2c_ack();
+		i2c_input();
+		i2c_ack();
+		frequency = ( uint32_t ) i2c_input() << 8;
+		i2c_ack();
+		frequency |= i2c_input();
+		i2c_ack();
+		i2c_input();
+		i2c_ack();
+		i2c_input();
+		i2c_ack();
+		i2c_input();
+		i2c_ack();
+		i2c_input();
+		i2c_nack();
+		i2c_stop();
 
-        	FREQ = frequency;
+		FREQ = frequency;
 
-        	/*for (int i = 0; i < 7; i++) {
-        		uint8_t val = i2c_input();
-    			printf("Byte %d:%d\n", i , i2c_input());
+		/*for (int i = 0; i < 7; i++) {
+			uint8_t val = i2c_input();
+			printf("Byte %d:%d\n", i , i2c_input());
 
-        	}
-        	printf("Byte %d:%d\n", 7 , i2c_input());
-        	*/
+		}
+		printf("Byte %d:%d\n", 7 , i2c_input());
+		*/
 
-        	printf("==================================================\n");
+		printf("==================================================\n");
 
-        	return status;
-        }
+		return status;
+	}
+
+    void get_station_name() {
+    	char name[8] = {};
+    	for (int i = 0; i < 8; i++) {
+    		name[i] = 0;
+    	}
+    	while (true) {
+			uint8_t status = this->sendCommand(0x24, 0b00000111, false);
+
+			//repeted start
+			i2c_start();
+			status |= i2c_output(this->address | R);
+
+			printf("Send Read:%d\n", status);
+
+			int block11;
+			int block12;
+			int block21;
+			int block22;
+			int block3;
+			int block41;
+			int block42;
+			int end;
+
+			i2c_input();
+			i2c_ack();
+			i2c_input();
+			i2c_ack();
+			block11 = i2c_input();
+			i2c_ack();
+			block12 = i2c_input();
+			i2c_ack();
+			block21 = i2c_input();
+			i2c_ack();
+			block22 = i2c_input();
+			i2c_ack();
+			block3 = i2c_input() << 8;
+			i2c_ack();
+			block3 |= i2c_input();
+			i2c_ack();
+			block41 = i2c_input();
+			i2c_ack();
+			block42 = i2c_input();
+			i2c_ack();
+			end = i2c_input() << 8;
+			i2c_ack();
+			end |= i2c_input();
+			i2c_nack();
+
+			if ((block21 >> 3) == 0 || (block21 >> 3) == 1) {
+				printf("Stanice: %c %c\n", block41, block42);
+			}
+
+			printf("Block1: %d\n", block11);
+			printf("Block1: %d\n", block12);
+			printf("Block2: %d\n", block21);
+			printf("Block2: %d\n", block22);
+			printf("Block3: %d\n", block3);
+			printf("Block4: %d\n", block41);
+			printf("Block4: %d\n", block42);
+			printf("End: %d\n", end);
+
+			i2c_stop();
+    	}
+
+    }
 
     uint8_t get_signal_strength() {
     	return RSSI;
@@ -342,15 +405,9 @@ public:
     	return FREQ;
     }
 
-    void status_fetch()
-    {
-        // TODO: Print some stats
-
-    }
-
     void seek_station()
     {
-    	uint8_t status = this->sendCommand(0x21, 0b00000100);
+    	uint8_t status = this->sendCommand(0x21, 0b00001100, true);
     	wait_us(100000);
     	printf("Seek Status %d\n", status);
     	this->get_tuned_data();
@@ -397,11 +454,17 @@ void loop() {
 		}
 	}
 
+	if (current % 200 == 0) {
+		if (display == 2) {
+			radio.get_station_name();
+		}
+	}
+
 	if (current % timer == 0) {
 		current = 0;
 		if (display == 1) {
 			radio.get_signal();
-			strengthPercentage = radio.get_signal_strength() / 127.0 * 8;
+			strengthPercentage = radio.get_signal_strength() / 40.0 * 8; //max could be 128
 			expand.turn_on_count(strengthPercentage);
 		}  else if (display == 2) {
 			expand.turn_on_count(0);
@@ -415,11 +478,10 @@ void loop() {
 {
 	expand.turn_on_count(0);
 
-	radio.tune(10140);
+	radio.tune(8750);
 	radio.set_volume(40);
 
 	wait_us(100000);
-
 
 	std::chrono::milliseconds time(1);
 	Ticker ticker;
