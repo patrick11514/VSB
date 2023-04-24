@@ -7,7 +7,7 @@ ENDNUM=85
 for i in `seq $STARTNUM $ENDNUM`
 do
     #check if the machine is up
-    ping -c 1 $STARTIP$i$ENDIP
+    ping -c 1 -W 1 $STARTIP$i$ENDIP
 
     #if ping ok, then connect
     if [ $? -eq 0 ]; then
