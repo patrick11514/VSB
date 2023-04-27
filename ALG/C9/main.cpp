@@ -8,13 +8,18 @@
 
 using namespace std;
 
+/**
+ * Reprezentace jedne polozky v ciselniku
+ */
 struct Item
 {
-    int key;
-    string value;
+    int key;      ///< Celociselna hodnota, klic polozky
+    string value; ///< Nazev nebo jiny retezec popisujici polozku
 };
 
+/// Pocet provedenych porovnani mezi prvky v tridenem vektoru
 int comparisonCount;
+/// Pocet vzajemnych prohozeni prvku v tridenem vektoru
 int swapCount;
 
 /**
@@ -54,6 +59,18 @@ vector<Item> read_items(string name)
     return items;
 }
 
+/**
+ * Implementace algoritmu Lomuto nebo Hoare pro rozdeleni prvku podle pivota.
+ * Jako pivot se voli prvek na pozici l ve vektoru items.
+ *
+ * @param items Vektor polozek, ktere chceme rozdelit
+ * @param l Index, od ktereho (vcetne), chceme polozky vektoru delit
+ * @param r Index, do ktereho (vcetne), chceme polozky vektoru delit
+ * @return Vraci index v poli ukazujici mezi ty dve rozdelenim
+ *         ziskane casti pole. V pripade Lomuto to je index, na
+ *         kterem skoncil pivot, v pripade Hoare je to index
+ *         posledniho prvku mensiho nez pivot.
+ */
 int First(vector<Item> &items, int l, int r)
 {
     int pivot = items[l].key;
@@ -85,6 +102,19 @@ int First(vector<Item> &items, int l, int r)
     }
 }
 
+/**
+ * Implementace algoritmu Lomuto nebo Hoare pro rozdeleni prvku podle pivota.
+ * Jako pivot se voli nahodny prvek vektoru mezi indexy l a r
+ * (vcetne techto indexu).
+ *
+ * @param items Vektor polozek, ktere chceme rozdelit
+ * @param l Index, od ktereho (vcetne), chceme polozky vektoru delit
+ * @param r Index, do ktereho (vcetne), chceme polozky vektoru delit
+ * @return Vraci index v poli ukazujici mezi ty dve rozdelenim
+ *         ziskane casti pole. V pripade Lomuto to je index, na
+ *         kterem skoncil pivot, v pripade Hoare je to index
+ *         posledniho prvku mensiho nez pivot.
+ */
 int Random(vector<Item> &items, int l, int r)
 {
     int random = l + (rand() % (r - l + 1));
@@ -118,9 +148,30 @@ int Random(vector<Item> &items, int l, int r)
     }
 }
 
+/**
+ * Implementace algoritmu Lomuto nebo Hoare pro rozdeleni prvku podle pivota.
+ * Jako pivot se voli median, tedy stredni prvek (podle hodnoty, ne indexu),
+ * ze 3 prvku na indexech l, r a (l+r)/2.
+ *
+ * @param items Vektor polozek, ktere chceme rozdelit
+ * @param l Index, od ktereho (vcetne), chceme polozky vektoru delit
+ * @param r Index, do ktereho (vcetne), chceme polozky vektoru delit
+ * @return Vraci index v poli ukazujici mezi ty dve rozdelenim
+ *         ziskane casti pole. V pripade Lomuto to je index, na
+ *         kterem skoncil pivot, v pripade Hoare je to index
+ *         posledniho prvku mensiho nez pivot.
+ */
 int Median(vector<Item> &items, int l, int r)
 {
-    int pivot = items[(r + l) / 2].key;
+    vector<int> keys;
+
+    keys.push_back(items[l].key);
+    keys.push_back(items[(r + l) / 2].key);
+    keys.push_back(items[r].key);
+
+    sort(keys.begin(), keys.end());
+
+    int pivot = keys[1];
 
     int i = l - 1;
     int j = r + 1;
@@ -149,6 +200,23 @@ int Median(vector<Item> &items, int l, int r)
     }
 }
 
+/**
+ * Implementace tridici funkce Quicksort specialne zamerene na trideni
+ * vektoru polozek typu int a s nastavitelnou funkci provadejici rozdeleni
+ * prvku podle pivota.
+ *
+ * @param items Vektor polozek, ktere chceme tridit
+ * @param l Index, od ktereho (vcetne), chceme polozky vektoru tridit
+ * @param r Index, do ktereho (vcetne), chceme polozky vektoru tridit
+ * @param pivot Ukazatel na funkci, ktera provede rozdeleni prvku podle pivota
+ *
+ * \note
+ * Pokud nerozumite ukazatelum na funkce, zkuste nejprve ten parametr pivot
+ * ignorovat a volat rovnou funkci First (popr. Random nebo Median). Kdyz
+ * vam to bude fungovat, tak jen zmente to "First" na "pivot" a melo by to
+ * fungovat dal, ale s tim, ze bude jen 1x napsany Quicksort, ale pri 3 jeho
+ * volanich se postupne vyzkousi se vsemi tremi funkcemi: First, Random, Median.
+ */
 void Quicksort(vector<Item> &items, int l, int r, int (*pivot)(vector<Item> &, int, int))
 {
     if (r - l < 1)
