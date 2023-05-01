@@ -1,0 +1,2 @@
+Component radius: 8
+Component diameter: 15
