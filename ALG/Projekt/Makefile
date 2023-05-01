@@ -1,5 +1,5 @@
 COMPILER=g++
-ARGS=-Wall -Wextra -g -O2 -fsanitize=address
+ARGS=
 OFILES=main.o Graph.o Node.o
 EXEC=main
 
