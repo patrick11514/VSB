@@ -106,11 +106,7 @@ int Graph::getDiameter()
     for (std::vector<Node *>::size_type i = 0; i < k.size(); i++)
     {
         int size = k[i]->getHighestDistance(k);
-
-        if (i % 50 == 0)
-        {
-            std::cout << i << "/" << k.size() << std::endl;
-        }
+        std::cout << i << "/" << k.size() << std::endl;
         if (size > max)
         {
             max = size;

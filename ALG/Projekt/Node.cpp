@@ -1,6 +1,8 @@
 #include <vector>
 #include <stack>
 #include <queue>
+#include <iostream>
+#include <chrono>
 
 #include "Node.h"
 #include "Types.h"
@@ -99,9 +101,11 @@ void Node::setStatus(Types status)
 int Node::getDistance(Node *fNode)
 {
     std::queue<Node *> nodes;
+    std::vector<Node *> visited;
     this->status = Types::CHECKING;
     this->distance = 0;
     nodes.push(this);
+    visited.push_back(this);
 
     do
     {
@@ -110,6 +114,11 @@ int Node::getDistance(Node *fNode)
 
         if (fNode->id == node->id)
         {
+            for (std::vector<Node *>::size_type i = 0; i < visited.size(); i++)
+            {
+                visited[i]->status = Types::UNCHECKED;
+            }
+
             return node->distance;
         }
 
@@ -118,6 +127,7 @@ int Node::getDistance(Node *fNode)
             if (node->neighbors[i]->status == Types::UNCHECKED)
             {
                 nodes.push(node->neighbors[i]);
+                visited.push_back(node->neighbors[i]);
                 node->neighbors[i]->status = Types::CHECKING;
                 node->neighbors[i]->distance = node->distance + 1;
             }
