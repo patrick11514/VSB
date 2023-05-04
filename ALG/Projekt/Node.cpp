@@ -98,36 +98,23 @@ void Node::setStatus(Types status)
     this->status = status;
 }
 
-int Node::getDistance(Node *fNode)
+void Node::calculateDistances()
 {
     std::queue<Node *> nodes;
-    std::vector<Node *> visited;
     this->status = Types::CHECKING;
     this->distance = 0;
     nodes.push(this);
-    visited.push_back(this);
 
     do
     {
         Node *node = nodes.front();
         nodes.pop();
 
-        if (fNode->id == node->id)
-        {
-            for (std::vector<Node *>::size_type i = 0; i < visited.size(); i++)
-            {
-                visited[i]->status = Types::UNCHECKED;
-            }
-
-            return node->distance;
-        }
-
         for (std::vector<Node *>::size_type i = 0; i < node->neighbors.size(); i++)
         {
             if (node->neighbors[i]->status == Types::UNCHECKED)
             {
                 nodes.push(node->neighbors[i]);
-                visited.push_back(node->neighbors[i]);
                 node->neighbors[i]->status = Types::CHECKING;
                 node->neighbors[i]->distance = node->distance + 1;
             }
@@ -136,11 +123,9 @@ int Node::getDistance(Node *fNode)
         node->status = Types::CHECKED;
 
     } while (!nodes.empty());
-
-    return -1;
 }
 
-int Node::getHighestDistance(std::vector<Node *> nodes)
+int Node::calculateHighestDistance(std::vector<Node *> nodes)
 {
     if (nodes.size() == 0)
     {
@@ -149,6 +134,8 @@ int Node::getHighestDistance(std::vector<Node *> nodes)
 
     int highestDistance = 0;
 
+    this->calculateDistances();
+
     for (std::vector<Node *>::size_type i = 0; i < nodes.size(); i++)
     {
         if (nodes[i]->id == this->id)
@@ -156,7 +143,7 @@ int Node::getHighestDistance(std::vector<Node *> nodes)
             continue;
         }
 
-        int distance = this->getDistance(nodes[i]);
+        int distance = nodes[i]->distance;
 
         if (distance > highestDistance)
         {
@@ -165,4 +152,24 @@ int Node::getHighestDistance(std::vector<Node *> nodes)
     }
 
     return highestDistance;
+}
+
+int Node::getHighestDistance()
+{
+    return this->highestDistance;
+}
+
+void Node::setHighestDistance(int distance)
+{
+    this->highestDistance = distance;
+}
+
+int Node::getDistance()
+{
+    return this->distance;
+}
+
+void Node::setDistance(int distance)
+{
+    this->distance = distance;
 }

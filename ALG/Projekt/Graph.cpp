@@ -105,12 +105,19 @@ int Graph::getDiameter()
 
     for (std::vector<Node *>::size_type i = 0; i < k.size(); i++)
     {
-        int size = k[i]->getHighestDistance(k);
+        int size = k[i]->getHighestDistance();
+        if (size == -1)
+        {
+            size = k[i]->calculateHighestDistance(k);
+            k[i]->setHighestDistance(size);
+        }
+
         std::cout << i << "/" << k.size() << std::endl;
         if (size > max)
         {
             max = size;
         }
+        this->resetGraph();
     }
 
     this->diameter = max;
@@ -132,15 +139,28 @@ int Graph::getRadius()
 
     std::vector<Node *> k = this->getBiggestComponentNodes();
 
-    int min = k[0]->getHighestDistance(k);
+    int min = k[0]->calculateHighestDistance(k);
+    if (min == -1)
+    {
+        min = k[0]->calculateHighestDistance(k);
+        k[0]->setHighestDistance(min);
+    }
 
     for (std::vector<Node *>::size_type i = 1; i < k.size(); i++)
     {
-        int size = k[i]->getHighestDistance(k);
+        int size = k[i]->getHighestDistance();
+        if (size == -1)
+        {
+            size = k[i]->calculateHighestDistance(k);
+            k[i]->setHighestDistance(size);
+        }
+
+        std::cout << i << "/" << k.size() << std::endl;
         if (size < min)
         {
             min = size;
         }
+        this->resetGraph();
     }
 
     this->radius = min;
@@ -153,6 +173,16 @@ void Graph::resetGraph()
     for (std::unordered_map<int, Node *>::iterator it = this->nodes.begin(); it != this->nodes.end(); it++)
     {
         it->second->setStatus(Types::UNCHECKED);
+    }
+}
+
+void Graph::resetGraphFull()
+{
+    for (std::unordered_map<int, Node *>::iterator it = this->nodes.begin(); it != this->nodes.end(); it++)
+    {
+        it->second->setStatus(Types::UNCHECKED);
+        it->second->setDistance(0);
+        it->second->setHighestDistance(-1);
     }
 }
 

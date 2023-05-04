@@ -30,6 +30,7 @@ public:
     int getRadius();
 
     void resetGraph();
+    void resetGraphFull();
 
     std::vector<Node *> getBiggestComponentNodes();
 };

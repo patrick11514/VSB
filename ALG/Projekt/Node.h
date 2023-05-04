@@ -12,6 +12,7 @@ private:
     std::vector<Node *> neighbors;
     int status = Types::UNCHECKED;
     int distance = 0;
+    int highestDistance = -1;
 
 public:
     Node(int id);
@@ -19,14 +20,20 @@ public:
     void addNeighbor(Node *neighbor);
     void setStatus(Types status);
 
+    int getHighestDistance();
+    void setHighestDistance(int distance);
+
+    int getDistance();
+    void setDistance(int distance);
+
     int getComponentSize();
     std::vector<Node *> getComponentNodes();
 
     int getId();
     std::vector<Node *> getNeighbors();
 
-    int getDistance(Node *node);
-    int getHighestDistance(std::vector<Node *> nodes);
+    void calculateDistances();
+    int calculateHighestDistance(std::vector<Node *> nodes);
 };
 
 #endif
