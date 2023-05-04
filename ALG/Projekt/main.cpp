@@ -8,8 +8,10 @@
 
 int main()
 {
+    auto mainStart = std::chrono::high_resolution_clock::now();
+
     auto start = std::chrono::high_resolution_clock::now();
-    Graph g("test.txt");
+    Graph g("TestovaciData/PrumerKomponenty_ShlukovaciKoef_Centralita/Graf1.txt");
     auto end = std::chrono::high_resolution_clock::now();
     std::cout << "Time to load graph: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
 
@@ -28,16 +30,27 @@ int main()
     g.resetGraph();
 
     start = std::chrono::high_resolution_clock::now();
-    std::cout << "Biggest component diameter: " << g.getDiameter() << std::endl;
+    int diameter = g.getDiameter();
+    std::cout << "Biggest component diameter: " << diameter << std::endl;
     end = std::chrono::high_resolution_clock::now();
     std::cout << "Time to get diameter: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
 
     g.resetGraph();
 
     start = std::chrono::high_resolution_clock::now();
-    std::cout << "Biggest component radius: " << g.getRadius() << std::endl;
+    int radius = g.getRadius();
+    std::cout << "Biggest component radius: " << radius << std::endl;
     end = std::chrono::high_resolution_clock::now();
     std::cout << "Time to get radius: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
+
+    auto mainEnd = std::chrono::high_resolution_clock::now();
+
+    std::cout << "Sum Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(mainEnd - mainStart).count() << " ms" << std::endl;
+
+    std::cout << "SUMM INFO:" << std::endl
+              << "Biggest component: " << size.size() << std::endl
+              << "Radius: " << radius << std::endl
+              << "Diameter: " << diameter << std::endl;
 
     return 0;
 }
