@@ -1,1 +1,0 @@
-Global clustering coefficient: 4512732/1015982992 = 0,004441739709752936

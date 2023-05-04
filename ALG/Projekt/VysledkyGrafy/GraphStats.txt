@@ -1,6 +1,0 @@
-Number of vertices: 121424
-Number of edges: 822761
-Number of components: 375
-Largest components
-Number of vertices: 51932
-Number of edges: 329878
