@@ -4,14 +4,14 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
-PROJECT_NAME           = "Průměr a poloměr grafu"
+PROJECT_NAME           = "Diameter and Radius of Graph"
 PROJECT_NUMBER         =
 PROJECT_BRIEF          =
 PROJECT_LOGO           =
-OUTPUT_DIRECTORY       = /home/patrick115/Projects/VŠB/ALG/Projekt
+OUTPUT_DIRECTORY       = ./
 CREATE_SUBDIRS         = NO
 ALLOW_UNICODE_NAMES    = NO
-OUTPUT_LANGUAGE        = Czech
+OUTPUT_LANGUAGE        = English
 OUTPUT_TEXT_DIRECTION  = None
 BRIEF_MEMBER_DESC      = YES
 REPEAT_BRIEF           = YES
@@ -118,7 +118,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # Configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = /home/patrick115/Projects/VŠB/ALG/Projekt
+INPUT                  = ./
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.c \
                          *.cc \
