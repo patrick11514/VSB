@@ -1,3 +1,9 @@
+/**
+ * @author Patrik Mintěl
+ * @date 4.5.2023
+ * @version 0.2.0
+ */
+
 #include <iostream>
 #include <string>
 #include <chrono>
@@ -6,12 +12,17 @@
 #include "Graph.h"
 #include "Node.h"
 
-int main()
+int main(int argc, char **args)
 {
+    if (argc < 2)
+    {
+        std::cout << "Enter file path to graph as argument" << std::endl;
+        return 1;
+    }
     auto mainStart = std::chrono::high_resolution_clock::now();
 
     auto start = std::chrono::high_resolution_clock::now();
-    Graph g("Graf1.txt");
+    Graph g(args[1]);
 
     if (!g.initialized)
     {
