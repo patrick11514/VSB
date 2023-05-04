@@ -1,11 +1,11 @@
-#ifndef __Types_H_
-#define __Types_H_ 1
+#pragma once
 
+/**
+ * @brief Types of Node statuses
+ */
 enum Types
 {
-    UNCHECKED = 0,
-    CHECKING = 1,
-    CHECKED = 2
+    UNCHECKED = 0, ///< Node is unchecked
+    CHECKING = 1,  ///< Node is currently being checked
+    CHECKED = 2    ///< Node is checked
 };
-
-#endif
