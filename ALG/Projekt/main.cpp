@@ -12,7 +12,14 @@ int main()
 
     auto start = std::chrono::high_resolution_clock::now();
     Graph g("TestovaciData/PrumerKomponenty_ShlukovaciKoef_Centralita/Graf1.txt");
+
+    if (!g.initialized)
+    {
+        std::cout << "Could not initialize graph" << std::endl;
+        return 1;
+    }
     auto end = std::chrono::high_resolution_clock::now();
+
     std::cout << "Time to load graph: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
 
     start = std::chrono::high_resolution_clock::now();
@@ -22,12 +29,11 @@ int main()
 
     g.resetGraph();
 
-    start = std::chrono::high_resolution_clock::now();
+    /*start = std::chrono::high_resolution_clock::now();
     std::vector<Node *> size = g.getBiggestComponentNodes();
     end = std::chrono::high_resolution_clock::now();
     std::cout << "Time to get biggest component nodes: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
-
-    g.resetGraph();
+*/
 
     start = std::chrono::high_resolution_clock::now();
     int diameter = g.getDiameter();
@@ -46,11 +52,6 @@ int main()
     auto mainEnd = std::chrono::high_resolution_clock::now();
 
     std::cout << "Sum Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(mainEnd - mainStart).count() << " ms" << std::endl;
-
-    std::cout << "SUMM INFO:" << std::endl
-              << "Biggest component: " << size.size() << std::endl
-              << "Radius: " << radius << std::endl
-              << "Diameter: " << diameter << std::endl;
 
     return 0;
 }

@@ -5,3 +5,4 @@ create.sh
 *.js
 *.o
 main
+*.time.txt

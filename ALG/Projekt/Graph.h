@@ -17,6 +17,8 @@ private:
     int radius = -1;
 
 public:
+    bool initialized = false;
+
     Graph(std::string fileName);
     ~Graph();
 

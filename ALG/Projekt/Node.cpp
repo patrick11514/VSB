@@ -132,6 +132,11 @@ int Node::calculateHighestDistance(std::vector<Node *> nodes)
         return 0;
     }
 
+    if (this->highestDistance != -1)
+    {
+        return this->highestDistance;
+    }
+
     int highestDistance = 0;
 
     this->calculateDistances();
@@ -150,6 +155,8 @@ int Node::calculateHighestDistance(std::vector<Node *> nodes)
             highestDistance = distance;
         }
     }
+
+    this->highestDistance = highestDistance;
 
     return highestDistance;
 }

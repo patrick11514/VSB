@@ -3,6 +3,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <vector>
+#include <chrono>
 
 #include "Graph.h"
 #include "Node.h"
@@ -50,6 +51,7 @@ Graph::Graph(std::string fileName)
     file.close();
 
     this->nodes = map;
+    this->initialized = true;
 }
 
 Graph::~Graph()
@@ -105,19 +107,17 @@ int Graph::getDiameter()
 
     for (std::vector<Node *>::size_type i = 0; i < k.size(); i++)
     {
-        int size = k[i]->getHighestDistance();
-        if (size == -1)
-        {
-            size = k[i]->calculateHighestDistance(k);
-            k[i]->setHighestDistance(size);
-        }
+        int size = k[i]->calculateHighestDistance(k);
 
-        // std::cout << i << "/" << k.size() << "\033[0K\r";
         if (size > max)
         {
             max = size;
         }
-        this->resetGraph();
+
+        for (std::vector<Node *>::size_type i = 0; i < k.size(); i++)
+        {
+            k[i]->setStatus(Types::UNCHECKED);
+        }
     }
 
     this->diameter = max;
@@ -140,27 +140,20 @@ int Graph::getRadius()
     std::vector<Node *> k = this->getBiggestComponentNodes();
 
     int min = k[0]->calculateHighestDistance(k);
-    if (min == -1)
-    {
-        min = k[0]->calculateHighestDistance(k);
-        k[0]->setHighestDistance(min);
-    }
 
     for (std::vector<Node *>::size_type i = 1; i < k.size(); i++)
     {
-        int size = k[i]->getHighestDistance();
-        if (size == -1)
-        {
-            size = k[i]->calculateHighestDistance(k);
-            k[i]->setHighestDistance(size);
-        }
+        int size = k[i]->calculateHighestDistance(k);
 
-        // std::cout << i << "/" << k.size() << "\t";
         if (size < min)
         {
             min = size;
         }
-        this->resetGraph();
+
+        for (std::vector<Node *>::size_type i = 0; i < k.size(); i++)
+        {
+            k[i]->setStatus(Types::UNCHECKED);
+        }
     }
 
     this->radius = min;
@@ -208,6 +201,8 @@ std::vector<Node *> Graph::getBiggestComponentNodes()
     }
 
     this->biggestComponentNodes = nodes;
+
+    this->resetGraph();
 
     return nodes;
 }
