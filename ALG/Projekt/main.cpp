@@ -11,7 +11,7 @@ int main()
     auto mainStart = std::chrono::high_resolution_clock::now();
 
     auto start = std::chrono::high_resolution_clock::now();
-    Graph g("TestovaciData/PrumerKomponenty_ShlukovaciKoef_Centralita/Graf1.txt");
+    Graph g("Graf1.txt");
 
     if (!g.initialized)
     {
