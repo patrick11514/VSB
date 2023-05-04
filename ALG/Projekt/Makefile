@@ -1,5 +1,5 @@
 COMPILER=g++
-ARGS=-O2
+ARGS=-O3
 OFILES=main.o Graph.o Node.o
 EXEC=main
 
