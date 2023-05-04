@@ -36,18 +36,18 @@ int main()
 */
 
     start = std::chrono::high_resolution_clock::now();
+    int radius = g.getRadius();
+    std::cout << "Biggest component radius: " << radius << std::endl;
+    end = std::chrono::high_resolution_clock::now();
+    std::cout << "Time to get radius: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
+
+    start = std::chrono::high_resolution_clock::now();
     int diameter = g.getDiameter();
     std::cout << "Biggest component diameter: " << diameter << std::endl;
     end = std::chrono::high_resolution_clock::now();
     std::cout << "Time to get diameter: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
 
     g.resetGraph();
-
-    start = std::chrono::high_resolution_clock::now();
-    int radius = g.getRadius();
-    std::cout << "Biggest component radius: " << radius << std::endl;
-    end = std::chrono::high_resolution_clock::now();
-    std::cout << "Time to get radius: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
 
     auto mainEnd = std::chrono::high_resolution_clock::now();
 
