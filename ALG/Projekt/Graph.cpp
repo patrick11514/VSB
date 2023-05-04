@@ -112,7 +112,7 @@ int Graph::getDiameter()
             k[i]->setHighestDistance(size);
         }
 
-        std::cout << i << "/" << k.size() << std::endl;
+        // std::cout << i << "/" << k.size() << "\033[0K\r";
         if (size > max)
         {
             max = size;
@@ -155,7 +155,7 @@ int Graph::getRadius()
             k[i]->setHighestDistance(size);
         }
 
-        std::cout << i << "/" << k.size() << std::endl;
+        // std::cout << i << "/" << k.size() << "\t";
         if (size < min)
         {
             min = size;
