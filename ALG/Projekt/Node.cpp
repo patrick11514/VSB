@@ -38,7 +38,7 @@ int Node::getComponentSize()
         Node *node = stack.top();
         stack.pop();
 
-        size += node->id;
+        size++;
 
         for (std::vector<Node *>::size_type i = 0; i < node->neighbors.size(); i++)
         {
