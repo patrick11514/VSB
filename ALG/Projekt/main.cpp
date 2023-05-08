@@ -42,9 +42,9 @@ int main(int argc, char **args)
 
     /*start = std::chrono::high_resolution_clock::now();
     std::vector<Node *> size = g.getBiggestComponentNodes();
+    std::cout << "Biggest component nodes: " << size.size() << std::endl;
     end = std::chrono::high_resolution_clock::now();
-    std::cout << "Time to get biggest component nodes: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
-*/
+    std::cout << "Time to get biggest component nodes: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;*/
 
     start = std::chrono::high_resolution_clock::now();
     int radius = g.getRadius();
