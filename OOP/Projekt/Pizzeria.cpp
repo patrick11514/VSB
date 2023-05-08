@@ -1,18 +1,19 @@
 #include "Pizzeria.h"
 #include "Employee.h"
 #include "Pizza.h"
+#include "Order.h"
 
 #include <string>
 
-Pizzeria::Pizzeria(std::string name, int maxEmployeesCount, int maxPizzasCount)
+Pizzeria::Pizzeria(std::string name, int maxEmployeesCount, int maxOrdersCount)
 {
     this->name = name;
     this->maxEmployeesCount = maxEmployeesCount;
-    this->maxPizzasCount = maxPizzasCount;
+    this->maxOrdersCount = maxOrdersCount;
     this->employeesCount = 0;
-    this->pizzasCount = 0;
+    this->ordersCount = 0;
     this->employees = new Employee *[maxEmployeesCount];
-    this->pizzas = new Pizza *[maxPizzasCount];
+    this->orders = new Order *[maxOrdersCount];
 }
 
 Pizzeria::~Pizzeria()
@@ -23,11 +24,11 @@ Pizzeria::~Pizzeria()
     }
     delete[] this->employees;
 
-    for (int i = 0; i < this->pizzasCount; i++)
+    for (int i = 0; i < this->ordersCount; i++)
     {
-        delete this->pizzas[i];
+        delete this->orders[i];
     }
-    delete[] this->pizzas;
+    delete[] this->orders;
 }
 
 std::string Pizzeria::getName()
@@ -48,11 +49,11 @@ void Pizzeria::addEmployee(Employee *employee)
     }
 }
 
-void Pizzeria::addPizza(Pizza *pizza)
+void Pizzeria::addOrder(Order *order)
 {
-    if (this->pizzasCount < this->maxPizzasCount)
+    if (this->ordersCount < this->maxOrdersCount)
     {
-        this->pizzas[this->pizzasCount++] = pizza;
+        this->orders[this->ordersCount++] = order;
     }
 }
 
@@ -65,11 +66,11 @@ Employee *Pizzeria::getEmployee(int index)
     return nullptr;
 }
 
-Pizza *Pizzeria::getPizza(int index)
+Order *Pizzeria::getOrder(int index)
 {
-    if (index >= 0 && index < this->pizzasCount)
+    if (index >= 0 && index < this->ordersCount)
     {
-        return this->pizzas[index];
+        return this->orders[index];
     }
     return nullptr;
 }
@@ -87,16 +88,16 @@ void Pizzeria::removeEmployee(int index)
     }
 }
 
-void Pizzeria::removePizza(int index)
+void Pizzeria::removeOrder(int index)
 {
-    if (index >= 0 && index < this->pizzasCount)
+    if (index >= 0 && index < this->ordersCount)
     {
-        delete this->pizzas[index];
-        for (int i = index; i < this->pizzasCount - 1; i++)
+        delete this->orders[index];
+        for (int i = index; i < this->ordersCount - 1; i++)
         {
-            this->pizzas[i] = this->pizzas[i + 1];
+            this->orders[i] = this->orders[i + 1];
         }
-        this->pizzasCount--;
+        this->ordersCount--;
     }
 }
 
@@ -105,17 +106,24 @@ std::string Pizzeria::printEmployees()
     std::string result = "";
     for (int i = 0; i < this->employeesCount; i++)
     {
-        result += this->employees[i]->getName() + " " + this->employees[i]->getSurname() + " " + std::to_string(this->employees[i]->getAge()) + "\n";
+        result += this->employees[i]->getName() + " " + this->employees[i]->getSurname() + ", Age: " + std::to_string(this->employees[i]->getAge()) + "\n";
     }
     return result;
 }
 
-std::string Pizzeria::printPizzas()
+std::string Pizzeria::printOrders()
 {
     std::string result = "";
-    for (int i = 0; i < this->pizzasCount; i++)
+    for (int i = 0; i < this->ordersCount; i++)
     {
-        result += this->pizzas[i]->getName() + " " + std::to_string(this->pizzas[i]->getPrice()) + "\n";
+        result += this->orders[i]->getName() + " " + this->orders[i]->getAddress() + ":\n";
+        for (int l = 0; l < this->orders[i]->getPizzasCount(); l++)
+        {
+            Pizza *pizza = this->orders[i]->getPizzas()[l];
+            result += "- " + pizza->getName() + " " + std::to_string(pizza->getPrice()) + "Kč\n";
+        }
+
+        result += "Sum: " + std::to_string(this->orders[i]->getPrice()) + "Kč\n";
     }
     return result;
 }
