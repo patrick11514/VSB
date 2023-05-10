@@ -6,3 +6,4 @@ create.sh
 *.o
 main
 *.time.txt
+latex
