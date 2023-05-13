@@ -1,5 +1,5 @@
 COMPILER=latexmk
-FILE=example.tex
+FILE=project.tex
 
 compile:
 	$(COMPILER) -pdf $(FILE)
