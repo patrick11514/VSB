@@ -1,0 +1,16 @@
+*.aux 
+*.fdb_latexmk 
+*.fls 
+*.log 
+*.out 
+*.synctex.gz 
+*.tocx 
+*.run*
+*.toc
+*.bbl
+*.bcf 
+*.blg 
+*.lof 
+*.lot
+
+ZadaniProjektu
