@@ -18,3 +18,6 @@ This repository contains laboratories and homeworks.
 [**APPS - Architecture of computer and paralel systems**](https://github.com/patrick11514/VSB/tree/main/APPS)
 
 [**OOP - Object Oriented Programming**](https://github.com/patrick11514/VSB/tree/main/OOP)
+
+## 3. semester
+[**C#**](https://github.com/patrick11514/VSB/tree/main/CSharp)
