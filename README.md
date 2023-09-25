@@ -21,3 +21,6 @@ This repository contains laboratories and homeworks.
 
 ## 3. semester
 [**C#**](https://github.com/patrick11514/VSB/tree/main/CSharp)
+[**ALG2**](https://github.com/patrick11514/VSB/tree/main/ALG2)
+[**RUST**](https://github.com/patrick11514/VSB/tree/main/Rust)
+[**POS**](https://github.com/patrick11514/VSB/tree/main/POS)
