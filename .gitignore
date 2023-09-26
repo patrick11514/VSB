@@ -4,3 +4,5 @@ main2
 
 #OBJECT files
 *.o
+
+.vscode
