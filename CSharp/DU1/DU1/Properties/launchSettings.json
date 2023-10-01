@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DU1": {
+      "commandName": "Project",
+      "commandLineArgs": "../../../dataset.csv"
+    }
+  }
+}
