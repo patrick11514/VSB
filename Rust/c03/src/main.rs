@@ -59,5 +59,14 @@ fn main() {
     foo(file_ref); // nemusíme to castit, z &mut OpenedFile na &OpenedFile
     foo(file_ref);*/
 
-    read_write(&file, &mut file); //Error
+    //read_write(&file, &mut file); //Error
+
+    /*let file2 = &file;
+    let file3 = file2; //Shared lze kopírovat*/
+
+    let file2 = &mut file;
+    let file3 = file2;
+
+    file2.fd = 3; //Movene se mi hodnota, takže nemůžu dělat kopie
+    file3.fd = 5;
 }
