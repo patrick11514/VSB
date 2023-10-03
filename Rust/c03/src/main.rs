@@ -1,4 +1,4 @@
-fn take_items(mut a: [i32; 4]) {
+/*fn take_items(mut a: [i32; 4]) {
     a[0] = 5;
 }
 
@@ -24,6 +24,15 @@ fn read(file: OpenedFile) -> ReadResult {
 
 fn read_write(file: &OpenedFile, file2: &mut OpenedFile) {
     println!("{}", file.fd);
+}*/
+
+//pokud chci vracet referenci a jako parameter mám více referencí, tak musím udělat "label" pro ty reference a tím specifikovat, kterou z nich budu vracet, protože compiler checkuje pouze signaturu a returny a neví, kterou tu referenci budeme vracet
+fn foo<'a>(a: &'a u32, b: &'a u32) -> &'a u32 {
+    if true {
+        a
+    } else {
+        b
+    }
 }
 
 fn main() {
@@ -50,7 +59,7 @@ fn main() {
         }
     }*/
 
-    let mut file = OpenedFile { fd: 0 };
+    //let mut file = OpenedFile { fd: 0 };
     /*//let file_ref: &OpenedFile /*& = Shared reference, lze jich udělat více, nelze měnit přes to věci */ = &file;
     let file_ref: &mut OpenedFile /* Mut reference, lze udělat pouze jednu, ale lze přes ni měnit data */ = &mut file;
 
@@ -64,9 +73,9 @@ fn main() {
     /*let file2 = &file;
     let file3 = file2; //Shared lze kopírovat*/
 
-    let file2 = &mut file;
+    /*let file2 = &mut file;
     let file3 = file2;
 
     file2.fd = 3; //Movene se mi hodnota, takže nemůžu dělat kopie
-    file3.fd = 5;
+    file3.fd = 5;*/
 }
