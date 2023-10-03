@@ -22,7 +22,7 @@ fn read(file: OpenedFile) -> ReadResult {
     }
 }
 
-fn foo(file: &OpenedFile) {
+fn read_write(file: &OpenedFile, file2: &mut OpenedFile) {
     println!("{}", file.fd);
 }
 
@@ -51,11 +51,13 @@ fn main() {
     }*/
 
     let mut file = OpenedFile { fd: 0 };
-    //let file_ref: &OpenedFile /*& = Shared reference, lze jich udělat více, nelze měnit přes to věci */ = &file;
+    /*//let file_ref: &OpenedFile /*& = Shared reference, lze jich udělat více, nelze měnit přes to věci */ = &file;
     let file_ref: &mut OpenedFile /* Mut reference, lze udělat pouze jednu, ale lze přes ni měnit data */ = &mut file;
 
     file_ref.fd = 5;
 
     foo(file_ref); // nemusíme to castit, z &mut OpenedFile na &OpenedFile
-    foo(file_ref);
+    foo(file_ref);*/
+
+    read_write(&file, &mut file); //Error
 }
