@@ -17,7 +17,7 @@ namespace DU1
             Country[] countrys = ParseCSV(csv);
 
             Console.WriteLine($"Průměrný plat: {averageWageInCountrys(countrys)}");
-            Console.WriteLine($"Nejvyšší plat v roce 2023: {getCountryWithHighestWage(countrys, 2023).name}");
+            Console.WriteLine($"Nejvyšší plat v roce 2023: {getCountryWithHighestWage(countrys, 2023)?.name}");
 
             Console.WriteLine("");
 
@@ -50,7 +50,7 @@ namespace DU1
                     year = int.Parse(yearSplited[0]);
                 }
 
-                bool inEU = cols[4].CompareTo("ano") == 0;
+                bool inEU = cols[4].Equals("ano");
 
                 Country c = new Country(countryName, averageWage, exchageRate, year, inEU);
                 countrys[i - 1] = c;
@@ -98,9 +98,9 @@ namespace DU1
             return double.Round(averageWage, 2);
         }
 
-        static Country getCountryWithHighestWage(Country[] countrys, int year)
+        static Country? getCountryWithHighestWage(Country[] countrys, int year)
         {
-            Country country = null;
+            Country? country = null;
 
             foreach (Country c in countrys)
             {
