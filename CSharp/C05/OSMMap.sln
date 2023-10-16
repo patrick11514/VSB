@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSMMap", "OSMMap\OSMMap.csproj", "{3AC62601-5754-4BD1-B4D1-5F44990115FC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSMMapLib", "OSMMapLib\OSMMapLib.csproj", "{98860BE6-6211-452D-AA4F-22F9F868C4FA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapRendererLib", "MapRendererLib\MapRendererLib.csproj", "{705ECD63-410C-4297-9D19-28BA9861812A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3AC62601-5754-4BD1-B4D1-5F44990115FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AC62601-5754-4BD1-B4D1-5F44990115FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AC62601-5754-4BD1-B4D1-5F44990115FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AC62601-5754-4BD1-B4D1-5F44990115FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98860BE6-6211-452D-AA4F-22F9F868C4FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98860BE6-6211-452D-AA4F-22F9F868C4FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98860BE6-6211-452D-AA4F-22F9F868C4FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98860BE6-6211-452D-AA4F-22F9F868C4FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{705ECD63-410C-4297-9D19-28BA9861812A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{705ECD63-410C-4297-9D19-28BA9861812A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{705ECD63-410C-4297-9D19-28BA9861812A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{705ECD63-410C-4297-9D19-28BA9861812A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2CBB536D-B0D1-4C0E-8C1F-D98667DF6B9A}
+	EndGlobalSection
+EndGlobal
