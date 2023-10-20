@@ -1,6 +1,7 @@
 #include "DistributionCountingSort.h"
 
 #include <fstream>
+#include <iostream>
 
 std::vector<int> loadFromFile(std::string fileName)
 {
@@ -8,7 +9,8 @@ std::vector<int> loadFromFile(std::string fileName)
 
     if (!file.is_open())
     {
-        throw "File not found!";
+        std::cout << "File not found!" << std::endl;
+        throw;
     }
 
     std::vector<int> data;
@@ -31,7 +33,8 @@ void putToFile(std::string fileName, std::vector<int> data)
 
     if (!file.is_open())
     {
-        throw "File couldn't be opened!";
+        std::cout << "File not found!" << std::endl;
+        throw;
     }
 
     for (auto c : data)
@@ -46,7 +49,8 @@ std::vector<int> distributionCountingSort(std::vector<int> data, int min, int ma
 {
     if (min > max)
     {
-        throw "Min cannot be greater than max!";
+        std::cout << "Min cannot be greater than max!" << std::endl;
+        throw;
     }
 
     std::vector<int> counts(max - min);
@@ -87,14 +91,16 @@ std::vector<int> distributionCountingSortFromFile(std::string fileName, int min,
 {
     if (min > max)
     {
-        throw "Min cannot be greater than max!";
+        std::cout << "Min cannot be greater than max!" << std::endl;
+        throw;
     }
 
     std::ifstream file(fileName);
 
     if (!file.is_open())
     {
-        throw "File not found!";
+        std::cout << "File not found!" << std::endl;
+        throw;
     }
 
     std::vector<int> counts(max - min);
@@ -130,7 +136,8 @@ std::vector<int> distributionCountingSortFromFile(std::string fileName, int min,
 
     if (!file.is_open())
     {
-        throw "File not found!";
+        std::cout << "File not found!" << std::endl;
+        throw;
     }
 
     while (!file.eof())
