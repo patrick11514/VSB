@@ -1,6 +1,6 @@
 COMPILER=g++
 ARGS=
-OFILES=main.o ComparsionCountingSort.o
+OFILES=main.o ComparsionCountingSort.o DistributionCountingSort.o
 EXEC=main
 
 $(EXEC): $(OFILES)
