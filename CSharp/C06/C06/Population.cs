@@ -25,9 +25,9 @@ namespace C06
         {
             foreach(Person person in persons)
             {
-                if (person is Unemployed)
+                if (person is Unemployed unemployed)
                 {
-                    person.PrintInfo();
+                    unemployed.PrintInfo();
                 }
             }
         }
@@ -35,10 +35,10 @@ namespace C06
         public void PrintEmployeesWithSalary()
         {
             foreach(Person person in persons) { 
-                if (person is Employee)
+                if (person is Employee employee)
                 {
-                    person.PrintInfo();
-                    Console.WriteLine(((Employee)person).GetSalary());
+                    employee.PrintInfo();
+                    Console.WriteLine(employee.GetSalary());
                 }
             }
         }
@@ -48,14 +48,14 @@ namespace C06
             Employee? e = null;
 
             foreach (Person person in persons) { 
-                if (person is Employee)
+                if (person is Employee employee)
                 {
                     if (e is null)
                     {
-                        e = (Employee)person;
-                    } else if ((Employee) person > e)
+                        e = employee;
+                    } else if (employee > e)
                     {
-                        e = (Employee)person;
+                        e = employee;
                     }
                 }
             }
@@ -69,8 +69,8 @@ namespace C06
            
             foreach(Person employee in persons)
             {
-                if (employee is HourlySalaryEmployee) {
-                    employees.Add((HourlySalaryEmployee)employee);
+                if (employee is HourlySalaryEmployee hourlyEmployee) {
+                    employees.Add(hourlyEmployee);
                 }
             }
 
