@@ -10,24 +10,30 @@ Source: https://www.psp.cz/sqw/hp.sqw?k=1301, https://www.psp.cz/sqw/hp.sqw?k=13
 DROP TABLE IF EXISTS dbo.bod_schuze;
 DROP TABLE IF EXISTS dbo.zmatecne;
 DROP TABLE IF EXISTS dbo.hl_zposlanec;
+DROP TABLE IF EXISTS dbo.zmatecne_hlasovani_poslanec;
 DROP TABLE IF EXISTS dbo._schuze;
 DROP TABLE IF EXISTS dbo.funkce;
 DROP TABLE IF EXISTS dbo.typ_funkce;
 DROP TABLE IF EXISTS dbo.omluvy;
 DROP TABLE IF EXISTS dbo._omluvy;
+DROP TABLE IF EXISTS dbo.omluva;
 DROP TABLE IF EXISTS dbo.hl_poslanec;
+DROP TABLE IF EXISTS dbo.hlasovani_poslanec;
 DROP TABLE IF EXISTS dbo.hl_hlasovani;
 DROP TABLE IF EXISTS dbo._hl_hlasovani;
+DROP TABLE IF EXISTS dbo.hlasovani;
 DROP TABLE IF EXISTS dbo.schuze_stav;
 DROP TABLE IF EXISTS dbo.schuze;
 DROP TABLE IF EXISTS dbo.poslanec;
 DROP TABLE IF EXISTS dbo.organy;
 DROP TABLE IF EXISTS dbo._organy;
+DROP TABLE IF EXISTS dbo.organ;
 DROP TABLE IF EXISTS dbo.typ_organu;
 DROP TABLE IF EXISTS dbo.zarazeni;
 DROP TABLE IF EXISTS dbo._zarazeni;
 DROP TABLE IF EXISTS dbo.osoby;
 DROP TABLE IF EXISTS dbo._osoby;
+DROP TABLE IF EXISTS dbo.osoba;
 GO
 
 CREATE TABLE dbo._osoby (
@@ -574,3 +580,48 @@ CREATE TABLE dbo.bod_schuze (
 );
 BULK INSERT dbo.bod_schuze FROM 'e:\d_ftp\geneea\bod_schuze.unl'
    WITH ( FIELDTERMINATOR = '|', ROWTERMINATOR = '\n', CODEPAGE = 1250 );
+
+
+-------------------------------------
+-- Schema updates
+
+
+SELECT id_hlasovani
+INTO zmatecne_temp
+FROM zmatecne
+GROUP BY id_hlasovani;
+
+DROP TABLE zmatecne;
+
+EXEC sp_rename 'zmatecne_temp', 'zmatecne'; 
+
+---------------------
+EXEC sp_rename 'dbo.poslanec.id_obdobi', 'id_organ', 'COLUMN';
+
+---------------------
+EXEC sp_rename 'dbo.organy.id_typ_organu', 'id_typ_org', 'COLUMN';
+
+---------------------
+EXEC sp_rename 'dbo.organy', 'organ';
+
+---------------------
+EXEC sp_rename 'dbo.osoby', 'osoba';
+
+---------------------
+EXEC sp_rename 'dbo.organ.organ_id_organ', 'rodic_id_organ', 'COLUMN';
+
+---------------------
+EXEC sp_rename 'dbo.typ_organu.typ_id_typ_org', 'rodic_id_typ_org', 'COLUMN';
+
+---------------------
+EXEC sp_rename 'dbo.hl_hlasovani', 'hlasovani';
+
+---------------------
+EXEC sp_rename 'dbo.hl_poslanec', 'hlasovani_poslanec';
+
+---------------------
+EXEC sp_rename 'dbo.hl_zposlanec', 'zmatecne_hlasovani_poslanec';
+
+---------------------
+EXEC sp_rename 'dbo.omluvy', 'omluva';
+
