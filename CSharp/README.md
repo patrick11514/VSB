@@ -19,5 +19,5 @@
 **Homeworks:**
 * [**Homework 1**](https://github.com/patrick11514/VSB/tree/main/CSharp/DU1)
     ![DU1](https://upload.patrick115.eu/screenshot/CSharp_DU1.png)
-* [**Homework 2**](https://github.com/patrick115114/VSB/tree/main/CSharp/DU2)
+* [**Homework 2**](https://github.com/patrick11514/VSB/tree/main/CSharp/DU2)
     ![DU2](https://upload.patrick115.eu/screenshot/CSharp_DU2.png)
