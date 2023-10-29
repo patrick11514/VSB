@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DU2": {
+      "commandName": "Project",
+      "commandLineArgs": "../../../data.txt"
+    }
+  }
+}

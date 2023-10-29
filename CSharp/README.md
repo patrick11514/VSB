@@ -15,3 +15,9 @@
     ![C05](https://upload.patrick115.eu/screenshot/jan_CSharp5.png)
 * [**Employees**](https://github.com/patrick11514/VSB/tree/main/CSharp/C06)
     ![C06](https://upload.patrick115.eu/screenshot/jan_CSharp6.png)
+
+**Homeworks:**
+* [**Homework 1**](https://github.com/patrick11514/VSB/tree/main/CSharp/DU1)
+    ![DU1](https://upload.patrick115.eu/screenshot/CSharp_DU1.png)
+* [**Homework 2**](https://github.com/patrick115114/VSB/tree/main/CSharp/DU2)
+    ![DU2](https://upload.patrick115.eu/screenshot/CSharp_DU2.png)
