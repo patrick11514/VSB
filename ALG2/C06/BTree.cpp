@@ -1,5 +1,4 @@
 #include "BTree.h"
-#include <iostream>
 
 BTree::BTree(const int N)
 {
