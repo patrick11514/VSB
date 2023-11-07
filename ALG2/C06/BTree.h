@@ -26,6 +26,10 @@ public:
      * @param value - value to be inserted
      */
     void insert(const int value);
+    /**
+     * @brief clear - clear the tree
+     */
+    void clear();
 
     /**
      * @brief print - print the tree

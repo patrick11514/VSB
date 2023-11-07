@@ -12,11 +12,24 @@ BTree::~BTree()
 
 void BTree::insert(const int value)
 {
+    if (this->searchValue(value))
+    {
+        return;
+    }
+
     BTreePage *newRoot = this->root->insert(value, true);
 
     if (newRoot != nullptr)
     {
         this->root = newRoot;
+    }
+}
+
+void BTree::clear()
+{
+    if (this->root != nullptr)
+    {
+        this->root->clear();
     }
 }
 

@@ -195,6 +195,26 @@ void BTreePage::insertFirstChild(BTreePage *page)
     }
 }
 
+void BTreePage::clear()
+{
+    int i = 0;
+    for (std::vector<BTreePage *>::size_type i = 0; i < this->children.size(); ++i)
+    {
+        if (this->children[i] != nullptr)
+        {
+            delete this->children[i];
+            this->children[i] = nullptr;
+        }
+    }
+
+    int size = this->values.size();
+
+    for (std::vector<int>::size_type i = 0; i < size; ++i)
+    {
+        this->values.pop_back();
+    }
+}
+
 void BTreePage::print() const
 {
     // print values in the page

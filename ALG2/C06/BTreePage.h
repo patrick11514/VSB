@@ -90,6 +90,10 @@ public:
      * @param page - pointer to the child
      */
     void insertFirstChild(BTreePage *page);
+    /**
+     * @brief clear - clear the page and its children
+     */
+    void clear();
 
     /**
      * @brief print - print the page and its children
