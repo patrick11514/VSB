@@ -1,5 +1,5 @@
 COMPILER=g++
-ARGS=
+ARGS=-fsanitize=address
 OFILES=main.o BTree.o BTreePage.o
 EXEC=main
 
