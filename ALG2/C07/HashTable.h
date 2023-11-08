@@ -9,7 +9,10 @@ private:
     int size;
     std::vector<std::vector<std::pair<std::string, int>>> slots;
 
-    int hash(const std::string &key) const;
+    void init(const int size);
+
+    int
+    hash(const std::string &key) const;
 
 public:
     /**

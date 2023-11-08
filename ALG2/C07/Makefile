@@ -1,6 +1,6 @@
 COMPILER=g++
 ARGS=
-OFILES=main.o
+OFILES=main.o HashTable.o
 EXEC=main
 
 $(EXEC): $(OFILES)
