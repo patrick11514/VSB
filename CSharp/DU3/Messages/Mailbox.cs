@@ -44,7 +44,7 @@ namespace Messages
                 }
             }
 
-            obj = new T();
+            obj = default;
 
             return false;
         }
