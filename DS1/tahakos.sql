@@ -805,3 +805,46 @@ Výsledek: 1 záznam
 id_osoba	jmeno	prijmeni	pocet_ruznych_klubu	pocet_mesicu_ukoncenych_clenstvi
 6492	Ivo	Vondrák	2	16
 */
+
+
+---
+
+SELECT os.jmeno, COUNT(*) pocet
+FROM poslanec p
+JOIN osoba os ON os.id_osoba = p.id_osoba
+JOIN zarazeni z ON z.id_osoba = os.id_osoba
+JOIN organ org ON org.id_organ = z.id_of AND cl_funkce = 0
+JOIN organ org2 ON org2.id_organ = p.id_organ AND org2.id_organ = org.rodic_id_organ
+GROUP BY os.jmeno
+ORDER BY pocet DESC
+
+SELECT os.jmeno, COUNT(*) pocet
+FROM osoba os
+WHERE EXISTS (
+    SELECT 1
+    FROM poslanec p
+    JOIN zarazeni z ON p.id_osoba = z.id_osoba
+    JOIN organ org ON org.id_organ = z.id_of AND z.cl_funkce = 0
+    JOIN organ org2 ON org2.id_organ = p.id_organ AND org2.id_organ = org.rodic_id_organ
+    WHERE os.id_osoba = p.id_osoba
+)
+GROUP BY os.jmeno
+ORDER BY pocet DESC
+
+
+WITH ctx AS (SELECT os.id_osoba, os.jmeno, os.prijmeni, p.id_kraj
+             FROM poslanec p
+                      JOIN osoba os ON os.id_osoba = p.id_osoba
+                      JOIN zarazeni z ON z.id_osoba = os.id_osoba
+                      JOIN organ org ON org.id_organ = z.id_of AND z.cl_funkce = 0
+                      JOIN organ org2 ON org2.id_organ = p.id_organ AND org2.id_organ = org.rodic_id_organ
+             WHERE YEAR(org.od_organ) >= 2013)
+
+SELECT t1.*
+FROM ctx t1
+WHERE EXISTS (
+    SELECT 1
+    FROM ctx t2
+    WHERE t2.id_osoba = t1.id_osoba AND
+          t2.id_kraj = 594
+    ) AND E
