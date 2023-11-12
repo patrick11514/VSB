@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>IDK proč to dělám v HTML XD</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;900&family=Poppins:wght@100;300;400;500;700&family=Roboto:wght@100;300;500;700&display=swap" rel="stylesheet">
+        <style>
+            html {
+                font-family: 'Inter', sans-serif;
+                font-weight: 400;
+            }
+
+            table {
+                border-collapse: collapse;
+            }
+
+            thead {
+                font-weight: 600;
+            }
+
+            thead, tbody {
+                border: black 2px solid;
+            }
+
+
+            td, th {
+                padding: 6px;
+            }
+
+            td:first-child, td:nth-child(6), th:first-child, th:nth-child(6) {
+                border-right: black 2px solid;
+            }
+
+            td:nth-child(2), td:nth-child(3), td:nth-child(4), td:nth-child(5), td:nth-child(6) {
+                text-align: center;
+            }
+
+
+        </style>
+    </head>
+    <body>
+        <!--
+CREATE TABLE users (
+    id       INTEGER NOT NULL,
+    username VARCHAR2(255) NOT NULL,
+    email    VARCHAR2(255),
+    password VARCHAR2(72) NOT NULL,
+    role     INTEGER NOT NULL
+);
+
+ALTER TABLE users ADD CONSTRAINT users_pk PRIMARY KEY ( id );
+        -->
+        <p>Tabulka <b>Users</b></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Název atributu</th>
+                    <th>Dat. typ</th>
+                    <th>Délka</th>
+                    <th>Klíč</th>
+                    <th>Null</th>
+                    <th>IO</th>
+                    <th>Popis</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>id</td>
+                    <td>INTEGER</td>
+                    <td></td>
+                    <td>Primární</td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Automatický inkrementovaný PK</td>
+                </tr>
+                <tr>
+                    <td>username</td>
+                    <td>VARCHAR</td>
+                    <td>255</td>
+                    <td></td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Uživatelské jméno, pro přihlášení uživatele</td>
+                </tr>
+                <tr>
+                    <td>email</td>
+                    <td>VARCHAR</td>
+                    <td>255</td>
+                    <td></td>
+                    <td>Ano</td>
+                    <td></td>
+                    <td>Emailová adresa</td>
+                </tr>
+                <tr>
+                    <td>password</td>
+                    <td>VARCHAR</td>
+                    <td>72</td>
+                    <td></td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Heslo uživatele zašifrované algoritmem BCRYPT</td>
+                </tr>
+                <tr>
+                    <td>role</td>
+                    <td>INTEGER</td>
+                    <td></td>
+                    <td>Cizí (Roles)</td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Role uživatele</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!--
+CREATE TABLE tickets (
+    id         INTEGER NOT NULL,
+    name       VARCHAR2(255) NOT NULL,
+    status     INTEGER NOT NULL,
+    created_at DATE NOT NULL,
+    users_id   INTEGER NOT NULL,
+    types_id   INTEGER NOT NULL,
+    users_id2  INTEGER NOT NULL
+);
+
+ALTER TABLE tickets ADD CONSTRAINT tickets_pk PRIMARY KEY ( id );
+
+ALTER TABLE tickets
+    ADD CONSTRAINT tickets_types_fk FOREIGN KEY ( types_id )
+        REFERENCES types ( id );
+
+ALTER TABLE tickets
+    ADD CONSTRAINT tickets_users_fk FOREIGN KEY ( users_id )
+        REFERENCES users ( id );
+
+ALTER TABLE tickets
+    ADD CONSTRAINT tickets_users_fkv2 FOREIGN KEY ( users_id2 )
+        REFERENCES users ( id );
+        -->
+        <p>Tabulka <b>Tickets</b></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Název atributu</th>
+                    <th>Dat. typ</th>
+                    <th>Délka</th>
+                    <th>Klíč</th>
+                    <th>Null</th>
+                    <th>IO</th>
+                    <th>Popis</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>id</td>
+                    <td>INTEGER</td>
+                    <td></td>
+                    <td>Primární</td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Automatický inkrementovaný PK</td>
+                </tr>
+                <tr>
+                    <td>name</td>
+                    <td>VARCHAR</td>
+                    <td>255</td>
+                    <td></td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Název ticketu</td>
+                </tr>
+                <tr>
+                    <td>status</td>
+                    <td>INTEGER</td>
+                    <td></td>
+                    <td>Cizí (Statuses)</td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Stav ticketu</td>
+                </tr>
+                <tr>
+                    <td>created_at</td>
+                    <td>DATE</td>
+                    <td></td>
+                    <td></td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Datum vytvoření ticketu</td>
+                </tr>
+                <tr>
+                    <td>users_id</td>
+                    <td>INTEGER</td>
+                    <td></td>
+                    <td>Cizí (Users)</td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Uživatel, který vytvořil ticket</td>
+                </tr>
+                <tr>
+                    <td>types_id</td>
+                    <td>INTEGER</td>
+                    <td></td>
+                    <td>Cizí (Types)</td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Typ ticketu</td>
+                </tr>
+                <tr>
+                    <td>users_id2</td>
+                    <td>INTEGER</td>
+                    <td></td>
+                    <td>Cizí (Users)</td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Uživatel, který je přiřazen k ticketu</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!--
+CREATE TABLE messages (
+    id         INTEGER NOT NULL,
+    message    VARCHAR2(1024) NOT NULL,
+    created_at DATE NOT NULL,
+    tickets_id INTEGER NOT NULL,
+    users_id   INTEGER NOT NULL
+);
+
+ALTER TABLE messages ADD CONSTRAINT messages_pk PRIMARY KEY ( id );
+
+ALTER TABLE messages
+    ADD CONSTRAINT messages_tickets_fk FOREIGN KEY ( tickets_id )
+        REFERENCES tickets ( id );
+
+ALTER TABLE messages
+    ADD CONSTRAINT messages_users_fk FOREIGN KEY ( users_id )
+        REFERENCES users ( id );
+        -->
+        <p>Tabulka <b>Messages</b></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Název atributu</th>
+                    <th>Dat. typ</th>
+                    <th>Délka</th>
+                    <th>Klíč</th>
+                    <th>Null</th>
+                    <th>IO</th>
+                    <th>Popis</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>id</td>
+                    <td>INTEGER</td>
+                    <td></td>
+                    <td>Primární</td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Automatický inkrementovaný PK</td>
+                </tr>
+                <tr>
+                    <td>message</td>
+                    <td>VARCHAR</td>
+                    <td>1024</td>
+                    <td></td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Zpráva</td>
+                </tr>
+                <tr>
+                    <td>created_at</td>
+                    <td>DATE</td>
+                    <td></td>
+                    <td></td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Datum vytvoření zprávy</td>
+                </tr>
+                <tr>
+                    <td>tickets_id</td>
+                    <td>INTEGER</td>
+                    <td></td>
+                    <td>Cizí (Tickets)</td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Ticket, ke kterému je zpráva přiřazena</td>
+                </tr>
+                <tr>
+                    <td>users_id</td>
+                    <td>INTEGER</td>
+                    <td></td>
+                    <td>Cizí (Users)</td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Uživatel, který zprávu vytvořil</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!--
+CREATE TABLE comments (
+    id         INTEGER NOT NULL,
+    "comment"  VARCHAR2(1024) NOT NULL,
+    tickets_id INTEGER NOT NULL,
+    users_id   INTEGER NOT NULL
+);
+
+ALTER TABLE comments ADD CONSTRAINT comments_pk PRIMARY KEY ( id );
+
+ALTER TABLE comments
+    ADD CONSTRAINT comments_tickets_fk FOREIGN KEY ( tickets_id )
+        REFERENCES tickets ( id );
+
+ALTER TABLE comments
+    ADD CONSTRAINT comments_users_fk FOREIGN KEY ( users_id )
+        REFERENCES users ( id );
+        -->
+        <p>Tabulka <b>Comments</b></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Název atributu</th>
+                    <th>Dat. typ</th>
+                    <th>Délka</th>
+                    <th>Klíč</th>
+                    <th>Null</th>
+                    <th>IO</th>
+                    <th>Popis</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>id</td>
+                    <td>INTEGER</td>
+                    <td></td>
+                    <td>Primární</td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Automatický inkrementovaný PK</td>
+                </tr>
+                <tr>
+                    <td>comment</td>
+                    <td>VARCHAR</td>
+                    <td>1024</td>
+                    <td></td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Komentář</td>
+                </tr>
+                <tr>
+                    <td>tickets_id</td>
+                    <td>INTEGER</td>
+                    <td></td>
+                    <td>Cizí (Tickets)</td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Ticket, ke kterému je komentář přiřazen</td>
+                </tr>
+                <tr>
+                    <td>users_id</td>
+                    <td>INTEGER</td>
+                    <td></td>
+                    <td>Cizí (Users)</td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Uživatel, který komentář vytvořil</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!--
+CREATE TABLE roles (
+    id          INTEGER NOT NULL,
+    name        VARCHAR2(255),
+    description VARCHAR2(512),
+    users_id    INTEGER NOT NULL
+);
+
+ALTER TABLE roles ADD CONSTRAINT roles_pk PRIMARY KEY ( id );
+
+ALTER TABLE roles
+    ADD CONSTRAINT roles_users_fk FOREIGN KEY ( users_id )
+        REFERENCES users ( id );
+        -->
+        <p>Tabulka <b>Roles</b></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Název atributu</th>
+                    <th>Dat. typ</th>
+                    <th>Délka</th>
+                    <th>Klíč</th>
+                    <th>Null</th>
+                    <th>IO</th>
+                    <th>Popis</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>id</td>
+                    <td>INTEGER</td>
+                    <td></td>
+                    <td>Primární</td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Automatický inkrementovaný PK</td>
+                </tr>
+                <tr>
+                    <td>name</td>
+                    <td>VARCHAR</td>
+                    <td>255</td>
+                    <td></td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Název role</td>
+                </tr>
+                <tr>
+                    <td>description</td>
+                    <td>VARCHAR</td>
+                    <td>512</td>
+                    <td></td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Popis role</td>
+                </tr>
+                <tr>
+                    <td>users_id</td>
+                    <td>INTEGER</td>
+                    <td></td>
+                    <td>Cizí (Users)</td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Uživatel, který má roli přiřazenou</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!--
+CREATE TABLE types (
+    id          INTEGER NOT NULL,
+    name        VARCHAR2(255) NOT NULL,
+    description VARCHAR2(512) NOT NULL
+);
+
+ALTER TABLE types ADD CONSTRAINT types_pk PRIMARY KEY ( id );
+        -->
+        <p>Tabulka <b>Types</b></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Název atributu</th>
+                    <th>Dat. typ</th>
+                    <th>Délka</th>
+                    <th>Klíč</th>
+                    <th>Null</th>
+                    <th>IO</th>
+                    <th>Popis</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>id</td>
+                    <td>INTEGER</td>
+                    <td></td>
+                    <td>Primární</td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Automatický inkrementovaný PK</td>
+                </tr>
+                <tr>
+                    <td>name</td>
+                    <td>VARCHAR</td>
+                    <td>255</td>
+                    <td></td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Název typu ticketu</td>
+                </tr>
+                <tr>
+                    <td>description</td>
+                    <td>VARCHAR</td>
+                    <td>512</td>
+                    <td></td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Popis typu ticketu</td>
+                </tr>
+            </tbody>
+    </body>
+</html>
