@@ -25,3 +25,9 @@
     ![DU1](https://upload.patrick115.eu/screenshot/CSharp_DU1.png)
 * [**Homework 2**](https://github.com/patrick11514/VSB/tree/main/CSharp/DU2)
     ![DU2](https://upload.patrick115.eu/screenshot/CSharp_DU2.png)
+* [**Homework 3**](https://github.com/patrick11514/VSB/tree/main/CSharp/DU3)
+    ![DU3](https://upload.patrick115.eu/screenshot/CSharp_DU3)
+
+**Tests:**
+* [**Test 1**](https://github.com/patrick11514/VSB/tree/main/CSharp/Test1)
+    ![Test1](https://upload.patrick115.eu/screenshot/CSharp_Test1.png)
