@@ -11,8 +11,7 @@ private:
 
     void init(const int size);
 
-    int
-    hash(const std::string &key) const;
+    unsigned int hash(const std::string &key) const;
 
 public:
     /**
@@ -56,5 +55,11 @@ public:
      * @param value Value of key
      * @return True if key exists, false otherwise
      */
-    bool tryGetValue(const std::string &key, int &value) const;
+    bool tryGetValue(const std::string &key, int *value) const;
+    /**
+     * @brief Get value of key
+     * @param key Key to get value of
+     * @return Value of key, 0 if key does not exist
+     */
+    int operator[](const std::string &key) const;
 };
