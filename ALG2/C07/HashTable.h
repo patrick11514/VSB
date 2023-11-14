@@ -3,14 +3,29 @@
 #include <utility>
 #include <vector>
 
+/**
+ * @brief Hash table
+ */
 class HashTable
 {
 private:
+    /**
+     * @brief Slots size of hash table
+     */
     int size;
+    /**
+     * @brief Slots of hash table
+     */
     std::vector<std::vector<std::pair<std::string, int>>> slots;
-
+    /**
+     * @brief Initialize hash table
+     * @param size Size of hash table
+     */
     void init(const int size);
-
+    /**
+     * @brief Jenkins hash function
+     * @link https://en.wikipedia.org/wiki/Jenkins_hash_function
+     */
     unsigned int hash(const std::string &key) const;
 
 public:
