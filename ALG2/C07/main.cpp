@@ -6,9 +6,11 @@ int main()
 {
     HashTable tabulka;
 
+    tabulka["skola"] = 79;
     tabulka.insert("pepa", 8);
     tabulka.insert("karla", 42);
 
+    std::cout << "skola: " << tabulka["skola"] << std::endl;
     std::cout << "Pepa: " << tabulka["pepa"] << std::endl;
     std::cout << "Karla: " << tabulka["karla"] << std::endl;
 

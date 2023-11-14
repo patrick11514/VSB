@@ -120,3 +120,21 @@ int HashTable::operator[](const std::string &key) const
 
     return 0;
 }
+
+int &HashTable::operator[](const std::string &key)
+{
+    int32_t hash = this->hash(key) % this->size;
+
+    for (int i = 0; i < this->slots[hash].size(); ++i)
+    {
+
+        if (this->slots[hash][i].first == key)
+        {
+            return this->slots[hash][i].second;
+        }
+    }
+
+    this->insert(key, 0);
+
+    return this->operator[](key);
+}

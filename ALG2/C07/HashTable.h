@@ -62,4 +62,10 @@ public:
      * @return Value of key, 0 if key does not exist
      */
     int operator[](const std::string &key) const;
+    /**
+     * @brief Get/Set value of key
+     * @param key Key to Get/Set value of key
+     * @return Value of key, 0 if key does not exist
+     */
+    int &operator[](const std::string &key);
 };
