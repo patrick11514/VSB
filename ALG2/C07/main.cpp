@@ -41,6 +41,8 @@ int main()
         std::cout << "Pepa má: " << vys << std::endl;
     }
 
+    tabulka.report("hashTableReport.txt");
+
     tabulka.clear();
 
     std::cout << "Pepa: " << tabulka["pepa"] << std::endl;

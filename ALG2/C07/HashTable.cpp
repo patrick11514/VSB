@@ -1,5 +1,5 @@
 #include "HashTable.h"
-#include <iostream>
+#include <fstream>
 
 void HashTable::init(const int size)
 {
@@ -167,4 +167,40 @@ double HashTable::getLoadFactor() const
         }
     }
     return (double)fulledSlots / (double)this->size;
+}
+
+void HashTable::report(std::string fileName) const
+{
+    std::ofstream file(fileName);
+
+    if (!file.is_open())
+    {
+        throw "File could not be opened";
+    }
+
+    file << "Size: " << this->size << std::endl;
+
+    int i = 1;
+    for (auto slot : this->slots)
+    {
+        file << "Slot ";
+
+        // align numbers
+        for (int j = 0; j < std::to_string(this->size).length() - std::to_string(i).length(); ++j)
+        {
+            file << " ";
+        }
+
+        file << i << ": ";
+        int l = 0;
+        for (auto slotItem : slot)
+        {
+            file << "\"" << slotItem.first << "\": " << slotItem.second << (l < slot.size() - 1 ? ", " : "");
+            ++l;
+        }
+        file << std::endl;
+        ++i;
+    }
+
+    file.close();
 }

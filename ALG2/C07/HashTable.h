@@ -98,4 +98,9 @@ public:
      * @return Value of key, 0 if key does not exist
      */
     int operator[](const std::string &key) const;
+    /**
+     * @brief Output hash table to file
+     * @param fileName name of the file
+     */
+    void report(std::string fileName) const;
 };
