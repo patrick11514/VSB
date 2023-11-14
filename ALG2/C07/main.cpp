@@ -30,6 +30,10 @@ int main()
         std::cout << "karla2 není v hashtable" << std::endl;
     }
 
+    std::cout << "Velikost tabulky: " << tabulka.getTableSize() << std::endl;
+    std::cout << "Pocet klicu: " << tabulka.getNumberOfKeys() << std::endl;
+    std::cout << "Load factor: " << tabulka.getLoadFactor() * 100 << "%" << std::endl;
+
     int vys = 0;
 
     if (tabulka.tryGetValue("pepa", &vys))

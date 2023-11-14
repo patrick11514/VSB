@@ -42,6 +42,27 @@ public:
      * @brief Clear hash table
      */
     void clear();
+    /**
+     * @brief Get/Set value of key
+     * @param key Key to Get/Set value of key
+     * @return Value of key, 0 if key does not exist
+     */
+    int &operator[](const std::string &key);
+    /**
+     * @brief Get size of hash table
+     * @return Size of hash table
+     */
+    size_t getTableSize() const;
+    /**
+     * @brief Get number of keys in hash table
+     * @return Number of keys in hash table
+     */
+    size_t getNumberOfKeys() const;
+    /**
+     * @brief Get load factor of hash table
+     * @return Load factor of hash table
+     */
+    double getLoadFactor() const;
 
     /**
      * @brief Check if key exists in hash table
@@ -62,10 +83,4 @@ public:
      * @return Value of key, 0 if key does not exist
      */
     int operator[](const std::string &key) const;
-    /**
-     * @brief Get/Set value of key
-     * @param key Key to Get/Set value of key
-     * @return Value of key, 0 if key does not exist
-     */
-    int &operator[](const std::string &key);
 };

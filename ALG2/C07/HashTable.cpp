@@ -42,11 +42,11 @@ void HashTable::insert(const std::string &key, const int value)
 {
     unsigned int hash = this->hash(key) % this->size;
 
-    for (int i = 0; i < this->slots[hash].size(); ++i)
+    for (auto &slotItem : this->slots[hash])
     {
-        if (this->slots[hash][i].first.compare(key) == 0)
+        if (slotItem.first.compare(key) == 0)
         {
-            this->slots[hash][i].second = value;
+            slotItem.second = value;
             return;
         }
     }
@@ -110,11 +110,11 @@ int HashTable::operator[](const std::string &key) const
 {
     int32_t hash = this->hash(key) % this->size;
 
-    for (auto slot : this->slots[hash])
+    for (auto slotItem : this->slots[hash])
     {
-        if (slot.first == key)
+        if (slotItem.first == key)
         {
-            return slot.second;
+            return slotItem.second;
         }
     }
 
@@ -125,16 +125,46 @@ int &HashTable::operator[](const std::string &key)
 {
     int32_t hash = this->hash(key) % this->size;
 
-    for (int i = 0; i < this->slots[hash].size(); ++i)
+    for (auto &slotItem : this->slots[hash])
     {
 
-        if (this->slots[hash][i].first == key)
+        if (slotItem.first == key)
         {
-            return this->slots[hash][i].second;
+            return slotItem.second;
         }
     }
 
     this->insert(key, 0);
 
     return this->operator[](key);
+}
+
+size_t HashTable::getTableSize() const
+{
+    return this->size;
+}
+
+size_t HashTable::getNumberOfKeys() const
+{
+    size_t size = 0;
+
+    for (auto slot : this->slots)
+    {
+        size += slot.size();
+    }
+    return size;
+}
+
+double HashTable::getLoadFactor() const
+{
+    int fulledSlots = 0;
+
+    for (auto slot : this->slots)
+    {
+        if (slot.size() > 0)
+        {
+            fulledSlots++;
+        }
+    }
+    return (double)fulledSlots / (double)this->size;
 }
