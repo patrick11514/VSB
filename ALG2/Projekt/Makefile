@@ -1,6 +1,6 @@
 COMPILER=g++
 ARGS=-fsanitize=address -g -Wall -Wextra
-OFILES=main.o HeightMap.o Cube.o
+OFILES=main.o HeightMap.o Cube.o types.o
 EXEC=main
 
 $(EXEC): $(OFILES)

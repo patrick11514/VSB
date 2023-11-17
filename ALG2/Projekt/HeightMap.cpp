@@ -46,7 +46,7 @@ void HeightMap::createCubes(std::ifstream &file)
         int currentHeight;
         file >> currentHeight;
 
-        for (int z = 1; z <= currentHeight; z++)
+        for (int z = 1; z <= currentHeight; ++z)
         {
             Cube *cube = new Cube(x, y, z);
             this->setCube(x, y, z, cube);
@@ -169,5 +169,35 @@ int HeightMap::getFaces() const
 {
     int faces = 0;
 
-        return faces;
+    std::vector<std::vector<Cube *>> parts;
+
+    // from X axis
+    for (int x = 0; x < this->width; ++x)
+    {
+        std::vector<Cube *> part;
+        for (int y = 0; y < this->length; ++y)
+        {
+            for (int z = 0; z < this->height; ++z)
+            {
+                Cube *cube = this->getCube(x, y, z);
+                if (cube != nullptr)
+                {
+                    part.push_back(cube);
+                }
+            }
+        }
+
+        parts.push_back(part);
+    }
+
+    // now check connected cubes
+    for (auto cubes : parts)
+    {
+        for (auto cube : cubes)
+        {
+            // if (cube->)
+        }
+    }
+
+    return faces;
 }
