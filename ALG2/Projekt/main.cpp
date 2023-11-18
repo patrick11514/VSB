@@ -6,7 +6,7 @@ int main()
 {
     HeightMap c("data.txt");
 
-    std::cout << c.getFaces() << std::endl;
+    std::cout << "Objekt má " << c.getFaces() << " stran." << std::endl;
 
     return 0;
 }
