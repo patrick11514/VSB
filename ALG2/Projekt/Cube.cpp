@@ -24,37 +24,6 @@ int Cube::getZ() const
     return this->z;
 }
 
-bool Cube::isNeighbor(Cube *nCube) const
-{
-    bool found = false;
-
-    for (auto cube : this->neighbors)
-    {
-        if (cube->isSame(nCube))
-        {
-            found = true;
-            break;
-        }
-    }
-
-    return found;
-}
-
-bool Cube::isNeighbor(Cube *cube, Face face) const
-{
-    return this->neighbors[face]->isSame(cube);
-}
-
-bool Cube::isSame(Cube *cube) const
-{
-    return cube->getX() == this->x && cube->getY() == this->y && cube->getZ() == this->z;
-}
-
-Cube *Cube::getCubeAt(Face face) const
-{
-    return this->neighbors[face];
-}
-
 Status Cube::getStatus() const
 {
     return this->status;
