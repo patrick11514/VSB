@@ -19,10 +19,11 @@ void HeightMap::setCube(int x, int y, int z, Cube *cube)
 int HeightMap::getMaxHeight(std::ifstream &file)
 {
     int width, length, height;
-    file >> width >> length;
+    file >> length >> width;
     height = 0;
 
-    while (!file.eof())
+    int count = 0;
+    while (!file.eof() && count < width * length)
     {
         int currentHeight;
 
@@ -31,6 +32,7 @@ int HeightMap::getMaxHeight(std::ifstream &file)
         {
             height = currentHeight;
         }
+        count++;
     }
 
     return height;
@@ -60,7 +62,7 @@ void HeightMap::createCubes(std::ifstream &file)
             y++;
         }
 
-        if (y > this->length)
+        if (y >= this->length)
         {
             break;
         }
