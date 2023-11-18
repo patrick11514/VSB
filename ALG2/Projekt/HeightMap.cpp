@@ -5,7 +5,7 @@ Cube *HeightMap::getCube(int x, int y, int z) const
 {
     if (x >= 1 && x <= this->width && y >= 1 && y <= this->length && z >= 1 && z <= this->height)
     {
-        return this->cubes[(x - 1) * this->width * this->length + (y - 1) * this->length + (z - 1)];
+        return this->cubes[this->getIndex(x, y, z)];
     }
 
     return nullptr;
@@ -13,7 +13,7 @@ Cube *HeightMap::getCube(int x, int y, int z) const
 
 void HeightMap::setCube(int x, int y, int z, Cube *cube)
 {
-    this->cubes[(x - 1) * this->width * this->length + (y - 1) * this->length + (z - 1)] = cube;
+    this->cubes[this->getIndex(x, y, z)] = cube;
 }
 
 int HeightMap::getMaxHeight(std::ifstream &file)
@@ -128,6 +128,60 @@ void HeightMap::addNeighbors()
     }
 }
 
+int HeightMap::getFacesAtAxis(Axis axis) const
+{
+    int faces = 0;
+
+    std::vector<std::vector<Cube *>> parts;
+
+    for (auto cube : this->cubes)
+    {
+        if (cube == nullptr || cube->getStatus() == Status::Checked)
+        {
+            continue;
+        }
+
+        std::vector<Cube *> cubes = cube->getNeighborsAtAxis(axis);
+
+        parts.push_back(cubes);
+    }
+
+    this->resetStatus();
+
+    // now check connected cubes
+    for (auto cubes : parts)
+    {
+        for (auto cube : cubes)
+        {
+
+            if (cube->getStatus() == Status::Checked)
+            {
+                continue;
+            }
+
+            faces += cube->walkThroughNeighbors(axis);
+        }
+    }
+
+    return faces;
+}
+
+void HeightMap::resetStatus() const
+{
+    for (auto &cube : this->cubes)
+    {
+        if (cube != nullptr)
+        {
+            cube->setStatus(Status::Unchecked);
+        }
+    }
+}
+
+int HeightMap::getIndex(int x, int y, int z) const
+{
+    return ((x - 1) * this->length * this->height) + ((y - 1) * this->height) + ((z - 1));
+}
+
 HeightMap::HeightMap(std::string fileName)
 {
     // Check max dimensions
@@ -169,34 +223,12 @@ int HeightMap::getFaces() const
 {
     int faces = 0;
 
-    std::vector<std::vector<Cube *>> parts;
+    std::vector<Axis> axies = getAllAxies();
 
-    // from X axis
-    for (int x = 0; x < this->width; ++x)
+    for (Axis axis : axies)
     {
-        std::vector<Cube *> part;
-        for (int y = 0; y < this->length; ++y)
-        {
-            for (int z = 0; z < this->height; ++z)
-            {
-                Cube *cube = this->getCube(x, y, z);
-                if (cube != nullptr)
-                {
-                    part.push_back(cube);
-                }
-            }
-        }
-
-        parts.push_back(part);
-    }
-
-    // now check connected cubes
-    for (auto cubes : parts)
-    {
-        for (auto cube : cubes)
-        {
-            // if (cube->)
-        }
+        faces += this->getFacesAtAxis(axis);
+        this->resetStatus();
     }
 
     return faces;

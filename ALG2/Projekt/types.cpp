@@ -1,57 +1,65 @@
 #include "types.hpp"
 
-Face getFaceAtAxis(Axis axis)
+std::vector<Face> getFacesAtAxis(Axis axis)
 {
-    if (axis == Axis::X)
+    std::vector<Face> faces;
+
+    if (axis == Axis::X || axis == Axis::XInvert)
     {
-        return Face::FRONT;
+        faces.push_back(Face::LEFT);
+        faces.push_back(Face::RIGHT);
+        faces.push_back(Face::TOP);
+        faces.push_back(Face::BOTTOM);
     }
-    else if (axis == Axis::XInvert)
+    else if (axis == Axis::Y || axis == Axis::YInvert)
     {
-        return Face::BACK;
+        faces.push_back(Face::FRONT);
+        faces.push_back(Face::BACK);
+        faces.push_back(Face::TOP);
+        faces.push_back(Face::BOTTOM);
     }
-    else if (axis == Axis::Y)
+    else if (axis == Axis::Z || axis == Axis::ZInvert)
     {
-        return Face::RIGHT;
+        faces.push_back(Face::FRONT);
+        faces.push_back(Face::BACK);
+        faces.push_back(Face::LEFT);
+        faces.push_back(Face::RIGHT);
     }
-    else if (axis == Axis::YInvert)
-    {
-        return Face::LEFT;
-    }
-    else if (axis == Axis::Z)
-    {
-        return Face::TOP;
-    }
-    else if (axis == Axis::ZInvert)
-    {
-        return Face::BOTTOM;
-    }
+
+    return faces;
 }
 
-Axis getAxisAtFace(Face face)
+CubeScanData getCubeDataAtAxis(Axis axis)
 {
-    if (face == Face::FRONT)
+
+    CubeScanData data;
+
+    if (axis == Axis::X || axis == Axis::XInvert)
     {
-        return Axis::X;
+        data.checkIfFaceHasNeighbor = axis == Axis::X ? Face::FRONT : Face::BACK;
     }
-    else if (face == Face::BACK)
+    else if (axis == Axis::Y || axis == Axis::YInvert)
     {
-        return Axis::XInvert;
+        data.checkIfFaceHasNeighbor = axis == Axis::Y ? Face::LEFT : Face::RIGHT;
     }
-    else if (face == Face::RIGHT)
+    else if (axis == Axis::Z || axis == Axis::ZInvert)
     {
-        return Axis::Y;
+        data.checkIfFaceHasNeighbor = axis == Axis::Z ? Face::BOTTOM : Face::TOP;
     }
-    else if (face == Face::LEFT)
-    {
-        return Axis::YInvert;
-    }
-    else if (face == Face::TOP)
-    {
-        return Axis::Z;
-    }
-    else if (face == Face::BOTTOM)
-    {
-        return Axis::ZInvert;
-    }
+
+    data.neighborsAtFaces = getFacesAtAxis(axis);
+
+    return data;
+}
+
+std::vector<Axis> getAllAxies()
+{
+    std::vector<Axis> axies;
+    axies.push_back(Axis::X);
+    axies.push_back(Axis::XInvert);
+    axies.push_back(Axis::Y);
+    axies.push_back(Axis::YInvert);
+    axies.push_back(Axis::Z);
+    axies.push_back(Axis::ZInvert);
+    return axies;
 }

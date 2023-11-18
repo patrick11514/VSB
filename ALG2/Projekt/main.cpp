@@ -5,5 +5,8 @@
 int main()
 {
     HeightMap c("data.txt");
+
+    std::cout << c.getFaces() << std::endl;
+
     return 0;
 }

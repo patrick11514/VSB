@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 
 enum Face
 {
@@ -26,5 +27,12 @@ enum Status
     Checked
 };
 
-Face getFaceAtAxis(Axis axis);
-Axis getAxisAtFace(Face face);
+struct
+{
+    std::vector<Face> neighborsAtFaces;
+    Face checkIfFaceHasNeighbor;
+} typedef CubeScanData;
+
+std::vector<Face> getFacesAtAxis(Axis axis);
+CubeScanData getCubeDataAtAxis(Axis axis);
+std::vector<Axis> getAllAxies();
