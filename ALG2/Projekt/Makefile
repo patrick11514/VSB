@@ -15,6 +15,17 @@ cleanOBJ:
 cleanEXEC:
 	rm -f $(EXEC)
 
-clean: cleanOBJ cleanEXEC
+cleanDoxygen:
+	rm -rf html latex
+
+clean: cleanOBJ cleanEXEC cleanDoxygen
 
 all: clean $(EXEC)
+
+doxygen: Doxyfile
+	doxygen Doxyfile
+
+pdf: doxygen
+	cd latex && make pdf
+	mv latex/refman.pdf ./Documentation.pdf
+
