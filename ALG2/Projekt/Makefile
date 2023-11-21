@@ -1,5 +1,5 @@
 COMPILER=g++
-ARGS=-fsanitize=address -g -Wall -Wextra
+ARGS=-O3
 OFILES=main.o HeightMap.o Cube.o types.o
 EXEC=main
 

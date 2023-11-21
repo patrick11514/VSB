@@ -1,5 +1,6 @@
 #include "Cube.hpp"
 #include <iostream>
+#include <queue>
 
 Cube::Cube(int x, int y, int z)
 {
@@ -43,20 +44,30 @@ int Cube::walkThroughNeighbors(Axis axis)
 {
     CubeScanData data = getCubeDataAtAxis(axis);
 
-    this->status = Status::Checked;
-
     if (this->neighbors[data.checkIfFaceHasNeighbor] != nullptr)
     {
         return 0;
     }
 
-    for (auto face : data.neighborsAtFaces)
-    {
-        Cube *cube = this->neighbors[face];
+    std::queue<Cube *> queue;
 
-        if (cube != nullptr && cube->getStatus() == Status::Unchecked)
+    queue.push(this);
+
+    while (!queue.empty())
+    {
+        Cube *cube = queue.front();
+        queue.pop();
+
+        cube->status = Status::Checked;
+
+        for (auto face : data.neighborsAtFaces)
         {
-            cube->walkThroughNeighbors(axis);
+            Cube *cubeN = cube->neighbors[face];
+
+            if (cubeN != nullptr && cubeN->getStatus() == Status::Unchecked)
+            {
+                queue.push(cubeN);
+            }
         }
     }
 
@@ -67,23 +78,29 @@ std::vector<Cube *> Cube::getNeighborsAtAxis(Axis axis)
 {
     std::vector<Face> faces = getFacesAtAxis(axis);
 
-    this->status = Status::Checked;
-
     std::vector<Cube *> cubes;
-    cubes.push_back(this);
+    std::queue<Cube *> queue;
+    queue.push(this);
 
-    for (auto face : faces)
+    while (!queue.empty())
     {
-        Cube *cube = this->neighbors[face];
+        Cube *cube = queue.front();
+        queue.pop();
 
-        if (cube != nullptr && cube->getStatus() == Status::Unchecked)
+        cube->status = Status::Checked;
+
+        cubes.push_back(cube);
+
+        for (auto face : faces)
         {
-            std::vector<Cube *> otherCubes = cube->getNeighborsAtAxis(axis);
+            Cube *cubeN = cube->neighbors[face];
 
-            cubes.insert(cubes.end(), otherCubes.begin(), otherCubes.end());
+            if (cubeN != nullptr && cubeN->getStatus() == Status::Unchecked)
+            {
+                queue.push(cubeN);
+            }
         }
     }
-
     return cubes;
 }
 
