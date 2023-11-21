@@ -62,7 +62,7 @@ void HeightMap::createCubes(std::ifstream &file)
             y++;
         }
 
-        if (y >= this->length)
+        if (y > this->length)
         {
             break;
         }
