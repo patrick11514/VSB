@@ -58,6 +58,9 @@ int Cube::walkThroughNeighbors(Axis axis)
         Cube *cube = queue.front();
         queue.pop();
 
+        if (cube->status == Status::Checked)
+            continue;
+
         cube->status = Status::Checked;
 
         for (auto face : data.neighborsAtFaces)
@@ -87,9 +90,11 @@ std::vector<Cube *> Cube::getNeighborsAtAxis(Axis axis)
         Cube *cube = queue.front();
         queue.pop();
 
-        cube->status = Status::Checked;
+        if (cube->status == Status::Checked)
+            continue;
 
         cubes.push_back(cube);
+        cube->status = Status::Checked;
 
         for (auto face : faces)
         {
