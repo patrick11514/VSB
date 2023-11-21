@@ -68,7 +68,7 @@ ALTER TABLE users ADD CONSTRAINT users_pk PRIMARY KEY ( id );
             </thead>
             <tbody>
                 <tr>
-                    <td>id</td>
+                    <td>user_id</td>
                     <td>INTEGER</td>
                     <td></td>
                     <td>Primární</td>
@@ -155,7 +155,7 @@ ALTER TABLE tickets
             </thead>
             <tbody>
                 <tr>
-                    <td>id</td>
+                    <td>ticket_id</td>
                     <td>INTEGER</td>
                     <td></td>
                     <td>Primární</td>
@@ -191,16 +191,16 @@ ALTER TABLE tickets
                     <td>Datum vytvoření ticketu</td>
                 </tr>
                 <tr>
-                    <td>users_id</td>
+                    <td>Users_user_id</td>
                     <td>INTEGER</td>
                     <td></td>
                     <td>Cizí (Users)</td>
                     <td>Ne</td>
                     <td></td>
-                    <td>Uživatel, který vytvořil ticket</td>
+                    <td>Hráč, který vytvořil ticket</td>
                 </tr>
                 <tr>
-                    <td>types_id</td>
+                    <td>Types_type_id</td>
                     <td>INTEGER</td>
                     <td></td>
                     <td>Cizí (Types)</td>
@@ -209,13 +209,13 @@ ALTER TABLE tickets
                     <td>Typ ticketu</td>
                 </tr>
                 <tr>
-                    <td>users_id2</td>
+                    <td>Users_user_id2</td>
                     <td>INTEGER</td>
                     <td></td>
                     <td>Cizí (Users)</td>
                     <td>Ne</td>
                     <td></td>
-                    <td>Uživatel, který je přiřazen k ticketu</td>
+                    <td>Moderátor, který je přiřazen k ticketu</td>
                 </tr>
             </tbody>
         </table>
@@ -254,7 +254,7 @@ ALTER TABLE messages
             </thead>
             <tbody>
                 <tr>
-                    <td>id</td>
+                    <td>message_id</td>
                     <td>INTEGER</td>
                     <td></td>
                     <td>Primární</td>
@@ -281,7 +281,7 @@ ALTER TABLE messages
                     <td>Datum vytvoření zprávy</td>
                 </tr>
                 <tr>
-                    <td>tickets_id</td>
+                    <td>Tickets_ticket_id</td>
                     <td>INTEGER</td>
                     <td></td>
                     <td>Cizí (Tickets)</td>
@@ -290,13 +290,13 @@ ALTER TABLE messages
                     <td>Ticket, ke kterému je zpráva přiřazena</td>
                 </tr>
                 <tr>
-                    <td>users_id</td>
+                    <td>Users_user_id</td>
                     <td>INTEGER</td>
                     <td></td>
                     <td>Cizí (Users)</td>
                     <td>Ne</td>
                     <td></td>
-                    <td>Uživatel, který zprávu vytvořil</td>
+                    <td>Hráč, nebo moderátor, který zprávu napsal</td>
                 </tr>
             </tbody>
         </table>
@@ -334,7 +334,7 @@ ALTER TABLE comments
             </thead>
             <tbody>
                 <tr>
-                    <td>id</td>
+                    <td>comment_id</td>
                     <td>INTEGER</td>
                     <td></td>
                     <td>Primární</td>
@@ -352,7 +352,7 @@ ALTER TABLE comments
                     <td>Komentář</td>
                 </tr>
                 <tr>
-                    <td>tickets_id</td>
+                    <td>Tickets_ticket_id</td>
                     <td>INTEGER</td>
                     <td></td>
                     <td>Cizí (Tickets)</td>
@@ -361,80 +361,13 @@ ALTER TABLE comments
                     <td>Ticket, ke kterému je komentář přiřazen</td>
                 </tr>
                 <tr>
-                    <td>users_id</td>
+                    <td>Users_user_id</td>
                     <td>INTEGER</td>
                     <td></td>
                     <td>Cizí (Users)</td>
                     <td>Ne</td>
                     <td></td>
-                    <td>Uživatel, který komentář vytvořil</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <!--
-CREATE TABLE roles (
-    id          INTEGER NOT NULL,
-    name        VARCHAR2(255),
-    description VARCHAR2(512),
-    users_id    INTEGER NOT NULL
-);
-
-ALTER TABLE roles ADD CONSTRAINT roles_pk PRIMARY KEY ( id );
-
-ALTER TABLE roles
-    ADD CONSTRAINT roles_users_fk FOREIGN KEY ( users_id )
-        REFERENCES users ( id );
-        -->
-        <p>Tabulka <b>Roles</b></p>
-        <table>
-            <thead>
-                <tr>
-                    <th>Název atributu</th>
-                    <th>Dat. typ</th>
-                    <th>Délka</th>
-                    <th>Klíč</th>
-                    <th>Null</th>
-                    <th>IO</th>
-                    <th>Popis</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>id</td>
-                    <td>INTEGER</td>
-                    <td></td>
-                    <td>Primární</td>
-                    <td>Ne</td>
-                    <td></td>
-                    <td>Automatický inkrementovaný PK</td>
-                </tr>
-                <tr>
-                    <td>name</td>
-                    <td>VARCHAR</td>
-                    <td>255</td>
-                    <td></td>
-                    <td>Ne</td>
-                    <td></td>
-                    <td>Název role</td>
-                </tr>
-                <tr>
-                    <td>description</td>
-                    <td>VARCHAR</td>
-                    <td>512</td>
-                    <td></td>
-                    <td>Ne</td>
-                    <td></td>
-                    <td>Popis role</td>
-                </tr>
-                <tr>
-                    <td>users_id</td>
-                    <td>INTEGER</td>
-                    <td></td>
-                    <td>Cizí (Users)</td>
-                    <td>Ne</td>
-                    <td></td>
-                    <td>Uživatel, který má roli přiřazenou</td>
+                    <td>Moderátor, který komentář napsal</td>
                 </tr>
             </tbody>
         </table>
@@ -463,7 +396,7 @@ ALTER TABLE types ADD CONSTRAINT types_pk PRIMARY KEY ( id );
             </thead>
             <tbody>
                 <tr>
-                    <td>id</td>
+                    <td>type_id</td>
                     <td>INTEGER</td>
                     <td></td>
                     <td>Primární</td>
