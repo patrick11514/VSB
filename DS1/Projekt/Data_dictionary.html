@@ -4,9 +4,12 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>IDK proč to dělám v HTML XD</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;900&family=Poppins:wght@100;300;400;500;700&family=Roboto:wght@100;300;500;700&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;900&family=Poppins:wght@100;300;400;500;700&family=Roboto:wght@100;300;500;700&display=swap"
+            rel="stylesheet"
+        />
         <style>
             html {
                 font-family: 'Inter', sans-serif;
@@ -21,24 +24,30 @@
                 font-weight: 600;
             }
 
-            thead, tbody {
+            thead,
+            tbody {
                 border: black 2px solid;
             }
 
-
-            td, th {
+            td,
+            th {
                 padding: 6px;
             }
 
-            td:first-child, td:nth-child(6), th:first-child, th:nth-child(6) {
+            td:first-child,
+            td:nth-child(6),
+            th:first-child,
+            th:nth-child(6) {
                 border-right: black 2px solid;
             }
 
-            td:nth-child(2), td:nth-child(3), td:nth-child(4), td:nth-child(5), td:nth-child(6) {
+            td:nth-child(2),
+            td:nth-child(3),
+            td:nth-child(4),
+            td:nth-child(5),
+            td:nth-child(6) {
                 text-align: center;
             }
-
-
         </style>
     </head>
     <body>
@@ -105,11 +114,11 @@ ALTER TABLE users ADD CONSTRAINT users_pk PRIMARY KEY ( id );
                 </tr>
                 <tr>
                     <td>role</td>
-                    <td>INTEGER</td>
+                    <td>VARCHAR</td>
+                    <td>1</td>
                     <td></td>
-                    <td>Cizí (Roles)</td>
                     <td>Ne</td>
-                    <td></td>
+                    <td>1</td>
                     <td>Role uživatele</td>
                 </tr>
             </tbody>
@@ -352,6 +361,15 @@ ALTER TABLE comments
                     <td>Komentář</td>
                 </tr>
                 <tr>
+                    <td>commented_at</td>
+                    <td>DATE</td>
+                    <td></td>
+                    <td></td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Datum, kdy byl komentář napsán</td>
+                </tr>
+                <tr>
                     <td>Tickets_ticket_id</td>
                     <td>INTEGER</td>
                     <td></td>
@@ -381,7 +399,7 @@ CREATE TABLE types (
 
 ALTER TABLE types ADD CONSTRAINT types_pk PRIMARY KEY ( id );
         -->
-        <p>Tabulka <b>Types</b></p>
+        <p>Tabulka <b>Categories</b></p>
         <table>
             <thead>
                 <tr>
@@ -396,7 +414,7 @@ ALTER TABLE types ADD CONSTRAINT types_pk PRIMARY KEY ( id );
             </thead>
             <tbody>
                 <tr>
-                    <td>type_id</td>
+                    <td>category_id</td>
                     <td>INTEGER</td>
                     <td></td>
                     <td>Primární</td>
@@ -411,7 +429,7 @@ ALTER TABLE types ADD CONSTRAINT types_pk PRIMARY KEY ( id );
                     <td></td>
                     <td>Ne</td>
                     <td></td>
-                    <td>Název typu ticketu</td>
+                    <td>Název kategorie ticketu</td>
                 </tr>
                 <tr>
                     <td>description</td>
@@ -420,8 +438,92 @@ ALTER TABLE types ADD CONSTRAINT types_pk PRIMARY KEY ( id );
                     <td></td>
                     <td>Ne</td>
                     <td></td>
-                    <td>Popis typu ticketu</td>
+                    <td>Popis kategorie ticketu</td>
                 </tr>
             </tbody>
+        </table>
+
+        <!--
+            CREATE TABLE ticket_categories (
+    tickets_ticket_id      INTEGER NOT NULL,
+    updated_at             DATE NOT NULL,
+    users_user_id          INTEGER NOT NULL,
+    categories_category_id INTEGER NOT NULL
+);
+
+ALTER TABLE ticket_categories ADD CONSTRAINT ticket_categories_pk PRIMARY KEY ( tickets_ticket_id,
+                                                                                updated_at );
+
+--  ERROR: FK name length exceeds maximum allowed length(30) 
+ALTER TABLE ticket_categories
+    ADD CONSTRAINT ticket_categories_categories_fk FOREIGN KEY ( categories_category_id )
+        REFERENCES categories ( category_id );
+
+ALTER TABLE ticket_categories
+    ADD CONSTRAINT ticket_categories_tickets_fk FOREIGN KEY ( tickets_ticket_id )
+        REFERENCES tickets ( ticket_id );
+
+ALTER TABLE ticket_categories
+    ADD CONSTRAINT ticket_categories_users_fk FOREIGN KEY ( users_user_id )
+        REFERENCES users ( user_id );
+        -->
+
+        <p>Tabulka <b>Ticket_categories</b></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Název atributu</th>
+                    <th>Dat. typ</th>
+                    <th>Délka</th>
+                    <th>Klíč</th>
+                    <th>Null</th>
+                    <th>IO</th>
+                    <th>Popis</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Tickets_ticket_id</td>
+                    <td>INTEGER</td>
+                    <td></td>
+                    <td>Primární, Cizí (Tickets)</td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Ticket, ke kterému je kategorie přiřazena</td>
+                </tr>
+                <tr>
+                    <td>updated_at</td>
+                    <td>DATE</td>
+                    <td></td>
+                    <td>Primární</td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Datum, kdy byla kategorie přiřazena k ticketu</td>
+                </tr>
+                <tr>
+                    <td>Users_user_id</td>
+                    <td>INTEGER</td>
+                    <td></td>
+                    <td>Cizí (Users)</td>
+                    <td>Ano</td>
+                    <td></td>
+                    <td>Moderátor, který kategorii přiřadil k ticketu. (Null při vytvoření ticketu, kdy si kategorii vybírá Hráč)</td>
+                </tr>
+                <tr>
+                    <td>Categories_category_id</td>
+                    <td>INTEGER</td>
+                    <td></td>
+                    <td>Cizí (Categories)</td>
+                    <td>Ne</td>
+                    <td></td>
+                    <td>Kategorie, která je přiřazena k ticketu</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Integritní omezení:</h3>
+        <ol>
+            <li>Role musí mít hodnotu buď "H" pro hráče, nebo "M" pro moderátora.</li>
+        </ol>
     </body>
 </html>
