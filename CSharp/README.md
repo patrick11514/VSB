@@ -19,6 +19,10 @@
     ![C07](https://upload.patrick115.eu/screenshot/jan_CSharp7.png)
 * [**Stock**](https://github.com/patrick11514/VSB/tree/main/CSharp/C08)
     ![C08](https://upload.patrick115.eu/screenshot/jan_CSharp8.png)
+* [**Steams**](https://github.com/patrick11514/VSB/tree/main/CSharp/C09)
+    ![C09](https://upload.patrick115.eu/screenshot/jan_CSharp9.png)
+* [**Writers**](https://github.com/patrick11514/VSB/tree/main/CSharp/C10)
+    ![C10](https://upload.patrick115.eu/screenshot/jan_CSharp10.png)
 
 **Homeworks:**
 * [**Homework 1**](https://github.com/patrick11514/VSB/tree/main/CSharp/DU1)
