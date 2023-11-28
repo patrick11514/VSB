@@ -155,7 +155,6 @@ int HeightMap::getFacesAtAxis(Axis axis) const
     {
         for (auto cube : cubes)
         {
-
             if (cube->getStatus() == Status::Checked)
             {
                 continue;

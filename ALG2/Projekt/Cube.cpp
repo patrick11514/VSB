@@ -46,6 +46,7 @@ int Cube::walkThroughNeighbors(Axis axis)
 
     if (this->neighbors[data.checkIfFaceHasNeighbor] != nullptr)
     {
+        this->status = Status::Checked;
         return 0;
     }
 
@@ -69,7 +70,11 @@ int Cube::walkThroughNeighbors(Axis axis)
 
             if (cubeN != nullptr && cubeN->getStatus() == Status::Unchecked)
             {
-                queue.push(cubeN);
+                // if neighbor is blocked, don't go this ways
+                if (cubeN->neighbors[data.checkIfFaceHasNeighbor] == nullptr)
+                {
+                    queue.push(cubeN);
+                }
             }
         }
     }
