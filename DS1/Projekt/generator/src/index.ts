@@ -500,6 +500,8 @@ if (!fs.existsSync('tickets.sql') || !fs.existsSync('ticket_categories.sql') || 
             const minDate = new Date(ticketCategoryPairs[i].date)
 
             if (!lastMessageDate) {
+                createdAt.setMonth(minDate.getMonth())
+                createdAt.setFullYear(minDate.getFullYear())
                 createdAt.setDate(minDate.getDate() + 1)
                 createdAt.setHours(Math.floor(Math.random() * 24))
                 createdAt.setMinutes(Math.floor(Math.random() * 60))
@@ -507,6 +509,8 @@ if (!fs.existsSync('tickets.sql') || !fs.existsSync('ticket_categories.sql') || 
 
                 lastMessageDate = createdAt.toISOString()
             } else {
+                createdAt.setMonth(new Date(lastMessageDate).getMonth())
+                createdAt.setFullYear(new Date(lastMessageDate).getFullYear())
                 createdAt.setDate(new Date(lastMessageDate).getDate() + 1)
                 createdAt.setHours(Math.floor(Math.random() * 24))
                 createdAt.setMinutes(Math.floor(Math.random() * 60))
@@ -563,6 +567,8 @@ if (!fs.existsSync('tickets.sql') || !fs.existsSync('ticket_categories.sql') || 
                 const createdAt = new Date()
 
                 if (!lastCommentDate) {
+                    createdAt.setMonth(new Date(ticketCategoryPairs[i].date).getMonth())
+                    createdAt.setFullYear(new Date(ticketCategoryPairs[i].date).getFullYear())
                     createdAt.setDate(new Date(ticketCategoryPairs[i].date).getDate() + 1)
                     createdAt.setHours(Math.floor(Math.random() * 24))
                     createdAt.setMinutes(Math.floor(Math.random() * 60))
@@ -570,6 +576,8 @@ if (!fs.existsSync('tickets.sql') || !fs.existsSync('ticket_categories.sql') || 
 
                     lastCommentDate = createdAt.toISOString()
                 } else {
+                    createdAt.setMonth(new Date(lastCommentDate).getMonth())
+                    createdAt.setFullYear(new Date(lastCommentDate).getFullYear())
                     createdAt.setDate(new Date(lastCommentDate).getDate() + 1)
                     createdAt.setHours(Math.floor(Math.random() * 24))
                     createdAt.setMinutes(Math.floor(Math.random() * 60))
