@@ -1,0 +1,28 @@
+{
+    "name": "ds_generator",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "ts-node-dev --respawn ./src/index.ts",
+        "build": "mkdir -p build && tsc",
+        "start": "node ./build/index.js",
+        "clear": "rm -rf build",
+        "format": "prettier --write ."
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/bcrypt": "^5.0.2",
+        "@types/node": "^20.10.3",
+        "prettier": "^3.1.0",
+        "ts-node-dev": "^2.0.0",
+        "typescript": "^5.3.2"
+    },
+    "dependencies": {
+        "bcrypt": "^5.1.1",
+        "lorem-ipsum": "^2.0.8"
+    }
+}
