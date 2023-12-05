@@ -370,16 +370,16 @@ if (!fs.existsSync('tickets.sql') || !fs.existsSync('ticket_categories.sql') || 
             if (categoryIndex === categoriesMax - 1 && index === categories.length - 1) {
                 fs.appendFileSync(
                     'tickets.sql',
-                    `('${name.replaceAll("'", "''")}', ${status}, '${createdAt
-                        .toISOString()
-                        .replace('T', ' ')}', ${author}, ${moderator});\n`,
+                    `('${name.replaceAll("'", "''")}', ${status}, '${
+                        createdAt.toISOString().replace('T', ' ').split('.')[0]
+                    }', ${author}, ${moderator});\n`,
                 )
             } else {
                 fs.appendFileSync(
                     'tickets.sql',
-                    `('${name.replaceAll("'", "''")}', ${status}, '${createdAt
-                        .toISOString()
-                        .replace('T', ' ')}', ${author}, ${moderator}),\n`,
+                    `('${name.replaceAll("'", "''")}', ${status}, '${
+                        createdAt.toISOString().replace('T', ' ').split('.')[0]
+                    }', ${author}, ${moderator}),\n`,
                 )
             }
 
@@ -428,7 +428,7 @@ if (!fs.existsSync('tickets.sql') || !fs.existsSync('ticket_categories.sql') || 
 
                 fs.appendFileSync(
                     'ticket_categories.sql',
-                    `(${ticketId}, '${updatedAt.toISOString().replace('T', ' ')}', ${
+                    `(${ticketId}, '${updatedAt.toISOString().replace('T', ' ').split('.')[0]}', ${
                         i == 0 ? 'NULL' : moderator
                     }, ${randomCategoryId}),\n`,
                 )
@@ -459,12 +459,14 @@ if (!fs.existsSync('tickets.sql') || !fs.existsSync('ticket_categories.sql') || 
 
             fs.appendFileSync(
                 'ticket_categories.sql',
-                `(${ticketId}, '${updatedAt.toISOString().replace('T', ' ')}', ${moderator}, ${categoryId}),\n`,
+                `(${ticketId}, '${
+                    updatedAt.toISOString().replace('T', ' ').split('.')[0]
+                }', ${moderator}, ${categoryId}),\n`,
             )
         } else {
             fs.appendFileSync(
                 'ticket_categories.sql',
-                `(${ticketId}, '${categoryData.date.replace('T', ' ')}', NULL, ${categoryId}),\n`,
+                `(${ticketId}, '${categoryData.date.replace('T', ' ').split('.')[0]}', NULL, ${categoryId}),\n`,
             )
         }
 
@@ -484,12 +486,12 @@ if (!fs.existsSync('tickets.sql') || !fs.existsSync('ticket_categories.sql') || 
         for (let l = 0; l < messageCount; l++) {
             const text = new LoremIpsum({
                 sentencesPerParagraph: {
-                    max: 8,
-                    min: 4,
+                    max: 4,
+                    min: 2,
                 },
                 wordsPerSentence: {
-                    max: 20,
-                    min: 8,
+                    max: 10,
+                    min: 4,
                 },
             }).generateParagraphs(2)
 
@@ -513,18 +515,85 @@ if (!fs.existsSync('tickets.sql') || !fs.existsSync('ticket_categories.sql') || 
                 lastMessageDate = createdAt.toISOString()
             }
 
+            //random number from 1 to 10 if 1 - 5 author is moderator otherwise its user
+            const author =
+                Math.floor(Math.random() * 10) < 5 ? ticketCategoryPairs[i].moderator : ticketCategoryPairs[i].author
+
             fs.appendFileSync(
                 'messages.sql',
-                `('${text.replaceAll("'", "''")}', '${createdAt.toISOString().replace('T', ' ')}', ${i}, ${
-                    ticketCategoryPairs[i].author
-                }),\n`,
+                `('${text.replaceAll("'", "''")}', '${
+                    createdAt.toISOString().replace('T', ' ').split('.')[0]
+                }', ${i}, ${author}),\n`,
             )
+        }
+    }
+
+    /**
+ * table comments
+ *     comment_id         INTEGER IDENTITY PRIMARY KEY,
+    comment            VARCHAR(1024) NOT NULL,
+    commented_at       DATETIME NOT NULL,
+    ticket_id          INTEGER NOT NULL,
+    moderator          INTEGER NOT NULL
+ */
+
+    if (!fs.existsSync('comments.sql')) {
+        const maxModeratorId = 30
+        const maxTicketId = 100
+
+        fs.writeFileSync('comments.sql', `INSERT INTO comments (comment, commented_at, ticket_id, moderator) VALUES\n`)
+
+        for (let i = 1; i <= maxTicketId; i++) {
+            const commentCount = Math.floor(Math.random() * 5) + 1
+
+            let lastCommentDate: string | undefined
+
+            for (let l = 0; l < commentCount; l++) {
+                const text = new LoremIpsum({
+                    sentencesPerParagraph: {
+                        max: 4,
+                        min: 2,
+                    },
+                    wordsPerSentence: {
+                        max: 10,
+                        min: 4,
+                    },
+                }).generateParagraphs(2)
+
+                const createdAt = new Date()
+
+                if (!lastCommentDate) {
+                    createdAt.setDate(new Date(ticketCategoryPairs[i].date).getDate() + 1)
+                    createdAt.setHours(Math.floor(Math.random() * 24))
+                    createdAt.setMinutes(Math.floor(Math.random() * 60))
+                    createdAt.setSeconds(Math.floor(Math.random() * 60))
+
+                    lastCommentDate = createdAt.toISOString()
+                } else {
+                    createdAt.setDate(new Date(lastCommentDate).getDate() + 1)
+                    createdAt.setHours(Math.floor(Math.random() * 24))
+                    createdAt.setMinutes(Math.floor(Math.random() * 60))
+                    createdAt.setSeconds(Math.floor(Math.random() * 60))
+
+                    lastCommentDate = createdAt.toISOString()
+                }
+
+                //random number from 1 to 10 if 1 - 5 author is moderator otherwise its user
+                const moderator = Math.floor(Math.random() * maxModeratorId) + 1
+
+                fs.appendFileSync(
+                    'comments.sql',
+                    `('${text.replaceAll("'", "''")}', '${
+                        createdAt.toISOString().replace('T', ' ').split('.')[0]
+                    }', ${i}, ${moderator}),\n`,
+                )
+            }
         }
     }
 }
 
 //merge sqls
-const files = ['users.sql', 'tickets.sql', 'ticket_categories.sql', 'messages.sql']
+const files = ['users.sql', 'tickets.sql', 'categories.sql', 'ticket_categories.sql', 'messages.sql', 'comments.sql']
 
 if (!fs.existsSync('merged.sql')) {
     //read all files and before file enter -- =============== FILENAME ===============
