@@ -17,7 +17,7 @@ namespace DU4
                 return diff;
             }
 
-            return a.TieCount - b.TieCount;
+            return b.TieCount - a.TieCount;
            // return 0;
         }
     }
