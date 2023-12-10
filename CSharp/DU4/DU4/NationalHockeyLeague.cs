@@ -22,14 +22,10 @@ namespace DU4
 
         public void LoadData(string teamsCsvPath, string matchCsvPath)
         {
-            Console.WriteLine("TEAMS");
             //teams
             CsvReader reader = new(teamsCsvPath);
             reader.SetDataCallback((cols, _) =>
             {
-                Console.WriteLine(cols[0]);
-                Console.WriteLine(int.Parse(cols[0]));
-
                 this.Teams.Add(new Team()
                 {
                     Id = int.Parse(cols[0]),
@@ -39,21 +35,10 @@ namespace DU4
             });
             reader.Read();
 
-
-            Console.WriteLine("MATCHEST");
             //matches
             reader = new (matchCsvPath);
             reader.SetDataCallback((cols, _) =>
             {
-                Team team = this.Teams.Find((team) => team.Id == int.Parse(cols[2]));
-                if (team == null)
-                {
-                    Console.WriteLine($"TEAM SESSION: {cols[0]}");
-                    Console.WriteLine(cols[2]);
-                    Console.WriteLine(int.Parse(cols[2]));
-                    Console.WriteLine(this.Teams.Find((team) => team.Id == int.Parse(cols[2])));
-                }
-
                 this.Matches.Add(new Match()
                 {
                     Season = cols[0],
