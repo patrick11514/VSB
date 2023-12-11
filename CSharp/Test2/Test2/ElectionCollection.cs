@@ -18,7 +18,6 @@ namespace Test2
             using BinaryReader br = new(fs);
 
             int Candidates = br.ReadInt32();
-            Console.WriteLine(Candidates);
             for (int i = 0; i < Candidates; i++)
             {
                 string party = br.ReadString();
@@ -66,9 +65,9 @@ namespace Test2
                 return a.Key.CompareTo(b.Key);
             });
 
-            foreach (KeyValuePair<string, int> data in sorted)
+            foreach (KeyValuePair<string, int> pair in sorted)
             {
-                Console.WriteLine($"{data.Key}: {data.Value}");
+                Console.WriteLine($"{pair.Key}: {pair.Value}");
             }
         }
 
