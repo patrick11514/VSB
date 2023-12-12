@@ -20,17 +20,17 @@ let end
 lines.forEach((line) => {
     if (line.trim() == '') return
 
-    let [from, to, time] = line.trim().split(';')
+    let [_, __, time] = line.trim().split(';')
 
-    time = time * 1000
+    time = new Date(time)
 
     if (!start) {
-        start = new Date(time)
+        start = time
     }
 
-    if (time > start.getTime()) {
-        if (!end || time > end.getTime()) {
-            end = new Date(time)
+    if (time.getTime() > start.getTime()) {
+        if (!end || time.getTime() > end.getTime()) {
+            end = time
         }
     }
 })
@@ -60,7 +60,7 @@ segmentsArray.forEach((segment, index) => {
 
         const [from, to, time] = line.trim().split(';')
 
-        const currentTime = new Date(time * 1000)
+        const currentTime = new Date(time)
 
         if (currentTime.getTime() >= segment.start.getTime() && segment.end.getTime() <= currentTime.getTime()) {
             fileContent += `${from};${to}\n`

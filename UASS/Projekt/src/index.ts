@@ -6,10 +6,15 @@ const file = fs
     .split('\n')
     .map((l) => l.trim())
 
-fs.writeFileSync('network2/network.csv', `Source;Target;From;To\n`)
+fs.writeFileSync('network2/network.csv', `Source;Target;Time\n`)
 
 file.forEach((line) => {
     const [a, b, _, time] = line.split(',').map((s) => s.trim())
 
-    fs.appendFileSync('network2/network.csv', `${a};${b};${time};${time}\n`)
+    const dateTime = new Date(parseInt(time) * 1000)
+    const str = dateTime.toISOString().slice(0, -1)
+
+    fs.appendFileSync('network2/network.csv', `${a};${b};${str}\n`)
 })
+
+console.log('done')
