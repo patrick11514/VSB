@@ -43,8 +43,11 @@ Centrální vrcholy: 2907, 2908, 2949, 2951, 2955, 2959, 2963, 2997, 3010, 3013,
 V sítí se nachází velké možství hubů, jedním z hlavních hůbů je vrchol číslo 2818, který má největší stupeň a pravděpodobně se jednalo o nějaký rozcestník, který měl na svojí stránce hromadů odkazů na ostatní.
 ![Main Hub](network1/images/main_hub.png)
 
-Když se podíváme z větší dálky, tak se kolem hlavního hubu nachází další menší huby, které tvojí s ostatními vrcholy svoje vlastní komunity.
+Když se podíváme z větší dálky, tak se kolem hlavního hubu nachází další menší huby (hvězdy), které tvojí s ostatními vrcholy svoje vlastní komunity.
 ![Hubs](network1/images/hubs.svg)
 
 Máme zde i několik klik, například:
-//myšlenky - zjístit teda definici hubu, hvězdy (hvězda = hub???) a kliky (klika všechny se všema)
+![Star1](network1/images/star1.png)
+![Star2](network1/images/star2.png)
+![Star3](network1/images/star3.png)
+![Star4](network1/images/star4.png)
