@@ -62,29 +62,32 @@ fn run_server(port: u16) -> ChatResult<()> {
     println!("Server listening on port {port}");
 
     let server = std::net::TcpListener::bind(("127.0.0.1", port))?;
-    let (client, address) = server.accept()?;
-    println!("Client connected from {address}");
 
-    let mut reader = MessageReader::new(&client);
-    let mut writer = MessageWriter::new(&client);
+    loop {
+        let (client, address) = server.accept()?;
+        println!("Client connected from {address}");
 
-    writer.send(ServerToClientMsg::Hello("Welcome".to_string()))?;
+        let mut reader = MessageReader::new(&client);
+        let mut writer = MessageWriter::new(&client);
 
-    for msg in reader {
-        let msg = match msg {
-            Ok(msg) => msg,
-            Err(error) => {
-                println!("Bad client! Error: {error:?}");
-                continue;
-            }
-        };
-        match msg {
-            ClientToServerMsg::Ping => {
-                writer.send(ServerToClientMsg::Pong)?;
+        writer.send(ServerToClientMsg::Hello("Welcome".to_string()))?;
+
+        for msg in reader {
+            let msg = match msg {
+                Ok(msg) => msg,
+                Err(error) => {
+                    println!("Bad client! Error: {error:?}");
+                    continue;
+                }
+            };
+            match msg {
+                ClientToServerMsg::Ping => {
+                    writer.send(ServerToClientMsg::Pong)?;
+                }
             }
         }
-    }
 
-    println!("Client disconnected from {address}");
+        println!("Client disconnected from {address}");
+    }
     Ok(())
 }
