@@ -24,7 +24,7 @@ lines.forEach((line) => {
 
     time = new Date(time)
 
-    if (!start) {
+    if (!start || time.getTime() < start.getTime()) {
         start = time
     }
 
