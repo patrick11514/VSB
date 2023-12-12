@@ -62,7 +62,7 @@ segmentsArray.forEach((segment, index) => {
 
         const currentTime = new Date(time)
 
-        if (currentTime.getTime() >= segment.start.getTime() && segment.end.getTime() <= currentTime.getTime()) {
+        if (currentTime.getTime() >= segment.start.getTime() && segment.end.getTime() >= currentTime.getTime()) {
             fileContent += `${from};${to}\n`
         }
     })
