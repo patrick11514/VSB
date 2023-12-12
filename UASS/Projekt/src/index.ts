@@ -1,12 +1,14 @@
 import fs from 'node:fs'
 
 const file = fs
-    .readFileSync('edit-enwikibooks.csv', 'utf-8')
+    .readFileSync('soc-sign-bitcoinalpha.csv', 'utf-8')
     .split('\n')
     .map((l) => l.trim())
 
-file.forEach((line) => {
-    const [a, b, _, time] = line.split(';').map((s) => s.trim())
+fs.writeFileSync('network2/network.csv', `Source;Target;From;To\n`)
 
-    fs.appendFileSync('network2/network.csv', `${a};${b};${time}\n`)
+file.forEach((line) => {
+    const [a, b, time] = line.split(';').map((s) => s.trim())
+
+    fs.appendFileSync('network2/network.csv', `${a};${b};${time};${time}\n`)
 })

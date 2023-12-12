@@ -35,7 +35,7 @@ lines.forEach((line) => {
     }
 })
 
-const segments = 5
+const segments = 8
 const segmentLength = (end.getTime() - start.getTime()) / segments
 
 const segmentsArray = []
@@ -58,12 +58,11 @@ segmentsArray.forEach((segment, index) => {
     lines.forEach((line) => {
         if (line.trim() == '') return
 
-        const [from, to, s, e] = line.trim().split(';')
+        const [from, to, time] = line.trim().split(';')
 
-        const startTime = new Date(s * 1000)
-        const endTime = new Date(e * 1000)
+        const currentTime = new Date(time * 1000)
 
-        if (startTime.getTime() >= segment.start.getTime() || endTime.getTime() <= segment.end.getTime()) {
+        if (currentTime.getTime() >= segment.start.getTime() && segment.end.getTime() <= currentTime.getTime()) {
             fileContent += `${from};${to}\n`
         }
     })
