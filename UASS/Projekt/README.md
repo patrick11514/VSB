@@ -13,7 +13,6 @@ Síť obsahuje 3031 vrcholů, které reprezentují webové stránky. Hrany mezi 
 ## 1.2. Základní statistiky
 
 Obrázek sítě:
-
 ![Network Image](network1/images/network.svg)
 
 Statisticky v tabulce:
@@ -61,6 +60,9 @@ Síť obsahuje 3783 vrcholů, které reprezentují uživatele, kteří obchoduj�
 
 ## 2.2. Data kompletí sítě:
 
+Obrázek sítě:
+![Network Image](network1/images/network.svg)
+
 | Název vlastnosti  | Hodnota |
 | ----------------- | ------- |
 | **Počet vrcholů** | 3783    |
@@ -87,7 +89,6 @@ Síť jsem se rozdl rozděli na 8 částí v intervalech:
 ### 2.4.1. network-0.csv (08.11.2010 04:00:00 - 03.07.2011 19:00:00)
 
 Obrázek sítě:
-
 ![Network Image](network2/images/splited-1.png)
 
 | Název vlastnosti                   | Hodnota             |
@@ -103,7 +104,6 @@ Obrázek sítě:
 ### 2.4.2. network-1.csv (03.07.2011 19:00:00 - 26.02.2012 10:00:00)
 
 Obrázek sítě:
-
 ![Network Image](network2/images/splited-2.png)
 
 | Název vlastnosti                   | Hodnota             |
@@ -119,7 +119,6 @@ Obrázek sítě:
 ### 2.4.3. network-2.csv (26.02.2012 10:00:00 - 21.10.2012 01:00:00)
 
 Obrázek sítě:
-
 ![Network Image](network2/images/splited-3.png)
 
 | Název vlastnosti                   | Hodnota              |
@@ -135,7 +134,6 @@ Obrázek sítě:
 ### 2.4.4. network-3.csv (21.10.2012 01:00:00 - 15.06.2013 16:00:00)
 
 Obrazek sítě:
-
 ![Network Image](network2/images/splited-4.png)
 
 | Název vlastnosti                   | Hodnota              |
@@ -151,7 +149,6 @@ Obrazek sítě:
 ### 2.4.5. network-4.csv (15.06.2013 16:00:00 - 08.02.2014 07:00:00)
 
 Obrázek sítě:
-
 ![Network Image](network2/images/splited-5.png)
 
 | Název vlastnosti                   | Hodnota              |
@@ -167,7 +164,6 @@ Obrázek sítě:
 ### 2.4.6. network-5.csv (08.02.2014 07:00:00 - 03.10.2014 22:00:00)
 
 Obrázek sítě:
-
 ![Network Image](network2/images/splited-6.png)
 
 | Název vlastnosti                   | Hodnota              |
@@ -183,7 +179,6 @@ Obrázek sítě:
 ### 2.4.7. network-6.csv (03.10.2014 22:00:00 - 29.05.2015 13:00:00)
 
 Obrázek sítě:
-
 ![Network Image](network2/images/splited-7.png)
 
 | Název vlastnosti                   | Hodnota            |
@@ -199,7 +194,6 @@ Obrázek sítě:
 ### 2.4.8. network-7.csv (29.05.2015 13:00:00 - 22.01.2016 04:00:00)
 
 Obrázek sítě:
-
 ![Network Image](network2/images/splited-8.png)
 
 | Název vlastnosti                   | Hodnota            |
