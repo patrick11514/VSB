@@ -13,5 +13,11 @@ int main()
 
     std::cout << duration.count() << "ms" << std::endl;
 
+    std::uint32_t result = 0;
+
+    std::cout << strutils::parse_uint("4294967296", result) << std::endl;
+
+    std::cout << "Output: " << result << std::endl;
+
     return 0;
 }

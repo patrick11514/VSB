@@ -65,18 +65,38 @@ bool strutils::parse_uint(std::string input, std::uint32_t &result)
 {
     size_t len = input.length();
 
-    result = 0;
+    if (len == 0)
+    {
+        return false;
+    }
+
+    std::uint32_t tempResult = 0;
 
     for (size_t i = 0; i < len; ++i)
     {
-        int num = input[i];
+        int num = input[i] - '0';
         if (num > 9)
         {
             return false;
         }
 
-        result = result * 10 + num;
+        std::uint32_t newResult = tempResult * 10 + num;
+        std::uint32_t backResult = (newResult - num) / 10;
+
+        // check overflow
+        if (backResult != tempResult || newResult < tempResult)
+        {
+            return false;
+        }
+
+        tempResult = newResult;
     }
 
+    result = tempResult;
     return true;
+}
+
+bool strutils::validate_utf8(std::vector<std::uint8_t> input, size_t &result)
+{
+    return false;
 }
