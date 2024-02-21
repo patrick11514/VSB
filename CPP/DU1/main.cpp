@@ -19,5 +19,10 @@ int main()
 
     std::cout << "Output: " << result << std::endl;
 
+    size_t result2;
+
+    strutils::validate_utf8({0b10001001}, result2);
+    std::cout << result2 << std::endl;
+
     return 0;
 }
