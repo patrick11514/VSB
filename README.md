@@ -20,23 +20,23 @@ This repository contains laboratories and homeworks.
 [**OOP - Object Oriented Programming**](https://github.com/patrick11514/VSB/tree/main/OOP)
 
 ## 3. semester
-[**C#**](https://github.com/patrick11514/VSB/tree/main/CSharp)
+[**C# - CSharp**](https://github.com/patrick11514/VSB/tree/main/CSharp)
 
-[**ALG2**](https://github.com/patrick11514/VSB/tree/main/ALG2)
+[**ALG2 - Algorithms 2**](https://github.com/patrick11514/VSB/tree/main/ALG2)
 
 [**RUST**](https://github.com/patrick11514/VSB/tree/main/Rust)
 
-[**POS**](https://github.com/patrick11514/VSB/tree/main/POS)
+[**POS - Computer Networks**](https://github.com/patrick11514/VSB/tree/main/POS)
 
-[**DS1**](https://github.com/patrick11514/VSB/tree/main/DS1)
+[**DS1 - Database Systems 1**](https://github.com/patrick11514/VSB/tree/main/DS1)
 
-[**UASS**](https://github.com/patrick11514/VSB/tree/main/UASS)
+[**UASS - Introduction into social networks**](https://github.com/patrick11514/VSB/tree/main/UASS)
 
 ## 4. semester
-[**C#2**](https://github.com/patrick11514/VSB/tree/main/CSharp2)
+[**C#2 - CSharp 2**](https://github.com/patrick11514/VSB/tree/main/CSharp2)
 
-[**SKJ**](https://github.com/patrik11514/VSB/tree/main/SKJ)
+[**SKJ - Scripting Languages (Python)**](https://github.com/patrik11514/VSB/tree/main/SKJ)
 
-[**TAMZ**](https://github.com/patrick11514/VSB/tree/main/TAMZ)
+[**TAMZ - Creation of mobile APPS**](https://github.com/patrick11514/VSB/tree/main/TAMZ)
 
-[**URO**](https://github.com/patrick11514/VSB/tree/main/URO)
+[**URO - User Interfaces**](https://github.com/patrick11514/VSB/tree/main/URO)
