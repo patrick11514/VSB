@@ -31,3 +31,12 @@ This repository contains laboratories and homeworks.
 [**DS1**](https://github.com/patrick11514/VSB/tree/main/DS1)
 
 [**UASS**](https://github.com/patrick11514/VSB/tree/main/UASS)
+
+## 4. semester
+[**C#2**](https://github.com/patrick11514/VSB/tree/main/CSharp2)
+
+[**SKJ**](https://github.com/patrik11514/VSB/tree/main/SKJ)
+
+[**TAMZ**](https://github.com/patrick11514/VSB/tree/main/TAMZ)
+
+[**URO**](https://github.com/patrick11514/VSB/tree/main/URO)
