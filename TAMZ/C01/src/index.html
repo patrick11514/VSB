@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+    <head>
+        <title>TAMZ 1</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
+        <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
+    </head>
+    <body>
+        <!-- 
+        1. Seznam Komponent
+        https://ionicframework.com/docs/components
+
+        2. ion-app
+        https://ionicframework.com/docs/api/app
+
+        3. Struktura header-footer
+        https://ionicframework.com/docs/api/content#header--footer  
+
+        4. Vlastnosti
+        https://ionicframework.com/docs/api/toolbar#properties   
+
+        4.1 TODO Nastavte prvku ion-toolbar vlastnost "color" na hodnotu "primary"
+
+        5. TODO přidejte ion-content https://ionicframework.com/docs/api/content
+
+        6. TODO přidejte ion-input, prozkoumejte vlastnosti 
+        
+        6.1 TODO vypisujte do konzole ion-input hodnoty  https://ionicframework.com/docs/api/input#filtering-user-input
+
+        7. TODO přidejte tlačitko, prozkoumejte vlastnosti
+
+        8. TODO přidejte alert
+    -->
+
+        <ion-app>
+            <ion-header>
+                <ion-toolbar>
+                    <ion-title> Header </ion-title>
+                </ion-toolbar>
+            </ion-header>
+            <ion-content class="ion-padding">
+                <h1>Heading 1</h1>
+                <h2>Heading 2</h2>
+                <h3>Heading 3</h3>
+                <h4>Heading 4</h4>
+                <h5>Heading 5</h5>
+                <h6>Heading 6</h6>
+
+                <p>Here's a small text description for the content. Nothing more, nothing less.</p>
+
+                <ion-input type="text" />
+
+                <ion-button>Ahoj</ion-button>
+            </ion-content>
+            <ion-footer>
+                <ion-toolbar>
+                    <ion-title> Footer </ion-title>
+                </ion-toolbar>
+            </ion-footer>
+        </ion-app>
+
+        <script src="index.js"></script>
+    </body>
+</html>

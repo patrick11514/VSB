@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
+	<script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" rel="stylesheet"> 
+	<!-- Následuje vycentrovaný obsah stránky pro ukázku, normálně by byl v CSS  -->
+	<style>
+	  .example-content {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+		font-size: 200%;
+	  }
+	</style>
+</head>
+<body>
+
+<ion-tabs>
+  <ion-tab tab="page1"> <!-- Tab 1 -->
+    <ion-nav id="page1-nav"></ion-nav> <!-- Navigační element strany (tabu) 1 -->
+    <div id="first-page"> <!-- Obsah strany 1 -->
+	  <ion-header>		  <!-- Záhlaví - můžeme mít i zápatí -->
+		<ion-toolbar>	  <!-- Toolbar s případnými tlačítky a nadpisem -->
+		  <ion-title>Záhlaví - Strana 1</ion-title>
+		</ion-toolbar>
+	  </ion-header>
+	  <ion-content>		  <!-- Obsah strany 1 -->
+		<div class="example-content">Ukázka obsahu strany 1</div>
+	  </ion-content>
+	  <ion-footer>
+		<ion-toolbar>
+		  <ion-title>Zápatí</ion-title>
+		</ion-toolbar>
+	  </ion-footer>		  
+	</div>
+  </ion-tab>
+  <ion-tab tab="page2">
+    <ion-nav id="page2-nav"></ion-nav>
+    <div id="second-page">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Strana 2</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <div class="example-content">Obsah strany 2</div>
+      </ion-content>
+    </div>
+  </ion-tab> 
+  
+  <ion-tab-bar slot="bottom"> <!-- Tabbar na spodní straně obrazovky -->
+    <ion-tab-button tab="page1">
+      <ion-icon name="home"></ion-icon>
+      Domů
+    </ion-tab-button>
+    <ion-tab-button tab="page2">
+      <ion-icon name="caret-forward"></ion-icon>
+      Strana 2
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>
+	<script>
+	// Pokud dáme skript do hlavičky s odkomentovanou sekcí (sic!) addEventListener, nenastaví se správně výška obsahu
+	//document.addEventListener('init', function(event) {
+	  const homeNav = document.querySelector('#page1-nav');
+	  const homePage = document.querySelector('#first-page');
+	  homeNav.root = homePage;
+
+	  const secondNav = document.querySelector('#page2-nav');
+	  const secondPage = document.querySelector('#second-page');
+	  secondNav.root = secondPage;
+	//});
+	</script>
+
+</body>
+</html>

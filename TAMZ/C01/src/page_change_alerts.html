@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
+	<script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" rel="stylesheet"> 
+</head>
+<body>
+
+<ion-app> <!-- Aplikace s navigačním elementem -->
+  <ion-nav root="page-one"></ion-nav>
+</ion-app>
+
+<template id="page1_html"> <!-- Templating tímto způsobem vypůjčen z OnsenUI ukázek, pozor na potenciální problémy s ID -->
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>První strana</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <h1>Strana 1</h1>
+        <p>Navigace na stranu 2 skrze následující tlačítko:</p>
+        <ion-nav-link router-direction="forward" component="page-two"> <!-- Reference na page-two definovanou v JS -->
+          <ion-button>Na stranu 2</ion-button> <!-- Součástí je tlačítko -->
+        </ion-nav-link>
+        <ion-button onclick="alert('JS Alert')"><ion-icon slot="start" name="alert-circle"></ion-icon>JS alert tlačítko</ion-button>
+        <ion-button id="alert-example"><ion-icon slot="start" name="alert"></ion-icon>Ionic Alert</ion-button>
+        <!-- Tlačítko a výstraha jsou propojeny skrze id tlačítka -->
+      </ion-content>
+</template>
+
+<template id="page2_html">
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-back-button text="Zpět" icon="chevron-back"></ion-back-button>
+          </ion-buttons>
+          <ion-title>Druhá strana</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <h1>Strana 2</h1>
+        <p>Stiskněte tlačítko zpět pro návrat na 1. stranu</p>
+      </ion-content>
+</template>
+
+<ion-alert id="alert2"
+	trigger="alert-example"
+	header="Ionic Výstraha"
+	sub-header="(podnadpis nemusíme uvádět)"
+	message="Výstraha Frameworku Ionic"
+></ion-alert>
+<script>
+  //Do atributu nelze snadno vložit pole, proto je u Ionic potřeba následující: 
+  const alert = document.getElementById('alert2');
+  alert.buttons = ['OK'];
+</script>
+	
+<script>
+  // Nezbytný kód pro použití JS navigace a definice dynamických stránek
+  class PageOne extends HTMLElement {
+    connectedCallback() {
+      this.innerHTML = document.getElementById('page1_html').innerHTML;
+    }
+  }
+
+  class PageTwo extends HTMLElement {
+    connectedCallback() {
+      this.innerHTML = document.getElementById('page2_html').innerHTML;
+    }
+  }
+
+  customElements.define('page-one', PageOne);
+  customElements.define('page-two', PageTwo);
+
+</script>
+</body>
+</html>

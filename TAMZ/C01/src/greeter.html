@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
+	<script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" rel="stylesheet"> 
+<script>
+    function displayGreeting() {
+        var name = document.getElementById('name').value;
+        console.log("Name: \"" + name + "\"");
+        if (name === "" || name === undefined) {
+            window.alert('You did not fill in the name!')
+        } else {
+			const alrt = document.getElementById("greeter");
+			alrt.message = "Hello " + name + "!";
+			alrt.buttons = ['Dismiss'];
+			alrt.present();
+        }
+    }
+</script>
+</head>
+<body>
+
+<ion-header>
+	<ion-toolbar>
+	  <ion-title>Greeter Example</ion-title>
+	</ion-toolbar>
+  </ion-header>
+  <ion-content class="ion-padding">
+	<h1>Enter your name</h1>
+	<ion-input placeholder="e.g. John Doe" id="name"></ion-input><br>
+	<ion-button id="greet-alert" onclick="displayGreeting()">Greet me!</ion-button>
+</ion-content>
+
+<!-- Tlačítko a výstraha nejsou propojeny, o zobrazení se stará JS -->
+<ion-alert id="greeter"	header="Greetings"></ion-alert>
+</body>
+</html>
