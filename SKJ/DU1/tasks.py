@@ -93,22 +93,39 @@ def count_words(data: str):
     return dict
 
 
-def bonus_fizzbuzz(num):
+def bonus_fizzbuzz(num: int) -> str | int:
     """
     Implement the `fizzbuzz` function.
     `if`, match-case and cycles are not allowed.
+
+    Example:
+    fizzbuzz(3) # Fizz
+    fizzbuzz(5) # Buzz
+    fizzbuzz(15) # FizzBuzz
+    fizzbuzz(8) # 8
+
     """
-    pass
+    dict = {0: num, 1: "Fizz", 2: "Buzz", 3: "FizzBuzz"}
+
+    return dict[int(not bool(num % 3)) + (int(not bool(num % 5)) * 2)]
 
 
-def bonus_utf8(cp):
+def bonus_utf8(cp: int):
     """
     Encode `cp` (a Unicode code point) into 1-4 UTF-8 bytes - you should know this from `Základy číslicových systémů (ZDS)`.
     Example:
         bonus_utf8(0x01) == [0x01]
         bonus_utf8(0x1F601) == [0xF0, 0x9F, 0x98, 0x81]
     """
-    pass
+
+    # U+0000 - U+007F
+    if cp >> 7 == 0b0:
+        return cp
+    elif cp >> 5 == 0b110:
+        print("second")
+    print(bin(cp))
+    print(bin(cp >> 7))
+    print(bin(cp >> 5))
 
 
-print(count_words("hello is this the crusty crab no this is patrick"))
+print(bonus_utf8(0x01000000))
