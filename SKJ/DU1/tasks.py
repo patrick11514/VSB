@@ -121,16 +121,18 @@ def bonus_utf8(cp: int):
     # https://en.wikipedia.org/wiki/UTF-8#Encoding
 
     # U+0000 - U+007F
+    # handle first case
     if cp <= 0x7F:
         return [cp]
 
+    # handle other cases
     parts = 0
 
     def create_mask(ones: int):
         base = 1
         for _ in range(7):
             base <<= 1
-            # or shifted base with zero if ones > 0 or zero
+            # or shifted base with one if ones > 0 or zero
             base |= int(bool(ones))
             if ones > 0:
                 ones -= 1
@@ -138,36 +140,9 @@ def bonus_utf8(cp: int):
 
     if cp <= 0x7FF:
         parts = 1
-        # extract first part
-        first = cp >> 6
-        # add prefix 0b110
-        first = first | 0b11000000
-
-        # extract second part
-        second = cp & 0b111111
-        # add prefix 0b10
-        second = second | 0b10000000
-
-        # return [first, second]
     elif cp <= 0xFFFF:
         parts = 2
-        # extract first part
-        first = cp >> 12
-        # add prefix 0b110
-        first = first | 0b11100000
-
-        # extract second part
-        second = cp >> 6 & 0b111111
-        # add prefix 0b10
-        second = second | 0b10000000
-
-        # extract third part
-        third = cp & 0b111111
-        # add prefix 0b10
-        third = third | 0b10000000
-
-        # return [first, second, third]
-    elif cp <= 0x10FFFF:
+    else:
         parts = 3
 
     list = []
@@ -175,23 +150,19 @@ def bonus_utf8(cp: int):
     # extract first part
     first = cp >> (6 * parts)
     # add prefix to part with function, that creates mask
+    # and put it in the list
     list.append(first | create_mask(parts))
 
-    print(bin(first))
+    # extract other parts
+    for i in range(parts):
+        # counts bacwards => parts = 2
+        # first itteration 2, second 1, third, 0
+        shifter = parts - i - 1
 
-    return [0x0000]
+        # shift cp with parts * 6 to get specific part
+        # and then and with 0b111111 to remove other bits
+        shifted = (cp >> shifter * 6) & 0b111111
+        # now add prefix 0b10 to bits and put in the list
+        list.append(shifted | 0b10000000)
 
-
-print(bytes(bonus_utf8(0x24)).decode("utf-8"))
-print("====================")
-print(bytes(bonus_utf8(0xA3)).decode("utf-8"))
-print("====================")
-print(bytes(bonus_utf8(0x418)).decode("utf-8"))
-print("====================")
-print(bytes(bonus_utf8(0x939)).decode("utf-8"))
-print("====================")
-print(bytes(bonus_utf8(0x20AC)).decode("utf-8"))
-print("====================")
-print(bytes(bonus_utf8(0xD55C)).decode("utf-8"))
-print("====================")
-print(bytes(bonus_utf8(0x10348)).decode("utf-8"))
+    return list
