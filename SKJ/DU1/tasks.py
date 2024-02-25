@@ -118,14 +118,80 @@ def bonus_utf8(cp: int):
         bonus_utf8(0x1F601) == [0xF0, 0x9F, 0x98, 0x81]
     """
 
+    # https://en.wikipedia.org/wiki/UTF-8#Encoding
+
     # U+0000 - U+007F
-    if cp >> 7 == 0b0:
-        return cp
-    elif cp >> 5 == 0b110:
-        print("second")
-    print(bin(cp))
-    print(bin(cp >> 7))
-    print(bin(cp >> 5))
+    if cp <= 0x7F:
+        return [cp]
+
+    parts = 0
+
+    def create_mask(ones: int):
+        base = 1
+        for _ in range(7):
+            base <<= 1
+            # or shifted base with zero if ones > 0 or zero
+            base |= int(bool(ones))
+            if ones > 0:
+                ones -= 1
+        return base
+
+    if cp <= 0x7FF:
+        parts = 1
+        # extract first part
+        first = cp >> 6
+        # add prefix 0b110
+        first = first | 0b11000000
+
+        # extract second part
+        second = cp & 0b111111
+        # add prefix 0b10
+        second = second | 0b10000000
+
+        # return [first, second]
+    elif cp <= 0xFFFF:
+        parts = 2
+        # extract first part
+        first = cp >> 12
+        # add prefix 0b110
+        first = first | 0b11100000
+
+        # extract second part
+        second = cp >> 6 & 0b111111
+        # add prefix 0b10
+        second = second | 0b10000000
+
+        # extract third part
+        third = cp & 0b111111
+        # add prefix 0b10
+        third = third | 0b10000000
+
+        # return [first, second, third]
+    elif cp <= 0x10FFFF:
+        parts = 3
+
+    list = []
+
+    # extract first part
+    first = cp >> (6 * parts)
+    # add prefix to part with function, that creates mask
+    list.append(first | create_mask(parts))
+
+    print(bin(first))
+
+    return [0x0000]
 
 
-print(bonus_utf8(0x01000000))
+print(bytes(bonus_utf8(0x24)).decode("utf-8"))
+print("====================")
+print(bytes(bonus_utf8(0xA3)).decode("utf-8"))
+print("====================")
+print(bytes(bonus_utf8(0x418)).decode("utf-8"))
+print("====================")
+print(bytes(bonus_utf8(0x939)).decode("utf-8"))
+print("====================")
+print(bytes(bonus_utf8(0x20AC)).decode("utf-8"))
+print("====================")
+print(bytes(bonus_utf8(0xD55C)).decode("utf-8"))
+print("====================")
+print(bytes(bonus_utf8(0x10348)).decode("utf-8"))
