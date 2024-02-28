@@ -1,0 +1,1 @@
+../ROOT/deploy.sh
