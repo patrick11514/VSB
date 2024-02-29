@@ -93,8 +93,17 @@ class myApp:
         if len(data) > 0:
             self.calculate()
 
+    ee = False
+
     def easterEgg(self, _):
-        self.name.config(text="Never gonna give you up, never gonna let you down...")
+        if self.ee == False:
+            self.name.config(
+                text="Never gonna give you up, never gonna let you down..."
+            )
+            self.ee = True
+        else:
+            self.name.config(text="Patrik Mintěl (MIN0150)")
+            self.ee = False
 
     def calculate(self):
         try:
