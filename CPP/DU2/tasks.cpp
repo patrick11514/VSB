@@ -241,6 +241,11 @@ bool UTF8String::operator==(const UTF8String &right) const
     return true;
 }
 
+bool UTF8String::operator!=(const UTF8String &right) const
+{
+    return !(this->operator==(right));
+}
+
 UTF8String &UTF8String::operator=(const UTF8String &right)
 {
     // self assign handling

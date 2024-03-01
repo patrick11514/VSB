@@ -110,6 +110,7 @@ public:
      * @return true if bytes of UTF8Strings are same otherwise false
      */
     bool operator==(const UTF8String &right) const;
+    bool operator!=(const UTF8String &right) const; ///< != operator, negation of == operator
     /**
      * @brief Operator to get specific byte from UTF8String
      * @param index Index of byte
