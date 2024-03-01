@@ -40,7 +40,7 @@ private:
      * @param input Vector of code points
      * @return Vector of bytes
      */
-    std::vector<uint16_t> _decodeCodePoints(std::vector<CodePoint> cp) const;
+    std::vector<uint16_t> _decodeCodePoints(std::vector<CodePoint> cps) const;
     /**
      * @brief Encode internal data to vector of code points
      *

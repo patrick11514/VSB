@@ -55,11 +55,11 @@ std::vector<uint16_t> UTF8String::_decodeCodePoint(CodePoint cp) const
     return output;
 }
 
-std::vector<uint16_t> UTF8String::_decodeCodePoints(std::vector<CodePoint> input) const
+std::vector<uint16_t> UTF8String::_decodeCodePoints(std::vector<CodePoint> cps) const
 {
     std::vector<uint16_t> output;
 
-    for (auto cp : input)
+    for (auto cp : cps)
     {
         std::vector<uint16_t> temp = this->_decodeCodePoint(cp);
         output.insert(output.end(), temp.begin(), temp.end());
