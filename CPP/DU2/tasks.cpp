@@ -16,13 +16,13 @@ int UTF8String::_getClosestPowerOfTwo(int x) const
     return base;
 }
 
-std::vector<uint16_t> UTF8String::_decodeCodePoint(CodePoint cp) const
+std::vector<uint8_t> UTF8String::_encodeCodePoint(CodePoint cp) const
 {
-    std::vector<uint16_t> output;
+    std::vector<uint8_t> output;
 
     if (cp <= 0x7F)
     {
-        output.push_back(static_cast<uint16_t>(cp));
+        output.push_back(static_cast<uint8_t>(cp));
     }
     else
     {
@@ -42,12 +42,12 @@ std::vector<uint16_t> UTF8String::_decodeCodePoint(CodePoint cp) const
             parts = 3;
         }
 
-        uint16_t first = cp >> (6 * parts);
+        uint8_t first = cp >> (6 * parts);
         output.push_back(first | this->_createMask(parts));
 
         for (int i = parts - 1; i >= 0; --i)
         {
-            uint16_t shifted = (cp >> i * 6) & 0b111111;
+            uint8_t shifted = (cp >> i * 6) & 0b111111;
             output.push_back(shifted | 0b10000000);
         }
     }
@@ -55,20 +55,20 @@ std::vector<uint16_t> UTF8String::_decodeCodePoint(CodePoint cp) const
     return output;
 }
 
-std::vector<uint16_t> UTF8String::_decodeCodePoints(std::vector<CodePoint> cps) const
+std::vector<uint8_t> UTF8String::_encodeCodePoints(std::vector<CodePoint> cps) const
 {
-    std::vector<uint16_t> output;
+    std::vector<uint8_t> output;
 
     for (auto cp : cps)
     {
-        std::vector<uint16_t> temp = this->_decodeCodePoint(cp);
+        std::vector<uint8_t> temp = this->_encodeCodePoint(cp);
         output.insert(output.end(), temp.begin(), temp.end());
     }
 
     return output;
 }
 
-std::vector<CodePoint> UTF8String::_encodeCodePoints() const
+std::vector<CodePoint> UTF8String::_decodeCodePoints() const
 {
     std::vector<CodePoint> output;
 
@@ -146,46 +146,40 @@ void UTF8String::_resizeBuffer(int minSize = 0)
 
     do
     {
-        this->capacity = this->capacity > 0 ? this->capacity * 2 : 1;
+        this->capacity = std::max(this->capacity * 2, 1);
     } while (this->capacity < minSize + prev);
 
-    uint16_t *oldData = this->data;
-    this->data = new uint16_t[this->capacity];
-    memcpy(this->data, oldData, this->size * 2);
+    uint8_t *oldData = this->data;
+    this->data = new uint8_t[this->capacity];
+    std::copy(oldData, oldData + this->size, this->data);
     delete[] oldData;
 }
 
-UTF8String::UTF8String(std::string str)
+UTF8String::UTF8String(const std::string &str)
 {
     this->size = str.size();
     this->capacity = this->_getClosestPowerOfTwo(this->size);
-    this->data = new uint16_t[this->capacity];
+    this->data = new uint8_t[this->capacity];
 
-    for (int i = 0; i < this->size; ++i)
-    {
-        this->data[i] = static_cast<uint16_t>(str[i]);
-    }
+    std::copy(str.begin(), str.end(), this->data);
 }
 
-UTF8String::UTF8String(std::vector<CodePoint> cps)
+UTF8String::UTF8String(const std::vector<CodePoint> &cps)
 {
-    std::vector<uint16_t> bytes = this->_decodeCodePoints(cps);
+    std::vector<uint8_t> bytes = this->_encodeCodePoints(cps);
     this->size = bytes.size();
     this->capacity = this->_getClosestPowerOfTwo(bytes.size());
-    this->data = new uint16_t[this->capacity];
+    this->data = new uint8_t[this->capacity];
 
-    for (size_t i = 0; i < bytes.size(); ++i)
-    {
-        this->data[i] = bytes[i];
-    }
+    std::copy(bytes.begin(), bytes.end(), this->data);
 }
 
 UTF8String::UTF8String(const UTF8String &instance)
 {
     this->size = instance.size;
     this->capacity = instance.capacity;
-    this->data = new uint16_t[this->capacity];
-    memcpy(this->data, instance.data, this->size * 2);
+    this->data = new uint8_t[this->capacity];
+    std::copy(instance.data, instance.data + this->size, this->data);
 }
 
 UTF8String::~UTF8String()
@@ -209,36 +203,20 @@ void UTF8String::append(char c)
 
 void UTF8String::append(CodePoint cp)
 {
-    std::vector<uint16_t> bytes = this->_decodeCodePoint(cp);
+    std::vector<uint8_t> bytes = this->_encodeCodePoint(cp);
 
     if (this->size + static_cast<int>(bytes.size()) > this->capacity)
     {
         this->_resizeBuffer(bytes.size());
     }
 
-    for (size_t i = 0; i < bytes.size(); ++i)
-    {
-        this->data[this->size] = bytes[i];
-        this->size++;
-    }
+    std::copy(bytes.begin(), bytes.end(), this->data + this->size);
+    this->size += bytes.size();
 }
 
 bool UTF8String::operator==(const UTF8String &right) const
 {
-    if (this->size != right.size)
-    {
-        return false;
-    }
-
-    for (int i = 0; i < this->size; ++i)
-    {
-        if (this->data[i] != right.data[i])
-        {
-            return false;
-        }
-    }
-
-    return true;
+    return std::equal(this->data, this->data + this->size, right.data, right.data + right.size);
 }
 
 bool UTF8String::operator!=(const UTF8String &right) const
@@ -260,13 +238,13 @@ UTF8String &UTF8String::operator=(const UTF8String &right)
     }
     this->size = right.size;
     this->capacity = right.capacity;
-    this->data = new uint16_t[this->capacity];
-    memcpy(this->data, right.data, this->size * 2);
+    this->data = new uint8_t[this->capacity];
+    std::copy(right.data, right.data + this->size, this->data);
 
     return *this;
 }
 
-std::optional<uint16_t> UTF8String::operator[](const int &index) const
+std::optional<uint8_t> UTF8String::operator[](const int &index) const
 {
     if (index >= this->size || index < 0)
     {
@@ -288,6 +266,7 @@ UTF8String UTF8String::operator+(const UTF8String &right) const
 
 UTF8String::operator std::string() const
 {
+    // prý jde něco takovýho, ale idk XD std::string str(this->data, this->size);
     std::string str;
     str.reserve(this->size);
 
@@ -306,7 +285,7 @@ UTF8String &UTF8String::operator+=(const UTF8String &right)
         this->_resizeBuffer(this->size + right.size);
     }
 
-    memcpy(this->data + this->size, right.data, right.size * 2);
+    std::copy(right.data, right.data + right.size, this->data + this->size);
     this->size += right.size;
     return *this;
 }
@@ -318,7 +297,7 @@ int UTF8String::get_byte_count() const
 
 int UTF8String::get_point_count() const
 {
-    std::vector<CodePoint> cps = this->_encodeCodePoints();
+    std::vector<CodePoint> cps = this->_decodeCodePoints();
 
     return cps.size();
 }
@@ -330,7 +309,7 @@ std::optional<CodePoint> UTF8String::nth_code_point(const int &index) const
         return std::nullopt;
     }
 
-    std::vector<CodePoint> cps = this->_encodeCodePoints();
+    std::vector<CodePoint> cps = this->_decodeCodePoints();
 
     if (index >= static_cast<int>(cps.size()))
     {

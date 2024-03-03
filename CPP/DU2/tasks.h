@@ -16,9 +16,9 @@ using CodePoint = uint32_t;
 class UTF8String
 {
 private:
-    int size = 0;             ///< Size of bytes in data
-    int capacity = 0;         ///< Capacity of data
-    uint16_t *data = nullptr; ///< Stored bytes
+    int size = 0;            ///< Size of bytes in data
+    int capacity = 0;        ///< Capacity of data
+    uint8_t *data = nullptr; ///< Stored bytes
 
     /**
      * @brief Get closes power of two
@@ -33,20 +33,20 @@ private:
      * @param cp Code point
      * @return Vector of bytes
      */
-    std::vector<uint16_t> _decodeCodePoint(CodePoint cp) const;
+    std::vector<uint8_t> _encodeCodePoint(CodePoint cp) const;
     /**
      * @brief Decode vector of code points to vector of bytes
      *
      * @param input Vector of code points
      * @return Vector of bytes
      */
-    std::vector<uint16_t> _decodeCodePoints(std::vector<CodePoint> cps) const;
+    std::vector<uint8_t> _encodeCodePoints(std::vector<CodePoint> cps) const;
     /**
      * @brief Encode internal data to vector of code points
      *
      * @return Vector of code points
      */
-    std::vector<CodePoint> _encodeCodePoints() const;
+    std::vector<CodePoint> _decodeCodePoints() const;
 
     /**
      * @brief Create mask for shifting first part of code point
@@ -67,12 +67,12 @@ public:
      * @brief Construtor from string
      * @param str String from which will be UTF8String constructed
      */
-    UTF8String(std::string str);
+    UTF8String(const std::string &str);
     /**
      * @brief Construct from vector of CodePoints
      * @param cps Vector of CodePoints
      */
-    UTF8String(std::vector<CodePoint> cps);
+    UTF8String(const std::vector<CodePoint> &cps);
     UTF8String(const UTF8String &instance); ///< Copy constructor
     ~UTF8String();                          ///< Destructor
 
@@ -116,7 +116,7 @@ public:
      * @param index Index of byte
      * @return byte if index is in range, otherwite std::nullopt
      */
-    std::optional<uint16_t> operator[](const int &index) const;
+    std::optional<uint8_t> operator[](const int &index) const;
     UTF8String operator+(const UTF8String &right) const; ///< + operator to concatenate UTF8Strings
     operator std::string() const;                        ///< Cast UTF8String to std::string
 
