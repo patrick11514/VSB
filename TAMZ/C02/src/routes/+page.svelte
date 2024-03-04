@@ -7,6 +7,7 @@
     let date: string;
     let birthday: string | undefined = undefined;
     let had: 0 | 1 | 2 = 0;
+    let difference = 0;
 
     const calculateBirthday = (inputDate: string) => {
         const date = new Date(inputDate);
@@ -19,6 +20,7 @@
         } else if (now.getTime() < date.getTime()) {
             birthday = date.toLocaleDateString();
             had = 0;
+            difference = (date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
         } else {
             date.setFullYear(now.getFullYear() + 1);
             birthday = date.toLocaleDateString();
@@ -47,7 +49,7 @@
     {#if had === 2}
         <h1>Tento rok jsi již měl narozeniny :(, další máš: {birthday}</h1>
     {:else if had === 0}
-        <h1>Narozeniny jsi ještě neměl, budeš je mít: {birthday}</h1>
+        <h1>Narozeniny jsi ještě neměl, budeš je mít: {birthday} což je za {Math.round(difference)} dní</h1>
     {:else}
         <h1>Všechno nejlepší {name}!! 🎂</h1>
     {/if}
