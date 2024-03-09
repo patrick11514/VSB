@@ -151,7 +151,7 @@ void UTF8String::_resizeBuffer(int minSize = 0)
 
     uint8_t *oldData = this->data;
     this->data = new uint8_t[this->capacity];
-    std::copy(oldData, oldData + this->size, this->data);
+    std::copy(oldData, oldData + this->size - 1, this->data);
     delete[] oldData;
 }
 
@@ -179,7 +179,7 @@ UTF8String::UTF8String(const UTF8String &instance)
     this->size = instance.size;
     this->capacity = instance.capacity;
     this->data = new uint8_t[this->capacity];
-    std::copy(instance.data, instance.data + this->size, this->data);
+    std::copy(instance.data, instance.data + this->size - 1, this->data);
 }
 
 UTF8String::~UTF8String()
@@ -238,8 +238,9 @@ UTF8String &UTF8String::operator=(const UTF8String &right)
     }
     this->size = right.size;
     this->capacity = right.capacity;
+    std::cout << this->capacity;
     this->data = new uint8_t[this->capacity];
-    std::copy(right.data, right.data + this->size, this->data);
+    std::copy(right.data, right.data + this->size - 1, this->data);
 
     return *this;
 }
@@ -285,7 +286,7 @@ UTF8String &UTF8String::operator+=(const UTF8String &right)
         this->_resizeBuffer(this->size + right.size);
     }
 
-    std::copy(right.data, right.data + right.size, this->data + this->size);
+    std::copy(right.data, right.data + right.size - 1, this->data + this->size);
     this->size += right.size;
     return *this;
 }
