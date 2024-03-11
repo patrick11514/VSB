@@ -25,3 +25,13 @@ export const SwalAlert = async (data: SweetAlertOptions) => {
         ...data
     });
 };
+
+
+export const formatDate = (date: Date) => {
+    return date.toLocaleDateString('cs', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'numeric',
+        year: 'numeric'
+    })
+}

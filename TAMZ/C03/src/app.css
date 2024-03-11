@@ -111,3 +111,8 @@ h1 {
 .between {
     justify-content: space-around;
 }
+
+.swal2-center {
+    position: relative;
+    height: 100vh;
+}
