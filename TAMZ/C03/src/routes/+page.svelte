@@ -56,7 +56,7 @@
         }
 
         if (selectedEntry === undefined || selectedEntry.length == 0) {
-            const items = localStorage.getItem("items")
+            let items = localStorage.getItem("items")
 
             try {
                 let id: number
@@ -91,11 +91,24 @@
                     title: "Nepovedlo se uložit data :(",
                 })
             }
+
+            items = localStorage.getItem("items")
+
+            if (items) {
+                loadData(true)
+                silenced = true
+                selectedEntry = items
+            }
         } else {
             try {
                 localStorage.setItem(
                     "item" + selectedEntry.toString(),
-                    JSON.stringify(obj.data)
+                    JSON.stringify({ ...obj.data, tachometer: undefined })
+                )
+
+                sessionStorage.setItem(
+                    "item" + selectedEntry.toString(),
+                    obj.data.tachometer.toString()
                 )
 
                 SwalAlert({
@@ -108,14 +121,6 @@
                     title: "Nepovedlo se uložit data :(",
                 })
             }
-        }
-
-        const items = localStorage.getItem("items")
-
-        if (items) {
-            loadData(true)
-            silenced = true
-            selectedEntry = items
         }
     }
 
