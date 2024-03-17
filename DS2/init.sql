@@ -182,3 +182,10 @@ insert into StudentCourse (student_login, course_code, year) values ('rin766', '
 insert into StudentCourse (student_login, course_code, year) values ('rin766', '470-alg-220', 2021);
 insert into StudentCourse (student_login, course_code, year) values ('rin766', '420-toe-166', 2021);
 insert into StudentCourse (student_login, course_code, year) values ('rin766', '420-man-111', 2021);
+
+
+update course set grade = 2 where code in ('460-ds1-011', '460-ds2-012', '460-pyt-001', '420-mic-061', '420-mac-022');
+update course set grade = 3 where code in ('460-cns-922', '460-img-101', '460-jav-226', '420-adv-061');
+
+update StudentCourse set points = dbms_random.value(0,100);
+commit;
