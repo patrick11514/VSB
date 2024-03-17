@@ -2,12 +2,12 @@
 
 Value *Value::operator[](const size_t) const
 {
-    throw std::exception();
+    throw UnIndexableException();
 }
 
 Value *Value::operator[](const std::string &) const
 {
-    throw std::exception();
+    throw UnIndexableException();
 }
 
 Value *Value::clone() const
