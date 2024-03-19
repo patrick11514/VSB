@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import font, messagebox, ttk
 
+from ttkthemes import ThemedTk
+
 
 class myApp:
     formData = [
@@ -32,7 +34,7 @@ class myApp:
 
     selectedId: int | None = None
 
-    def __init__(self, master: Tk):
+    def __init__(self, master: ThemedTk):
         self.master = master
         self.master.title("Formulář (MIN0150)")
 
@@ -176,12 +178,53 @@ class myApp:
         self.name.pack(side="left")
 
     def settings(self):
-        print("Nastavení")
+        win = Toplevel()
+        win.grab_set()
+        win.title("Nastavení")
+
+        frame = Frame(win)
+        label = Label(frame, text="Vyber si téma:")
+        label.pack(side="top")
+
+        def setTheme():
+            selected = comboBox.get()
+            if not selected:
+                return
+
+            themes = self.master.get_themes()
+
+            if not selected in themes:
+                messagebox.showerror(
+                    title="Neúspěch", message="Vyber prosím platné téma"
+                )
+                return
+
+            self.master.set_theme(selected)
+
+        button = Button(frame, text="Nastavit", command=setTheme)
+        button.pack(side="bottom")
+
+        comboBox = ttk.Combobox(frame, values=self.master.get_themes())
+        comboBox.pack(side="bottom")
+        frame.pack(side="top", expand=True)
 
     def callHelp(self):
-        print("Pomoc už je na cestě")
+        messagebox.showinfo(
+            title="Pomoc!!!",
+            message="Pomoc už je na cestě, vyčkej prosím v klidu a snad se někdo objeví, kdo ti s tvým problémem pomůže",
+        )
 
     def cancel(self):
+        if self.selectedId == None:
+            return
+
+        result = messagebox.askyesno(
+            title="Zrušení výběru",
+            message="Opravdu chceš zrušit vybraný daný kontakt? Pokud provedeš zrušení, upravená data, která nejsou uložena můžou být ztracena.",
+        )
+
+        if not result:
+            return
         # clear all inputs
         self.data.selection_remove(self.selectedId)
 
@@ -333,6 +376,6 @@ class myApp:
             )
 
 
-root = Tk()
+root = ThemedTk()
 app = myApp(root)
 root.mainloop()
