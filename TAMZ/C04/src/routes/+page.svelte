@@ -4,9 +4,11 @@
     import IonButton from "$/components/Ion/ionButton.svelte"
     import IonDateTime from "$/components/Ion/ionDateTime.svelte"
     import IonItemOption from "$/components/Ion/ionItemOption.svelte"
+    import IonItemOptions from "$/components/Ion/ionItemOptions.svelte"
     import IonModal from "$/components/Ion/ionModal.svelte"
     import { SwalAlert } from "$/lib"
     import { add } from "ionicons/icons"
+    import { onMount } from "svelte"
     import { z } from "zod"
 
     let date: undefined | string = undefined
@@ -19,18 +21,28 @@
     let itemSchema = z.object({
         date: z.string(),
         price: z.coerce.number().min(1),
-        type: z.string().min(1),
+        type: z
+            .literal("arctic")
+            .or(z.literal("normal"))
+            .or(z.literal("ba95"))
+            .or(z.literal("ba100")),
         gasStation: z.string().min(1),
         volume: z.coerce.number().min(1),
         tachometer: z.coerce.number().min(1),
     })
 
-    let items: z.infer<typeof itemSchema>[] = []
+    let elements: z.infer<typeof itemSchema>[] = []
 
     let modalOpen = false
     let updating = false
+    let updatingId: number | undefined = undefined
 
     const addRecord = () => {
+        if (updating) {
+            update()
+            return
+        }
+
         const item = itemSchema.safeParse({
             date,
             price,
@@ -45,6 +57,197 @@
                 icon: "error",
                 title: "Vyplň prosím všechny hodnoty",
             })
+            return
+        }
+
+        try {
+            const items = localStorage.getItem("items")
+
+            if (!items) {
+                localStorage.setItem("items", Number(1).toString())
+                localStorage.setItem("item0", JSON.stringify(item.data))
+            } else {
+                localStorage.setItem(
+                    "items",
+                    Number(Number(items) + 1).toString()
+                )
+                localStorage.setItem("item" + items, JSON.stringify(item.data))
+            }
+
+            SwalAlert({
+                icon: "success",
+                title: "Záznam byl úspěšně přidán",
+            })
+
+            modalOpen = false
+
+            //clear inputs
+            resetInputs()
+            loadItems()
+        } catch (_) {
+            SwalAlert({
+                icon: "error",
+                title: "Něco se pokazilo, zkuste to prosím znovu",
+            })
+        }
+    }
+
+    const resetInputs = () => {
+        date = undefined
+        price = 0
+        type = ""
+        gasStation = ""
+        volume = 0
+        tachometer = 0
+    }
+
+    onMount(() => {
+        loadItems()
+    })
+
+    let totalPrice = 0
+
+    const loadItems = () => {
+        const items = localStorage.getItem("items")
+
+        if (!items) return
+
+        const numberItems = Number(items)
+
+        elements = []
+
+        for (let i = 0; i < numberItems; i++) {
+            const item = localStorage.getItem("item" + i)
+
+            if (item) {
+                const parsedJson = itemSchema.safeParse(JSON.parse(item))
+
+                if (parsedJson.success) {
+                    elements = [...elements, parsedJson.data]
+                    totalPrice += parsedJson.data.price * parsedJson.data.volume
+                } else {
+                    console.log(item)
+                    console.log(parsedJson.error)
+                }
+            }
+        }
+    }
+
+    const deleteItem = async (item: number) => {
+        const result = await SwalAlert({
+            toast: false,
+            position: "center",
+            timer: 0,
+            title: "Opravdu chceš smazat tento záznam?",
+            showConfirmButton: true,
+            confirmButtonText: "Ano",
+            showCancelButton: true,
+            cancelButtonText: "Ne",
+        })
+
+        if (!result.isConfirmed) return
+
+        //delete
+        elements = elements.filter((_, i) => i !== item)
+
+        //clear storage
+        const items = localStorage.getItem("items")
+
+        if (!items) {
+            return
+        }
+
+        const numberItems = Number(items)
+
+        for (let i = 0; i < numberItems; i++) {
+            localStorage.removeItem("item" + i)
+        }
+
+        //add back
+
+        try {
+            localStorage.setItem("items", elements.length.toString())
+
+            for (let i = 0; i < elements.length; i++) {
+                localStorage.setItem(
+                    "item" + i.toString(),
+                    JSON.stringify(elements[i])
+                )
+            }
+
+            loadItems()
+        } catch (_) {
+            SwalAlert({
+                icon: "error",
+                title: "Nepovedlo se smazat záznam.",
+            })
+        }
+    }
+
+    const startEdit = (id: number) => {
+        updating = true
+
+        const data = elements[id]
+
+        //fill inputs
+        date = data.date
+        price = data.price
+        type = data.type
+        gasStation = data.gasStation
+        volume = data.volume
+        tachometer = data.tachometer
+
+        updatingId = id
+
+        modalOpen = true
+    }
+
+    const update = () => {
+        if (updatingId === undefined) return
+
+        const item = itemSchema.safeParse({
+            date,
+            price,
+            type,
+            gasStation,
+            volume,
+            tachometer,
+        })
+
+        if (!item.success) {
+            SwalAlert({
+                icon: "error",
+                title: "Vyplň prosím všechny hodnoty",
+            })
+            return
+        }
+
+        try {
+            localStorage.setItem(
+                "item" + updatingId.toString(),
+                JSON.stringify(item.data)
+            )
+
+            modalOpen = false
+            updatingId = undefined
+            resetInputs()
+
+            loadItems()
+        } catch (_) {
+            SwalAlert({
+                icon: "error",
+                title: "Nepovedlo se upravit záznam.",
+            })
+        }
+    }
+
+    const modalCancel = () => {
+        modalOpen = false
+
+        if (updating) {
+            resetInputs()
+            updating = false
+            updatingId = undefined
             return
         }
     }
@@ -69,23 +272,32 @@
     </ion-fab>
 
     <ion-list>
-        {#if items.length == 0}
+        {#if elements.length == 0}
             <h2>Žádný záznam nenalezen, přidej nějaký.</h2>
         {:else}
-            {#each items as item, id}
-                <ion-item-sliding>
+            {#each elements as item, id}
+                <ion-item-sliding id="{id}-{item.price}-{item.tachometer}}">
                     <ion-item>
                         <ion-label>
-                            Sliding Item with Expandable Options
+                            {item.volume}l
+                        </ion-label>
+                        <ion-label style="text-align:right;">
+                            {item.price}Kč/l
                         </ion-label>
                     </ion-item>
 
-                    <ion-item-options side="end">
-                        <IonItemOption>Favorite</IonItemOption>
-                        <IonItemOption color="danger" expandable>
-                            Delete
+                    <IonItemOptions onSwipe={() => deleteItem(id)} side="end">
+                        <IonItemOption on:click={() => startEdit(id)}>
+                            Upravit
                         </IonItemOption>
-                    </ion-item-options>
+                        <IonItemOption
+                            on:click={() => deleteItem(id)}
+                            color="danger"
+                            expandable
+                        >
+                            Smazat
+                        </IonItemOption>
+                    </IonItemOptions>
                 </ion-item-sliding>
             {/each}
         {/if}
@@ -97,9 +309,7 @@
         <ion-header>
             <ion-toolbar>
                 <ion-buttons slot="start">
-                    <IonButton on:click={() => (modalOpen = false)}>
-                        Cancel
-                    </IonButton>
+                    <IonButton on:click={modalCancel}>Cancel</IonButton>
                 </ion-buttons>
                 <ion-title>
                     {#if !updating}
