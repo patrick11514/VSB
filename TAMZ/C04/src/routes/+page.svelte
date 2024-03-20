@@ -7,7 +7,7 @@
     import IonItemOptions from "$/components/Ion/ionItemOptions.svelte"
     import IonModal from "$/components/Ion/ionModal.svelte"
     import { SwalAlert } from "$/lib"
-    import { add } from "ionicons/icons"
+    import { add, cashOutline, informationOutline } from "ionicons/icons"
     import { onMount } from "svelte"
     import { z } from "zod"
 
@@ -115,6 +115,7 @@
         const numberItems = Number(items)
 
         elements = []
+        totalPrice = 0
 
         for (let i = 0; i < numberItems; i++) {
             const item = localStorage.getItem("item" + i)
@@ -251,6 +252,26 @@
             return
         }
     }
+
+    const showInfo = () => {
+        SwalAlert({
+            toast: false,
+            position: "center",
+            timer: 0,
+            title: "O aplikaci",
+            text: "Vytvořil Patrik Mintěl (MIN0150)",
+        })
+    }
+
+    const showPrice = () => {
+        SwalAlert({
+            toast: false,
+            position: "center",
+            timer: 0,
+            title: "Celková cena",
+            text: `Celková cena ze všech záznamů je: ${totalPrice}Kč`,
+        })
+    }
 </script>
 
 <ion-menu content-id="main-content">
@@ -259,7 +280,30 @@
             <ion-title>Menu</ion-title>
         </ion-toolbar>
     </ion-header>
-    <ion-content class="ion-padding">This is the menu content.</ion-content>
+    <ion-content class="ion-padding">
+        <ion-item
+            on:click={() => showPrice()}
+            on:keypress={() => showPrice()}
+            tabindex="-1"
+            role="button"
+        >
+            <ion-icon aria-hidden="true" icon={cashOutline} slot="start" />
+            <ion-label>Celková cena</ion-label>
+        </ion-item>
+        <ion-item
+            on:click={() => showInfo()}
+            on:keypress={() => showInfo()}
+            tabindex="-1"
+            role="button"
+        >
+            <ion-icon
+                aria-hidden="true"
+                icon={informationOutline}
+                slot="start"
+            />
+            <ion-label> O aplikaci </ion-label>
+        </ion-item>
+    </ion-content>
 </ion-menu>
 <ion-content id="main-content" class="ion-padding">
     <ion-fab horizontal="end" vertical="bottom" slot="fixed">
