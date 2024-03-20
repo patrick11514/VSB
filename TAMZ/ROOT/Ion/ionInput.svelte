@@ -18,6 +18,8 @@
     export let placeholder = ""
     export let min: number | undefined = undefined
     export let max: number | undefined = undefined
+    export let label: string | undefined = undefined
+    export let labelPlacement: undefined | "stacked" = undefined
 
     let element: HTMLIonInputElement
 
@@ -26,4 +28,13 @@
     })
 </script>
 
-<ion-input {type} {placeholder} bind:this={element} {value} {min} {max} />
+<ion-input
+    {type}
+    {placeholder}
+    {label}
+    label-placement={labelPlacement}
+    bind:this={element}
+    {value}
+    {min}
+    {max}
+/>
