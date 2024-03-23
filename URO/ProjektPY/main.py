@@ -274,7 +274,7 @@ class myApp:
             frame, text="Vytvořil Patrik Mintěl (MIN0150)", font=("Ubuntu", 14)
         )
         text.pack(side="top", fill="both")
-        button = Button(frame, text="Ok", command=window.destroy)
+        button = Button(frame, text="Ok", command=window.destroy, font=("Ubuntu", 14))
         button.pack(side="top", expand=True)
         frame.pack(side="top", expand=True, fill="both", padx="40", pady="40")
 
