@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import filedialog, ttk
+from tkinter import filedialog, messagebox, ttk
 
 
 class myApp:
@@ -77,7 +77,20 @@ class myApp:
         "price": "Cena",
     }
 
+    columns = {
+        "id": {"name": "ID", "width": 10},
+        "name": {"name": "Jméno figurky", "width": 350},
+        "manufacturer": {"name": "Výrobce", "width": 180},
+        "weight": {"name": "Váha", "width": 50},
+        "size": {"name": "Velikost", "width": 80},
+        "price": {"name": "Cena", "width": 80},
+    }
+
+    previewId: int = None
+    imagesList: list[int] = []
     imagelist: list[PhotoImage] = []
+
+    selected: int | None = None
 
     def __init__(self, master: Tk):
         self.master = master
@@ -96,6 +109,12 @@ class myApp:
 
         # menu
         self.menu = Menu(self.master)
+
+        self.file = Menu(self.menu, tearoff=0)
+        self.file.add_command(label="Nový", command=self.add)
+        self.file.add_command(label="Smazat", command=self.remove)
+        self.file.add_command(label="Ukončit", command=self.master.destroy)
+        self.menu.add_cascade(label="Soubor", menu=self.file)
 
         self.other = Menu(self.menu, tearoff=0)
         self.other.add_command(label="O programu", command=self.about)
@@ -159,22 +178,15 @@ class myApp:
         self.search.pack(side="top", fill="x", padx="20", pady="20")
 
         self.list = Frame(self.master)
-        columns = {
-            "id": {"name": "ID", "width": 10},
-            "name": {"name": "Jméno figurky", "width": 350},
-            "manufacturer": {"name": "Výrobce", "width": 180},
-            "weight": {"name": "Váha", "width": 50},
-            "size": {"name": "Velikost", "width": 80},
-            "price": {"name": "Cena", "width": 80},
-        }
+
         self.listTree = ttk.Treeview(
             self.list,
-            columns=tuple(columns.keys()),
+            columns=tuple(self.columns.keys()),
             show="headings",
         )
         self.listTree.bind("<ButtonRelease-1>", self.selectItem)
 
-        for key, value in columns.items():
+        for key, value in self.columns.items():
             self.listTree.heading(key, text=value["name"])
             self.listTree.column(key, width=value["width"])
 
@@ -187,17 +199,7 @@ class myApp:
         self.list.pack(side="left", fill="both", expand=True, padx="20", pady="20")
 
         # fill example data
-        i = 1
-        for data in self.exampleData:
-            vals = []
-            for key in columns.keys():
-                if key == "id":
-                    vals.append(i)
-                    continue
-                vals.append(data[key])
-            self.listTree.insert("", END, values=tuple(vals), iid=i, text=i)
-
-            i += 1
+        self.fillData()
 
         self.view = Frame(self.master)
         self.topView = Frame(self.view)
@@ -254,6 +256,7 @@ class myApp:
             background="darkgray",
             font=("Ubuntu", 16),
             borderwidth=0,
+            command=self.remove,
         )
         self.removeItem.pack(side="left", anchor="s", padx="20", pady="20")
 
@@ -275,6 +278,29 @@ class myApp:
         button.pack(side="top", expand=True)
         frame.pack(side="top", expand=True, fill="both", padx="40", pady="40")
 
+    def unselectItem(self):
+        if self.selected == None:
+            return
+
+        self.selected = None
+
+        for element in self.infoElements.values():
+            element.destroy()
+
+        self.infoElements.clear()
+        self.infoLabel = Label(
+            self.info, text="Vyber produkt pro zobrazení informací", font=("Ubuntu", 14)
+        )
+        self.infoLabel.pack(side="top", fill="both", expand=True)
+
+        if self.previewId != None:
+            self.preview.delete(self.previewId)
+            self.previewId = None
+
+        for imgId in self.imagesList:
+            self.images.delete(imgId)
+        self.imagesList.clear()
+
     def selectItem(self, _):
         selectedItem = self.listTree.focus()
 
@@ -289,6 +315,7 @@ class myApp:
         self.infoLabel.destroy()
 
         selectedData = self.exampleData[int(selectedItem) - 1]
+        self.selected = int(selectedItem) - 1
 
         for col, name in self.infoColumns.items():
             label = Label(
@@ -303,9 +330,15 @@ class myApp:
             self.infoElements[col] = label
 
         self.image = PhotoImage(file=selectedData["images"]["main"])
-        self.preview.create_image(100, 100, image=self.image)
+        if self.previewId != None:
+            self.preview.delete(self.previewId)
+        self.previewId = self.preview.create_image(100, 100, image=self.image)
 
         self.imagelist.clear()
+
+        for imgId in self.imagesList:
+            self.images.delete(imgId)
+        self.imagesList.clear()
 
         moreImages = selectedData["images"]["other"]
         i = 0
@@ -313,8 +346,10 @@ class myApp:
         y = 0
         for path in moreImages:
             self.imagelist.append(PhotoImage(file=path))
-            self.images.create_image(
-                x * 200 + 100, y * 200 + 100, image=self.imagelist[i]
+            self.imagesList.append(
+                self.images.create_image(
+                    x * 200 + 100, y * 200 + 100, image=self.imagelist[i]
+                )
             )
             x += 1
             i += 1
@@ -394,6 +429,39 @@ class myApp:
             return
 
         print(file.name)
+
+    def remove(self):
+        if self.selected == None:
+            messagebox.showerror(title="Error", message="Nevybral jsi žádnou položku")
+            return
+
+        result = messagebox.askyesno(
+            title="Smazání položky", message="Opravdu chceš smazat tuto položku?"
+        )
+
+        if not result:
+            return
+
+        for i in range(len(self.exampleData)):
+            self.listTree.delete(i + 1)
+
+        self.exampleData.pop(self.selected)
+
+        self.fillData()
+        self.unselectItem()
+
+    def fillData(self):
+        i = 1
+        for data in self.exampleData:
+            vals = []
+            for key in self.columns.keys():
+                if key == "id":
+                    vals.append(i)
+                    continue
+                vals.append(data[key])
+            self.listTree.insert("", END, values=tuple(vals), iid=i, text=i)
+
+            i += 1
 
 
 root = Tk()
