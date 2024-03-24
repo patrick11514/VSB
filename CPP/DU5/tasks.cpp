@@ -85,7 +85,7 @@ std::vector<CodePoint> UTF8String::_decodeCodePoints() const
             parts = 3;
         }
 
-        // mode first bytes to left
+        // move first bytes to left
         CodePoint final = byte << (6 * parts);
 
         for (int l = parts - 1; l >= 0; --l)
@@ -135,10 +135,19 @@ UTF8String::UTF8String(const std::vector<CodePoint> &cps)
     this->data.assign(bytes.begin(), bytes.end());
 }
 
+UTF8String::UTF8String(const std::vector<uint8_t> &bytes) : data(bytes)
+{
+}
+
 UTF8String::UTF8String(const UTF8String &instance)
 {
     this->data.reserve(instance.data.size());
     this->data.assign(instance.data.begin(), instance.data.end());
+}
+
+UTF8String::UTF8String(UTF8String &&instance)
+{
+    this->data.swap(instance.data);
 }
 
 void UTF8String::append(char c)
@@ -230,7 +239,7 @@ size_t UTF8String::get_point_count() const
 
 std::optional<CodePoint> UTF8String::nth_code_point(const size_t &index) const
 {
-    // převzato ze staré implementace a nechtělo se mi řešit elegantnější řešení :/
+    // převzato ze staré implementace a nechtělo se mi řešit elegantnější řešení
     std::vector<CodePoint> cps = this->_decodeCodePoints();
 
     if (index >= cps.size())
@@ -239,4 +248,227 @@ std::optional<CodePoint> UTF8String::nth_code_point(const size_t &index) const
     }
 
     return cps[index];
+}
+
+BytesIterator UTF8String::bytes() const
+{
+    return BytesIterator(this->data.data(), this->data.size());
+}
+
+CodePointIterator UTF8String::codepoints() const
+{
+    return CodePointIterator(this->data.data(), this->data.size());
+}
+
+BytesIterator::BytesIterator(const uint8_t *bytes, size_t size) : data(bytes), size(size)
+{
+}
+
+BytesIterator BytesIterator::begin() const
+{
+    return BytesIterator(this->data, this->size);
+}
+
+BytesIterator BytesIterator::end() const
+{
+    return BytesIterator(this->data + this->size, this->size);
+}
+
+uint8_t BytesIterator::operator*() const
+{
+    return *this->data;
+}
+
+bool BytesIterator::operator==(const BytesIterator &other) const
+{
+    return this->data == other.data;
+}
+
+bool BytesIterator::operator!=(const BytesIterator &other) const
+{
+    return !this->operator==(other);
+}
+
+BytesIterator &BytesIterator::operator++()
+{
+    this->data++;
+    return *this;
+}
+
+BytesIterator BytesIterator::operator++(int)
+{
+    BytesIterator pre = *this;
+    this->data++;
+    return pre;
+}
+
+BytesIterator &BytesIterator::operator--()
+{
+    this->data--;
+    return *this;
+}
+
+BytesIterator BytesIterator::operator--(int)
+{
+    BytesIterator pre = *this;
+    this->data--;
+    return pre;
+}
+
+BytesIterator BytesIterator::operator+=(size_t value)
+{
+    this->data += value;
+    return *this;
+}
+
+BytesIterator BytesIterator::operator-=(size_t value)
+{
+    this->data -= value;
+    return *this;
+}
+
+BytesIterator BytesIterator::operator+(size_t value)
+{
+    this->data = this->data + value;
+    return *this;
+}
+
+BytesIterator BytesIterator::operator-(size_t value)
+{
+    this->data = this->data - value;
+    return *this;
+}
+
+CodePoint CodePointIterator::_getCodePoint() const
+{
+    uint8_t byte = *this->data;
+    int parts = 0;
+    // U+0000 - U+007F
+    if (byte >> 7 == 0b0)
+    {
+        // U+0000 - U+007F
+        return static_cast<CodePoint>(byte);
+    }
+    else if (byte >> 5 == 0b110)
+    {
+        // separate only bits, which we care
+        byte &= 0b11111;
+        parts = 1;
+    }
+    else if (byte >> 4 == 0b01110)
+    {
+        byte &= 0b1111;
+        parts = 2;
+    }
+    else
+    {
+        byte &= 0b111;
+        parts = 3;
+    }
+
+    // move first bytes to left
+    CodePoint final = byte << (6 * parts);
+
+    for (int l = parts - 1; l >= 0; --l)
+    {
+        int offset = parts - l;
+        final |= (this->data[offset] & 0b111111) << l * 6;
+    }
+
+    return final;
+}
+
+size_t CodePointIterator::_getCodePointEnd() const
+{
+    uint8_t byte = *this->data;
+    int parts = 0;
+    // U+0000 - U+007F
+    if (byte >> 7 == 0b0)
+    {
+        // U+0000 - U+007F
+        return 0;
+    }
+    else if (byte >> 5 == 0b110)
+    {
+        // separate only bits, which we care
+        byte &= 0b11111;
+        parts = 1;
+    }
+    else if (byte >> 4 == 0b01110)
+    {
+        byte &= 0b1111;
+        parts = 2;
+    }
+    else
+    {
+        byte &= 0b111;
+        parts = 3;
+    }
+    return parts;
+}
+
+CodePointIterator::CodePointIterator(const uint8_t *bytes, size_t size) : data(bytes), size(size)
+{
+}
+
+CodePointIterator CodePointIterator::begin() const
+{
+    return CodePointIterator(this->data, this->size);
+}
+
+CodePointIterator CodePointIterator::end() const
+{
+    return CodePointIterator(this->data + this->size, this->size);
+}
+
+CodePoint CodePointIterator::operator*() const
+{
+    return this->_getCodePoint();
+}
+
+bool CodePointIterator::operator==(const CodePointIterator &other) const
+{
+    return this->data == other.data;
+}
+
+bool CodePointIterator::operator!=(const CodePointIterator &other) const
+{
+    return !this->operator==(other);
+}
+
+CodePointIterator &CodePointIterator::operator++()
+{
+    size_t skipBytes = this->_getCodePointEnd();
+    // skip bytes + move by one
+    this->data += skipBytes + 1;
+    return *this;
+}
+
+CodePointIterator CodePointIterator::operator++(int)
+{
+    CodePointIterator pre = *this;
+    this->operator++();
+    return pre;
+}
+
+CodePointIterator &CodePointIterator::operator--()
+{
+    while (true)
+    {
+        this->data--;
+        // check if we found valid code point starting byte
+        if (*this->data >> 6 != 0b10)
+        {
+            break;
+        }
+    }
+
+    return *this;
+}
+
+CodePointIterator CodePointIterator::operator--(int)
+{
+    CodePointIterator pre = *this;
+    this->operator--();
+    return pre;
 }

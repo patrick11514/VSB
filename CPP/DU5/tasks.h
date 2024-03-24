@@ -9,9 +9,57 @@
 #include <cstring>
 #include <optional>
 
-/// UTF-8 string (reuse your previous implementation and modify it)
+class BytesIterator
+{
+    const uint8_t *data;
+    size_t size;
+
+public:
+    BytesIterator(const uint8_t *bytes, size_t size);
+
+    BytesIterator begin() const;
+    BytesIterator end() const;
+
+    uint8_t operator*() const;
+    bool operator==(const BytesIterator &other) const;
+    bool operator!=(const BytesIterator &other) const;
+    BytesIterator &operator++();
+    BytesIterator operator++(int);
+    BytesIterator &operator--();
+    BytesIterator operator--(int);
+    BytesIterator operator+=(size_t value);
+    BytesIterator operator-=(size_t value);
+    BytesIterator operator+(size_t value);
+    BytesIterator operator-(size_t value);
+};
 
 using CodePoint = uint32_t;
+
+class CodePointIterator
+{
+    const uint8_t *data;
+    size_t size;
+
+    CodePoint _getCodePoint() const;
+    size_t _getCodePointEnd() const;
+
+public:
+    CodePointIterator(const uint8_t *bytes, size_t size);
+
+    CodePointIterator begin() const;
+    CodePointIterator end() const;
+
+    CodePoint operator*() const;
+    bool operator==(const CodePointIterator &other) const;
+    bool operator!=(const CodePointIterator &other) const;
+    CodePointIterator &operator++();
+    CodePointIterator operator++(int);
+    CodePointIterator &operator--();
+    CodePointIterator operator--(int);
+};
+
+/// UTF-8 string (reuse your previous implementation and modify it)
+
 /**
  * @brief UTF8 strings
  */
@@ -60,7 +108,9 @@ public:
      * @param cps Vector of CodePoints
      */
     UTF8String(const std::vector<CodePoint> &cps);
+    UTF8String(const std::vector<uint8_t> &bytes);
     UTF8String(const UTF8String &instance); ///< Copy constructor
+    UTF8String(UTF8String &&instance);      ///< Move constructor
 
     /**
      * @brief Append new char to UTF8String
@@ -89,6 +139,10 @@ public:
      * @return CodePoint on index or std::nullopt
      */
     std::optional<CodePoint> nth_code_point(const size_t &index) const;
+
+    BytesIterator bytes() const;
+
+    CodePointIterator codepoints() const;
 
     /**
      * @brief Compare operator, UTF8Strings equals if bytes are same
