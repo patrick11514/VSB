@@ -8,6 +8,28 @@
 #include <utility>
 #include <cstring>
 #include <optional>
+#include <exception>
+#include <queue>
+#include <stack>
+
+/**
+   ____      _                          _ _                  ____  _            _
+  / __ \    | |                        | (_)                / __ \| |          | |
+ | |  | | __| |_ __   _____   _____  __| |_   _ __   __ _  | |  | | |_ __ _ ___| | ___   _
+ | |  | |/ _` | '_ \ / _ \ \ / / _ \/ _` | | | '_ \ / _` | | |  | | __/ _` |_  / |/ / | | |
+ | |__| | (_| | |_) | (_) \ V /  __/ (_| | | | | | | (_| | | |__| | || (_| |/ /|   <| |_| |
+  \____/ \__,_| .__/ \___/ \_/ \___|\__,_|_| |_| |_|\__,_|  \____/ \__\__,_/___|_|\_\\__, |
+              | |                                                                     __/ |
+              |_|                                                                    |___/
+
+[*] What type of pointer should be used for the value and what type should be used for storing
+the child nodes? What type of pointer should be used for the parent link? Think about ownership -
+who is the owner of what data and which data is shared by whom.
+
+Pro hodnotu bude použit shared pointer, protože hodnotu, tím že může být velká, tak chci sdílet mezi
+třeba více nodama, za to potomky budou unique pointer, protože potomek je vlastněn daným parentem.
+
+*/
 
 class BytesIterator
 {
@@ -41,7 +63,7 @@ class CodePointIterator
     size_t size;
 
     CodePoint _getCodePoint() const;
-    size_t _getCodePointEnd() const;
+    size_t _getCountOfLeadingParts() const;
 
 public:
     CodePointIterator(const uint8_t *bytes, size_t size);
@@ -140,8 +162,16 @@ public:
      */
     std::optional<CodePoint> nth_code_point(const size_t &index) const;
 
+    /**
+     * @brief Return iterator over bytes in UTF8String
+     * @return Iterator over bytes
+     */
     BytesIterator bytes() const;
 
+    /**
+     * @brief Return iterator over CodePoints in UTF8String
+     * @return Iterator over CodePoints
+     */
     CodePointIterator codepoints() const;
 
     /**
@@ -176,4 +206,52 @@ struct BigData
     int value;
 };
 
-class Tree;
+class Tree
+{
+    std::shared_ptr<BigData> data;
+    Tree *parent;
+    std::unique_ptr<Tree> left;
+    std::unique_ptr<Tree> right;
+
+public:
+    Tree(int data);
+    Tree(std::shared_ptr<BigData> data);
+
+    Tree *get_parent() const;
+    bool has_parent() const;
+    Tree *get_left_child() const;
+    Tree *get_right_child() const;
+    BigData &get_value() const;
+    const Tree *get_root() const;
+    bool is_same_tree_as(Tree *other) const;
+
+    std::unique_ptr<Tree> set_left_child(std::unique_ptr<Tree> child);
+    std::unique_ptr<Tree> set_right_child(std::unique_ptr<Tree> child);
+    std::unique_ptr<Tree> take_left_child();
+    std::unique_ptr<Tree> take_right_child();
+    std::unique_ptr<Tree> take_child(Tree &child);
+    void swap_children();
+    void replace_value(std::shared_ptr<BigData> value);
+
+    class TreeIterator
+    {
+        std::vector<Tree *> data;
+        size_t current;
+
+        void _putIntoData(Tree *node);
+
+    public:
+        TreeIterator(Tree *root, bool end);
+
+        bool operator==(const TreeIterator &other) const;
+        bool operator!=(const TreeIterator &other) const;
+        TreeIterator &operator++();
+        TreeIterator operator++(int);
+        TreeIterator &operator--();
+        TreeIterator operator--(int);
+        Tree &operator*();
+    };
+
+    Tree::TreeIterator begin();
+    Tree::TreeIterator end();
+};

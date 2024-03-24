@@ -211,7 +211,6 @@ UTF8String UTF8String::operator+(const UTF8String &right) const
 
 UTF8String::operator std::string() const
 {
-    // prý jde něco takovýho, ale idk XD std::string str(this->data, this->size);
     std::string str(this->data.begin(), this->data.end());
 
     return str;
@@ -378,7 +377,7 @@ CodePoint CodePointIterator::_getCodePoint() const
     return final;
 }
 
-size_t CodePointIterator::_getCodePointEnd() const
+size_t CodePointIterator::_getCountOfLeadingParts() const
 {
     uint8_t byte = *this->data;
     int parts = 0;
@@ -438,7 +437,7 @@ bool CodePointIterator::operator!=(const CodePointIterator &other) const
 
 CodePointIterator &CodePointIterator::operator++()
 {
-    size_t skipBytes = this->_getCodePointEnd();
+    size_t skipBytes = this->_getCountOfLeadingParts();
     // skip bytes + move by one
     this->data += skipBytes + 1;
     return *this;
@@ -471,4 +470,238 @@ CodePointIterator CodePointIterator::operator--(int)
     CodePointIterator pre = *this;
     this->operator--();
     return pre;
+}
+
+Tree::Tree(int data) : parent(nullptr)
+{
+    this->data = std::make_unique<BigData>(data);
+}
+
+Tree::Tree(std::shared_ptr<BigData> data) : parent(nullptr)
+{
+    this->data = std::move(data);
+}
+
+Tree *Tree::get_parent() const
+{
+    return this->parent;
+}
+
+bool Tree::has_parent() const
+{
+    return this->parent != nullptr;
+}
+
+Tree *Tree::get_left_child() const
+{
+    return this->left.get();
+}
+
+Tree *Tree::get_right_child() const
+{
+
+    return this->right.get();
+}
+
+BigData &Tree::get_value() const
+{
+    return *this->data.get();
+}
+
+std::unique_ptr<Tree> Tree::set_left_child(std::unique_ptr<Tree> child)
+{
+
+    std::unique_ptr<Tree> prev = nullptr;
+    if (this->left != nullptr)
+    {
+        prev = std::move(this->left);
+        prev->parent = nullptr;
+    }
+
+    this->left = std::move(child);
+    if (this->left != nullptr)
+    {
+        this->left->parent = this;
+    }
+    return prev;
+}
+
+const Tree *Tree::get_root() const
+{
+    const Tree *current = this;
+
+    while (current->parent != nullptr)
+    {
+        current = current->parent;
+    }
+    return current;
+}
+
+bool Tree::is_same_tree_as(Tree *other) const
+{
+    return this->get_root() == other->get_root();
+}
+
+std::unique_ptr<Tree> Tree::set_right_child(std::unique_ptr<Tree> child)
+{
+    std::unique_ptr<Tree> prev = nullptr;
+    if (this->right != nullptr)
+    {
+        prev = std::move(this->right);
+        prev->parent = nullptr;
+    }
+    this->right = std::move(child);
+    if (this->right != nullptr)
+    {
+        this->right->parent = this;
+    }
+    return prev;
+}
+
+std::unique_ptr<Tree> Tree::take_left_child()
+{
+    std::unique_ptr<Tree> prev = nullptr;
+    if (this->left != nullptr)
+    {
+        prev = std::move(this->left);
+        prev->parent = nullptr;
+    }
+
+    this->left.reset();
+
+    return prev;
+}
+
+std::unique_ptr<Tree> Tree::take_right_child()
+{
+    std::unique_ptr<Tree> prev = nullptr;
+    if (this->right != nullptr)
+    {
+        prev = std::move(this->right);
+        prev->parent = nullptr;
+    }
+
+    this->right.reset();
+
+    return prev;
+}
+
+std::unique_ptr<Tree> Tree::take_child(Tree &child)
+{
+    if (this->left.get() == &child)
+    {
+        return this->take_left_child();
+    }
+    if (this->right.get() == &child)
+    {
+        return this->take_right_child();
+    }
+
+    throw std::runtime_error("Invalid child");
+}
+
+void Tree::swap_children()
+{
+    std::swap(this->left, this->right);
+}
+
+void Tree::replace_value(std::shared_ptr<BigData> value)
+{
+    std::stack<Tree *> childs;
+    childs.push(this);
+
+    while (!childs.empty())
+    {
+        Tree *node = childs.top();
+        node->data = value;
+        childs.pop();
+
+        Tree *left = node->get_left_child();
+
+        if (left != nullptr)
+        {
+            childs.push(left);
+        }
+        Tree *right = node->get_right_child();
+
+        if (right != nullptr)
+        {
+            childs.push(right);
+        }
+    }
+}
+
+void Tree::TreeIterator::_putIntoData(Tree *node)
+{
+
+    if (node == nullptr)
+    {
+        return;
+    }
+
+    this->_putIntoData(node->get_left_child());
+
+    this->data.push_back(node);
+
+    this->_putIntoData(node->get_right_child());
+}
+
+Tree::TreeIterator::TreeIterator(Tree *root, bool end) : current(0)
+{
+    this->_putIntoData(root);
+    if (end)
+    {
+        this->current = this->data.size();
+    }
+}
+
+bool Tree::TreeIterator::operator==(const TreeIterator &other) const
+{
+    return std::equal(this->data.begin(), this->data.end(), other.data.begin(), other.data.end()) && this->current == other.current;
+}
+
+bool Tree::TreeIterator::operator!=(const TreeIterator &other) const
+{
+    return !this->operator==(other);
+}
+
+Tree::TreeIterator &Tree::TreeIterator::operator++()
+{
+    this->current++;
+    return *this;
+}
+
+Tree::TreeIterator Tree::TreeIterator::operator++(int)
+{
+    TreeIterator prev = *this;
+    this->current++;
+    return prev;
+}
+
+Tree::TreeIterator &Tree::TreeIterator::operator--()
+{
+    this->current--;
+    return *this;
+}
+
+Tree::TreeIterator Tree::TreeIterator::operator--(int)
+{
+    TreeIterator prev = *this;
+    this->current--;
+    return prev;
+}
+
+Tree &Tree::TreeIterator::operator*()
+{
+    return *this->data[this->current];
+}
+
+Tree::TreeIterator Tree::begin()
+{
+    return TreeIterator(this, false);
+}
+
+Tree::TreeIterator Tree::end()
+{
+    return TreeIterator(this, true);
 }
