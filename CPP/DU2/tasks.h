@@ -122,4 +122,6 @@ public:
 
     UTF8String &operator=(const UTF8String &right);  ///< Assing operator
     UTF8String &operator+=(const UTF8String &right); ///< append UTF8String
+
+    void print() const;
 };

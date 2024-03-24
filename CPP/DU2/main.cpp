@@ -2,15 +2,15 @@
 
 int main()
 {
-    UTF8String a{"Ahoj"};
-    std::cout << "===== a =====" << std::endl;
-    // a.print();
-    UTF8String b{" Svete"};
-    std::cout << "===== b =====" << std::endl;
-    // b.print();
+    UTF8String str{std::vector<CodePoint>{
+        0x1F601, // 😁
+        0x1F614, // 😔
+        static_cast<CodePoint>('0'),
+        0x010D // č
+    }};
+    str.append(' ');
+    UTF8String str2(str);
 
-    UTF8String c = a + b;
-
-    std::cout << "===== c =====" << std::endl;
-    // c.print();
+    str.print();
+    str2.print();
 }
