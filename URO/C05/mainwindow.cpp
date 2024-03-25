@@ -1,7 +1,7 @@
-#include "c04.h"
+#include "mainwindow.h"
 
-C04::C04(QWidget *parent)
-    : QMainWindow(parent)
+MainWindow::MainWindow(QWidget *parent)
+    : QWidget(parent)
 {
     QGridLayout* layout = new QGridLayout(this);
 
@@ -10,9 +10,7 @@ C04::C04(QWidget *parent)
 
 
     setLayout(layout);
-}
-
-C04::~C04()
-{
 
 }
+
+MainWindow::~MainWindow() {}
