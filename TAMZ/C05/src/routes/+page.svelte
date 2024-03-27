@@ -109,6 +109,6 @@
 <IonButton disabled={sendDisabled} on:click={authenticate}>
     Authenticate with code
 </IonButton>
-<IonButton disabled={resetDisabled} on:click={reset} color="danger"
-    >Reset</IonButton
->
+<IonButton disabled={resetDisabled} on:click={reset} color="danger">
+    Reset
+</IonButton>
