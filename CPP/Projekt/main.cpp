@@ -1,8 +1,13 @@
 #include <iostream>
 #include <string>
 
-int main()
-{
+#include "argParser.hpp"
+#include "server.hpp"
 
-    return 0;
+int main(int argc, char **argv)
+{
+    ArgParser parser(argc, argv);
+
+    Server s;
+    s.start();
 }
