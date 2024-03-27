@@ -20,6 +20,7 @@
     export let max: number | undefined = undefined
     export let label: string | undefined = undefined
     export let labelPlacement: undefined | "stacked" = undefined
+    export let readonly = false
 
     let element: HTMLIonInputElement
 
@@ -37,4 +38,5 @@
     {value}
     {min}
     {max}
+    {readonly}
 />

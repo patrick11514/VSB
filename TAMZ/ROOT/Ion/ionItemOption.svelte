@@ -1,15 +1,7 @@
 <script lang="ts">
-    export let color:
-        | "primary"
-        | "secondary"
-        | "tertiary"
-        | "success"
-        | "warning"
-        | "danger"
-        | "light"
-        | "medium"
-        | "dark"
-        | undefined = undefined
+    import type { Color } from "@ionic/core"
+
+    export let color: Color = "primary"
 
     export let expandable = false
 </script>
