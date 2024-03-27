@@ -1,5 +1,4 @@
 #include "server.hpp"
-#include <unistd.h>
 
 Server::Server(int port) : port(port)
 {
@@ -16,17 +15,18 @@ void Server::start()
     sockaddr_in address;
     address.sin_family = AF_INET;
     address.sin_port = htons(8080);
-    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_addr.s_addr = inet_addr("0.0.0.0");
 
-    bind(soc, (sockaddr *)&address, sizeof(address));
-    listen(soc, 5);
+    std::cout << "bind: " << bind(soc, (sockaddr *)&address, sizeof(address)) << std::endl;
+    std::cout << "listen: " << listen(soc, 5) << std::endl;
 
     while (true)
     {
         int client = accept(soc, nullptr, nullptr);
 
         char buffer[1024] = {0};
-        recv(client, buffer, sizeof(buffer), 0);
+        ssize_t aa = recv(client, buffer, sizeof(buffer), 0);
+        std::cout << aa << std::endl;
         std::cout << "Message from client: " << buffer
                   << std::endl;
     }
