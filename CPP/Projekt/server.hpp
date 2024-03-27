@@ -7,13 +7,19 @@
 #include <unistd.h>
 #include <iostream>
 
+#include "argParser.hpp"
+#include "socket.hpp"
+
 class Server
 {
-    int port = 8080;
+    const ArgParser &parser;
+    Socket *socket = nullptr;
 
 public:
-    Server() = default;
-    Server(int port);
+    Server(const ArgParser &parser);
+    ~Server();
 
     void start();
+
+    void loop() const;
 };

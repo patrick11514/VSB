@@ -18,7 +18,12 @@ int main(int argc, char **argv)
 {
     ArgParser parser(argc, argv);
 
-    Socket s("127.0.0.1", 8080);
+    Server s(parser);
+    s.start();
+}
+
+/*
+Socket s("127.0.0.1", 8080);
 
     StartType type = s.bind();
     if (type != StartType::OK)
@@ -50,4 +55,4 @@ int main(int argc, char **argv)
 
         std::cout << data.data << std::endl;
     };
-}
+*/
