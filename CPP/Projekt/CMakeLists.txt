@@ -13,4 +13,4 @@ endif()
 add_compile_options(-Wall -Wextra -pedantic)
 
 # Use main.cpp to call and debug your functions
-add_executable(main main.cpp argParser.cpp server.cpp socket.cpp)
+add_executable(main main.cpp socket/socket.cpp utils/argParser.cpp utils/logger.cpp server/server.cpp server/payload.cpp server/response.cpp)

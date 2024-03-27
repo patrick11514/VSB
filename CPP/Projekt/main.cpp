@@ -3,19 +3,26 @@
 #include <signal.h>
 #include <functional>
 
-#include "argParser.hpp"
-#include "server.hpp"
-#include "socket.hpp"
+#include "utils/argParser.hpp"
+#include "server/server.hpp"
+#include "socket/socket.hpp"
 
 // https://www.geeksforgeeks.org/signals-c-language/ on CTRL + C close socket
-void neco(int s)
+void handleSigInt(int s)
 {
-    std::cout << "lol" << s << std::endl;
+    if (Server::instance != nullptr)
+    {
+        Logger::info("Stopping server...");
+        Server::instance->~Server();
+        Logger::info("Server stopped.");
+    }
     exit(s);
 }
 
 int main(int argc, char **argv)
 {
+    signal(SIGINT, handleSigInt);
+
     ArgParser parser(argc, argv);
 
     Server s(parser);

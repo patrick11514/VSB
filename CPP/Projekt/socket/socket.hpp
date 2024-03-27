@@ -19,6 +19,7 @@ struct ReceivedData
 {
     int fd;
     std::string data;
+    std::string address;
 };
 
 class Socket
@@ -26,6 +27,8 @@ class Socket
     in_addr_t address = INADDR_ANY;
     int port = 8080;
     int fd = -1;
+
+    std::string getAddress(sockaddr *address);
 
 public:
     Socket() = default;
