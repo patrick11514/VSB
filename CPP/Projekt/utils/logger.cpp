@@ -2,17 +2,17 @@
 
 void Logger::info(const std::string &text)
 {
-    std::cout << "[" << Logger::getTime() << "] [INFO] " << text << "" << std::endl;
+    std::cout << "[" << Logger::getTime() << "] [INFO] " << text << "\n";
 }
 
 void Logger::error(const std::string &text)
 {
-    std::cout << "[" << Logger::getTime() << "] [ERRO] " << text << "" << std::endl;
+    std::cout << "[" << Logger::getTime() << "] [ERRO] " << text << "\n";
 }
 
 void Logger::warn(const std::string &text)
 {
-    std::cout << "[" << Logger::getTime() << "] [WARN] " << text << "" << std::endl;
+    std::cout << "[" << Logger::getTime() << "] [WARN] " << text << "\n";
 }
 
 std::_Put_time<char> Logger::getTime()
