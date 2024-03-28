@@ -79,9 +79,19 @@ void Server::start()
     this->loop();
 }
 
+void someLoop()
+{
+    for (int i = 0; i < 900000000; ++i)
+    {
+    }
+}
+
 void Server::loop() const
 {
     std::string str("HTTP/1.1 666\r\nContent-Type: text/html\r\nContent-Length: 4\r\n\r\nAhoj");
+
+    unsigned int n = std::thread::hardware_concurrency();
+    std::cout << n << " concurrent threads are supported.\n";
     // todo
     while (true)
     {
@@ -96,23 +106,34 @@ void Server::loop() const
         // get client data
         auto clientData = data.value();
 
-        // parse HTTP Payload
-        HTTPPayload payload(clientData);
-
-        if (!payload.isValid)
-        {
-            close(clientData.fd);
-            continue;
-        }
-
-        HTTPResponse response(std::string(payload.httpVersion), 200);
-        response.content = "<!DOCTYPE HTML><html><head><title>Super CPP</title></head><body><h1 style=\"color:red;\">CPP je super!!</h1></body></html>";
-        response.headers.emplace("Content-Type", "text/html");
-        response.send(clientData.fd);
-
-        // send(clientData.fd, payload.content.data(), payload.content.size(), 0);
-        // send(clientData.fd, str.data(), str.size(), 0);
-        // close connection with client
-        close(clientData.fd);
+        std::thread t(&Server::handleRequest, this, clientData);
+        t.detach();
     }
+}
+
+void Server::handleRequest(const ReceivedData &data) const
+{
+    // parse HTTP Payload
+    HTTPPayload payload(data);
+
+    if (!payload.isValid)
+    {
+        close(data.fd);
+        return;
+    }
+
+    Logger::info(std::format("{} to {} from {}", payload.method, payload.path, data.address));
+
+    // someLoop();
+    // 96806 requests in 30.10s,
+
+    HTTPResponse response(std::string(payload.httpVersion), 200);
+    response.content = "<!DOCTYPE HTML><html><head><title>Super CPP</title></head><body><h1 style=\"color:red;\">CPP je super!!</h1></body></html>";
+    response.headers.emplace("Content-Type", "text/html");
+    response.send(data.fd);
+
+    // send(clientData.fd, payload.content.data(), payload.content.size(), 0);
+    // send(clientData.fd, str.data(), str.size(), 0);
+    // close connection with client
+    close(data.fd);
 }

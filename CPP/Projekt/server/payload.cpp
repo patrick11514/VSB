@@ -42,10 +42,6 @@ HTTPPayload::HTTPPayload(const ReceivedData &data)
 
     if (httpParts.size() < 3)
     {
-        for (auto x : sws)
-        {
-            std::cout << "PART: " << x << std::endl;
-        }
         return;
     }
 

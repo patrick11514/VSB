@@ -7,6 +7,7 @@
 
 #include <stdexcept>
 #include <iostream>
+#include <thread>
 
 #include "../utils/argParser.hpp"
 #include "../socket/socket.hpp"
@@ -21,6 +22,8 @@ class Server
 {
     const ArgParser &parser;  ///< Reference to argument parser
     Socket *socket = nullptr; ///< Pointer on opened socket
+
+    void handleRequest(const ReceivedData &data) const;
 
 public:
     static Server *instance; ///< Instance of server, because if we CTRL-C program, we want to access socket and close it
