@@ -41,6 +41,11 @@ ThreadPool::ThreadPool()
     }
 }
 
+ThreadPool::ThreadPool(bool joinAfter) : ThreadPool()
+{
+    this->joinAfter = joinAfter;
+}
+
 ThreadPool::~ThreadPool()
 {
     {
@@ -54,7 +59,14 @@ ThreadPool::~ThreadPool()
     // join all threads
     for (auto &thread : this->threads)
     {
-        thread.join();
+        if (this->joinAfter)
+        {
+            thread.join();
+        }
+        else
+        {
+            thread.detach();
+        }
     }
 }
 

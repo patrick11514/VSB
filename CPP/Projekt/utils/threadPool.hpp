@@ -17,9 +17,15 @@ class ThreadPool
     std::mutex mutex;                        ///< Mutex to handle accesing to tasks only frome one thread at the same time
     std::condition_variable variable;        ///< Block threads if no tasks are available
     bool stop = false;                       ///< Variable to stop all threads
+    bool joinAfter = false;
 
 public:
-    ThreadPool();  ///< Constructor
+    ThreadPool(); ///< Constructor
+    /**
+     * @brief Constructor
+     * @param joinAfter Should be threads joined in destructor to wait for their work to be done?
+     */
+    ThreadPool(bool joinAfter);
     ~ThreadPool(); ///< Destructor
 
     /**
