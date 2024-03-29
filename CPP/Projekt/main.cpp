@@ -23,10 +23,19 @@ void handleSigInt(int s)
     exit(s);
 }
 
+/**
+ * In file file://./server/modes/devMode.cpp line 22 we send data to pipe, but if data was transfering
+ * and the client terminate request, send return -1 and crashes program on 141 (Broken PIPE), so this
+ * function prevents the crash and if statment catches this and returns from function and connection is
+ * closed.
+ */
+void handleBrokenPipe(int s) {}
+
 int main(int argc, char **argv)
 {
 
     signal(SIGINT, handleSigInt);
+    signal(SIGPIPE, handleBrokenPipe);
 
     ArgParser parser(argc, argv);
 
