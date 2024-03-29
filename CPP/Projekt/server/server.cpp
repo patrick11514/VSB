@@ -6,11 +6,15 @@ Server::Server(const ArgParser &parser) : parser(parser)
 {
     if (Server::instance != nullptr)
     {
-        Logger::info("You can only create single instance of server");
+        this->l.info("You can only create single instance of server");
         this->~Server();
         return;
     }
     Server::instance = this;
+}
+
+Server::Server(const ArgParser &parser, std::ostream &infoStream, std::ostream &errorStream, std::ostream &warnStream) : parser(parser), l(infoStream, errorStream, warnStream)
+{
 }
 
 Server::~Server()
@@ -33,13 +37,13 @@ void Server::start()
             port = std::stoi(*portStr);
             if (port < 1 || port > 65353)
             {
-                Logger::error("Invalid port in range 1-65353");
+                this->l.error("Invalid port in range 1-65353");
                 return;
             }
         }
         catch (const std::exception &)
         {
-            Logger::error("Invalid port number: " + *portStr);
+            this->l.error("Invalid port number: " + *portStr);
             return;
         }
     }
@@ -62,17 +66,17 @@ void Server::start()
         StartType result = this->socket->bind();
         if (result != StartType::OK)
         {
-            Logger::error("Failed to start server on port " + std::to_string(port) + ".");
+            this->l.error("Failed to start server on port " + std::to_string(port) + ".");
             return;
         }
 
-        Logger::info("DEV server started!");
-        Logger::info(std::format("Address: http://{}:{}", (host == true ? "0.0.0.0" : "127.0.0.1"), port));
+        this->l.info("DEV server started!");
+        this->l.info(std::format("Address: http://{}:{}", (host == true ? "0.0.0.0" : "127.0.0.1"), port));
     }
     else
     {
         // TODO
-        Logger::warn("Server mode WIP");
+        this->l.warn("Server mode WIP");
         return;
     }
 
@@ -86,13 +90,10 @@ void someLoop()
     }
 }
 
-void Server::loop() const
+void Server::loop()
 {
     std::string str("HTTP/1.1 666\r\nContent-Type: text/html\r\nContent-Length: 4\r\n\r\nAhoj");
 
-    unsigned int n = std::thread::hardware_concurrency();
-    std::cout << n << " concurrent threads are supported.\n";
-    // todo
     while (true)
     {
         // accept connection
@@ -106,12 +107,15 @@ void Server::loop() const
         // get client data
         auto clientData = data.value();
 
-        std::thread t(&Server::handleRequest, this, clientData);
-        t.detach();
+        this->pool.push(
+            [clientData = std::move(clientData), this]
+            {
+                this->handleRequest(clientData);
+            });
     }
 }
 
-void Server::handleRequest(const ReceivedData &data) const
+void Server::handleRequest(const ReceivedData &data)
 {
     // parse HTTP Payload
     HTTPPayload payload(data);
@@ -122,7 +126,7 @@ void Server::handleRequest(const ReceivedData &data) const
         return;
     }
 
-    Logger::info(std::format("{} to {} from {}", payload.method, payload.path, data.address));
+    this->l.info(std::format("{} to {} from {}", payload.method, payload.path, data.address));
 
     // someLoop();
     // 96806 requests in 30.10s,

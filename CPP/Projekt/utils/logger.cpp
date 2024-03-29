@@ -1,18 +1,24 @@
 #include "logger.hpp"
 
+Logger::Logger(std::ostream &infoStream, std::ostream &errorStream, std::ostream &warnStream)
+    : infoStream(infoStream), errorStream(errorStream), warnStream(warnStream) {}
+
 void Logger::info(const std::string &text)
 {
-    std::cout << "[" << Logger::getTime() << "] [INFO] " << text << "\n";
+    std::lock_guard<std::mutex> lock(Logger::mutex);
+    this->infoStream << "[" << this->getTime() << "] [INFO] " << text << "\n";
 }
 
 void Logger::error(const std::string &text)
 {
-    std::cout << "[" << Logger::getTime() << "] [ERRO] " << text << "\n";
+    std::lock_guard<std::mutex> lock(Logger::mutex);
+    this->errorStream << "[" << Logger::getTime() << "] [ERRO] " << text << "\n";
 }
 
 void Logger::warn(const std::string &text)
 {
-    std::cout << "[" << Logger::getTime() << "] [WARN] " << text << "\n";
+    std::lock_guard<std::mutex> lock(Logger::mutex);
+    this->warnStream << "[" << Logger::getTime() << "] [WARN] " << text << "\n";
 }
 
 std::_Put_time<char> Logger::getTime()

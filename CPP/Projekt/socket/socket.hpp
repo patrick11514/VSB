@@ -30,6 +30,8 @@ class Socket
 
     std::string getAddress(sockaddr *address);
 
+    size_t numberOfConnectionsToAcceptBeforeDrop = 1000;
+
 public:
     Socket() = default;
     Socket(in_addr_t address, int port);

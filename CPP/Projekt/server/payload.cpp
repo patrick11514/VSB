@@ -1,7 +1,5 @@
 #include "payload.hpp"
 
-#include <iostream>
-
 HTTPPayload::HTTPPayload(const ReceivedData &data)
 {
     this->payload = data.data;
@@ -61,7 +59,10 @@ HTTPPayload::HTTPPayload(const ReceivedData &data)
         size_t separator = row.find(": ");
         if (separator == std::string_view::npos)
         {
-            Logger::warn(std::format("Cannot parse header: {}", row));
+            if (Server::instance != nullptr)
+            {
+                Server::instance->l.warn(std::format("Cannot parse header: {}", row));
+            }
             continue;
         }
 

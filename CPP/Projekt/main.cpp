@@ -13,16 +13,16 @@ void handleSigInt(int s)
 {
     if (Server::instance != nullptr)
     {
-        Logger::info("Stopping server...");
+        Logger &l = Server::instance->l;
+        l.info("Stopping server...");
         Server::instance->~Server();
-        Logger::info("Server stopped.");
+        l.info("Server stopped.");
     }
     exit(s);
 }
 
 int main(int argc, char **argv)
 {
-    ThreadPool pool;
 
     signal(SIGINT, handleSigInt);
 

@@ -6,6 +6,7 @@
 
 #include "../socket/socket.hpp"
 #include "../utils/logger.hpp"
+#include "../server/server.hpp"
 
 class HTTPPayload
 {

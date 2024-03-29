@@ -79,7 +79,7 @@ StartType Socket::bind()
         return StartType::FAILED_TO_BIND;
     }
 
-    if (listen(this->fd, 20) == -1)
+    if (listen(this->fd, this->numberOfConnectionsToAcceptBeforeDrop) == -1)
     {
         return StartType::FAILED_TO_LISTEN;
     }

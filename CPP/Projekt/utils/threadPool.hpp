@@ -4,15 +4,27 @@
 #include <mutex>
 #include <condition_variable>
 #include <vector>
+#include <queue>
 #include <functional>
 
+/**
+ * @brief Thread pool
+ */
 class ThreadPool
 {
-    std::vector<std::thread> threads;
-    std::vector<std::function<void>> tasks;
-    std::mutex mutex;
-    std::condition_variable variable;
+    std::vector<std::thread> threads;        ///< Vector of threads
+    std::queue<std::function<void()>> tasks; ///< Tasks to be done
+    std::mutex mutex;                        ///< Mutex to handle accesing to tasks only frome one thread at the same time
+    std::condition_variable variable;        ///< Block threads if no tasks are available
+    bool stop = false;                       ///< Variable to stop all threads
 
 public:
-    ThreadPool();
+    ThreadPool();  ///< Constructor
+    ~ThreadPool(); ///< Destructor
+
+    /**
+     * @brief Add new task
+     * @param function lambda function to be added
+     */
+    void push(std::function<void()> function);
 };
