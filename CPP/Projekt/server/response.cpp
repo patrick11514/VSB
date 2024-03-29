@@ -125,14 +125,20 @@ bool HTTPResponse::send(int fd) const
     if (this->content.length() == 0 && this->code >= 300)
     {
         std::string content = this->formatDefaultPage(codeText);
-        headers.append(std::format("Content-Length: {}{}", content.length(), this->separator));
+        if (this->headers.find("Content-Length") == this->headers.end())
+        {
+            headers.append(std::format("Content-Length: {}{}", content.length(), this->separator));
+        }
         generated = std::format("{}{}{}{}{}",
                                 firstLine, this->separator, headers, this->separator,
                                 content);
     }
     else
     {
-        headers.append(std::format("Content-Length: {}{}", this->content.length(), this->separator));
+        if (this->headers.find("Content-Length") == this->headers.end())
+        {
+            headers.append(std::format("Content-Length: {}{}", this->content.length(), this->separator));
+        }
         generated = std::format("{}{}{}{}{}", firstLine, this->separator, headers, this->separator, this->content);
     }
 

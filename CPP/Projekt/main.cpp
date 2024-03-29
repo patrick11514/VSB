@@ -30,11 +30,11 @@ int main(int argc, char **argv)
 
     ArgParser parser(argc, argv);
 
-    #std::ofstream log("/tmp/log.txt");
-    #std::ofstream err("/tmp/err.txt");
-    #std::ofstream warn("/tmp/warn.txt");
+    // std::ofstream log("/tmp/log.txt");
+    // std::ofstream err("/tmp/err.txt");
+    // std::ofstream warn("/tmp/warn.txt");
 
-    Server s(parser/*, log, err, warn*/);
+    Server s(parser /*, log, err, warn*/);
     s.start();
 }
 

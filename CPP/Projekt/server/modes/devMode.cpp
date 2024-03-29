@@ -4,17 +4,27 @@
 
 void DevMode::doFile(const fs::path &filePath, HTTPResponse &response, const FileRead &file, int fd) const
 {
+    uintmax_t fileSize = fs::file_size(filePath);
+
     std::ifstream iFile(filePath);
-    std::stringstream ss;
+    // 1024 * 1024
+    char data[1048576];
 
-    ss << iFile.rdbuf();
-
-    std::string data = ss.str();
-    response.content = data;
-
+    // send empty response with correct length
+    response.headers.emplace("Content-Length", std::to_string(fileSize));
     response.headers.emplace("Content-Type", file.getMimeType());
-
     response.send(fd);
+
+    while (!(iFile.eof() || iFile.fail()))
+    {
+        iFile.read(data, sizeof(data));
+
+        if ((int)::send(fd, data, iFile.gcount(), 0) == -1)
+        {
+            // error or user just canceled request
+            return;
+        }
+    }
 }
 
 DevMode::DevMode(const ArgParser &parser, Logger &logger) : MainMode(parser, logger), indexes{"index.html", "index.htm"}
@@ -72,6 +82,7 @@ void DevMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
 
         if (!found)
         {
+            this->logger.info(std::format("{} to {} from {}", data.method, data.path, client.address));
             response.code = 404;
             response.send(client.fd);
         }
