@@ -5,6 +5,7 @@
 #include "mainMode.hpp"
 #include "../response.hpp"
 #include "../../utils/fileRead.hpp"
+#include "../../utils/decode.hpp"
 
 namespace fs = std::filesystem;
 

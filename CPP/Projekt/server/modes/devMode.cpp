@@ -19,10 +19,20 @@ void DevMode::doFile(const fs::path &filePath, HTTPResponse &response, const Fil
     {
         iFile.read(data, sizeof(data));
 
-        if ((int)::send(fd, data, iFile.gcount(), 0) == -1)
+        // fix crash
+
+        try
         {
-            // error or user just canceled request
-            return;
+            if ((int)::send(fd, data, iFile.gcount(), 0) == -1)
+            {
+                std::cout << "konec" << std::endl;
+                // error or user just canceled request
+                return;
+            }
+        }
+        catch (std::exception &)
+        {
+            std::cout << "Catched" << std::endl;
         }
     }
 }
@@ -43,7 +53,7 @@ DevMode::DevMode(const ArgParser &parser, Logger &logger) : MainMode(parser, log
 void DevMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
 {
     fs::path filePath = this->path;
-    filePath.concat(data.path);
+    filePath += decode(data.path);
 
     FileRead file(filePath);
 
