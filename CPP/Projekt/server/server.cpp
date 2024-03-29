@@ -26,6 +26,7 @@ Server::~Server()
     delete this->mode;
     delete this->l;
     delete this->socket;
+    Server::instance = nullptr;
 }
 
 void Server::start()
