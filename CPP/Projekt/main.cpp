@@ -13,7 +13,7 @@ void handleSigInt(int s)
 {
     if (Server::instance != nullptr)
     {
-        Logger &l = Server::instance->l;
+        Logger l;
         l.info("Stopping server...");
         Server::instance->~Server();
         l.info("Server stopped.");

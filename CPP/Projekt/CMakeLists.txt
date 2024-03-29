@@ -12,5 +12,7 @@ endif()
 
 add_compile_options(-Wall -Wextra -pedantic)
 
-# Use main.cpp to call and debug your functions
-add_executable(main main.cpp socket/socket.cpp utils/argParser.cpp utils/logger.cpp utils/threadPool.cpp server/server.cpp server/payload.cpp server/response.cpp)
+set(UTILS "utils/argParser.cpp" "utils/logger.cpp" "utils/threadPool.cpp" "utils/fileRead.cpp" "utils/mimeType.cpp")
+set(SERVER "server/server.cpp" "server/payload.cpp" "server/response.cpp")
+set(MODES "server/modes/mainMode.cpp" "server/modes/devMode.cpp")
+add_executable(main main.cpp socket/socket.cpp ${UTILS} ${SERVER} ${MODES})

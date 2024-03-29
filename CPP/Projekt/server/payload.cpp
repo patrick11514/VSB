@@ -1,5 +1,7 @@
 #include "payload.hpp"
 
+#include "server.hpp"
+
 HTTPPayload::HTTPPayload(const ReceivedData &data)
 {
     this->payload = data.data;
@@ -61,7 +63,7 @@ HTTPPayload::HTTPPayload(const ReceivedData &data)
         {
             if (Server::instance != nullptr)
             {
-                Server::instance->l.warn(std::format("Cannot parse header: {}", row));
+                Server::instance->l->warn(std::format("Cannot parse header: {}", row));
             }
             continue;
         }

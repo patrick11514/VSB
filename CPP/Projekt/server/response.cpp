@@ -97,13 +97,20 @@ std::string HTTPResponse::codeToText() const
     }
 }
 
-HTTPResponse::HTTPResponse(std::string version, unsigned short code) : version(version), code(code)
+std::string HTTPResponse::formatDefaultPage(const std::string &codeText) const
 {
+    std::string style("html, body {margin:0;padding: 0;width: 100%;height:100%;}body {display:flex;align-items: center;flex-direction: column;}");
+
+    return std::format("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>{} {}</title><style>{}</style></head><body><h1>{} {}</h1><hr style=\"width: 100%;\"><p>Tondík v1.0</p></body></html>",
+                       this->code, codeText, style, this->code, codeText);
 }
+
+HTTPResponse::HTTPResponse(std::string version, unsigned short code) : version(version), code(code) {}
 
 bool HTTPResponse::send(int fd) const
 {
-    std::string firstLine = std::format("{} {} {}", this->version, this->code, this->codeToText());
+    std::string codeText = this->codeToText();
+    std::string firstLine = std::format("{} {} {}", this->version, this->code, codeText);
     std::string headers;
 
     std::string_view a("ahoj");
@@ -114,12 +121,20 @@ bool HTTPResponse::send(int fd) const
         headers.append(std::format("{}: {}{}", header.first, header.second, this->separator));
     }
 
-    if (this->content.length() > 0)
+    std::string generated;
+    if (this->content.length() == 0 && this->code >= 300)
+    {
+        std::string content = this->formatDefaultPage(codeText);
+        headers.append(std::format("Content-Length: {}{}", content.length(), this->separator));
+        generated = std::format("{}{}{}{}{}",
+                                firstLine, this->separator, headers, this->separator,
+                                content);
+    }
+    else
     {
         headers.append(std::format("Content-Length: {}{}", this->content.length(), this->separator));
+        generated = std::format("{}{}{}{}{}", firstLine, this->separator, headers, this->separator, this->content);
     }
-
-    std::string generated = std::format("{}{}{}{}{}", firstLine, this->separator, headers, this->separator, this->content);
 
     return (int)::send(fd, generated.data(), generated.size(), 0) != -1;
 }

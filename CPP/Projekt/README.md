@@ -3,7 +3,7 @@
 ### Funkce
 - Web server bude fungovat pouze na HTTP protokolu.
 - Web server půjde spustit několika způsoby:
- 1. V "dev" módu, kdy se server spustí v základu na localhostu, případně přes argument --host na všech interfacech (0.0.0.0) a vybraném portu (defaultně 8080) a bude sloužit pro servování jen jedé složky (defaultně ./, přépadně lze změnit pomocí argumentu).
+ 1. V "dev" módu, kdy se server spustí v základu na localhostu, případně přes argument --host na všech interfacech (0.0.0.0) a vybraném portu (defaultně 8080) a bude sloužit pro servování jen jedé složky (defaultně ./, přépadně lze změnit pomocí argumentu --path).
  2. V "server" módu, kdy se spustí na všech interfacech (0.0.0.0) na daném portu (defaultně 80) a bude pomocí konfiguračních souborů servovat více složek na základě domén/subdomén... (podobně jako například Nginx). Do parametru se poté přidá root složka webserveru, kde bude základní config...
 - Web server bude umět servovat statické soubory (HTML, CSS, JS, obrázky, fonty, ...).
 - Web server bude umět obsloužit více uživatelů najednou.
@@ -23,6 +23,11 @@ configs_folder=/etc/webserver
 ;custom response headers (optional) -  array of strings
 headers[] = "Server: SuperWebServer"
 headers[] = "Header: CustomHeaderValue"
+;custom mime types (optional) - array of strings
+;format: "extension,mime_type"
+mime_types[] = "php,text/php"
+mime_types[] = "html,text/html"
+mime_types[] = "htm,text/html"
 access_log=/var/log/webserver/access.log
 error_log=/var/log/webserver/error.log
 ; default root folder if no domain is found
