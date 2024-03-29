@@ -16,5 +16,5 @@ public:
     MainMode(const ArgParser &parser, Logger &logger);
     virtual ~MainMode();
 
-    virtual void handleRequest(const ReceivedData &client, const HTTPPayload &data);
+    virtual void handleRequest(const ReceivedData &client, const HTTPPayload &);
 };

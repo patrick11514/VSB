@@ -4,7 +4,7 @@ MainMode::MainMode(const ArgParser &parser, Logger &logger) : parser(parser), lo
 
 MainMode::~MainMode() {}
 
-void MainMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
+void MainMode::handleRequest(const ReceivedData &client, const HTTPPayload &)
 {
     ::close(client.fd);
 }
