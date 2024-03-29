@@ -6,6 +6,7 @@
 #include "utils/argParser.hpp"
 #include "server/server.hpp"
 #include "socket/socket.hpp"
+#include "utils/threadPool.hpp"
 
 // https://www.geeksforgeeks.org/signals-c-language/ on CTRL + C close socket
 void handleSigInt(int s)
@@ -21,6 +22,8 @@ void handleSigInt(int s)
 
 int main(int argc, char **argv)
 {
+    ThreadPool pool;
+
     signal(SIGINT, handleSigInt);
 
     ArgParser parser(argc, argv);
