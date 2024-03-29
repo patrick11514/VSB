@@ -27,9 +27,9 @@ std::unordered_map<fs::path, std::string> MimeType::mimeTypes = {
     {".tiff", "image/tiff"},
     {".webp", "image/webp"},
     // video formats
-    {".avi", "image/avi"},
-    {".mp4", "image/mp4"},
-    {".mpeg", "image/mpeg"},
+    {".avi", "video/avi"},
+    {".mp4", "video/mp4"},
+    {".mpeg", "video/mpeg"},
     {".webm", "video/webm"},
     // audio formats
     {".mp3", "audio/mpeg"},
