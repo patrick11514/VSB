@@ -3,6 +3,8 @@
 #include <signal.h>
 #include <functional>
 
+#include <fstream>
+
 #include "utils/argParser.hpp"
 #include "server/server.hpp"
 #include "socket/socket.hpp"
@@ -28,7 +30,11 @@ int main(int argc, char **argv)
 
     ArgParser parser(argc, argv);
 
-    Server s(parser);
+    #std::ofstream log("/tmp/log.txt");
+    #std::ofstream err("/tmp/err.txt");
+    #std::ofstream warn("/tmp/warn.txt");
+
+    Server s(parser/*, log, err, warn*/);
     s.start();
 }
 
