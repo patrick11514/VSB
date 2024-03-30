@@ -14,7 +14,7 @@ class DevMode : public MainMode
     fs::path path;
     std::vector<std::string> indexes;
 
-    void doFile(const fs::path &filePath, HTTPResponse &response, const FileRead &file, int fd) const;
+    void doFile(const fs::path &filePath, const HTTPPayload &payload, HTTPResponse &response, const FileRead &file, int fd) const;
 
 public:
     DevMode(const ArgParser &parser, Logger &logger);

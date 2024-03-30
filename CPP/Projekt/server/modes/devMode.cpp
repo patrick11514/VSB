@@ -2,7 +2,7 @@
 
 #include <fstream>
 
-void DevMode::doFile(const fs::path &filePath, HTTPResponse &response, const FileRead &file, int fd) const
+void DevMode::doFile(const fs::path &filePath, const HTTPPayload &payload, HTTPResponse &response, const FileRead &file, int fd) const
 {
     uintmax_t fileSize = fs::file_size(filePath);
 
@@ -10,20 +10,102 @@ void DevMode::doFile(const fs::path &filePath, HTTPResponse &response, const Fil
     // 1024 * 1024
     char data[1048576];
 
+    bool startSet = false;
+    size_t startAt = 0;
+    size_t end = fileSize;
+
+    // range works only in VLC :(
+    /*if (payload.headers.find("Range") != payload.headers.end())
+    {
+        std::string_view range = payload.headers.at("Range");
+
+        std::cout << range << std::endl;
+
+        if (!range.starts_with("bytes="))
+        {
+            // bad request
+            response.code = 400;
+            return;
+        }
+
+        size_t eq = range.find("=");
+        std::string_view data(range.begin() + eq + 1, range.end());
+
+        size_t dash = data.find("-");
+        if (dash == std::string_view::npos)
+        {
+            // bad request
+            response.code = 400;
+            return;
+        }
+
+        std::string_view from(data.begin(), data.begin() + dash);
+        std::string_view to(data.begin() + dash + 1, data.end());
+
+        if (from.size() > 0)
+        {
+            startSet = true;
+            startAt = static_cast<size_t>(std::stoi(std::string(from)));
+        }
+
+        if (to.size() > 0)
+        {
+            std::string_view to(data.begin() + dash + 1, data.end());
+            end = static_cast<size_t>(std::stoi(std::string(to)));
+        }
+
+        // partial content
+        response.code = 206;
+    }
+    else
+    {
+        response.headers.emplace("Accept-Ranges", "bytes");
+    }*/
+
     // send empty response with correct length
-    response.headers.emplace("Content-Length", std::to_string(fileSize));
+    if (startSet)
+    {
+        response.headers.emplace("Content-Range",
+                                 std::format("bytes {}-{}/{}", std::to_string(startAt), std::to_string(end), std::to_string(fileSize)));
+    }
+
+    response.headers.emplace("Content-Length", std::to_string(end - startAt));
     response.headers.emplace("Content-Type", file.getMimeType());
+    // response.headers.emplace("Connection", "close");
     response.send(fd);
+
+    iFile.seekg(startAt);
+    size_t read = 0;
 
     while (!(iFile.eof() || iFile.fail()))
     {
-        iFile.read(data, sizeof(data));
+        size_t toRead = sizeof(data);
 
-        if ((int)::send(fd, data, iFile.gcount(), 0) == -1)
+        size_t diff = end - read;
+        if (diff < toRead)
+        {
+            toRead = static_cast<size_t>(diff);
+        }
+
+        iFile.read(data, toRead);
+
+        size_t readed = iFile.gcount();
+
+        if ((int)::send(fd, data, readed, 0) == -1)
         {
             // error or user just canceled request
             return;
         }
+
+        read += readed;
+
+        if (read > static_cast<size_t>(end))
+        {
+            return;
+        }
+
+        // Get new test
+        // std::cout << (int)recv(fd, &buffer, sizeof(buffer), MSG_DONTWAIT) << std::endl;
     }
 }
 
@@ -54,11 +136,12 @@ void DevMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
     }
 
     HTTPResponse response(std::string(data.httpVersion), 200);
+    response.headers.emplace("Server", "Tondik/1.0");
 
     if (!file.isFolder())
     {
         this->logger.info(std::format("{} to {} from {}", data.method, data.path, client.address));
-        this->doFile(filePath, response, file, client.fd);
+        this->doFile(filePath, data, response, file, client.fd);
     }
     else
     {
@@ -73,7 +156,7 @@ void DevMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
                 std::string newPathToConsole = std::string(data.path);
                 newPathToConsole.append(index);
                 this->logger.info(std::format("{} to {} from {}", data.method, newPathToConsole, client.address));
-                this->doFile(newPath, response, FileRead(newPath), client.fd);
+                this->doFile(newPath, data, response, FileRead(newPath), client.fd);
                 found = true;
                 break;
             }
