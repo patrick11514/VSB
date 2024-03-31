@@ -15,7 +15,7 @@ void DevMode::doFile(const fs::path &filePath, const HTTPPayload &payload, HTTPR
     size_t end = fileSize;
 
     // range works only in VLC :(
-    /*if (payload.headers.find("Range") != payload.headers.end())
+    if (payload.headers.find("Range") != payload.headers.end())
     {
         std::string_view range = payload.headers.at("Range");
 
@@ -60,7 +60,7 @@ void DevMode::doFile(const fs::path &filePath, const HTTPPayload &payload, HTTPR
     else
     {
         response.headers.emplace("Accept-Ranges", "bytes");
-    }*/
+    }
 
     // send empty response with correct length
     if (startSet)
@@ -77,6 +77,8 @@ void DevMode::doFile(const fs::path &filePath, const HTTPPayload &payload, HTTPR
     iFile.seekg(startAt);
     size_t read = 0;
 
+    char buffer[1024];
+
     while (!(iFile.eof() || iFile.fail()))
     {
         size_t toRead = sizeof(data);
@@ -91,9 +93,12 @@ void DevMode::doFile(const fs::path &filePath, const HTTPPayload &payload, HTTPR
 
         size_t readed = iFile.gcount();
 
+        std::cout << "SEND" << std::endl;
+
         if ((int)::send(fd, data, readed, 0) == -1)
         {
             // error or user just canceled request
+            std::cout << "ERR" << std::endl;
             return;
         }
 
@@ -101,11 +106,16 @@ void DevMode::doFile(const fs::path &filePath, const HTTPPayload &payload, HTTPR
 
         if (read > static_cast<size_t>(end))
         {
+            std::cout << "END" << std::endl;
             return;
         }
 
         // Get new test
-        // std::cout << (int)recv(fd, &buffer, sizeof(buffer), MSG_DONTWAIT) << std::endl;
+        int res = (int)recv(fd, &buffer, sizeof(buffer), MSG_DONTWAIT);
+        if (res > -1)
+        {
+            std::cout << "REV: " << res << std::endl;
+        }
     }
 }
 
