@@ -5,22 +5,27 @@
 #include <QGridLayout>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QSignalMapper>
+#include <cmath>
 
 enum Operation
 {
+    NONE,
     PLUS,
     MINUS,
     MUL,
-    DIV
+    DIV,
+    MODULO
 };
 
 class MainWindow : public QWidget
 {
     Q_OBJECT
 
-    double currentValue;
-    double prevValue;
-    Operation operation;
+    QString currentValue;
+    QString prevValue;
+    bool negative = false;
+    Operation operation = Operation::NONE;
 
     QLineEdit *screen;
 
@@ -47,8 +52,16 @@ class MainWindow : public QWidget
     QPushButton *reset;
     QPushButton *swap;
 
+    void setDisplay();
+
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+public slots:
+    void addNumber(QString n);
+    void setOperation(QString o);
+    void clear();
+    void toggleNegative();
+    void solve();
 };
 #endif // MAINWINDOW_H
