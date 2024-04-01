@@ -47,6 +47,8 @@ void skipSpaces(std::istream &is)
 bool checkString(std::istream &is, const std::string &str)
 {
     char *c = new char[str.size()];
+    std::fill(c, c + str.size(), 0);
+
     is.read(c, str.size());
     std::string_view sw(c, str.size());
 

@@ -139,7 +139,24 @@ void encode8Bytes(std::vector<uint8_t> &data, size_t bytes);
 std::vector<uint8_t> serialize(const Value &value);
 
 using VecIt = std::vector<uint8_t>::const_iterator;
+/**
+ * @brief Decode 8bytes to data
+ * @param begin iterator to begin of data
+ * @param end iterator to end of data
+ * @return size_t which was constructed from 8 separated bytes
+ */
 size_t decode8Bytes(VecIt &begin, VecIt &end);
+/**
+ * @brief Deserialize all types of Value
+ * @param begin itterator to begin of data
+ * @param end iterator to end of data
+ * @return if deserialization was successfull it returns Value, otherwise std::nullopt
+ */
 std::optional<Value> deserializeAll(VecIt &begin, VecIt &end);
 
+/**
+ * @brief deserialize data
+ * @param data data to be deserialized
+ * @return Value, if deserialization was successfull, Value will be returned, otherwise Null will be returned
+ */
 Value deserialize(const std::vector<uint8_t> &data);
