@@ -29,7 +29,7 @@ void handleSigInt(int s)
  * function prevents the crash and if statment catches this and returns from function and connection is
  * closed.
  */
-void handleBrokenPipe(int s) {}
+void handleBrokenPipe(int) {}
 
 int main(int argc, char **argv)
 {

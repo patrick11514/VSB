@@ -1,3 +1,4 @@
+
 #include "devMode.hpp"
 
 #include <fstream>
@@ -11,15 +12,15 @@ void DevMode::doFile(const fs::path &filePath, const HTTPPayload &payload, HTTPR
     char data[1048576];
 
     bool startSet = false;
-    size_t startAt = 0;
+    size_t start = 0;
     size_t end = fileSize;
 
-    // range works only in VLC :(
+    // if client asks for specific range (sadly works only in VLC), browsers
+    // ask this through same connection and because we don't support keepalive
+    // connection, browsers doesn't support jumping into unbuffered part of vieo
     if (payload.headers.find("Range") != payload.headers.end())
     {
         std::string_view range = payload.headers.at("Range");
-
-        std::cout << range << std::endl;
 
         if (!range.starts_with("bytes="))
         {
@@ -36,6 +37,7 @@ void DevMode::doFile(const fs::path &filePath, const HTTPPayload &payload, HTTPR
         {
             // bad request
             response.code = 400;
+            response.send(fd);
             return;
         }
 
@@ -45,39 +47,42 @@ void DevMode::doFile(const fs::path &filePath, const HTTPPayload &payload, HTTPR
         if (from.size() > 0)
         {
             startSet = true;
-            startAt = static_cast<size_t>(std::stoi(std::string(from)));
+            start = static_cast<size_t>(std::stoul(std::string(from)));
         }
 
         if (to.size() > 0)
         {
             std::string_view to(data.begin() + dash + 1, data.end());
-            end = static_cast<size_t>(std::stoi(std::string(to)));
+            end = static_cast<size_t>(std::stoul(std::string(to)));
+        }
+
+        std::cout << start << " | " << end << std::endl;
+
+        if (end > fileSize || start > fileSize)
+        {
+            response.code = 400;
+            response.send(fd);
+            return;
         }
 
         // partial content
         response.code = 206;
-    }
-    else
-    {
-        response.headers.emplace("Accept-Ranges", "bytes");
     }
 
     // send empty response with correct length
     if (startSet)
     {
         response.headers.emplace("Content-Range",
-                                 std::format("bytes {}-{}/{}", std::to_string(startAt), std::to_string(end), std::to_string(fileSize)));
+                                 std::format("bytes {}-{}/{}", std::to_string(start), std::to_string(end), std::to_string(fileSize)));
     }
 
-    response.headers.emplace("Content-Length", std::to_string(end - startAt));
+    response.headers.emplace("Content-Length", std::to_string(end - start));
     response.headers.emplace("Content-Type", file.getMimeType());
-    // response.headers.emplace("Connection", "close");
     response.send(fd);
 
-    iFile.seekg(startAt);
+    // jump to start
+    iFile.seekg(start);
     size_t read = 0;
-
-    char buffer[1024];
 
     while (!(iFile.eof() || iFile.fail()))
     {
@@ -93,28 +98,18 @@ void DevMode::doFile(const fs::path &filePath, const HTTPPayload &payload, HTTPR
 
         size_t readed = iFile.gcount();
 
-        std::cout << "SEND" << std::endl;
-
         if ((int)::send(fd, data, readed, 0) == -1)
         {
             // error or user just canceled request
-            std::cout << "ERR" << std::endl;
             return;
         }
 
         read += readed;
 
-        if (read > static_cast<size_t>(end))
+        // end of file
+        if (read >= static_cast<size_t>(end))
         {
-            std::cout << "END" << std::endl;
             return;
-        }
-
-        // Get new test
-        int res = (int)recv(fd, &buffer, sizeof(buffer), MSG_DONTWAIT);
-        if (res > -1)
-        {
-            std::cout << "REV: " << res << std::endl;
         }
     }
 }
