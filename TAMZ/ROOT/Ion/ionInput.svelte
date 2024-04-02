@@ -21,11 +21,15 @@
     export let label: string | undefined = undefined
     export let labelPlacement: undefined | "stacked" = undefined
     export let readonly = false
+    export let onChange:
+        | ((value: string | null | undefined | number) => void)
+        | undefined = undefined
 
     let element: HTMLIonInputElement
 
     $: element?.addEventListener("ionInput", (ev) => {
         value = (ev.currentTarget as HTMLIonInputElement).value
+        if (onChange) onChange(value)
     })
 </script>
 
