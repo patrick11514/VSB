@@ -8,6 +8,7 @@ import IonItemOptions from "./ionItemOptions.svelte";
 import IonModal from "./ionModal.svelte";
 import IonSelect from "./ionSelect.svelte";
 import RadioGroup from "./radioGroup.svelte";
+import SearchBar from "./searchBar.svelte";
 
-export { IonActionSheet, IonButton, IonDateTime, IonFabButton, IonInput, IonItemOption, IonItemOptions, IonModal, IonSelect, RadioGroup };
+export { IonActionSheet, IonButton, IonDateTime, IonFabButton, IonInput, IonItemOption, IonItemOptions, IonModal, IonSelect, RadioGroup, SearchBar };
 
