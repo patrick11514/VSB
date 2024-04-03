@@ -8,7 +8,7 @@
 #include "utils/argParser.hpp"
 #include "server/server.hpp"
 #include "socket/socket.hpp"
-#include "utils/threadPool.hpp"
+#include "utils/iniParser.hpp"
 
 // https://www.geeksforgeeks.org/signals-c-language/ on CTRL + C close socket
 void handleSigInt(int s)
@@ -38,6 +38,8 @@ int main(int argc, char **argv)
     signal(SIGPIPE, handleBrokenPipe);
 
     ArgParser parser(argc, argv);
+
+    IniParser config("../_testing/example.ini");
 
     std::ofstream log("/tmp/log.txt");
     std::ofstream err("/tmp/err.txt");

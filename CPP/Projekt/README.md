@@ -56,3 +56,26 @@ access_log=/var/log/webserver/example.com/access.log
 error_log=/var/log/webserver/example.com/error.log
 ```
 
+
+### INI specifikace
+#### Key-Value
+```INI
+key=value
+neco=ahoj
+```
+#### Sekce
+```INI
+[Sekce1]
+hodnota1=1
+hodnota2=2
+
+[Sekce2]
+hodnota1=3
+hodnota2=4
+```
+
+#### Pole
+```INI
+pole[] = "ahoj"
+pole[] = "cau"
+```
