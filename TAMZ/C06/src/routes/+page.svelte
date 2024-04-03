@@ -161,7 +161,7 @@
             return
         }
 
-        czk = (parseFloat(value) * selected.rate * selected.unit).toFixed(2)
+        czk = ((parseFloat(value) * selected.rate) / selected.unit).toFixed(2)
     }
 
     const updateDate = async (date: string) => {
