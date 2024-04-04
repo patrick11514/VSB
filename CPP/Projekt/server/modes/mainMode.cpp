@@ -32,10 +32,10 @@ void MainMode::doFile(const fs::path &filePath, const HTTPPayload &payload, HTTP
             return;
         }
 
-        size_t eq = range.find("=");
+        size_t eq = range.find('=');
         std::string_view data(range.begin() + eq + 1, range.end());
 
-        size_t dash = data.find("-");
+        size_t dash = data.find('-');
         if (dash == std::string_view::npos)
         {
             // bad request

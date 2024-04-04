@@ -29,7 +29,7 @@ HTTPPayload::HTTPPayload(const ReceivedData &data)
 
     while (true)
     {
-        size_t space = part.find(" ");
+        size_t space = part.find(' ');
         if (space == std::string_view::npos)
         {
             httpParts.push_back(std::string_view(part.begin(), part.end()));

@@ -113,9 +113,6 @@ bool HTTPResponse::send(int fd) const
     std::string firstLine = std::format("{} {} {}", this->version, this->code, codeText);
     std::string headers;
 
-    std::string_view a("ahoj");
-    std::string_view b("ahoj");
-
     for (auto header : this->headers)
     {
         headers.append(std::format("{}: {}{}", header.first, header.second, this->separator));
