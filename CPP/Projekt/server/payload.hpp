@@ -5,7 +5,6 @@
 #include <unordered_map>
 
 #include "../socket/socket.hpp"
-#include "../utils/logger.hpp"
 
 class HTTPPayload
 {

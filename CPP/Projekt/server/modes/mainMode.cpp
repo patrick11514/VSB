@@ -1,10 +1,11 @@
+#include <fstream>
+
 #include "mainMode.hpp"
+#include "../../utils/decode.hpp"
 
 MainMode::MainMode(const ArgParser &parser, Logger &logger) : parser(parser), logger(logger) {}
 
 MainMode::~MainMode() {}
-
-#include <fstream>
 
 void MainMode::doFile(const fs::path &filePath, const HTTPPayload &payload, HTTPResponse &response, const FileRead &file, int fd) const
 {

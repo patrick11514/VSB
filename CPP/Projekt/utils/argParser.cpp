@@ -1,3 +1,5 @@
+#include <string_view>
+
 #include "argParser.hpp"
 
 ArgParser::ArgParser(int argc, char **argv) : filePath(argv[0])

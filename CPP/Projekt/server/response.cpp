@@ -1,3 +1,5 @@
+#include <format>
+
 #include "response.hpp"
 
 std::string HTTPResponse::codeToText() const

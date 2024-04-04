@@ -3,11 +3,9 @@
 #include <filesystem>
 
 #include "../../utils/argParser.hpp"
-#include "../../socket/socket.hpp"
 #include "../../utils/logger.hpp"
-#include "../payload.hpp"
 #include "../../utils/fileRead.hpp"
-#include "../../utils/decode.hpp"
+#include "../payload.hpp"
 #include "../response.hpp"
 
 namespace fs = std::filesystem;

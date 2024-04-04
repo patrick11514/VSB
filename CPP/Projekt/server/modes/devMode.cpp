@@ -1,5 +1,6 @@
-
 #include "devMode.hpp"
+
+#include "../../utils/decode.hpp"
 
 DevMode::DevMode(const ArgParser &parser, Logger &logger) : MainMode(parser, logger), indexes{"index.html", "index.htm"}
 {

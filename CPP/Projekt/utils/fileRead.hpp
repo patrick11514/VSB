@@ -2,8 +2,6 @@
 
 #include <filesystem>
 
-#include "mimeType.hpp"
-
 namespace fs = std::filesystem;
 
 class FileRead

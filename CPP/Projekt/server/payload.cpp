@@ -1,5 +1,4 @@
 #include "payload.hpp"
-
 #include "server.hpp"
 
 HTTPPayload::HTTPPayload(const ReceivedData &data)

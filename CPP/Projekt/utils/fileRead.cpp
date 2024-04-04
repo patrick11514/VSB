@@ -1,4 +1,5 @@
 #include "fileRead.hpp"
+#include "mimeType.hpp"
 
 #include <iostream>
 

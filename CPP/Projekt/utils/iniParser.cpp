@@ -1,7 +1,5 @@
 #include "iniParser.hpp"
 
-#include <iostream>
-
 void IniParser::skipSpaces(swit &begin, const swit &end) const
 {
     while (begin != end)
@@ -205,7 +203,7 @@ IniParser::IniParser(const std::string &filePath)
             std::string value = trim(pair.second);
 
             std::string fullName(section);
-            fullName.reserve(section.size() + key.size());
+            fullName.reserve(section.size() + key.size() + 1);
 
             auto it = key.end();
 
@@ -214,13 +212,15 @@ IniParser::IniParser(const std::string &filePath)
             {
                 // remove [] from name
                 key.erase(key.end() - 2, key.end());
+                fullName += ".";
+                fullName += key;
 
-                auto elem = this->keyArrayPairs.find(key);
+                auto elem = this->keyArrayPairs.find(fullName);
                 if (elem == this->keyArrayPairs.end())
                 {
                     std::vector<std::string> data;
                     data.emplace_back(value);
-                    this->keyArrayPairs.emplace(key, data);
+                    this->keyArrayPairs.emplace(fullName, data);
                     continue;
                 }
 
@@ -228,11 +228,14 @@ IniParser::IniParser(const std::string &filePath)
                 continue;
             }
 
-            auto elem = this->keyValuePairs.find(key);
+            fullName += ".";
+            fullName += key;
+
+            auto elem = this->keyValuePairs.find(fullName);
 
             if (elem == this->keyValuePairs.end())
             {
-                this->keyValuePairs.emplace(key, value);
+                this->keyValuePairs.emplace(fullName, value);
                 continue;
             }
 
