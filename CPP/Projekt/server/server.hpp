@@ -9,7 +9,8 @@
 #include <thread>
 
 #include "../utils/threadPool.hpp"
-#include "modes/devMode.hpp"
+#include "../socket/socket.hpp"
+#include "modes/mainMode.hpp"
 
 /**
  * @brief Main part of HTTP Server

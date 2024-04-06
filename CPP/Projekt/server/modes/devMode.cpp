@@ -6,7 +6,7 @@ DevMode::DevMode(const ArgParser &parser, Logger &logger) : MainMode(parser, log
 {
     if (parser.includes("path"))
     {
-        this->path = fs::absolute(*parser.getByKey("path"));
+        this->path = fs::canonical(*parser.getByKey("path"));
     }
     else
     {
@@ -16,8 +16,8 @@ DevMode::DevMode(const ArgParser &parser, Logger &logger) : MainMode(parser, log
 
 void DevMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
 {
-    fs::path filePath = this->path;
-    filePath += decode(data.path);
+
+    fs::path filePath = this->path / decode(data.path);
 
     FileRead file(filePath);
 
@@ -41,8 +41,7 @@ void DevMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
         bool found = false;
         for (const auto &index : this->indexes)
         {
-            fs::path newPath = filePath;
-            newPath.concat(index);
+            fs::path newPath = filePath / index;
 
             if (fs::exists(newPath))
             {

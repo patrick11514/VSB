@@ -45,7 +45,22 @@ HTTPPayload::HTTPPayload(const ReceivedData &data)
     }
 
     this->method = httpParts[0];
-    this->path = httpParts[1];
+    std::string_view tempPath = httpParts[1];
+
+    if (tempPath.find("..") != tempPath.npos)
+    {
+        isValid = false;
+        return;
+    }
+
+    if (tempPath[0] == '/')
+    {
+        this->path = std::string_view(tempPath.begin() + 1, tempPath.end());
+    }
+    else
+    {
+        this->path = tempPath;
+    }
     this->httpVersion = httpParts[2];
 
     // headers

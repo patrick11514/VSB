@@ -1,25 +1,48 @@
-## WebServer
+# Tondík Web Server
 
-### Funkce
-- Web server bude fungovat pouze na HTTP protokolu.
-- Web server půjde spustit několika způsoby:
- 1. V "dev" módu, kdy se server spustí v základu na localhostu, případně přes argument --host na všech interfacech (0.0.0.0) a vybraném portu (defaultně 8080) a bude sloužit pro servování jen jedé složky (defaultně ./, přépadně lze změnit pomocí argumentu --path).
- 2. V "server" módu, kdy se spustí na všech interfacech (0.0.0.0) na daném portu (defaultně 80) a bude pomocí konfiguračních souborů servovat více složek na základě domén/subdomén... (podobně jako například Nginx). Do parametru se poté přidá root složka webserveru, kde bude základní config...
-- Web server bude umět servovat statické soubory (HTML, CSS, JS, obrázky, fonty, ...).
-- Web server bude umět obsloužit více uživatelů najednou.
+## CMD Line
 
-### Milestone do půlky semestru
-- [x] Zpracování HTTP requestů
-- [x] Odeslání HTTP response
-- [x] Kompletně funkční "dev" server 
-- [x] Argumenty příkazové řádky: --dev, --host, --port
-- [x] Obsloužení více uživatelů najednou (multithreading)
+```BASH
+> ./main
+Tondík Web Server
 
-### Config soubor
-#### Hlavní soubor
+Argument types:
+ --name=value
+ -name value
+
+Argument list:
+ --help - shows this help
+Dev mode:
+ --dev - start server in dev mode
+ --host - start dev server on 0.0.0.0 interface
+ --port=8080 - start dev server on specific port
+ --path=/path/to/folder - server files in specified folder
+Server mode:
+ --path=/etc/tondik - path to config file
+```
+
+## Modes
+### Dev mode (Fully implemented)
+Used to serve only one folder. By default started on 127.0.0.1 on port 8080 and it will be serving ./ folder. 
+
+#### Parameters
+- --dev - start dev mode
+- --host - start on 0.0.0.0
+- --port=1234 - change port
+- --path=/path/to/folder - change folder
+
+### Server mode (Not implemented yet)
+Used to serve multiple folders based on domains/subdomains/hostnames.
+
+#### Config file specifications (Based on INI)
+- key=value - set value to key
+- ;comment - single line comments
+- [section] - section, keys under this section will be: section.key, section will be ended when another section starts
+- array[]=value - add value to array
+
+#### Main config file
 ```INI
 port=80
-configs_folder=/etc/webserver
 ;custom response headers (optional) -  array of strings
 headers[] = "Server: SuperWebServer"
 headers[] = "Header: CustomHeaderValue"
@@ -36,46 +59,56 @@ default_root=/var/www/default
 index=index.html
 ```
 
-#### Konfigurační soubory
-```INI
-domain=example.com
-root=/var/www/example.com
-; v základu bude brát jako index soubor index.html
-; lze změnit přes index=index.htm například
-index=index.htm
-access_log=/var/log/webserver/example.com/access.log
-error_log=/var/log/webserver/example.com/error.log
-```
+#### Config for domain/subdomain/hostname
+- serving specific folder
+    ```INI
+    domain=example.com
+    root=/var/www/example.com
+    ; default index will be index.html, but can be changed by this option
+    index=index.htm
+    access_log=/var/log/webserver/example.com/access.log
+    error_log=/var/log/webserver/example.com/error.log
+    ```
+- proxy pass (reverse proxy)
+    ```INI
+    domain=something.example.com
+    reverse_proxy=http://localhost:8080
+    access_log=/var/log/webserver/example.com/access.log
+    error_log=/var/log/webserver/example.com/error.log
+    ```
 
-nebo
+## Specification
+- support only static files (html,css,js,videos,images...)
+- support for HTTP 1.1
+- doesn't support keep-alive connection
+- support partial content:
+    - when streaming video file, for example in vlc, you can skip through video file
+    - supported only in VLC, because browsers are using same connection to do this and we don't support keep-alive connections
 
-```INI
-domain=something.example.com
-reverse_proxy=http://localhost:8080
-access_log=/var/log/webserver/example.com/access.log
-error_log=/var/log/webserver/example.com/error.log
-```
-
-
-### INI specifikace
-#### Key-Value
-```INI
-key=value
-neco=ahoj
-```
-#### Sekce
-```INI
-[Sekce1]
-hodnota1=1
-hodnota2=2
-
-[Sekce2]
-hodnota1=3
-hodnota2=4
-```
-
-#### Pole
-```INI
-pole[] = "ahoj"
-pole[] = "cau"
-```
+## Testing
+- Logs are written in /tmp/log.txt
+    ```BASH
+    ❯ wrk -t12 -c1000 -d30s http://localhost:8080
+    Running 30s test @ http://localhost:8080
+      12 threads and 1000 connections
+      Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency    38.46ms    4.07ms 151.68ms   91.13%
+        Req/Sec     2.15k   191.48     2.56k    82.77%
+      773070 requests in 30.10s, 343.56MB read
+      Socket errors: connect 0, read 773046, write 0, timeout 0
+    Requests/sec:  25683.19
+    Transfer/sec:     11.41MB
+    ```
+- Logs are written to stdout
+    ```BASH
+    ❯ wrk -t12 -c1000 -d30s http://localhost:8080
+    Running 30s test @ http://localhost:8080
+      12 threads and 1000 connections
+      Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency    50.21ms    5.30ms 140.66ms   85.17%
+        Req/Sec     1.65k   150.66     2.26k    79.20%
+      592907 requests in 30.10s, 263.50MB read
+      Socket errors: connect 0, read 592884, write 0, timeout 0
+    Requests/sec:  19697.31
+    Transfer/sec:      8.75MB
+    ```

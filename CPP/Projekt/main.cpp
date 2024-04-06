@@ -39,6 +39,25 @@ int main(int argc, char **argv)
 
     ArgParser parser(argc, argv);
 
+    if (parser.includes("help"))
+    {
+        std::cout << "Tondík Web Server\n\n";
+        std::cout << "Argument types:\n";
+        std::cout << " --name=value\n";
+        std::cout << " -name value\n\n";
+        std::cout << "Argument list:\n";
+        std::cout << " --help - shows this help\n";
+        std::cout << "Dev mode:\n";
+        std::cout << " --dev - start server in dev mode\n";
+        std::cout << " --host - start dev server on 0.0.0.0 interface\n";
+        std::cout << " --port=8080 - start dev server on specific port\n";
+        std::cout << " --path=/path/to/folder - server files in specified folder\n";
+        std::cout << "Server mode:\n";
+        std::cout << " --path=/etc/tondik - path to config files\n";
+
+        return 0;
+    }
+
     IniParser config("../_testing/example.ini");
 
     std::ofstream log("/tmp/log.txt");

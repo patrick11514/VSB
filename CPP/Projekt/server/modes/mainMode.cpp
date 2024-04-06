@@ -60,8 +60,6 @@ void MainMode::doFile(const fs::path &filePath, const HTTPPayload &payload, HTTP
             end = static_cast<size_t>(std::stoul(std::string(to)));
         }
 
-        std::cout << start << " | " << end << std::endl;
-
         if (end > fileSize || start > fileSize)
         {
             response.code = 400;
