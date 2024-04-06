@@ -18,14 +18,25 @@ int main()
 {
 
     std::vector<Student> students{
-        Student{"Jarmila", 90, 5},
-        Student{"Petr", 10, 90},
+        Student{"Jarmila", 50, 40},
+        Student{"Lenka", 90, 30},
+        Student{"Jakub", 20, 90},
     };
     std::vector<Exam> exams{
-        Exam{"DIM", 80, 35},
-        Exam{"UPR", 5, 75},
-        Exam{"ZPG", 65, 90},
-    };
+        Exam{"SKJ", 10, 80},
+        Exam{"DIM", 70, 70},
+        Exam{"MA", 90, 20},
+        Exam{"APPS", 20, 0}};
 
-    std::cout << max_score_difference(students, exams) << std::endl;
+    auto result = get_leaderboard_of_each_subject(students, exams);
+
+    for (const auto &pair : result)
+    {
+        std::cout << pair.first << std::endl;
+
+        for (const auto &score : pair.second)
+        {
+            std::cout << score.first.name << ": " << score.second << std::endl;
+        }
+    }
 }

@@ -211,50 +211,47 @@ TEST_CASE("Filter students some passed")
         REQUIRE(all == to_set({students[0]}));
         REQUIRE(one == to_set({students[0], students[2]}));
 }
-/*
-TEST_CASE("Leaderboard single exam per subject") {
-    std::vector<Student> students{
+
+TEST_CASE("Leaderboard single exam per subject")
+{
+        std::vector<Student> students{
             Student{"Jarmila", 50, 40},
             Student{"Lenka", 90, 30},
             Student{"Jakub", 20, 90},
-    };
-    std::vector<Exam> exams{
+        };
+        std::vector<Exam> exams{
             Exam{"SKJ", 10, 80},
             Exam{"DIM", 70, 70},
             Exam{"MA", 90, 20},
-            Exam{"APPS", 20, 0}
-    };
-    auto leaderboard = get_leaderboard_of_each_subject(students, exams);
-    REQUIRE(leaderboard.size() == 4);
-    REQUIRE(leaderboard["SKJ"] == std::vector<std::pair<Student, Score>>{
-            {students[1], 174},
-            {students[0], 106},
-            {students[2], 72}
-    });
-    REQUIRE(leaderboard["DIM"] == std::vector<std::pair<Student, Score>>{
-            {students[1], 72},
-            {students[2], 66},
-            {students[0], 54}
-    });
-    REQUIRE(leaderboard["MA"] == std::vector<std::pair<Student, Score>>{
-            {students[2], 148},
-            {students[0], 74},
-            {students[1], 66}
-    });
-    REQUIRE(leaderboard["APPS"] == std::vector<std::pair<Student, Score>>{
-            {students[2], 212},
-            {students[1], 204},
-            {students[0], 160}
-    });
+            Exam{"APPS", 20, 0}};
+        auto leaderboard = get_leaderboard_of_each_subject(students, exams);
+        REQUIRE(leaderboard.size() == 4);
+        REQUIRE(leaderboard["SKJ"] == std::vector<std::pair<Student, Score>>{
+                                          {students[1], 174},
+                                          {students[0], 106},
+                                          {students[2], 72}});
+        REQUIRE(leaderboard["DIM"] == std::vector<std::pair<Student, Score>>{
+                                          {students[1], 72},
+                                          {students[2], 66},
+                                          {students[0], 54}});
+        REQUIRE(leaderboard["MA"] == std::vector<std::pair<Student, Score>>{
+                                         {students[2], 148},
+                                         {students[0], 74},
+                                         {students[1], 66}});
+        REQUIRE(leaderboard["APPS"] == std::vector<std::pair<Student, Score>>{
+                                           {students[2], 212},
+                                           {students[1], 204},
+                                           {students[0], 160}});
 }
 
-TEST_CASE("Leaderboard multiple exams per subject") {
-    std::vector<Student> students{
+TEST_CASE("Leaderboard multiple exams per subject")
+{
+        std::vector<Student> students{
             Student{"Jarmila", 50, 40},
             Student{"Lenka", 90, 30},
             Student{"Jakub", 20, 90},
-    };
-    std::vector<Exam> exams{
+        };
+        std::vector<Exam> exams{
             Exam{"SKJ", 10, 80},
             Exam{"APPS", 10, 90},
             Exam{"DIM", 70, 70},
@@ -266,47 +263,42 @@ TEST_CASE("Leaderboard multiple exams per subject") {
             Exam{"APPS", 10, 100},
             Exam{"SKJ", 20, 90},
             Exam{"SKJ", 20, 90},
-    };
-    auto leaderboard = get_leaderboard_of_each_subject(students, exams);
-    REQUIRE(leaderboard.size() == 4);
-    REQUIRE(leaderboard["SKJ"] == std::vector<std::pair<Student, Score>>{
-            {students[1], 474},
-            {students[0], 282},
-            {students[2], 172}
-    });
-    REQUIRE(leaderboard["DIM"] == std::vector<std::pair<Student, Score>>{
-            {students[1], 204},
-            {students[2], 162},
-            {students[0], 146}
-    });
-    REQUIRE(leaderboard["MA"] == std::vector<std::pair<Student, Score>>{
-            {students[2], 490},
-            {students[0], 228},
-            {students[1], 182}
-    });
-    REQUIRE(leaderboard["APPS"] == std::vector<std::pair<Student, Score>>{
-            {students[1], 474},
-            {students[0], 268},
-            {students[2], 124}
-    });
+        };
+        auto leaderboard = get_leaderboard_of_each_subject(students, exams);
+        REQUIRE(leaderboard.size() == 4);
+        REQUIRE(leaderboard["SKJ"] == std::vector<std::pair<Student, Score>>{
+                                          {students[1], 474},
+                                          {students[0], 282},
+                                          {students[2], 172}});
+        REQUIRE(leaderboard["DIM"] == std::vector<std::pair<Student, Score>>{
+                                          {students[1], 204},
+                                          {students[2], 162},
+                                          {students[0], 146}});
+        REQUIRE(leaderboard["MA"] == std::vector<std::pair<Student, Score>>{
+                                         {students[2], 490},
+                                         {students[0], 228},
+                                         {students[1], 182}});
+        REQUIRE(leaderboard["APPS"] == std::vector<std::pair<Student, Score>>{
+                                           {students[1], 474},
+                                           {students[0], 268},
+                                           {students[2], 124}});
 }
 
-TEST_CASE("Leaderboard order changes") {
-    std::vector<Student> students{
+TEST_CASE("Leaderboard order changes")
+{
+        std::vector<Student> students{
             Student{"Jarmila", 50, 10},
             Student{"Lenka", 20, 75},
-    };
-    std::vector<Exam> exams{
+        };
+        std::vector<Exam> exams{
             Exam{"DIM", 10, 65},
             Exam{"DIM", 85, 5},
             Exam{"DIM", 90, 10},
             Exam{"DIM", 90, 10},
-    };
-    auto leaderboard = get_leaderboard_of_each_subject(students, exams);
-    REQUIRE(leaderboard.size() == 1);
-    REQUIRE(leaderboard["DIM"] == std::vector<std::pair<Student, Score>>{
-            {students[1], 514},
-            {students[0], 187}
-    });
+        };
+        auto leaderboard = get_leaderboard_of_each_subject(students, exams);
+        REQUIRE(leaderboard.size() == 1);
+        REQUIRE(leaderboard["DIM"] == std::vector<std::pair<Student, Score>>{
+                                          {students[1], 514},
+                                          {students[0], 187}});
 }
-*/

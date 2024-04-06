@@ -1,4 +1,5 @@
 #include "tasks.h"
+#include <string_view>
 
 std::ostream &operator<<(std::ostream &os, const Student &student)
 {
@@ -77,29 +78,47 @@ size_t max_score_difference(const std::vector<Student> &students, const std::vec
 
 std::pair<std::unordered_set<Student>, std::unordered_set<Student>> filter_students(const std::vector<Student> &students, const std::vector<Exam> &exams)
 {
-    // student -> exampoints
+    // Each student have unordered map of exam + points from them
+    // to avoid calling calculate_score 2x
+    std::unordered_map<Student, std::unordered_map<std::string, size_t>> data;
+
+    std::transform(students.begin(), students.end(), std::inserter(data, data.begin()),
+                   [exams](const Student &student)
+                   {
+                       std::unordered_map<std::string, size_t> studentExams;
+
+                       std::transform(exams.begin(), exams.end(), std::inserter(studentExams, studentExams.begin()),
+                                      [student](const Exam &exam)
+                                      {
+                                          return std::make_pair(exam.subject, calculate_score(student, exam));
+                                      });
+
+                       return std::make_pair(student, studentExams);
+                   });
 
     std::unordered_set<Student> all;
 
     std::copy_if(students.begin(), students.end(), std::inserter(all, all.begin()),
-                 [exams](const Student &student)
+                 [exams, &data](const Student &student)
                  {
                      return std::all_of(exams.begin(), exams.end(),
-                                        [student](const Exam &exam)
+                                        [student, &data](const Exam &exam)
                                         {
-                                            return calculate_score(student, exam) > 100;
+                                            return data[student][exam.subject] > 100;
+                                            // return calculate_score(student, exam) > 100;
                                         });
                  });
 
     std::unordered_set<Student> some;
 
     std::copy_if(students.begin(), students.end(), std::inserter(some, some.begin()),
-                 [exams](const Student &student)
+                 [exams, &data](const Student &student)
                  {
                      return std::any_of(exams.begin(), exams.end(),
-                                        [student](const Exam &exam)
+                                        [student, &data](const Exam &exam)
                                         {
-                                            return calculate_score(student, exam) > 100;
+                                            return data[student][exam.subject] > 100;
+                                            // return calculate_score(student, exam) > 100;
                                         });
                  });
 
@@ -108,5 +127,59 @@ std::pair<std::unordered_set<Student>, std::unordered_set<Student>> filter_stude
 
 Leaderboard get_leaderboard_of_each_subject(const std::vector<Student> &students, const std::vector<Exam> &exams)
 {
-    return Leaderboard();
+    std::unordered_map<Student, std::vector<std::pair<Subject, Score>>> data;
+
+    std::transform(students.begin(), students.end(), std::inserter(data, data.begin()),
+                   [exams](const Student &student)
+                   {
+                       std::vector<std::pair<Subject, Score>> examsScores;
+                       std::transform(exams.begin(), exams.end(), std::back_inserter(examsScores),
+                                      [student](const Exam &exam)
+                                      {
+                                          return std::make_pair(exam.subject, calculate_score(student, exam));
+                                      });
+                       return std::make_pair(student, examsScores);
+                   });
+
+    Leaderboard leaderboard;
+
+    std::for_each(data.begin(), data.end(),
+                  [&leaderboard](const std::pair<Student, std::vector<std::pair<Subject, Score>>> &pair)
+                  {
+                      std::for_each(pair.second.begin(), pair.second.end(),
+                                    [student = pair.first, &leaderboard](const std::pair<Subject, Score> &subjectScore)
+                                    {
+                                        auto &vec = leaderboard[subjectScore.first];
+                                        auto it = std::find_if(vec.begin(), vec.end(),
+                                                               [&student](const std::pair<Student, Score> &studentScore)
+                                                               {
+                                                                   return studentScore.first == student;
+                                                               });
+
+                                        if (it == vec.end())
+                                        {
+                                            vec.push_back(std::make_pair(student, subjectScore.second));
+                                        }
+                                        else
+                                        {
+                                            it->second += subjectScore.second;
+                                        }
+                                    });
+                  });
+
+    std::for_each(leaderboard.begin(), leaderboard.end(),
+                  [](auto &studentScore)
+                  {
+                      std::sort(studentScore.second.begin(), studentScore.second.end(),
+                                [](const std::pair<Student, Score> &first, const std::pair<Student, Score> &second)
+                                {
+                                    if (first.second == second.second)
+                                    {
+                                        return first.first.name > second.first.name;
+                                    }
+                                    return first.second > second.second;
+                                });
+                  });
+
+    return leaderboard;
 }
