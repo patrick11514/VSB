@@ -74,6 +74,9 @@
         "typeinfo": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "qpushbutton": "cpp"
+        "qpushbutton": "cpp",
+        "qjsondocument": "cpp",
+        "qbytearray": "cpp",
+        "qjsonarray": "cpp"
     }
 }
