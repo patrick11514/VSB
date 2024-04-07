@@ -20,6 +20,8 @@ ServerMode::ServerMode(const ArgParser &parser, Logger &logger, const std::strin
         // configFile << std::format("port=80\nconfigs_folder={}\n\naccess_log={}\nerror_log={}", path, path.concat);
     }
 
+    // IniParser config(mainPath);
+
     fs::path p1("/home/patrick115");
     fs::path p2("/home/patrick115/");
 

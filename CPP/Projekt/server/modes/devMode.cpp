@@ -14,6 +14,8 @@ DevMode::DevMode(const ArgParser &parser, Logger &logger) : MainMode(parser, log
     }
 }
 
+DevMode::~DevMode() {}
+
 void DevMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
 {
 
