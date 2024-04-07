@@ -88,6 +88,9 @@ void Server::start()
     }
     else
     {
+        this->l->warn("Server mode is in WIP");
+        return;
+
         auto value = this->parser.getByKey("path");
         std::string path = ".";
         if (value != nullptr)

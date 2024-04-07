@@ -1,5 +1,12 @@
 # Tondík Web Server
 
+## Milestone do půlky semestru
+- [x] Zpracování HTTP requestů
+- [x] Odeslání HTTP response
+- [x] Kompletně funkční "dev" server 
+- [x] Argumenty příkazové řádky: --dev, --host, --port
+- [x] Obsloužení více uživatelů najednou (multithreading)
+
 ## CMD Line
 
 ```BASH
