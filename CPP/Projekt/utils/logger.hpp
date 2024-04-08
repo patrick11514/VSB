@@ -1,6 +1,5 @@
 #pragma once
 #include <iostream>
-#include <string>
 #include <ctime>
 #include <iomanip>
 #include <format>
@@ -21,7 +20,7 @@ public:
     Logger() = default;
     Logger(std::ostream &infoStream, std::ostream &errorStream, std::ostream &warnStream);
 
-    void info(const std::string &text);  ///< [TIME] [INFO] text
-    void error(const std::string &text); ///< [TIME] [ERRO] text
-    void warn(const std::string &text);  ///< [TIME] [WARN] text
+    void info(const std::string_view &text);  ///< [TIME] [INFO] text
+    void error(const std::string_view &text); ///< [TIME] [ERRO] text
+    void warn(const std::string_view &text);  ///< [TIME] [WARN] text
 };

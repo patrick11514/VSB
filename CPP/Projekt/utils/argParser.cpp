@@ -1,3 +1,5 @@
+#include <string_view>
+
 #include "argParser.hpp"
 
 ArgParser::ArgParser(int argc, char **argv) : filePath(argv[0])
@@ -9,7 +11,7 @@ ArgParser::ArgParser(int argc, char **argv) : filePath(argv[0])
         if (current.starts_with("--"))
         {
             std::string_view sw(current.begin() + 2, current.end());
-            size_t result = sw.find("=");
+            size_t result = sw.find('=');
             if (result == std::string::npos)
             {
                 this->values.emplace(sw, "");

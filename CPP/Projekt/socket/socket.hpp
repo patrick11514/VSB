@@ -3,8 +3,9 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <stdexcept>
 #include <unistd.h>
+
+#include <stdexcept>
 #include <optional>
 
 enum StartType

@@ -4,4 +4,4 @@
 
 namespace fs = std::filesystem;
 
-fs::path decode(const std::string_view &path);
+fs::path decode(const std::string_view &path); ///< decode http encoded path

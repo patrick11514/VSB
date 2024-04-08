@@ -1,4 +1,8 @@
+#include <format>
+
 #include "server.hpp"
+#include "modes/devMode.hpp"
+#include "modes/serverMode.hpp"
 
 Server *Server::instance = nullptr;
 
@@ -84,8 +88,25 @@ void Server::start()
     }
     else
     {
-        // TODO
-        this->l->warn("Server mode WIP");
+        this->l->warn("Server mode is in WIP");
+        return;
+
+        auto value = this->parser.getByKey("path");
+        std::string path = ".";
+        if (value != nullptr)
+        {
+            path = *value;
+        }
+        try
+        {
+            this->mode = new ServerMode(this->parser, *this->l, path);
+        }
+        catch (std::exception &ex)
+        {
+            this->l->error(ex.what());
+            exit(-1);
+        }
+
         return;
     }
 
@@ -124,6 +145,8 @@ void Server::handleRequest(const ReceivedData &data)
 
     if (!payload.isValid)
     {
+        HTTPResponse response(std::string(payload.httpVersion), 400);
+        response.send(data.fd);
         close(data.fd);
         return;
     }

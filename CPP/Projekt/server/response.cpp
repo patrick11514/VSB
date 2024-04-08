@@ -1,3 +1,5 @@
+#include <format>
+
 #include "response.hpp"
 
 std::string HTTPResponse::codeToText() const
@@ -112,9 +114,6 @@ bool HTTPResponse::send(int fd) const
     std::string codeText = this->codeToText();
     std::string firstLine = std::format("{} {} {}", this->version, this->code, codeText);
     std::string headers;
-
-    std::string_view a("ahoj");
-    std::string_view b("ahoj");
 
     for (auto header : this->headers)
     {
