@@ -1,0 +1,4 @@
+Došlo k chybě:    at C07.TestPageMiddleware.Invoke(HttpContext ctx) in C:\Users\Patrik Mintěl\source\repos\2C07\C07\TestPageMiddleware.cs:line 16
+   at C07.FirstPageMiddleware.Invoke(HttpContext ctx) in C:\Users\Patrik Mintěl\source\repos\2C07\C07\FirstPageMiddleware.cs:line 21
+   at C07.FileServingMiddleware.Invoke(HttpContext ctx) in C:\Users\Patrik Mintěl\source\repos\2C07\C07\FileServingMiddleware.cs:line 34
+   at C07.ErrorHandleMiddleware.Invoke(HttpContext ctx, ExceptionHandler handler) in C:\Users\Patrik Mintěl\source\repos\2C07\C07\ErrorHandleMiddleware.cs:line 16
