@@ -1,5 +1,8 @@
-<h1>My Blog</h1>
+{% extends "weblog/base.html" %}
+
+{% block body %}
 
 {% for post in posts %}
-    <h2><a href="">{{ post.title }}</a></h2>
+    <h2><a href="{% url 'post' post.pk %}">{{ post.title }}</a></h2>
 {% endfor %}
+{% endblock %}

@@ -20,4 +20,9 @@ from django.urls import path
 
 from weblog import views
 
-urlpatterns = [path("admin/", admin.site.urls), path("", views.index, name="index")]
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("", views.index, name="index"),
+    path("post/<int:post_id>", views.post, name="post"),
+    path("post/<int:post_id>/addcomment", views.post, name="addcomment"),
+]
