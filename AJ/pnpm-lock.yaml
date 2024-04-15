@@ -14,9 +14,17 @@ dependencies:
   highlightjs-svelte:
     specifier: ^1.0.6
     version: 1.0.6
+  prism-svelte:
+    specifier: ^0.5.0
+    version: 0.5.0
   prismjs:
     specifier: ^1.29.0
     version: 1.29.0
+
+devDependencies:
+  '@types/prismjs':
+    specifier: ^1.26.3
+    version: 1.26.3
 
 packages:
 
@@ -58,6 +66,10 @@ packages:
       markdown-it-front-matter: 0.2.4
       postcss: 8.4.38
     dev: false
+
+  /@types/prismjs@1.26.3:
+    resolution: {integrity: sha512-A0D0aTXvjlqJ5ZILMz3rNfDBOx9hHxLZYv2by47Sm/pqW35zzjusrZTryatjN/Rf8Us2gZrJD+KeHbUSTux1Cw==}
+    dev: true
 
   /argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
@@ -211,6 +223,10 @@ packages:
       nanoid: 3.3.7
       picocolors: 1.0.0
       source-map-js: 1.2.0
+    dev: false
+
+  /prism-svelte@0.5.0:
+    resolution: {integrity: sha512-db91Bf3pRGKDPz1lAqLFSJXeW13mulUJxhycysFpfXV5MIK7RgWWK2E5aPAa71s8TCzQUXxF5JOV42/iOs6QkA==}
     dev: false
 
   /prismjs@1.29.0:

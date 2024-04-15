@@ -1,8 +1,12 @@
 {
-	"dependencies": {
-		"@marp-team/marp-core": "^3.9.0",
-		"highlight.js": "^11.9.0",
-		"highlightjs-svelte": "^1.0.6",
-		"prismjs": "^1.29.0"
-	}
+    "dependencies": {
+        "@marp-team/marp-core": "^3.9.0",
+        "highlight.js": "^11.9.0",
+        "highlightjs-svelte": "^1.0.6",
+        "prism-svelte": "^0.5.0",
+        "prismjs": "^1.29.0"
+    },
+    "devDependencies": {
+        "@types/prismjs": "^1.26.3"
+    }
 }
