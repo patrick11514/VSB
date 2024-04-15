@@ -529,7 +529,7 @@ Your counter is {$counter} <br />
 ```Svelte
 {#key someValue}
   <h2>Content refreshed, each time someValue changes</h2>
-{/await}
+{/key}
 ```
 
 ---
