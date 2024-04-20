@@ -416,8 +416,8 @@ TEST_SUITE("Iterators")
                             .iter()
                             .filter([i = 0ull](int) mutable
                                     {
-                ++i;
-                return i % 2 == 0; });
+                        ++i;
+                        return i % 2 == 0; });
 
         auto from_it = to_vec(filtered);
 
