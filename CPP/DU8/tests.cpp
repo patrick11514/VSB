@@ -544,11 +544,12 @@ TEST_SUITE("Iterators")
     }
 }
 
-/*
 // Tests for bonus functionality
 
-TEST_SUITE("Multi-dimensional index") {
-    TEST_CASE("Shape count") {
+TEST_SUITE("Multi-dimensional index")
+{
+    TEST_CASE("Shape count")
+    {
         REQUIRE_THROWS(NumpyArray<int>{{1, 2, 3}, {}});
         REQUIRE_THROWS(NumpyArray<int>{{1, 2, 3}, {4}});
         REQUIRE_THROWS(NumpyArray<int>{{1, 2, 3}, {4, 2, 8}});
@@ -556,18 +557,21 @@ TEST_SUITE("Multi-dimensional index") {
         NumpyArray<int> x2{{1, 2, 3}, {1, 3, 1}};
         NumpyArray<int> x3{{1, 2, 3}, {3, 1, 1}};
     }
-    TEST_CASE("Wrong index count") {
+    TEST_CASE("Wrong index count")
+    {
         NumpyArray<int> items{{1, 2, 3}, {3}};
         REQUIRE_THROWS(items.nd_index1(std::array<size_t, 0>{}));
         REQUIRE_THROWS(items.nd_index1(std::array<size_t, 2>{0, 0}));
     }
-    TEST_CASE("Wrong index value") {
+    TEST_CASE("Wrong index value")
+    {
         NumpyArray<int> items{{1, 2, 3, 4}, {2, 2}};
         REQUIRE_THROWS(items.nd_index1(std::array<size_t, 2>{2, 0}));
         REQUIRE_THROWS(items.nd_index1(std::array<size_t, 2>{0, 2}));
         REQUIRE_THROWS(items.nd_index1(std::array<size_t, 2>{2, 2}));
     }
-    TEST_CASE("2D array 1") {
+    TEST_CASE("2D array 1")
+    {
         NumpyArray<int> items{{1, 2, 3, 4, 5, 6, 7, 8}, {2, 4}};
         REQUIRE(items.nd_index1(std::array<size_t, 2>{0, 0}) == 1);
         REQUIRE(items.nd_index1(std::array<size_t, 2>{0, 1}) == 2);
@@ -578,7 +582,8 @@ TEST_SUITE("Multi-dimensional index") {
         REQUIRE(items.nd_index1(std::array<size_t, 2>{1, 2}) == 7);
         REQUIRE(items.nd_index1(std::array<size_t, 2>{1, 3}) == 8);
     }
-    TEST_CASE("2D array 2") {
+    TEST_CASE("2D array 2")
+    {
         NumpyArray<int> items{{1, 2, 3, 4, 5, 6, 7, 8}, {4, 2}};
         REQUIRE(items.nd_index1(std::array<size_t, 2>{0, 0}) == 1);
         REQUIRE(items.nd_index1(std::array<size_t, 2>{0, 1}) == 2);
@@ -589,7 +594,8 @@ TEST_SUITE("Multi-dimensional index") {
         REQUIRE(items.nd_index1(std::array<size_t, 2>{3, 0}) == 7);
         REQUIRE(items.nd_index1(std::array<size_t, 2>{3, 1}) == 8);
     }
-    TEST_CASE("3D array") {
+    TEST_CASE("3D array")
+    {
         std::vector<int> data(24);
         // Fill with numbers 1, 2, 3, 4, ...
         std::iota(data.begin(), data.end(), 1);
@@ -597,9 +603,12 @@ TEST_SUITE("Multi-dimensional index") {
         NumpyArray<int> items{data, {2, 4, 3}};
 
         int expected = 1;
-        for (size_t i = 0; i < 2; i++) {
-            for (size_t j = 0; j < 4; j++) {
-                for (size_t k = 0; k < 3; k++) {
+        for (size_t i = 0; i < 2; i++)
+        {
+            for (size_t j = 0; j < 4; j++)
+            {
+                for (size_t k = 0; k < 3; k++)
+                {
                     std::array<size_t, 3> index{i, j, k};
                     REQUIRE(items.nd_index1(index) == expected);
                     expected++;
@@ -609,37 +618,43 @@ TEST_SUITE("Multi-dimensional index") {
     }
 }
 
-TEST_SUITE("&& specialization for boolean arrays") {
-    template<class T, class = decltype(std::declval<T>() && std::declval<T>())>
-    std::true_type supports_and(const T&);
+TEST_SUITE("&& specialization for boolean arrays")
+{
+    template <class T, class = decltype(std::declval<T>() && std::declval<T>())>
+    std::true_type supports_and(const T &);
     std::false_type supports_and(...);
 
-    template<class T> using supports_and_test = decltype(supports_and(std::declval<T>()));
+    template <class T>
+    using supports_and_test = decltype(supports_and(std::declval<T>()));
 
     static_assert(supports_and_test<NumpyArray<bool>>());
     static_assert(!supports_and_test<NumpyArray<int>>());
 
-    TEST_CASE("And") {
+    TEST_CASE("And")
+    {
         NumpyArray<bool> b1{{true, false, true, false}};
         NumpyArray<bool> b2{{true, true, false, false}};
 
         auto result = b1 && b2;
         REQUIRE(to_vec(result) == std::vector<bool>{true, false, false, false});
     }
-    TEST_CASE("And slice") {
+    TEST_CASE("And slice")
+    {
         NumpyArray<bool> b1{{true, false, true, false}};
         NumpyArray<bool> b2{{true, true, false, false}};
 
         auto result = b1.slice(0, 4) && b2.slice(0, 4);
         REQUIRE(to_vec(result) == std::vector<bool>{true, false, false, false});
     }
-    TEST_CASE("And scalar") {
+    TEST_CASE("And scalar")
+    {
         NumpyArray<bool> arr1{std::vector<bool>{true, true, false}};
 
         REQUIRE(to_vec(arr1 && true) == std::vector<bool>{true, true, false});
         REQUIRE(to_vec(false && arr1) == std::vector<bool>{false, false, false});
     }
-    TEST_CASE("And array broadcast") {
+    TEST_CASE("And array broadcast")
+    {
         NumpyArray<bool> arr1{std::vector<bool>{true}};
         NumpyArray<bool> arr2{std::vector<bool>{true, true, false}};
 
@@ -647,4 +662,3 @@ TEST_SUITE("&& specialization for boolean arrays") {
         REQUIRE(to_vec(arr2 && arr1) == std::vector<bool>{true, true, false});
     }
 }
-*/

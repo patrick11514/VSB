@@ -3,6 +3,9 @@
 #include <exception>
 #include <vector>
 #include <memory>
+#include <array>
+// for std::iota in tests
+#include <numeric>
 
 class ArrayException : public std::exception
 {
@@ -28,6 +31,8 @@ class NumpyArray
 {
     T *data;
     size_t size;
+    // bonus
+    std::vector<size_t> dimensions;
 
 public:
     NumpyArray(std::vector<T> data)
@@ -35,6 +40,35 @@ public:
         this->size = data.size();
         this->data = new T[this->size];
         std::copy(data.begin(), data.end(), this->data);
+    }
+
+    NumpyArray(std::vector<T> data, std::vector<size_t> dimensions) : NumpyArray(data)
+    {
+        if (dimensions.size() == 0)
+        {
+            throw ArrayException("Dimensions array cannot be empty");
+        }
+
+        size_t items = 1;
+
+        for (auto i : dimensions)
+        {
+            items *= i;
+        }
+
+        if (data.size() < items)
+        {
+            throw ArrayException("Not enought items in data for these dimensions");
+        }
+
+        this->dimensions = dimensions;
+    }
+
+    NumpyArray(NumpyArray &other)
+    {
+        this->size = other.size;
+        this->data = new T[this->size];
+        std::copy(other.begin(), other.end(), this->data);
     }
 
     ~NumpyArray()
@@ -59,6 +93,11 @@ public:
         }
 
         return this->data[index];
+    }
+
+    size_t _size() const
+    {
+        return this->size;
     }
 
     class NumpyIterator
@@ -516,6 +555,97 @@ public:
         {
             return Iterable(this->begin(), this->end());
         }
+
+        template <typename B = T, std::enable_if_t<std::is_same_v<B, bool>, bool> = true>
+        NumpyArray<bool> operator&&(bool value) const
+        {
+            size_t range = this->dataEnd - this->dataStart;
+
+            std::vector<bool> newData;
+            newData.reserve(range);
+
+            for (size_t i = this->dataStart; i < this->dataEnd; ++i)
+            {
+                newData.emplace_back(this->data[i] && value);
+            }
+            return NumpyArray(newData);
+        }
+
+        template <typename B = T, std::enable_if_t<std::is_same_v<B, bool>, bool> = true>
+        friend NumpyArray<bool> operator&&(bool value, const NumpySlice &slice)
+        {
+            size_t range = slice.dataEnd - slice.dataStart;
+
+            std::vector<bool> newData;
+            newData.reserve(range);
+
+            for (size_t i = slice.dataStart; i < slice.dataEnd; ++i)
+            {
+                newData.emplace_back(slice.data[i] && value);
+            }
+            return NumpyArray(newData);
+        }
+
+        template <typename B = T, std::enable_if_t<std::is_same_v<B, bool>, bool> = true>
+        NumpyArray<bool> operator&&(NumpySlice slice) const
+        {
+            size_t range = this->dataEnd - this->dataStart;
+            size_t otherRange = slice.dataEnd - slice.dataStart;
+
+            if (range != otherRange)
+            {
+                if (range == 1)
+                {
+                    return slice.operator&&(this->operator[](0));
+                }
+
+                if (otherRange == 1)
+                {
+                    return this->operator&&(slice[0]);
+                }
+
+                throw ArrayException("Slices must have same size");
+            }
+
+            std::vector<bool> newData;
+            newData.reserve(range);
+
+            for (size_t i = 0; i < range; ++i)
+            {
+                newData.emplace_back(this->data[this->dataStart + i] && slice.data[slice.dataStart + i]);
+            }
+            return NumpyArray(newData);
+        }
+
+        template <typename B = T, std::enable_if_t<std::is_same_v<B, bool>, bool> = true>
+        NumpyArray<bool> operator&&(NumpyArray<bool> other) const
+        {
+            size_t range = this->dataEnd - this->dataStart;
+
+            if (range != other.size)
+            {
+                if (range == 1)
+                {
+                    return other.operator&&(this->operator[][0]);
+                }
+
+                if (other.size == 1)
+                {
+                    return this->operator&&(other[0]);
+                }
+
+                throw ArrayException("Slice's and Array's size must be same");
+            }
+
+            std::vector<bool> newData;
+            newData.reserve(range);
+
+            for (size_t i = 0; i < range; ++i)
+            {
+                newData.emplace_back(this->data[dataStart + i] && other[i]);
+            }
+            return NumpyArray(newData);
+        }
     };
 
     NumpySlice slice() const
@@ -739,7 +869,114 @@ public:
     {
         return Iterable(this->begin(), this->end());
     }
+
+    template <typename B = T, std::enable_if_t<std::is_same_v<B, bool>, bool> = true>
+    NumpyArray<bool> operator&&(bool value) const
+    {
+        std::vector<bool> newData;
+        newData.reserve(this->size);
+
+        for (size_t i = 0; i < this->size; ++i)
+        {
+            newData.emplace_back(this->data[i] && value);
+        }
+        return NumpyArray(newData);
+    }
+
+    template <typename B = T, std::enable_if_t<std::is_same_v<B, bool>, bool> = true>
+    NumpyArray<bool> operator&&(const NumpyArray<bool> &other) const
+    {
+        if (this->size != other.size)
+        {
+            if (this->size == 1)
+            {
+                return other.operator&&(this->data[0]);
+            }
+
+            if (other.size == 1)
+            {
+                return this->operator&&(other[0]);
+            }
+
+            throw ArrayException("Arrays must have same size");
+        }
+
+        std::vector<bool> newData;
+        newData.reserve(this->size);
+
+        for (size_t i = 0; i < this->size; ++i)
+        {
+            newData.emplace_back(this->data[i] && other.data[i]);
+        }
+
+        return NumpyArray(newData);
+    }
+
+    template <typename B = T, std::enable_if_t<std::is_same_v<B, bool>, bool> = true>
+    NumpyArray<bool> operator&&(const NumpySlice &other) const
+    {
+        if (this->size != other.size())
+        {
+            if (this->size == 1)
+            {
+                return other.operator&&(this->data[0]);
+            }
+
+            if (other.size() == 1)
+            {
+                return this->operator&&(other[0]);
+            }
+
+            throw ArrayException("Array's and Slice's size must be same");
+        }
+
+        std::vector<bool> newData;
+        newData.reserve(this->size);
+
+        for (size_t i = 0; i < this->size; ++i)
+        {
+            newData.emplace_back(this->data[i] && other[i]);
+        }
+
+        return NumpyArray(newData);
+    }
+
+    template <std::size_t S>
+    const T &nd_index1(const std::array<size_t, S> &indices)
+    {
+        if (indices.size() != this->dimensions.size())
+        {
+            throw ArrayException("Array with indices is not correct");
+        }
+
+        for (size_t i = 0; i < this->dimensions.size(); ++i)
+        {
+            if (indices[i] >= this->dimensions[i])
+            {
+                throw ArrayException("Index is too large");
+            }
+        }
+
+        size_t index = 0;
+
+        for (size_t i = 0; i < this->dimensions.size(); ++i)
+        {
+            size_t sumsOfSizes = 1;
+            for (size_t l = i + 1; l < this->dimensions.size(); ++l)
+            {
+                sumsOfSizes *= this->dimensions[l];
+            }
+
+            index += sumsOfSizes * indices[i];
+        }
+
+        return this->data[index];
+    }
 };
+
+// přes frienda mi to nefungovalo, viz DC
+// https://discord.com/channels/631124326522945546/1058362733902446663/1231273279478824980
+NumpyArray<bool> operator&&(bool value, const NumpyArray<bool> &array);
 
 template <typename BeginIt, typename EndIt>
 class Iterable
