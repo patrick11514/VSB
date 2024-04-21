@@ -140,10 +140,12 @@ public class MyDapper : IDisposable, IAsyncDisposable
         cmd.CommandText = sb.ToString();
         var reader = cmd.ExecuteReader();
 
-        while (reader.Read())
+        /*while (reader.Read())
         {
             
-        }
+        }*/
+
+        return new List<T>();
     }
 
     public void Select<T>(uint? limit = null)
