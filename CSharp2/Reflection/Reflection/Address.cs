@@ -3,15 +3,13 @@ namespace Reflection;
 public class Address
 {
     [PrimaryKey]
-    [Type(Type.INTEGER)]
     public int Id { get; set; }
     
-    [Type(Type.TEXT, true)]
+    [Nullable]
     public string City { get; set; }
-    [Type(Type.TEXT, true)]
+    [Nullable]
     public string Street { get; set; }
-    [Type(Type.INTEGER)]
     public int Number { get; set; }
-    [Type(Type.TEXT, true)]
+    [Nullable]
     public string ZipCode { get; set; }
 }

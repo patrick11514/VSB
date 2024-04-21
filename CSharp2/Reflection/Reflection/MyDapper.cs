@@ -63,6 +63,28 @@ public class MyDapper : IDisposable, IAsyncDisposable
         }
     }
 
+    //Convert type to SQLite type
+    public string getType<T>()
+    {
+        Console.WriteLine(typeof(T).Name);
+        switch (typeof(T).Name)
+        {
+            case "String":
+                return "TEXT";   
+            case "Int16":
+            case "Int32":
+            case "Int64":
+                return "INTEGER";
+            case "Double":
+            case "Single":
+            case "Decimal":
+                return "REAL";
+            
+        }
+        
+        return "aaa";
+    }
+
     private PropertyInfo? getPrimaryProperty<T>()
     {
         var type = typeof(T);
@@ -92,22 +114,16 @@ public class MyDapper : IDisposable, IAsyncDisposable
         
         foreach (var property in properties)
         {
-            if (!Attribute.IsDefined(property, typeof(TypeAttribute)))
+            if (!Attribute.IsDefined(property, typeof(NullableAttribute)))
             {
                 continue;
             }
             
-            var attr = (TypeAttribute?)Attribute.GetCustomAttribute(property, typeof(TypeAttribute));
+            var attr = (NullableAttribute?)Attribute.GetCustomAttribute(property, typeof(NullableAttribute));
 
             if (attr == null)
             {
                 continue;
-            }
-
-            sb.Append($"{property.Name} {attr.getType()}");
-            if (!attr.nullable)
-            {
-                sb.Append(" NOT NULL");
             }
 
             if (Attribute.IsDefined(property, typeof(PrimaryKeyAttribute)))
@@ -144,6 +160,8 @@ public class MyDapper : IDisposable, IAsyncDisposable
         {
             
         }
+
+        return new();
     }
 
     public void Select<T>(uint? limit = null)
