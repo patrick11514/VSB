@@ -50,6 +50,10 @@ Used to serve multiple folders based on domains/subdomains/hostnames.
 #### Main config file
 ```INI
 port=80
+;directory, where domain configs will be located
+config_directory=/etc/tondik/configs
+;if local=false, server is started on 0.0.0.0, if local=true then server is started on 127.0.0.1 (optional) - default value false
+local=false
 ;custom response headers (optional) -  array of strings
 headers[] = "Server: SuperWebServer"
 headers[] = "Header: CustomHeaderValue"

@@ -23,4 +23,6 @@ public:
     void info(const std::string_view &text);  ///< [TIME] [INFO] text
     void error(const std::string_view &text); ///< [TIME] [ERRO] text
     void warn(const std::string_view &text);  ///< [TIME] [WARN] text
+
+    void flush();
 };

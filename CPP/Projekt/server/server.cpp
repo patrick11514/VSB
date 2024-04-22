@@ -117,10 +117,27 @@ void Server::start()
         catch (std::exception &ex)
         {
             this->l->error(ex.what());
+            this->l->flush();
             exit(-1);
         }
 
-        return;
+        ServerMode *mode = dynamic_cast<ServerMode *>(this->mode);
+
+        if (mode->local)
+        {
+            this->socket = new Socket("127.0.0.1", mode->port);
+        }
+        else
+        {
+            this->socket = new Socket(INADDR_ANY, mode->port);
+        }
+
+        StartType result = this->socket->bind();
+        if (result != StartType::OK)
+        {
+            this->l->error("Failed to start server on port " + std::to_string(mode->port) + ".");
+            return;
+        }
     }
 
     this->loop();

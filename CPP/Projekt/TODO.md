@@ -8,6 +8,8 @@
 /home/patrick115/Projects/VSB/CPP/Projekt/server/modes/mainMode.cpp:7:77: warning: unused parameter ‘data’ [-Wunused-parameter]
     7 | void MainMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
       |     
+ - [ ] If configs directory doesn't exists, create it
+ - [ ] Load all .ini files from configs directory
 
 
 ### Milestone do půlky semestru
