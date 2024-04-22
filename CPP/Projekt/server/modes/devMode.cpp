@@ -18,6 +18,13 @@ DevMode::~DevMode() {}
 
 void DevMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
 {
+    std::string_view ipaddress = client.address;
+    auto header = data.headers.find("X-Forwarded-For");
+
+    if (header != data.headers.end())
+    {
+        ipaddress = header->second;
+    }
 
     fs::path filePath = this->path / decode(data.path);
 
@@ -35,7 +42,7 @@ void DevMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
 
     if (!file.isFolder())
     {
-        this->logger.info(std::format("{} to {} from {}", data.method, data.path, client.address));
+        this->logger.info(std::format("{} to {} from {}", data.method, data.path, ipaddress));
         this->doFile(filePath, data, response, file, client.fd);
     }
     else
@@ -49,7 +56,7 @@ void DevMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
             {
                 std::string newPathToConsole = std::string(data.path);
                 newPathToConsole.append(index);
-                this->logger.info(std::format("{} to {} from {}", data.method, newPathToConsole, client.address));
+                this->logger.info(std::format("{} to {} from {}", data.method, newPathToConsole, ipaddress));
                 this->doFile(newPath, data, response, FileRead(newPath), client.fd);
                 found = true;
                 break;
@@ -58,7 +65,7 @@ void DevMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
 
         if (!found)
         {
-            this->logger.info(std::format("{} to {} from {}", data.method, data.path, client.address));
+            this->logger.info(std::format("{} to {} from {}", data.method, data.path, ipaddress));
             response.code = 404;
             response.send(client.fd);
         }
