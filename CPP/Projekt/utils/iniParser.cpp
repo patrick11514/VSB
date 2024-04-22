@@ -1,4 +1,5 @@
 #include "iniParser.hpp"
+#include <cstring>
 
 void IniParser::skipSpaces(swit &begin, const swit &end) const
 {
@@ -66,12 +67,14 @@ std::optional<std::string> IniParser::parseSection(swit &begin, const swit &end,
 std::optional<std::pair<std::string_view, std::string_view>> IniParser::parseKeyValue(swit &begin, const swit &end, size_t &error) const
 {
     std::string_view sw(begin, end);
+
     auto separator = sw.find('=');
     if (separator == sw.npos)
     {
         error = 1;
         return std::nullopt;
     }
+
     return std::make_pair(std::string_view(begin, begin + separator), std::string_view(begin + separator + 1, end));
 }
 
@@ -148,8 +151,13 @@ IniParser::IniParser(const std::string &filePath)
             continue;
         }
 
+        size_t size = file.gcount();
+
         // remove end of string \0
-        size_t size = file.gcount() - 1;
+        if (buffer[file.gcount() - 1] == '\0')
+        {
+            --size;
+        }
 
         if (size == 0)
         {
@@ -228,7 +236,10 @@ IniParser::IniParser(const std::string &filePath)
                 continue;
             }
 
-            fullName += ".";
+            if (section.size() > 0)
+            {
+                fullName += ".";
+            }
             fullName += key;
 
             auto elem = this->keyValuePairs.find(fullName);

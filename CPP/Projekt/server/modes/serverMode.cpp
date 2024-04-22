@@ -11,26 +11,44 @@ ServerMode::ServerMode(const ArgParser &parser, Logger &logger, const std::strin
 
     fs::create_directory(path);
 
-    fs::path mainPath(path);
-    mainPath.concat("/main.ini");
+    fs::path mainPath(path / "main.ini");
 
     if (!fs::exists(mainPath))
     {
         std::ofstream configFile(mainPath);
-        // configFile << std::format("port=80\nconfigs_folder={}\n\naccess_log={}\nerror_log={}", path, path.concat);
+        fs::path accessLog(path / "access.log");
+        fs::path errorLog(path / "error.log");
+        configFile << std::format("port=80\n\naccess_log={}\nerror_log={}", accessLog.string(), errorLog.string());
+        configFile.close();
     }
 
-    // IniParser config(mainPath);
+    IniParser config(mainPath);
+    if (!config.isOpened())
+    {
+        throw std::runtime_error("Config file cannot be loaded.");
+    }
 
-    fs::path p1("/home/patrick115");
-    fs::path p2("/home/patrick115/");
+    if (!config.includes("access_log"))
+    {
+        throw std::runtime_error("Config doesn't include acces log path");
+    }
 
-    std::cout << p1 / "neco" << std::endl;
-    std::cout << p1 / "/neco" << std::endl;
-    std::cout << p2 / "neco" << std::endl;
-    std::cout << p2 / "/neco" << std::endl;
+    if (!config.includes("error_log"))
+    {
 
-    // IniParser config(path.concat("/main.ini"));
+        throw std::runtime_error("Config doesn't include error log path");
+    }
+
+    // cannot be nullptr
+    Server *server = Server::instance;
+
+    this->accessLog = std::move(std::ofstream(config.getValue("access_log").value()));
+    this->errorLog = std::move(std::ofstream(config.getValue("error_log").value()));
+
+    Logger *newMainLogger = new Logger(this->accessLog, this->errorLog, this->accessLog);
+    // swap pointers and delete old logger
+    std::swap(newMainLogger, server->l);
+    delete newMainLogger;
 }
 
 ServerMode::~ServerMode() {}

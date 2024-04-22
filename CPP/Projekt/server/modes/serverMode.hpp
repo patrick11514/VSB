@@ -1,6 +1,8 @@
 #pragma once
 
 #include "mainMode.hpp"
+#include "../server.hpp"
+#include "fstream"
 
 /**
  * @brief Class handling server mode (WIP)
@@ -8,6 +10,8 @@
 class ServerMode : public MainMode
 {
     Socket *socket = nullptr; ///< pointer to socket
+    std::ofstream accessLog;
+    std::ofstream errorLog;
 
 public:
     /**

@@ -104,9 +104,6 @@ void Server::start()
     }
     else
     {
-        this->l->warn("Server mode is in WIP");
-        return;
-
         auto value = this->parser.getByKey("path");
         std::string path = ".";
         if (value != nullptr)
@@ -130,8 +127,6 @@ void Server::start()
 }
 void Server::loop()
 {
-    std::string str("HTTP/1.1 666\r\nContent-Type: text/html\r\nContent-Length: 4\r\n\r\nAhoj");
-
     while (true)
     {
         // accept connection

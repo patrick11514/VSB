@@ -19,7 +19,6 @@
 #### Hlavní soubor
 ```INI
 port=80
-configs_folder=/etc/webserver
 ;custom response headers (optional) -  array of strings
 headers[] = "Server: SuperWebServer"
 headers[] = "Header: CustomHeaderValue"
