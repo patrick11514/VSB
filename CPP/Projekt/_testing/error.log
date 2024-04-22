@@ -4,3 +4,5 @@
 [11:25:00] [ERRO] Failed to start server on port 80.
 [11:25:01] [ERRO] Failed to start server on port 80.
 [12:12:02] [ERRO] Config doesn't include config directory
+[22:30:07] [ERRO] Cannot find domain entry in /home/patrick115/Projects/VSB/CPP/Projekt/_testing/configs/prvnistranka.ini
+[22:44:18] [ERRO] Cannot find domain entry in /home/patrick115/Projects/VSB/CPP/Projekt/_testing/configs/prvnistranka.ini

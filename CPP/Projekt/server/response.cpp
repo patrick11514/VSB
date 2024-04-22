@@ -1,6 +1,7 @@
 #include <format>
 
 #include "response.hpp"
+#include "server.hpp"
 
 std::string HTTPResponse::codeToText() const
 {
@@ -103,8 +104,8 @@ std::string HTTPResponse::formatDefaultPage(const std::string &codeText) const
 {
     std::string style("html, body {margin:0;padding: 0;width: 100%;height:100%;}body {display:flex;align-items: center;flex-direction: column;}");
 
-    return std::format("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>{} {}</title><style>{}</style></head><body><h1>{} {}</h1><hr style=\"width: 100%;\"><p>Tondík v1.0</p></body></html>",
-                       this->code, codeText, style, this->code, codeText);
+    return std::format("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>{} {}</title><style>{}</style></head><body><h1>{} {}</h1><hr style=\"width: 100%;\"><p>Tondík v{}</p></body></html>",
+                       this->code, codeText, style, this->code, codeText, Server::version);
 }
 
 HTTPResponse::HTTPResponse(std::string version, unsigned short code) : version(version), code(code) {}

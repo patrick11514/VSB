@@ -17,6 +17,7 @@
  */
 class Server
 {
+
     const ArgParser &parser;  ///< Reference to argument parser
     Socket *socket = nullptr; ///< Pointer on opened socket
     ThreadPool pool;          ///< Thread pool
@@ -28,6 +29,8 @@ class Server
     Server(const ArgParser &parser, std::ostream &infoStream, std::ostream &errorStream, std::ostream &warnStream); ///< With logger
 
 public:
+    static std::string version; ///< Tondik version, if we want to use it in another files
+
     Logger *l; ///< Logger
 
     static Server *instance; ///< Singleton

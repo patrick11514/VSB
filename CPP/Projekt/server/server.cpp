@@ -4,6 +4,8 @@
 #include "modes/devMode.hpp"
 #include "modes/serverMode.hpp"
 
+std::string Server::version = "1.0";
+
 Server *Server::instance = nullptr;
 
 Server::Server(const ArgParser &parser) : parser(parser)
@@ -43,8 +45,8 @@ Server *Server::init(const ArgParser &parser, std::ostream &infoStream, std::ost
 
 Server::~Server()
 {
-    delete this->mode;
     delete this->l;
+    delete this->mode;
     delete this->socket;
     Server::instance = nullptr;
 }
@@ -117,8 +119,8 @@ void Server::start()
         catch (std::exception &ex)
         {
             this->l->error(ex.what());
-            this->l->flush();
-            exit(-1);
+
+            throw std::runtime_error("");
         }
 
         ServerMode *mode = dynamic_cast<ServerMode *>(this->mode);

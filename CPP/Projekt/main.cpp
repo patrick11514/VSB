@@ -63,43 +63,15 @@ int main(int argc, char **argv)
     std::ofstream log("/tmp/log.txt");
     std::ofstream err("/tmp/err.txt");
     std::ofstream warn("/tmp/warn.txt");
-
-    Server *s = Server::init(parser /*, log, err, warn*/);
-    s->start();
-    delete s;
-}
-
-/*
-Socket s("127.0.0.1", 8080);
-
-    StartType type = s.bind();
-    if (type != StartType::OK)
+    Server *s = nullptr;
+    try
     {
-        std::cout << type << std::endl;
-        return -1;
+        s = Server::init(parser /*, log, err, warn*/);
+        s->start();
+    }
+    catch (std::exception &)
+    {
     }
 
-    std::string str("HTTP/1.1 404 Smri ti koule\r\nContent-Type: text/html\r\nContent-Length: 4\r\n\r\nAhoj");
-
-    while (true)
-    {
-        auto payload = s.accept();
-
-        if (!payload.has_value())
-        {
-            std::cout << "skipped" << std::endl;
-            continue;
-        }
-
-        ReceivedData data = payload.value();
-
-        if ((int)send(data.fd, str.data(), str.length(), 0) == -1)
-        {
-            continue;
-        }
-
-        close(data.fd);
-
-        std::cout << data.data << std::endl;
-    };
-*/
+    delete s;
+}

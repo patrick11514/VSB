@@ -15,6 +15,8 @@ class ServerMode : public MainMode
     std::ofstream errorLog;                                   ///< error log output file stream
     std::unordered_map<std::string, IniParser> domainConfigs; ///< configs for domains
 
+    void createDefaultHTMLFile(const fs::path &folderPath, const fs::path &mainConfig, const fs::path &domainConfigs) const;
+
 public:
     bool local = false; ///< If server is opened only on local network
     int port;           ///< Port number

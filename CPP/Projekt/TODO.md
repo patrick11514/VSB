@@ -2,14 +2,14 @@
 
 - [X] Při requestu vypsat log o tom, že přišel request z IP metodou X na URL Y
 - [x] Musím si udělat nějaký thread pool, protože když se accepte 1000 requestů na 1000 threadů, takže musím po maximálním zaplnění threadů nějakým způsobem requesty nechat čekat a když se uvolní, tak pak acceptnout connection
-- [ ] Fixnout to, že když sobor neexistuje, tak se nevypíše nic do konzole - přidat logger i pod ify
+- [X] Fixnout to, že když sobor neexistuje, tak se nevypíše nic do konzole - přidat logger i pod ify
 
 - [X] /home/patrick115/Projects/VSB/CPP/Projekt/server/modes/mainMode.cpp: In member function ‘virtual void MainMode::handleRequest(const ReceivedData&, const HTTPPayload&)’:
 /home/patrick115/Projects/VSB/CPP/Projekt/server/modes/mainMode.cpp:7:77: warning: unused parameter ‘data’ [-Wunused-parameter]
     7 | void MainMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
       |     
- - [ ] If configs directory doesn't exists, create it
- - [ ] Load all .ini files from configs directory
+ - [X] If configs directory doesn't exists, create it
+ - [X] Load all .ini files from configs directory
 
 
 ### Milestone do půlky semestru

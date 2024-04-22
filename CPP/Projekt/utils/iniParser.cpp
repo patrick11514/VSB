@@ -268,26 +268,32 @@ IniParser::IniParser(const std::string &filePath)
     this->opened = true;
 }
 
+IniParser::IniParser(IniParser &&other)
+{
+    std::swap(this->keyArrayPairs, other.keyArrayPairs);
+    std::swap(this->keyValuePairs, other.keyValuePairs);
+}
+
 bool IniParser::isOpened() const
 {
     return this->opened;
 }
 
-bool IniParser::includes(const std::string &key) const
+ValueKind IniParser::includes(const std::string &key) const
 {
     auto it = this->keyValuePairs.find(key);
     if (it != this->keyValuePairs.end())
     {
-        return true;
+        return ValueKind::Value;
     }
 
     auto it2 = this->keyArrayPairs.find(key);
     if (it2 != this->keyArrayPairs.end())
     {
-        return true;
+        return ValueKind::Array;
     }
 
-    return false;
+    return ValueKind::Empty;
 }
 
 std::optional<std::string> IniParser::getValue(const std::string &key) const

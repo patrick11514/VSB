@@ -13,6 +13,13 @@ namespace fs = std::filesystem;
 
 using swit = std::string_view::iterator;
 
+enum class ValueKind
+{
+    Empty,
+    Value,
+    Array
+};
+
 /**
  * @brief Simple ini file parser
  */
@@ -70,10 +77,12 @@ class IniParser
     void logError(const std::string &filePath, const std::string_view &sw, size_t line, size_t position, const std::string &message);
 
 public:
+    IniParser() = default;
     IniParser(const std::string &filePath); ///< constructor
+    IniParser(IniParser&&other);
 
     bool isOpened() const;                                                          ///< check if file is opened
-    bool includes(const std::string &key) const;                                    ///< check if key is presented in ini file
+    ValueKind includes(const std::string &key) const;                               ///< check if key is presented in ini file
     std::optional<std::string> getValue(const std::string &key) const;              ///< get value from ini file by key
     std::optional<std::vector<std::string>> getArray(const std::string &key) const; ///< get array from ini file by key
 

@@ -4,7 +4,7 @@
 #include <iomanip>
 #include <format>
 #include <mutex>
-
+#include <memory>
 /**
  * @brief Basic logged to console
  */
@@ -20,9 +20,9 @@ public:
     Logger() = default;
     Logger(std::ostream &infoStream, std::ostream &errorStream, std::ostream &warnStream);
 
+    ~Logger(); ///< Delete stream, if own
+
     void info(const std::string_view &text);  ///< [TIME] [INFO] text
     void error(const std::string_view &text); ///< [TIME] [ERRO] text
     void warn(const std::string_view &text);  ///< [TIME] [WARN] text
-
-    void flush();
 };
