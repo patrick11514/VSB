@@ -24,14 +24,18 @@ class Server
 
     void handleRequest(const ReceivedData &data); /// <Function to handle single request
 
+    Server(const ArgParser &parser);                                                                                ///< Constructor
+    Server(const ArgParser &parser, std::ostream &infoStream, std::ostream &errorStream, std::ostream &warnStream); ///< With logger
+
 public:
     Logger *l; ///< Logger
 
     static Server *instance; ///< Singleton
 
-    Server(const ArgParser &parser);                                                                                ///< Constructor
-    Server(const ArgParser &parser, std::ostream &infoStream, std::ostream &errorStream, std::ostream &warnStream); ///< With logger
-    ~Server();                                                                                                      ///< Destructor
+    static Server *init(const ArgParser &parser);
+    static Server *init(const ArgParser &parser, std::ostream &infoStream, std::ostream &errorStream, std::ostream &warnStream);
+
+    ~Server(); ///< Destructor
 
     void start(); ///< Start HTTP Server (create and bind socket + start loop)
 

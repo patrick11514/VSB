@@ -106,7 +106,7 @@ std::optional<ReceivedData> Socket::accept()
 
     char buffer[1024] = {0};
 
-    if ((int)recv(client, &buffer, sizeof(buffer), 0) == -1)
+    if (static_cast<int>(recv(client, &buffer, sizeof(buffer), 0)) == -1)
     {
         throw std::runtime_error("Unable to read input");
     }

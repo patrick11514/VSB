@@ -10,12 +10,6 @@ Server::Server(const ArgParser &parser) : parser(parser)
 {
     this->l = new Logger();
 
-    if (Server::instance != nullptr)
-    {
-        this->l->info("You can only create single instance of server");
-        this->~Server();
-        return;
-    }
     Server::instance = this;
 }
 
@@ -23,6 +17,28 @@ Server::Server(const ArgParser &parser, std::ostream &infoStream, std::ostream &
     : parser(parser)
 {
     this->l = new Logger(infoStream, errorStream, warnStream);
+
+    Server::instance = this;
+}
+
+Server *Server::init(const ArgParser &parser)
+{
+    if (Server::instance == nullptr)
+    {
+        Server::instance = new Server(parser);
+    }
+
+    return Server::instance;
+}
+
+Server *Server::init(const ArgParser &parser, std::ostream &infoStream, std::ostream &errorStream, std::ostream &warnStream)
+{
+    if (Server::instance == nullptr)
+    {
+        Server::instance = new Server(parser, infoStream, errorStream, warnStream);
+    }
+
+    return Server::instance;
 }
 
 Server::~Server()

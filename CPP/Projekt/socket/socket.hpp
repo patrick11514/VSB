@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <optional>
 
-enum StartType
+enum class StartType
 {
     OK,
     FAILED_TO_CREATE_SOCKET, ///< Failed to create socket

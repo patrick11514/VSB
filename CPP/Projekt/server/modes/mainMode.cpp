@@ -100,7 +100,7 @@ void MainMode::doFile(const fs::path &filePath, const HTTPPayload &payload, HTTP
 
         size_t readed = iFile.gcount();
 
-        if ((int)::send(fd, data, readed, 0) == -1)
+        if (static_cast<int>(::send(fd, data, readed, 0)) == -1)
         {
             // error or user just canceled request
             return;

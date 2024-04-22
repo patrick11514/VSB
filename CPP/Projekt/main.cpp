@@ -17,7 +17,7 @@ void handleSigInt(int s)
     {
         Logger l;
         l.info("Stopping server...");
-        Server::instance->~Server();
+        delete Server::instance;
         l.info("Server stopped.");
     }
     exit(s);
@@ -64,8 +64,9 @@ int main(int argc, char **argv)
     std::ofstream err("/tmp/err.txt");
     std::ofstream warn("/tmp/warn.txt");
 
-    Server s(parser /*, log, err, warn*/);
-    s.start();
+    Server *s = Server::init(parser /*, log, err, warn*/);
+    s->start();
+    delete s;
 }
 
 /*
