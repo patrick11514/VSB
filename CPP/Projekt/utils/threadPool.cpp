@@ -14,7 +14,7 @@ ThreadPool::ThreadPool()
                 while (true)
                 {
                     // variable for task
-                    std::function<void()> task;
+                    std::function<void()> task = nullptr;
 
                     {
 
@@ -26,7 +26,9 @@ ThreadPool::ThreadPool()
                                                 return this->stop == true || this->tasks.size() > 0;
                                             });
 
-                        if (stop == true)
+                        if (
+                            (this->completeAllTasks == false && stop == true) ||
+                            (this->completeAllTasks == true && this->tasks.size() == 0 && stop == true))
                         {
                             return;
                         }
@@ -35,7 +37,10 @@ ThreadPool::ThreadPool()
                         this->tasks.pop();
                     }
 
-                    task();
+                    if (task != nullptr)
+                    {
+                        task();
+                    }
                 }
             });
     }
@@ -68,6 +73,11 @@ ThreadPool::~ThreadPool()
             thread.detach();
         }
     }
+}
+
+void ThreadPool::setCompleteAllTasks(bool value)
+{
+    this->completeAllTasks = value;
 }
 
 void ThreadPool::push(std::function<void()> function)
