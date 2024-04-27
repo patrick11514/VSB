@@ -118,6 +118,7 @@ bool HTTPResponse::send(int fd) const
 
     for (auto header : this->headers)
     {
+        std::cout << header.fist << std::endl;
         headers.append(std::format("{}: {}{}", header.first, header.second, this->separator));
     }
 

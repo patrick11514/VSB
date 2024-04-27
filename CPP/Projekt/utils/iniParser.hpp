@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "logger.hpp"
+#include "utils.hpp"
 
 namespace fs = std::filesystem;
 
@@ -79,12 +80,14 @@ class IniParser
 public:
     IniParser() = default;
     IniParser(const std::string &filePath); ///< constructor
-    IniParser(IniParser&&other);
+    IniParser(IniParser &&other);
 
-    bool isOpened() const;                                                          ///< check if file is opened
-    ValueKind includes(const std::string &key) const;                               ///< check if key is presented in ini file
-    std::optional<std::string> getValue(const std::string &key) const;              ///< get value from ini file by key
-    std::optional<std::vector<std::string>> getArray(const std::string &key) const; ///< get array from ini file by key
+    IniParser &operator=(IniParser &&other);
+
+    bool isOpened() const;                                                              ///< check if file is opened
+    ValueKind includes(const std::string &key) const;                                   ///< check if key is presented in ini file
+    optionalRef<const std::string> getValue(const std::string &key) const;              ///< get value from ini file by key
+    optionalRef<const std::vector<std::string>> getArray(const std::string &key) const; ///< get array from ini file by key
 
     static std::string trim(const std::string_view &str); ///< trim string
 };
