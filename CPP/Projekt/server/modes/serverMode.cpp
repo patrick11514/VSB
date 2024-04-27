@@ -1,4 +1,5 @@
 #include "serverMode.hpp"
+#include "../../utils/utils.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -41,50 +42,51 @@ ServerMode::ServerMode(const ArgParser &parser, Logger &logger, const std::strin
         configFile.close();
     }
 
-    IniParser config(mainPath);
-    if (!config.isOpened())
+    this->mainConfig = std::move(IniParser(mainPath));
+
+    if (!this->mainConfig.isOpened())
     {
         throw std::runtime_error("Config file cannot be loaded.");
     }
 
-    if (config.includes("access_log") != ValueKind::Value)
+    if (this->mainConfig.includes("access_log") != ValueKind::Value)
     {
         throw std::runtime_error("Config doesn't include acces log path");
     }
 
-    if (config.includes("error_log") != ValueKind::Value)
+    if (this->mainConfig.includes("error_log") != ValueKind::Value)
     {
 
         throw std::runtime_error("Config doesn't include error log path");
     }
 
-    if (config.includes("default_root") != ValueKind::Value)
+    if (this->mainConfig.includes("default_root") != ValueKind::Value)
     {
         throw std::runtime_error("Config doesn't include default root");
     }
 
-    if (config.includes("config_directory") != ValueKind::Value)
+    if (this->mainConfig.includes("config_directory") != ValueKind::Value)
     {
         throw std::runtime_error("Config doesn't include configs directory");
     }
 
     // if doesn't exists, create it
-    fs::path defaultRoot(config.getValue("default_root").value());
+    fs::path defaultRoot(extractRef(this->mainConfig.getValue("default_root")));
     if (!fs::exists(defaultRoot))
     {
-        createDefaultHTMLFile(config.getValue("default_root").value(), mainPath, config.getValue("config_directory").value());
+        createDefaultHTMLFile(extractRef(this->mainConfig.getValue("default_root")), mainPath, extractRef(this->mainConfig.getValue("config_directory")));
     }
 
     // cannot be nullptr
     Server *server = Server::instance;
 
     // bind port
-    if (config.includes("port") != ValueKind::Value)
+    if (this->mainConfig.includes("port") != ValueKind::Value)
     {
         throw std::runtime_error("Config doesn't include port number");
     }
 
-    int port = std::stoi(config.getValue("port").value());
+    int port = std::stoi(this->mainConfig.getValue("port").value());
     if (port < 1 || port > 65353)
     {
         throw std::range_error("Invalid port in range 1-65353");
@@ -92,9 +94,9 @@ ServerMode::ServerMode(const ArgParser &parser, Logger &logger, const std::strin
 
     this->port = port;
 
-    if (config.includes("local") == ValueKind::Value)
+    if (this->mainConfig.includes("local") == ValueKind::Value)
     {
-        auto value = config.getValue("local").value();
+        auto value = extractRef(this->mainConfig.getValue("local"));
         if (value != "true" && value != "false")
         {
             throw std::runtime_error("Invalid value for local: " + value);
@@ -107,13 +109,13 @@ ServerMode::ServerMode(const ArgParser &parser, Logger &logger, const std::strin
     }
 
     // load configs
-    auto configDirectory = config.getValue("config_directory");
+    auto configDirectory = this->mainConfig.getValue("config_directory");
     if (!configDirectory.has_value())
     {
         throw std::runtime_error("Config doesn't include config directory");
     }
 
-    fs::path configsPath(path / configDirectory.value());
+    fs::path configsPath(path / extractRef(configDirectory));
     std::cout << configsPath << std::endl;
 
     if (!fs::exists(configsPath))
@@ -162,8 +164,8 @@ ServerMode::ServerMode(const ArgParser &parser, Logger &logger, const std::strin
     // because we store original streams in ServerMode and we are passing referenes to Logger
     // if this constructor throws error, references will be invalid, and error cannot be written into
     // file
-    this->accessLog = std::move(std::ofstream(config.getValue("access_log").value(), std::fstream::app));
-    this->errorLog = std::move(std::ofstream(config.getValue("error_log").value(), std::fstream::app));
+    this->accessLog = std::move(std::ofstream(this->mainConfig.getValue("access_log").value(), std::fstream::app));
+    this->errorLog = std::move(std::ofstream(this->mainConfig.getValue("error_log").value(), std::fstream::app));
 
     Logger *newMainLogger = new Logger(this->accessLog, this->errorLog, this->accessLog);
     // swap pointers and delete old logger
@@ -171,6 +173,26 @@ ServerMode::ServerMode(const ArgParser &parser, Logger &logger, const std::strin
     delete newMainLogger;
 
     server->l->info(std::format("Loaded {} domain config files", this->domainConfigs.size()));
+
+    if (this->mainConfig.includes("headers") == ValueKind::Array)
+    {
+        for (auto &header : extractRef(this->mainConfig.getArray("headers")))
+        {
+            auto split = header.find(": ");
+            if (split == header.npos)
+            {
+                continue;
+            }
+            this->customHeaders.emplace(
+                std::string_view(header.begin(), header.begin() + split),
+                std::string_view(header.begin() + split + 2, header.end()));
+        }
+    }
+
+    if (this->mainConfig.includes("mime_types") == ValueKind::Array)
+    {
+        // this->customMimeTypes = true;
+    }
 }
 
 ServerMode::~ServerMode()
@@ -213,7 +235,26 @@ void ServerMode::handleRequest(const ReceivedData &client, const HTTPPayload &da
         }
     }
 
+    HTTPResponse response(std::string(data.httpVersion), 200);
+    response.headers.emplace("Server", "Tondik/" + Server::version);
+
+    // custom headers
+    for (auto &header : this->customHeaders)
+    {
+        response.headers.emplace(header.first, header.second);
+    }
+
     std::cout << ipaddress << " -> " << host << std::endl;
+
+    auto hostConfig = this->domainConfigs.find(host);
+
+    if (hostConfig == this->domainConfigs.end())
+    {
+        //
+        std::cout << "def" << std::endl;
+    }
+
+    response.send(client.fd);
 
     ::close(client.fd);
 }

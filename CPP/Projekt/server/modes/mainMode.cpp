@@ -1,7 +1,7 @@
 #include <fstream>
 
 #include "mainMode.hpp"
-#include "../../utils/decode.hpp"
+#include "../../utils/utils.hpp"
 
 MainMode::MainMode(const ArgParser &parser, Logger &logger) : parser(parser), logger(logger) {}
 

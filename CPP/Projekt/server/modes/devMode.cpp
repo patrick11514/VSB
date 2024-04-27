@@ -1,6 +1,7 @@
 #include "devMode.hpp"
 
-#include "../../utils/decode.hpp"
+#include "../../utils/utils.hpp"
+#include "../server.hpp"
 
 DevMode::DevMode(const ArgParser &parser, Logger &logger) : MainMode(parser, logger), indexes{"index.html", "index.htm"}
 {
@@ -38,7 +39,7 @@ void DevMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
     }
 
     HTTPResponse response(std::string(data.httpVersion), 200);
-    response.headers.emplace("Server", "Tondik/1.0");
+    response.headers.emplace("Server", "Tondik/" + Server::version);
 
     if (!file.isFolder())
     {

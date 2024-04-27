@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "decode.hpp"
+#include "utils.hpp"
 
 bool isValid(char c)
 {

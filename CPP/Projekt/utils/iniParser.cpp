@@ -1,5 +1,6 @@
 #include "iniParser.hpp"
 #include <cstring>
+#include <algorithm>
 
 void IniParser::skipSpaces(swit &begin, const swit &end) const
 {
@@ -220,7 +221,10 @@ IniParser::IniParser(const std::string &filePath)
             {
                 // remove [] from name
                 key.erase(key.end() - 2, key.end());
-                fullName += ".";
+                if (section.size() > 0)
+                {
+                    fullName += ".";
+                }
                 fullName += key;
 
                 auto elem = this->keyArrayPairs.find(fullName);
@@ -272,6 +276,17 @@ IniParser::IniParser(IniParser &&other)
 {
     std::swap(this->keyArrayPairs, other.keyArrayPairs);
     std::swap(this->keyValuePairs, other.keyValuePairs);
+
+    std::swap(this->opened, other.opened);
+}
+
+IniParser &IniParser::operator=(IniParser &&other)
+{
+    std::swap(this->keyArrayPairs, other.keyArrayPairs);
+    std::swap(this->keyValuePairs, other.keyValuePairs);
+
+    std::swap(this->opened, other.opened);
+    return *this;
 }
 
 bool IniParser::isOpened() const
@@ -296,7 +311,7 @@ ValueKind IniParser::includes(const std::string &key) const
     return ValueKind::Empty;
 }
 
-std::optional<std::string> IniParser::getValue(const std::string &key) const
+optionalRef<const std::string> IniParser::getValue(const std::string &key) const
 {
     auto it = this->keyValuePairs.find(key);
 
@@ -308,7 +323,7 @@ std::optional<std::string> IniParser::getValue(const std::string &key) const
     return it->second;
 }
 
-std::optional<std::vector<std::string>> IniParser::getArray(const std::string &key) const
+optionalRef<const std::vector<std::string>> IniParser::getArray(const std::string &key) const
 {
     auto it = this->keyArrayPairs.find(key);
 
