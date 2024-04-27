@@ -1,5 +1,7 @@
 #include "tasks.h"
 
-int main() {
-    return 0;
+int main()
+{
+    using Program = Stack<PushNumber<6>, PushNumber<6>, Compare>;
+    Interpret<Program, Stack<>>::Result;
 }
