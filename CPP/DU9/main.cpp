@@ -2,6 +2,8 @@
 
 int main()
 {
-    using Program = Stack<PushNumber<6>, PushNumber<6>, Compare>;
-    Interpret<Program, Stack<>>::Result;
+    constexpr Matrix<int, 3, 4> a{{1,2,3,4,5,6}};
+    constexpr Matrix<int, 4,2>b{{1,2,3,4,5,6}};
+
+    constexpr auto c = a * b;
 }

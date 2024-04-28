@@ -1,2 +1,4 @@
 # build folders
 build
+# zed cache folder
+.cache 
