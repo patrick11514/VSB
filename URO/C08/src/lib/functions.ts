@@ -23,3 +23,16 @@ export const SwalAlert = async (data: SweetAlertOptions) => {
         ...data
     });
 };
+
+export const addItem = () => {
+    /*TODO*/
+};
+export const editItem = (selected: number | null) => {
+    /*TODO*/
+};
+
+export const removeItem = (selected: number | null) => {
+    if (selected !== null) {
+        //API CALL
+    }
+};

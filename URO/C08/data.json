@@ -1,0 +1,46 @@
+[
+    {
+        "name": "Date A Live IV - Hoshimiya Mukuro",
+        "manufacturer": "Taito",
+        "size": 180,
+        "price": 20,
+        "weight": 235,
+        "images": {
+            "main": "/items/1/main.png",
+            "other": ["/items/1/1.png", "/items/1/2.png"]
+        }
+    },
+    {
+        "name": "Sono Bisque Doll wa Koi o Suru - Kitagawa Marin",
+        "manufacturer": "Sega",
+        "size": 190,
+        "price": 19.41,
+        "weight": 245,
+        "images": {
+            "main": "/items/2/main.png",
+            "other": ["/items/2/1.png", "/items/2/2.png", "/items/2/3.png", "/items/2/4.png"]
+        }
+    },
+    {
+        "name": "Hatsune Miku",
+        "manufacturer": "Taito",
+        "size": 230,
+        "price": 30,
+        "weight": 422,
+        "images": {
+            "main": "/items/3/main.png",
+            "other": ["/items/3/1.png", "/items/3/2.png", "/items/3/3.png"]
+        }
+    },
+    {
+        "name": "Black ★ Rock Shooter - Pop Up Parade",
+        "manufacturer": "Good Smile Company",
+        "size": 170,
+        "price": 44,
+        "weight": 340,
+        "images": {
+            "main": "/items/4/main.png",
+            "other": ["/items/4/1.png", "/items/4/2.png", "/items/4/3.png", "/items/4/4.png"]
+        }
+    }
+]

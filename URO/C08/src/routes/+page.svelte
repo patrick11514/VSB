@@ -1,23 +1,47 @@
 <script lang="ts">
-    import { SwalAlert } from '$/lib/functions';
+    import Button from '$/components/Button.svelte';
+    import Col from '$/components/Col.svelte';
+    import Container from '$/components/Container.svelte';
+    import DropDownItem from '$/components/DropDownItem.svelte';
+    import FluidContainer from '$/components/FluidContainer.svelte';
+    import FormGroup from '$/components/FormGroup.svelte';
+    import ItemShow from '$/components/ItemShow.svelte';
+    import ItemsTable from '$/components/ItemsTable.svelte';
+    import Modal from '$/components/Modal.svelte';
+    import NavItem from '$/components/NavItem.svelte';
+    import Navigation from '$/components/Navigation.svelte';
+    import Row from '$/components/Row.svelte';
+    import SingleRowContainer from '$/components/SingleRowContainer.svelte';
+    import { API } from '$/lib/api';
+    import { addItem, removeItem } from '$/lib/functions';
+    import type { Item } from '$/types/types';
+    import { onMount } from 'svelte';
     import { writable } from 'svelte/store';
+    import type { PageServerData } from './$types';
+
+    export let data: PageServerData;
+
+    let mainData: Item[];
+    let selected: number | null = null;
+
+    const handleData = (response: (typeof data)['data']) => {
+        mainData = response;
+    };
+    handleData(data.data);
+
+    onMount(async () => {
+        const response = await API.data.GET();
+        handleData(response);
+    });
 
     const exit = () => {
         window.location.assign('about:blank');
     };
 
-    const newItem = () => {};
-
-    const removeItem = () => {};
+    let modalOpen = false;
 
     const showAbout = () => {
-        SwalAlert({
-            toast: false,
-            title: 'Evidence anime figurek',
-            text: 'Vytvořil Patrik Mintěl (MIN0150)',
-            timer: 0,
-            position: 'center'
-        });
+        modalOpen = true;
     };
 
     let search = writable<{
@@ -50,65 +74,62 @@
     <title>Evidence Anime Figurek</title>
 </svelte:head>
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid">
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">File</a>
-                    <ul class="dropdown-menu">
-                        <li><a on:click={newItem} class="dropdown-item" href="#">New item</a></li>
-                        <li><a on:click={removeItem} class="dropdown-item" href="#">Delete item</a></li>
-                        <li><a on:click={exit} class="dropdown-item" href="#">Exit</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Other</a>
-                    <ul class="dropdown-menu">
-                        <li><a on:click={showAbout} class="dropdown-item" href="#">About program</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<Navigation>
+    <NavItem name="File">
+        <DropDownItem on:click={addItem}>New Item</DropDownItem>
+        <DropDownItem on:click={() => removeItem(selected)}>Delete Item</DropDownItem>
+        <DropDownItem on:click={exit}>Exit Item</DropDownItem>
+    </NavItem>
+    <NavItem name="Other">
+        <DropDownItem on:click={showAbout}>About program</DropDownItem>
+    </NavItem>
+</Navigation>
 
-<div class="container-fluid mt-4">
-    <div class="row">
-        <div class="bg-dark-subtle p-4">
-            <h4><b>Vyhledávání</b></h4>
-            <div class="container">
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="name">Jméno</label>
-                            <input bind:value={$search.name} id="name" type="text" class="form-control" />
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="name">Výrobce</label>
-                            <input bind:value={$search.manufacturer} id="name" type="text" class="form-control" />
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="name">Velikost</label>
-                            <input bind:value={$search.size} id="name" type="number" class="form-control" />
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="name">Cena</label>
-                            <input bind:value={$search.price} id="name" type="number" class="form-control" />
-                        </div>
-                    </div>
-                    <div class="d-flex gap-2 col align-items-end">
-                        <button on:click={resetSearch} class="btn btn-secondary">Resetovat</button>
-                        <button on:click={doSearch} class="btn btn-secondary">Vyhledat</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+<SingleRowContainer color="dark-subtle">
+    <h4><b>Vyhledávání</b></h4>
+    <Container>
+        <Row>
+            <Col>
+                <FormGroup title="Jméno" bind:value={$search.name} />
+            </Col>
+            <Col>
+                <FormGroup title="Výrobce" bind:value={$search.manufacturer} />
+            </Col>
+            <Col>
+                <FormGroup title="Velikost" bind:value={$search.size} type="number" />
+            </Col>
+            <Col>
+                <FormGroup title="Cena" bind:value={$search.price} type="number" />
+            </Col>
+            <Col class="d-flex gap-2 align-items-end">
+                <Button on:click={resetSearch} color="secondary">Resetovat</Button>
+                <Button on:click={doSearch} color="secondary">Vyhledat</Button>
+            </Col>
+        </Row>
+    </Container>
+</SingleRowContainer>
+
+<FluidContainer>
+    <Row class="p-4 h-100">
+        <Col class="m-2">
+            <Container class="h-100 p-3" background="body-secondary">
+                <ItemsTable data={mainData} bind:selected />
+            </Container>
+        </Col>
+        <Col class="m-2">
+            <Container class="h-100" background="body-secondary">
+                <ItemShow data={mainData} bind:selected />
+            </Container>
+        </Col>
+    </Row>
+</FluidContainer>
+
+<Modal bind:show={modalOpen}>
+    <div class="modal-header">
+        <h5 class="modal-title">Evidence anime figurek</h5>
+        <button on:click={() => (modalOpen = false)} type="button" class="btn-close"></button>
     </div>
-</div>
+    <div class="modal-body">
+        <h6>Vytvořil <a href="https://patrick115.eu" target="_blank">Patrik Mintěl</a></h6>
+    </div>
+</Modal>
