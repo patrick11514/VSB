@@ -1,6 +1,8 @@
 #include "serverMode.hpp"
 #include "../../utils/utils.hpp"
+#include "../server.hpp"
 
+#include <filesystem>
 #include <iostream>
 #include <fstream>
 #include <format>
@@ -20,7 +22,7 @@ void ServerMode::createDefaultHTMLFile(const fs::path &folderPath, const fs::pat
     index.close();
 }
 
-ServerMode::ServerMode(const ArgParser &parser, Logger &logger, const std::string &configPath) : MainMode(parser, logger)
+ServerMode::ServerMode(const ArgParser &parser, Logger *logger, const std::string &configPath) : MainMode(parser, logger)
 {
     fs::path path(fs::canonical(configPath));
 
@@ -42,7 +44,7 @@ ServerMode::ServerMode(const ArgParser &parser, Logger &logger, const std::strin
         configFile.close();
     }
 
-    this->mainConfig = std::move(IniParser(mainPath));
+    this->mainConfig = IniParser(mainPath);
 
     if (!this->mainConfig.isOpened())
     {
@@ -164,12 +166,13 @@ ServerMode::ServerMode(const ArgParser &parser, Logger &logger, const std::strin
     // because we store original streams in ServerMode and we are passing referenes to Logger
     // if this constructor throws error, references will be invalid, and error cannot be written into
     // file
-    this->accessLog = std::move(std::ofstream(this->mainConfig.getValue("access_log").value(), std::fstream::app));
-    this->errorLog = std::move(std::ofstream(this->mainConfig.getValue("error_log").value(), std::fstream::app));
+    this->accessLog = std::ofstream(this->mainConfig.getValue("access_log").value(), std::fstream::app);
+    this->errorLog = std::ofstream(this->mainConfig.getValue("error_log").value(), std::fstream::app);
 
     Logger *newMainLogger = new Logger(this->accessLog, this->errorLog, this->accessLog);
     // swap pointers and delete old logger
-    std::swap(newMainLogger, server->l);
+    std::swap(server->l, newMainLogger);
+    this->logger = server->l;
     delete newMainLogger;
 
     server->l->info(std::format("Loaded {} domain config files", this->domainConfigs.size()));
@@ -195,10 +198,7 @@ ServerMode::ServerMode(const ArgParser &parser, Logger &logger, const std::strin
     }
 }
 
-ServerMode::~ServerMode()
-{
-    std::cout << "called" << std::endl;
-}
+ServerMode::~ServerMode(){}
 
 void ServerMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
 {
@@ -250,8 +250,52 @@ void ServerMode::handleRequest(const ReceivedData &client, const HTTPPayload &da
 
     if (hostConfig == this->domainConfigs.end())
     {
-        //
-        std::cout << "def" << std::endl;
+        fs::path folderPath = extractRef(this->mainConfig.getValue("default_root"));
+        fs::path filePath = folderPath / decode(data.path);
+        FileRead file(filePath);
+
+        if (!file.exists()) {
+            std::cout << "Not found" <<std::endl;
+            response.code = 404;
+            response.send(client.fd);
+            ::close(client.fd);
+            return;
+        }
+
+        if (!file.isFolder()) {
+            std::cout << "file not found" <<std::endl;
+            this->logger->info(std::format("{} to {} from {}", data.method, data.path, ipaddress));
+            this->doFile(filePath, data, response, file, client.fd);
+            ::close(client.fd);
+            return;
+        }
+
+        auto indexFile = this->mainConfig.getValue("index");
+
+        fs::path indexPath;
+
+        if (indexFile == std::nullopt) {
+            indexPath = folderPath / "index.html";
+        } else {
+            indexPath = folderPath / extractRef(indexFile);
+        }
+
+        std::cout << indexPath <<std::endl;
+
+        if (!fs::exists(indexPath)) {
+            std::cout << "index not found" <<std::endl;
+            response.code = 404;
+            response.send(client.fd);
+            ::close(client.fd);
+            return;
+        }
+
+        std::cout << "index file found" <<std::endl;
+
+        this->logger->info(std::format("{} to {} from {}", data.method, data.path, ipaddress));
+        this->doFile(filePath, data, response, FileRead(indexPath), client.fd);
+        ::close(client.fd);
+        return;
     }
 
     response.send(client.fd);

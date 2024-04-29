@@ -18,7 +18,7 @@ class MainMode
     const ArgParser &parser; ///< argument parser
 
 protected:
-    Logger &logger; ///< logger
+    Logger *logger; ///< logger
 
     /**
      * @brief Open file and serve it to client
@@ -31,7 +31,7 @@ protected:
     void doFile(const fs::path &filePath, const HTTPPayload &payload, HTTPResponse &response, const FileRead &file, int fd) const;
 
 public:
-    MainMode(const ArgParser &parser, Logger &logger); ///< constructor
+    MainMode(const ArgParser &parser, Logger *logger); ///< constructor
     virtual ~MainMode();                               ///< virtual destructor
 
     virtual void handleRequest(const ReceivedData &client, const HTTPPayload &); ///< handle request (called from server.cpp)

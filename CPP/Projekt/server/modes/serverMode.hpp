@@ -1,7 +1,6 @@
 #pragma once
 
 #include "mainMode.hpp"
-#include "../server.hpp"
 #include "fstream"
 #include "../../utils/iniParser.hpp"
 
@@ -29,7 +28,7 @@ public:
      * @param logger logger
      * @param configPath path to the config directory
      */
-    ServerMode(const ArgParser &parser, Logger &logger, const std::string &configPath);
+    ServerMode(const ArgParser &parser, Logger *logger, const std::string &configPath);
     ~ServerMode() final; ///< destructor
 
     void handleRequest(const ReceivedData &client, const HTTPPayload &data) final; ///< handle request

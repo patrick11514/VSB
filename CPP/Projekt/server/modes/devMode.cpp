@@ -3,7 +3,7 @@
 #include "../../utils/utils.hpp"
 #include "../server.hpp"
 
-DevMode::DevMode(const ArgParser &parser, Logger &logger) : MainMode(parser, logger), indexes{"index.html", "index.htm"}
+DevMode::DevMode(const ArgParser &parser, Logger *logger) : MainMode(parser, logger), indexes{"index.html", "index.htm"}
 {
     if (parser.includes("path"))
     {
@@ -43,7 +43,7 @@ void DevMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
 
     if (!file.isFolder())
     {
-        this->logger.info(std::format("{} to {} from {}", data.method, data.path, ipaddress));
+        this->logger->info(std::format("{} to {} from {}", data.method, data.path, ipaddress));
         this->doFile(filePath, data, response, file, client.fd);
     }
     else
@@ -57,7 +57,7 @@ void DevMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
             {
                 std::string newPathToConsole = std::string(data.path);
                 newPathToConsole.append(index);
-                this->logger.info(std::format("{} to {} from {}", data.method, newPathToConsole, ipaddress));
+                this->logger->info(std::format("{} to {} from {}", data.method, newPathToConsole, ipaddress));
                 this->doFile(newPath, data, response, FileRead(newPath), client.fd);
                 found = true;
                 break;
@@ -66,7 +66,7 @@ void DevMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
 
         if (!found)
         {
-            this->logger.info(std::format("{} to {} from {}", data.method, data.path, ipaddress));
+            this->logger->info(std::format("{} to {} from {}", data.method, data.path, ipaddress));
             response.code = 404;
             response.send(client.fd);
         }

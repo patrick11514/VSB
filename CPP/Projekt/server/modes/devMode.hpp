@@ -13,7 +13,7 @@ class DevMode : public MainMode
     std::array<std::string, 2> indexes; ///< list of index files (index.html, index.htm)
 
 public:
-    DevMode(const ArgParser &parser, Logger &logger); ///< constructor
+    DevMode(const ArgParser &parser, Logger *logger); ///< constructor
     ~DevMode() final;                                 ///< destructor
 
     void handleRequest(const ReceivedData &client, const HTTPPayload &data) final; ///< handle request

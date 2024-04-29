@@ -99,7 +99,7 @@ void Server::start()
             return;
         }
 
-        this->mode = new DevMode(parser, *this->l);
+        this->mode = new DevMode(parser, this->l);
 
         this->l->info("Tondík DEV server started!");
         this->l->info(std::format("Address: http://{}:{}", (host == true ? "0.0.0.0" : "127.0.0.1"), port));
@@ -114,7 +114,7 @@ void Server::start()
         }
         try
         {
-            this->mode = new ServerMode(this->parser, *this->l, path);
+            this->mode = new ServerMode(this->parser, this->l, path);
         }
         catch (std::exception &ex)
         {
