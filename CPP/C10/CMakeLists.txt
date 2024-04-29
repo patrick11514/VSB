@@ -3,6 +3,7 @@ project(C10)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(DISABLE_ASAN "Do not use Address sanitizer" OFF)
 
