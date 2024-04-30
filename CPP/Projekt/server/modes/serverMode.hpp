@@ -7,7 +7,7 @@
 /**
  * @brief Class handling server mode (WIP)
  */
-class ServerMode : public MainMode
+class ServerMode final : public MainMode
 {
     Socket *socket = nullptr;                                 ///< pointer to socket
     std::ofstream accessLog;                                  ///< access log output file stream
@@ -18,6 +18,8 @@ class ServerMode : public MainMode
     void createDefaultHTMLFile(const fs::path &folderPath, const fs::path &mainConfig, const fs::path &domainConfigs) const;
 
     std::unordered_map<std::string_view, std::string_view> customHeaders;
+
+    void handleFolder(const std::string& host, const fs::path& folderPath, const HTTPPayload& payload, HTTPResponse& response, const ReceivedData& client, const std::string_view& ipaddress, const std::string& index);
 
 public:
     bool local = false; ///< If server is opened only on local network

@@ -29,3 +29,36 @@ brambora[00:16:16] [INFO] Loaded 2 config files
 [15:56:11] [INFO] Loaded 2 domain config files
 [15:58:59] [INFO] Loaded 2 domain config files
 [16:02:27] [INFO] Loaded 2 domain config files
+[01:02:10] [INFO] Loaded 2 domain config files
+[01:02:14] [INFO] GET to  from 127.0.0.1
+[01:03:34] [INFO] Loaded 2 domain config files
+[01:03:38] [INFO] GET to  from 127.0.0.1
+[01:04:27] [INFO] Loaded 2 domain config files
+[01:04:29] [INFO] GET to  from 127.0.0.1
+[01:05:58] [INFO] Loaded 2 domain config files
+[01:05:59] [INFO] GET to  from 127.0.0.1
+[01:06:39] [INFO] Loaded 2 domain config files
+[01:06:39] [INFO] GET to  from 127.0.0.1
+[01:07:42] [INFO] Loaded 2 domain config files
+[01:07:43] [INFO] GET to  from 127.0.0.1
+[01:07:44] [INFO] GET to  from 127.0.0.1
+[09:09:30] [INFO] Loaded 2 domain config files
+[09:09:36] [INFO] GET to  from 127.0.0.1
+[09:10:20] [INFO] Loaded 2 domain config files
+[09:10:23] [INFO] GET to  from 127.0.0.1
+[09:10:23] [INFO] GET to assets/css/main.css from 127.0.0.1
+[09:10:23] [INFO] GET to assets/js/test.js from 127.0.0.1
+[09:10:26] [INFO] GET to page2.html from 127.0.0.1
+[09:10:29] [INFO] GET to index.html from 127.0.0.1
+[09:10:30] [INFO] GET to assets/css/main.css from 127.0.0.1
+[09:10:30] [INFO] GET to assets/js/test.js from 127.0.0.1
+[09:10:34] [INFO] GET to  from 127.0.0.1
+[09:10:34] [INFO] GET to assets/css/main.css from 127.0.0.1
+[09:10:34] [INFO] GET to assets/js/test.js from 127.0.0.1
+[09:19:59] [INFO] GET to page2.html from 127.0.0.1
+[09:20:19] [INFO] Loaded 2 domain config files
+[09:21:07] [INFO] Loaded 2 domain config files
+[09:21:16] [INFO] Host: localhost:8080 GET to index.html from 127.0.0.1
+[09:21:36] [INFO] Loaded 2 domain config files
+[09:39:57] [INFO] Loaded 2 domain config files
+[09:40:04] [INFO] GET to localhost:8080/index.html from 127.0.0.1

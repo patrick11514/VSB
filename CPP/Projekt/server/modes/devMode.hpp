@@ -7,7 +7,7 @@
 /**
  * @brief Class handling devmode
  */
-class DevMode : public MainMode
+class DevMode final : public MainMode
 {
     fs::path path;                      ///< path to the served directory from --path arg or ./
     std::array<std::string, 2> indexes; ///< list of index files (index.html, index.htm)

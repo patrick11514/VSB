@@ -76,7 +76,7 @@ ServerMode::ServerMode(const ArgParser &parser, Logger *logger, const std::strin
     fs::path defaultRoot(extractRef(this->mainConfig.getValue("default_root")));
     if (!fs::exists(defaultRoot))
     {
-        createDefaultHTMLFile(extractRef(this->mainConfig.getValue("default_root")), mainPath, extractRef(this->mainConfig.getValue("config_directory")));
+        createDefaultHTMLFile(extractRef(this->mainConfig.getValue("default_root")), mainPath, path / extractRef(this->mainConfig.getValue("config_directory")));
     }
 
     // cannot be nullptr
@@ -118,7 +118,6 @@ ServerMode::ServerMode(const ArgParser &parser, Logger *logger, const std::strin
     }
 
     fs::path configsPath(path / extractRef(configDirectory));
-    std::cout << configsPath << std::endl;
 
     if (!fs::exists(configsPath))
     {
@@ -200,13 +199,43 @@ ServerMode::ServerMode(const ArgParser &parser, Logger *logger, const std::strin
 
 ServerMode::~ServerMode(){}
 
-void ServerMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
-{
-    for (auto header : data.headers)
-    {
-        std::cout << header.first << ": " << header.second << std::endl;
+void ServerMode::handleFolder(const std::string& host, const fs::path&folderPath, const HTTPPayload&data, HTTPResponse& response, const ReceivedData& client, const std::string_view& ipaddress, const std::string& index) {
+    fs::path filePath = folderPath / decode(data.path);
+    FileRead file(filePath);
+
+    if (!file.exists()) {
+        this->logger->info(std::format("{} to {}/{} from {} [404]", data.method, host, data.path, ipaddress));
+        response.code = 404;
+        response.send(client.fd);
+        ::close(client.fd);
+        return;
     }
 
+    if (!file.isFolder()) {
+        this->logger->info(std::format("{} to {}/{} from {} [200]", data.method, host, data.path, ipaddress));
+        this->doFile(filePath, data, response, file, client.fd);
+        ::close(client.fd);
+        return;
+    }
+
+    fs::path indexPath(folderPath / index);
+
+    if (!fs::exists(indexPath)) {
+        this->logger->info(std::format("{} to {}/{} from {} [404]", data.method, host, std::string(data.path).append(index), ipaddress));
+        response.code = 404;
+        response.send(client.fd);
+        ::close(client.fd);
+        return;
+    }
+
+    this->logger->info(std::format("{} to {}/{} from {} [200]", data.method, host, std::string(data.path).append(index), ipaddress));
+    this->doFile(indexPath, data, response, FileRead(indexPath), client.fd);
+    ::close(client.fd);
+    return;
+}
+
+void ServerMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
+{
     std::string_view ipaddress = client.address;
     auto ipForwaredHeader = data.headers.find("X-Forwarded-For");
     if (ipForwaredHeader != data.headers.end())
@@ -244,59 +273,46 @@ void ServerMode::handleRequest(const ReceivedData &client, const HTTPPayload &da
         response.headers.emplace(header.first, header.second);
     }
 
-    std::cout << ipaddress << " -> " << host << std::endl;
+    auto hostConfigPair = this->domainConfigs.find(host);
 
-    auto hostConfig = this->domainConfigs.find(host);
-
-    if (hostConfig == this->domainConfigs.end())
+    if (hostConfigPair == this->domainConfigs.end())
     {
-        fs::path folderPath = extractRef(this->mainConfig.getValue("default_root"));
-        fs::path filePath = folderPath / decode(data.path);
-        FileRead file(filePath);
-
-        if (!file.exists()) {
-            std::cout << "Not found" <<std::endl;
-            response.code = 404;
-            response.send(client.fd);
-            ::close(client.fd);
-            return;
-        }
-
-        if (!file.isFolder()) {
-            std::cout << "file not found" <<std::endl;
-            this->logger->info(std::format("{} to {} from {}", data.method, data.path, ipaddress));
-            this->doFile(filePath, data, response, file, client.fd);
-            ::close(client.fd);
-            return;
-        }
-
         auto indexFile = this->mainConfig.getValue("index");
 
-        fs::path indexPath;
+        std::string index;
 
         if (indexFile == std::nullopt) {
-            indexPath = folderPath / "index.html";
+            index = "index.html";
         } else {
-            indexPath = folderPath / extractRef(indexFile);
+            index = extractRef(indexFile);
         }
 
-        std::cout << indexPath <<std::endl;
-
-        if (!fs::exists(indexPath)) {
-            std::cout << "index not found" <<std::endl;
-            response.code = 404;
-            response.send(client.fd);
-            ::close(client.fd);
-            return;
-        }
-
-        std::cout << "index file found" <<std::endl;
-
-        this->logger->info(std::format("{} to {} from {}", data.method, data.path, ipaddress));
-        this->doFile(filePath, data, response, FileRead(indexPath), client.fd);
-        ::close(client.fd);
+        this->handleFolder(host, extractRef(this->mainConfig.getValue("default_root")),
+                           data, response, client, ipaddress, index);
         return;
     }
+
+    auto& hostConfig = hostConfigPair->second;
+
+    if (hostConfig.getValue("root") != std::nullopt) {
+        //handle root
+
+        auto indexFile = hostConfig.getValue("index");
+
+        std::string index;
+
+        if (indexFile == std::nullopt) {
+            index = "index.html";
+        } else {
+            index = extractRef(indexFile);
+        }
+
+        this->handleFolder(host, extractRef(hostConfig.getValue("root")),
+                            data, response, client, ipaddress, index);
+        return;
+    }
+    //handle reverse proxy
+
 
     response.send(client.fd);
 
