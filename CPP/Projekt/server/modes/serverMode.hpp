@@ -3,6 +3,7 @@
 #include "mainMode.hpp"
 #include "fstream"
 #include "../../utils/iniParser.hpp"
+#include "../../utils/hostConfig.hpp"
 
 /**
  * @brief Class handling server mode (WIP)
@@ -13,7 +14,7 @@ class ServerMode final : public MainMode
     std::ofstream accessLog;                                  ///< access log output file stream
     std::ofstream errorLog;                                   ///< error log output file stream
     IniParser mainConfig;                                     ///< Main.ini config
-    std::unordered_map<std::string, IniParser> domainConfigs; ///< configs for domains
+    std::unordered_map<std::string, HostConfig> domainConfigs; ///< configs for domains
 
     void createDefaultHTMLFile(const fs::path &folderPath, const fs::path &mainConfig, const fs::path &domainConfigs) const;
 

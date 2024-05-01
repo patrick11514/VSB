@@ -13,7 +13,7 @@ endif()
 
 add_compile_options(-Wall -Wextra -pedantic)
 
-set(UTILS "utils/argParser.cpp" "utils/logger.cpp" "utils/threadPool.cpp" "utils/fileRead.cpp" "utils/mimeType.cpp" "utils/utils.cpp" "utils/iniParser.cpp")
-set(SERVER "server/server.cpp" "server/payload.cpp" "server/response.cpp")
+set(UTILS "utils/argParser.cpp" "utils/logger.cpp" "utils/threadPool.cpp" "utils/fileRead.cpp" "utils/mimeType.cpp" "utils/utils.cpp" "utils/iniParser.cpp" "utils/hostConfig.cpp")
+set(SERVER "server/server.cpp" "server/payload.cpp" "server/response.cpp" "server/request.cpp")
 set(MODES "server/modes/mainMode.cpp" "server/modes/devMode.cpp" "server/modes/serverMode.cpp")
 add_executable(main main.cpp socket/socket.cpp ${UTILS} ${SERVER} ${MODES})

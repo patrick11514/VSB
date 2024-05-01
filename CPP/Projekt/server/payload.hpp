@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string_view>
-#include <vector>
 #include <unordered_map>
 
 #include "../socket/socket.hpp"

@@ -62,3 +62,8 @@ brambora[00:16:16] [INFO] Loaded 2 config files
 [09:21:36] [INFO] Loaded 2 domain config files
 [09:39:57] [INFO] Loaded 2 domain config files
 [09:40:04] [INFO] GET to localhost:8080/index.html from 127.0.0.1
+[14:06:07] [INFO] Loaded 2 domain config files
+[14:06:11] [INFO] GET to prvnistranka:8080/favicon.ico from 127.0.0.1 [404]
+[14:55:45] [INFO] Loaded 2 domain config files
+[14:56:13] [INFO] Loaded 2 domain config files
+[14:59:32] [INFO] Loaded 2 domain config files
