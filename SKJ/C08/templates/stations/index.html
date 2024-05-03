@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10/10 fuel appka</title>
+</head>
+<body>
+    <h1><a href="{% url 'index' %}">Fuel APP</a></h1>
+    {% for company in companies %}
+    <h2><a href="{% url 'company' company.pk %}">{{company.name}}</a></h2>
+    {% endfor %}
+
+    <form method="POST" action="{% url 'addcompany' %}">
+        {% csrf_token %}
+        {{ company_form.as_p }}
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
