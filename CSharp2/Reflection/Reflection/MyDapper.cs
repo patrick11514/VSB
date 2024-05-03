@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Reflection;
 using System.Text;
 using Microsoft.Data.Sqlite;
@@ -27,48 +28,46 @@ public class MyDapper : IDisposable, IAsyncDisposable
     
     ////////////////////////////// PRIVATE ////////////////////////////// 
     
-    private void AddProperty(ref StringBuilder sb, PropertyInfo? property, object? obj)
+    private void AddProperty(ref StringBuilder sb, PropertyInfo property, object? obj)
     {
-        sb.Append($"{property?.Name} = ");
-        AddValue(ref sb, property?.GetValue(obj));
-    }
-    private void AddValue(ref StringBuilder sb, object? value)
-    {
-        switch (value)
+        sb.Append($"{property.Name} = ");
+        var value = property.GetValue(obj);
+        if (value == null)
         {
-            case null:
-                sb.Append("null");
-                break;
-            case DateTime:
-            case TimeSpan:
-            case string:
+            sb.Append("NULL");
+        } else {
+            if (this.GetType(property.PropertyType) == "TEXT")
+            {   
                 sb.Append($"\"{value}\"");
-                break;
-            case char:
-                sb.Append($"'{value}'");
-                break;
-            default:
+            }
+            else
             {
-                if (value is bool boolVal)
-                {
-                    sb.Append(boolVal ? "true" : "false");
-                }
-                else
-                {
-                    sb.Append($"{value}");
-                }
-
-                break;
+                sb.Append(value);
             }
         }
     }
 
-    //Convert type to SQLite type
-    public string GetType<T>()
+    public bool IsNullable<T>()
     {
-        switch (typeof(T).Name)
+        return Nullable.GetUnderlyingType(typeof(T)) != null;
+    }
+    
+    //Convert type to SQLite type
+    public string? GetType(Type t)
+    {
+        string name = t.Name;
+        Type? nullableType = Nullable.GetUnderlyingType(t);
+
+        if (nullableType != null)
+        {
+            name = nullableType.Name;
+        }
+        
+        switch (name)
         {
             case "String":
+            case "DateTime":
+            case "TimeSpan":
                 return "TEXT";   
             case "Int16":
             case "Int32":
@@ -78,15 +77,23 @@ public class MyDapper : IDisposable, IAsyncDisposable
             case "Single":
             case "Decimal":
                 return "REAL";
-            default:
-                Console.WriteLine(typeof(T).Name);
-                return "";
         }
         
-        return "aaa";
+        return null;
     }
 
-    private PropertyInfo? GetPrimaryProperty<T>()
+    //https://stackoverflow.com/a/49627291
+    public object? ConvertTo<T>(T value, Type to)
+    {
+        if (Nullable.GetUnderlyingType(typeof(T)) != null)
+        {
+            TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
+            return converter.ConvertTo(value, to);
+        }
+        return Convert.ChangeType(value, to);
+    }
+
+    private PropertyInfo? GetPrimaryProperty<T>(T value)
     {
         var type = typeof(T);
 
@@ -100,9 +107,56 @@ public class MyDapper : IDisposable, IAsyncDisposable
 
         return null;
     }
+    
+    private PropertyInfo? GetPrimaryProperty(Type t)
+    {
+        foreach (var property in t.GetProperties())
+        {
+            if (Attribute.IsDefined(property, typeof(PrimaryKeyAttribute)))
+            {
+                return property;
+            }
+        }
 
+        return null;
+    }
+
+    private IEnumerable<T> Iterate<T>(SqliteDataReader r)
+    {
+        using var reader = r;
+        Type type = typeof(T);
+        
+        while (reader.Read())
+        {
+            object? instance = Activator.CreateInstance(type);
+            
+            if (instance == null)
+            {
+                yield break;
+            }
+            
+            var properties = type.GetProperties();
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                var property = properties[i];
+
+                var value = reader.GetValue(i);
+                if (reader.IsDBNull(i))
+                {
+                    property.SetValue(instance, null);
+                }
+                else
+                {
+                    property.SetValue(instance, ConvertTo(value, property.PropertyType));
+                }
+            }
+
+            yield return (T)instance;
+        }
+    }
+    
     ////////////////////////////// CREATE //////////////////////////////
-
+    
     public void CreateTable<T>()
     {
         var type = typeof(T);
@@ -115,16 +169,18 @@ public class MyDapper : IDisposable, IAsyncDisposable
         
         foreach (var property in properties)
         {
+            //get type from property
+            string? typeName = this.GetType(property.PropertyType);
+            if (typeName == null)
+            {
+                throw new Exception("Type not supported");
+            }
+
+            sb.Append($"\"{property.Name}\" {typeName}");
+            
             if (!Attribute.IsDefined(property, typeof(NullableAttribute)))
             {
-                continue;
-            }
-            
-            var attr = (NullableAttribute?)Attribute.GetCustomAttribute(property, typeof(NullableAttribute));
-
-            if (attr == null)
-            {
-                continue;
+                sb.Append(" NOT NULL");
             }
 
             if (Attribute.IsDefined(property, typeof(PrimaryKeyAttribute)))
@@ -139,38 +195,20 @@ public class MyDapper : IDisposable, IAsyncDisposable
 
             ++i;
         }
-
+        
         sb.Append(')');
         
         var cmd = connection.CreateCommand();
         cmd.CommandText = sb.ToString();
         cmd.ExecuteNonQuery();
     }
-    public List<T> SelectAll<T>()
+    public IEnumerable<T> SelectAll<T>(uint? limit = null)
     {
         var type = typeof(T);
 
         StringBuilder sb = new();
         sb.Append($"SELECT * FROM {type.Name}");
         
-        var cmd = connection.CreateCommand();
-        cmd.CommandText = sb.ToString();
-        var reader = cmd.ExecuteReader();
-
-        /*while (reader.Read())
-        {
-            
-        }*/
-
-        return new List<T>();
-    }
-
-    public void Select<T>(uint? limit = null)
-    {
-        var type = typeof(T);
-
-        StringBuilder sb = new();
-        sb.Append($"SELECT * FROM {type.Name}");
         if (limit != null)
         {
             sb.Append(" LIMIT ");
@@ -179,31 +217,65 @@ public class MyDapper : IDisposable, IAsyncDisposable
         
         var cmd = connection.CreateCommand();
         cmd.CommandText = sb.ToString();
-        cmd.ExecuteNonQuery();
+
+        return Iterate<T>(cmd.ExecuteReader());
+        
     }
+
+    public T Select<T>(object pk)
+    {
+        var type = typeof(T);
+        //get primary key
+        PropertyInfo? pkProperty = GetPrimaryProperty(typeof(T));
+        if (pkProperty == null)
+        {
+            throw new Exception("Primary key not found");
+        }
+
+        StringBuilder sb = new();
+        sb.Append($"SELECT * FROM {type.Name} WHERE {pkProperty.Name} = ");
+        
+        if (this.GetType(pkProperty.PropertyType) == "TEXT")
+        {
+            sb.Append($"\"{pk}\"");
+        }
+        else
+        {
+            sb.Append(pk);
+        }
+        
+        var cmd = connection.CreateCommand();
+        cmd.CommandText = sb.ToString(); 
+        return Iterate<T>(cmd.ExecuteReader()).First();
+        
+    }
+    
     public bool Update<T>(T obj)
     {
         var type = typeof(T);
         var properties = type.GetProperties();
 
+        var pkProperty = GetPrimaryProperty(type);
+        if (pkProperty == null)
+        {
+            return false;
+        }
+        
         StringBuilder sb = new();
         sb.Append($"UPDATE {type.Name} SET ");
 
         int i = 0;
-
-        PropertyInfo? idAttr = null;
        
         foreach (var property in properties)
         {
-            if (Attribute.IsDefined(property, typeof(PrimaryKeyAttribute)))
+            if (property == pkProperty)
             {
-                idAttr = property;
                 continue;
             }
             
             AddProperty(ref sb, property, obj);
             
-            if (i < properties.Length - 1)
+            if (i < properties.Length - 2 /* -1 + -1 because of primary key*/)
             {
                 sb.Append(", ");
             }
@@ -211,14 +283,9 @@ public class MyDapper : IDisposable, IAsyncDisposable
             ++i;
         }
 
-        if (idAttr == null)
-        {
-            return false;
-        }
-
         sb.Append($" WHERE ");
-        AddProperty(ref sb, idAttr, obj);
-
+        AddProperty(ref sb, pkProperty, obj);
+        
         var cmd = connection.CreateCommand();
         cmd.CommandText = sb.ToString();
         cmd.ExecuteNonQuery();
@@ -252,7 +319,7 @@ public class MyDapper : IDisposable, IAsyncDisposable
         i = 0;
         foreach (var property in properties)
         {
-            AddValue(ref sb, property.GetValue(obj));
+            //AddValue(ref sb, property.GetValue(obj));
             if (i < properties.Length - 1)
             {
                 sb.Append(", ");
