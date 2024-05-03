@@ -64,9 +64,8 @@ public class MyDapper : IDisposable, IAsyncDisposable
     }
 
     //Convert type to SQLite type
-    public string getType<T>()
+    public string GetType<T>()
     {
-        Console.WriteLine(typeof(T).Name);
         switch (typeof(T).Name)
         {
             case "String":
@@ -79,13 +78,15 @@ public class MyDapper : IDisposable, IAsyncDisposable
             case "Single":
             case "Decimal":
                 return "REAL";
-            
+            default:
+                Console.WriteLine(typeof(T).Name);
+                return "";
         }
         
         return "aaa";
     }
 
-    private PropertyInfo? getPrimaryProperty<T>()
+    private PropertyInfo? GetPrimaryProperty<T>()
     {
         var type = typeof(T);
 
