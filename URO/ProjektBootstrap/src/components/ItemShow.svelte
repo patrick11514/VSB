@@ -10,8 +10,8 @@
     import Container from './Container.svelte';
     import Row from './Row.svelte';
 
-    export let data: Item[];
-    export let selected: number | null = null;
+    export let selectedId: number | null = null;
+    export let selected: Item | null = null;
 
     let category: 'info' | 'images' = 'info';
 
@@ -19,14 +19,7 @@
     let values: (string | number)[] = [];
     $: {
         if (selected !== null) {
-            values = [
-                selected + 1,
-                data[selected]?.name ?? '',
-                data[selected]?.manufacturer ?? '',
-                data[selected]?.size ?? '',
-                data[selected]?.weight ?? '',
-                data[selected]?.price ?? ''
-            ];
+            values = [(selectedId ?? 0) + 1, selected?.name ?? '', selected?.manufacturer ?? '', selected?.size ?? '', selected?.weight ?? '', selected?.price ?? ''];
         } else {
             values = Array.from({ length: names.length }).fill('') as string[];
         }
@@ -64,12 +57,12 @@
                             </table>
                         {/if}
                     {:else}
-                        <Container class="ratio ratio-1x1" background="secondary">
+                        <Container class="ratio ratio-1x1 w-100 h-100" background="secondary">
                             {#if selected !== null}
                                 <Row class="row-cols-2 m-2">
-                                    {#each data[selected].images.other as image}
+                                    {#each selected.images.other as image}
                                         <Col>
-                                            <img src={image} alt="Product" />
+                                            <img class="w-auto h-auto" src={image} alt="Product" />
                                         </Col>
                                     {/each}
                                 </Row>
@@ -82,7 +75,7 @@
         <Col class="pe-0">
             <div class="bg-secondary ratio ratio-1x1">
                 {#if selected !== null}
-                    <img class="object-fit-contain" src={data[selected].images.main} alt="Product preview" />
+                    <img class="object-fit-contain" src={selected.images.main} alt="Product preview" />
                 {/if}
             </div>
         </Col>
@@ -90,8 +83,8 @@
     <Row class="mt-auto p-4">
         <div class="d-flex flex-row gap-4">
             <Button on:click={addItem} style="min-width: 120px;" color="success">Přidat</Button>
-            <Button on:click={() => editItem(selected)} style="min-width: 120px;" color="secondary">Upravit</Button>
-            <Button on:click={() => removeItem(selected)} style="min-width: 120px;" color="danger">Odebrat</Button>
+            <Button on:click={() => editItem(selectedId)} style="min-width: 120px;" color="secondary">Upravit</Button>
+            <Button on:click={() => removeItem(selectedId)} style="min-width: 120px;" color="danger">Odebrat</Button>
         </div>
     </Row>
 </Container>

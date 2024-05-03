@@ -21,11 +21,14 @@
 
     export let data: PageServerData;
 
-    let mainData: Item[];
+    let mainData: Item[] = [];
+    let filteredData: Item[] = [];
+
     let selected: number | null = null;
 
     const handleData = (response: (typeof data)['data']) => {
         mainData = response;
+        filteredData = response;
     };
     handleData(data.data);
 
@@ -63,6 +66,8 @@
             size: 0,
             price: 0
         });
+
+        filteredData = mainData;
     };
 
     const doSearch = () => {
@@ -113,12 +118,12 @@
     <Row class="p-4 h-100">
         <Col class="m-2">
             <Container class="h-100 p-3" background="body-secondary">
-                <ItemsTable data={mainData} bind:selected />
+                <ItemsTable data={filteredData} bind:selected />
             </Container>
         </Col>
         <Col class="m-2">
             <Container class="h-100" background="body-secondary">
-                <ItemShow data={mainData} bind:selected />
+                <ItemShow selectedId={selected} selected={selected !== null ? filteredData[selected] : null} />
             </Container>
         </Col>
     </Row>

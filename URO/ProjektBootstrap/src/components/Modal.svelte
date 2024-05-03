@@ -12,11 +12,9 @@
 </Portal>
 
 <div class="modal" tabindex="-1" style="display: {show ? 'block' : 'none'};">
-    <ClickOutside clickoutside={() => (show = false)}>
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <slot />
-            </div>
-        </div>
-    </ClickOutside>
+    <div class="modal-dialog">
+        <ClickOutside class="modal-content" clickoutside={() => (show = false)}>
+            <slot />
+        </ClickOutside>
+    </div>
 </div>
