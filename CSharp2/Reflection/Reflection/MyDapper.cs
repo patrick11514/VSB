@@ -31,6 +31,11 @@ public class MyDapper : IDisposable, IAsyncDisposable
     private void AddProperty(ref StringBuilder sb, PropertyInfo property, object? obj)
     {
         sb.Append($"{property.Name} = ");
+        AddValue(ref sb, property, obj);
+    }
+
+    private void AddValue(ref StringBuilder sb, PropertyInfo property, object? obj)
+    {
         var value = property.GetValue(obj);
         if (value == null)
         {
@@ -186,6 +191,12 @@ public class MyDapper : IDisposable, IAsyncDisposable
             if (Attribute.IsDefined(property, typeof(PrimaryKeyAttribute)))
             {
                 sb.Append(" PRIMARY KEY");
+
+                PrimaryKeyAttribute attr = (PrimaryKeyAttribute)property.GetCustomAttribute(typeof(PrimaryKeyAttribute))!;
+                if (attr.AutoIncrement)
+                {
+                    sb.Append(" AUTOINCREMENT");
+                }
             }
 
             if (i < properties.Length - 1)
@@ -202,6 +213,9 @@ public class MyDapper : IDisposable, IAsyncDisposable
         cmd.CommandText = sb.ToString();
         cmd.ExecuteNonQuery();
     }
+    
+    ////////////////////////////// SELECT //////////////////////////////
+    
     public IEnumerable<T> SelectAll<T>(uint? limit = null)
     {
         var type = typeof(T);
@@ -250,6 +264,8 @@ public class MyDapper : IDisposable, IAsyncDisposable
         
     }
     
+    ////////////////////////////// UPDATE //////////////////////////////
+    
     public bool Update<T>(T obj)
     {
         var type = typeof(T);
@@ -293,7 +309,9 @@ public class MyDapper : IDisposable, IAsyncDisposable
         return true;
     }
 
-    public void Insert<T>(T obj)
+    ////////////////////////////// INSERT //////////////////////////////
+    
+    public bool Insert<T>(T obj)
     {
         var type = typeof(T);
         var properties = type.GetProperties();
@@ -319,7 +337,27 @@ public class MyDapper : IDisposable, IAsyncDisposable
         i = 0;
         foreach (var property in properties)
         {
-            //AddValue(ref sb, property.GetValue(obj));
+            bool added = false;
+            
+            if (Attribute.IsDefined(property, typeof(PrimaryKeyAttribute)))
+            {
+                PrimaryKeyAttribute attr = (PrimaryKeyAttribute)property.GetCustomAttribute(typeof(PrimaryKeyAttribute))!;
+                if (attr.AutoIncrement)
+                {
+                    if (property.GetValue(obj).Equals(Activator.CreateInstance(property.PropertyType)))
+                    {
+                        sb.Append("NULL");
+                        added = true;
+                    }
+                }
+            }
+            
+            if (!added)
+            {
+                AddValue(ref sb, property, obj);
+            }
+            
+            
             if (i < properties.Length - 1)
             {
                 sb.Append(", ");
@@ -329,8 +367,57 @@ public class MyDapper : IDisposable, IAsyncDisposable
         }
 
         sb.Append(")");
-        
-        Console.WriteLine(sb.ToString());
-    }
+        try
+        {
+            var cmd = connection.CreateCommand();
+            cmd.CommandText = sb.ToString();
+            cmd.ExecuteNonQuery();
+        }
+        catch
+        {
+            return false;
+        }
 
+        return true;
+    }
+    
+    ////////////////////////////// DELETE //////////////////////////////
+
+    public void Delete<T>(T obj)
+    {
+        var type = typeof(T);
+        var properties = type.GetProperties();
+
+        StringBuilder sb = new();
+        sb.Append($"DELETE FROM {type.Name} WHERE ");
+        
+        var pkProperty = GetPrimaryProperty(type);
+
+        if (pkProperty == null)
+        {
+            //list each property
+            int i = 0;
+            foreach (var property in properties)
+            {
+                sb.Append($"{property.Name} = ");
+                AddValue(ref sb, property, obj);
+
+                if (i < properties.Length - 1)
+                {
+                    sb.Append(" AND ");
+                }
+
+                ++i;
+            }
+        }
+        else
+        {
+            sb.Append($"{pkProperty.Name} = ");
+            AddValue(ref sb, pkProperty, obj);
+        }
+        
+        var cmd = connection.CreateCommand();
+        cmd.CommandText = sb.ToString();
+        cmd.ExecuteNonQuery();
+    }
 }

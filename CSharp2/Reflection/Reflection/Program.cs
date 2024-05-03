@@ -23,7 +23,10 @@ class Program
         dapper.GetType<TimeSpan>();*/
         
         //dapper.CreateTable<Address>();
-        var i = dapper.Select<Address>(1);
+        //dapper.Insert(new Address(){Id = 1, City = "Petrov", Date = new DateTime(2003,5,1,6,30,12), Number = 69,Street = "Česká", ZipCode = "123 45"});
+        //dapper.Delete(new Address(){Id = 1, City = "Petrov", Date = new DateTime(2003,5,1,6,30,12), Number = 69,Street = "Česká", ZipCode = "123 45"});
+        
+        /*var i = dapper.Select<Address>(1);
         Console.WriteLine(i.Id);
         Console.WriteLine(i.City);
         Console.WriteLine(i.Street);
@@ -45,7 +48,7 @@ class Program
         Console.WriteLine(b.Street);
         Console.WriteLine(b.Number);
         Console.WriteLine(b.ZipCode);
-        Console.WriteLine(b.Date);
+        Console.WriteLine(b.Date);*/
         //dapper.Insert(new Address() { City = null, Number = 459, ZipCode = "42000", Street = "Zlatá"});
         //dapper.SelectAll(new Address() { City = null, Number = 459, ZipCode = "42000", Street = "Zlatá"});
         //dapper.SelectAll<ExampleClass>();

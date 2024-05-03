@@ -2,7 +2,6 @@ namespace Reflection;
 
 public class Address
 {
-    [PrimaryKey]
     public int Id { get; set; }
     
     [Nullable]
