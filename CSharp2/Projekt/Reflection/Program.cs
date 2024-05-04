@@ -1,16 +1,12 @@
-﻿namespace Reflection;
+﻿namespace DataLayer;
 
 class Program
 {
+	public
 	static void Main(string[] args)
 	{
-		using var dapper = new MyDapper("db.sqlite");
 
-		Thread app = new(() =>
-		{
-			var instance = new DesktopApp.MainWindow();
-			instance.Activate();
-		});
+
 		/*dapper.GetType<string>();
         dapper.GetType<int>();
         dapper.GetType<double>();

@@ -1,0 +1,33 @@
+﻿<Window x:Class="DesktopApp.HightSchoolList"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DesktopApp"
+        mc:Ignorable="d"
+        Title="Přehled středních škol" Height="450" Width="800">
+    <Grid>
+        <DataGrid AutoGenerateColumns="False" CanUserReorderColumns="False" IsReadOnly="True" CanUserDeleteRows="False" CanUserAddRows="False" Grid.Row="0" Margin="10" ItemsSource="{Binding list}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Id" Binding="{Binding Id}" />
+                <DataGridTextColumn Header="Jméno" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Kraj" Binding="{Binding Region}" />
+                <DataGridTextColumn Header="Město" Binding="{Binding City}" />
+                <DataGridTextColumn Header="Ulice" Binding="{Binding Street}" />
+                <DataGridTextColumn Header="Číslo popisné" Binding="{Binding HouseNumber}" />
+                <DataGridTextColumn Header="PSČ" Binding="{Binding PostalCode}" />
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Upravit" Click="EditHighSchool"/>
+                                <Button Content="Odstranit" Click="RemoveHighSchool"/>
+                                <Button Content="Zobrazit programy" Click="ShowPrograms"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>
