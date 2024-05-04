@@ -164,7 +164,7 @@ public class MyDapper : IDisposable, IAsyncDisposable
 
 	////////////////////////////// CREATE //////////////////////////////
 
-	public void CreateTable<T>()
+	public async Task CreateTable<T>()
 	{
 		var type = typeof(T);
 		var properties = type.GetProperties();
@@ -213,12 +213,12 @@ public class MyDapper : IDisposable, IAsyncDisposable
 
 		var cmd = connection.CreateCommand();
 		cmd.CommandText = sb.ToString();
-		cmd.ExecuteNonQuery();
+		await cmd.ExecuteNonQueryAsync();
 	}
 
 	////////////////////////////// SELECT //////////////////////////////
 
-	public IEnumerable<T> SelectAll<T>(uint? limit = null)
+	public async Task<IEnumerable<T>> SelectAll<T>(uint? limit = null)
 	{
 		var type = typeof(T);
 
@@ -234,11 +234,11 @@ public class MyDapper : IDisposable, IAsyncDisposable
 		var cmd = connection.CreateCommand();
 		cmd.CommandText = sb.ToString();
 
-		return Iterate<T>(cmd.ExecuteReader());
+		return Iterate<T>(await cmd.ExecuteReaderAsync());
 
 	}
 
-	public T Select<T>(object pk)
+	public async Task<T> Select<T>(object pk)
 	{
 		var type = typeof(T);
 		//get primary key
@@ -262,13 +262,13 @@ public class MyDapper : IDisposable, IAsyncDisposable
 
 		var cmd = connection.CreateCommand();
 		cmd.CommandText = sb.ToString();
-		return Iterate<T>(cmd.ExecuteReader()).First();
+		return Iterate<T>(await cmd.ExecuteReaderAsync()).First();
 
 	}
 
 	////////////////////////////// UPDATE //////////////////////////////
 
-	public bool Update<T>(T obj)
+	public async Task<bool> Update<T>(T obj)
 	{
 		var type = typeof(T);
 		var properties = type.GetProperties();
@@ -303,17 +303,23 @@ public class MyDapper : IDisposable, IAsyncDisposable
 
 		sb.Append($" WHERE ");
 		AddProperty(ref sb, pkProperty, obj);
-
-		var cmd = connection.CreateCommand();
-		cmd.CommandText = sb.ToString();
-		cmd.ExecuteNonQuery();
+		try
+		{
+			var cmd = connection.CreateCommand();
+			cmd.CommandText = sb.ToString();
+			await cmd.ExecuteNonQueryAsync();
+		}
+		catch
+		{
+			return false;
+		}
 
 		return true;
 	}
 
 	////////////////////////////// INSERT //////////////////////////////
 
-	public bool Insert<T>(T obj)
+	public async Task<bool> Insert<T>(T obj)
 	{
 		var type = typeof(T);
 		var properties = type.GetProperties();
@@ -374,7 +380,7 @@ public class MyDapper : IDisposable, IAsyncDisposable
 		{
 			var cmd = connection.CreateCommand();
 			cmd.CommandText = sb.ToString();
-			cmd.ExecuteNonQuery();
+			await cmd.ExecuteNonQueryAsync();
 		}
 		catch
 		{
@@ -386,7 +392,7 @@ public class MyDapper : IDisposable, IAsyncDisposable
 
 	////////////////////////////// DELETE //////////////////////////////
 
-	public void Delete<T>(T obj)
+	public async Task Delete<T>(T obj)
 	{
 		var type = typeof(T);
 		var properties = type.GetProperties();
@@ -421,6 +427,6 @@ public class MyDapper : IDisposable, IAsyncDisposable
 
 		var cmd = connection.CreateCommand();
 		cmd.CommandText = sb.ToString();
-		cmd.ExecuteNonQuery();
+		await cmd.ExecuteNonQueryAsync();
 	}
 }

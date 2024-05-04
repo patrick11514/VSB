@@ -32,32 +32,44 @@ namespace DesktopApp
 
 			InitializeComponent();
 
-			this.list = new(dapper.SelectAll<HighSchoolProgram>());
+			_ = this.FetchData();
 
 			this.DataContext = this;
 		}
 
-		private void EditProgram(object sender, RoutedEventArgs e)
+		private async Task FetchData()
 		{
-			Button btn = sender as Button;
-			var program = btn.DataContext as HighSchoolProgram;
+			this.list = new(await dapper.SelectAll<HighSchoolProgram>());
+		}
+
+		private async void EditProgram(object sender, RoutedEventArgs e)
+		{
+			if (sender is not Button btn)
+			{
+				return;
+			}
+
+			if (btn.DataContext is not HighSchoolProgram program)
+			{
+				return;
+			}
 
 			var form = new ProgramForm(program);
 			form.ShowDialog();
 
-			dapper.Update(form.program);
+			await dapper.Update(form.program);
 		}
 
 		private void RemoveProgram(object sender, RoutedEventArgs e)
 		{
 
 		}
-		private void AddProgram(object sender, RoutedEventArgs e)
+		private async void AddProgram(object sender, RoutedEventArgs e)
 		{
 			var form = new ProgramForm();
 			form.ShowDialog();
 
-			dapper.Insert(form.program);
+			await dapper.Insert(form.program);
 			this.list.Add(form.program);
 		}
 	}

@@ -16,7 +16,17 @@ namespace Main
 			});
 			app.SetApartmentState(ApartmentState.STA);
 			app.Start();
+
+			Thread web = new(() =>
+			{
+				Web.Models.DataLayer.dapper = dapper;
+				Web.Program.Main([]);
+			});
+
+			web.Start();
+
 			app.Join();
+			web.Join();
 		}
 	}
 }

@@ -29,27 +29,45 @@ namespace DesktopApp
 			this.dapper = dapper;
 			InitializeComponent();
 
-			this.list = new(this.dapper.SelectAll<HighSchool>());
+			this.FetchData();
 
 			this.DataContext = this;
 		}
 
-		private void EditHighSchool(object sender, RoutedEventArgs e)
+		private async void FetchData()
 		{
+			this.list = new(await this.dapper.SelectAll<HighSchool>());
+		}
 
-			Button btn = sender as Button;
-			var highSchool = btn.DataContext as HighSchool;
+		private async void EditHighSchool(object sender, RoutedEventArgs e)
+		{
+			if (sender is not Button btn)
+			{
+				return;
+			}
+
+			if (btn.DataContext is not HighSchool highSchool)
+			{
+				return;
+			}
 
 			var highSchoolForm = new HighSchoolForm(highSchool);
 			highSchoolForm.ShowDialog();
 
-			dapper.Update(highSchoolForm.highSchool);
+			await dapper.Update(highSchoolForm.highSchool);
 		}
 
-		private void RemoveHighSchool(object sender, RoutedEventArgs e)
+		private async void RemoveHighSchool(object sender, RoutedEventArgs e)
 		{
-			Button btn = sender as Button;
-			var highSchool = btn.DataContext as HighSchool;
+			if (sender is not Button btn)
+			{
+				return;
+			}
+
+			if (btn.DataContext is not HighSchool highSchool)
+			{
+				return;
+			}
 
 			var result = MessageBox.Show("Opravu chcete smazat tento záznam?", "Odstranění záznamu", MessageBoxButton.YesNo, MessageBoxImage.Question);
 			if (result != MessageBoxResult.Yes)
@@ -57,14 +75,20 @@ namespace DesktopApp
 				return;
 			}
 
-			dapper.Delete(highSchool);
+			await dapper.Delete(highSchool);
 			list.Remove(highSchool);
 		}
 
 		private void ShowPrograms(object sender, RoutedEventArgs e)
 		{
-			Button btn = sender as Button;
-			var highSchool = btn.DataContext as HighSchool;
+			if (sender is not Button btn)
+			{
+				return;
+			}
+			if (btn.DataContext is not HighSchool highSchool)
+			{
+				return;
+			}
 			var schoolProgram = new ProgramList(dapper, highSchool);
 			schoolProgram.ShowDialog();
 		}

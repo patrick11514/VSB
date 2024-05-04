@@ -26,12 +26,12 @@ namespace DesktopApp
 			InitializeComponent();
 		}
 
-		private void AddHighSchoolList(object sender, RoutedEventArgs e)
+		private async void AddHighSchoolList(object sender, RoutedEventArgs e)
 		{
 			var highSchoolForm = new HighSchoolForm();
 			highSchoolForm.ShowDialog();
 
-			dapper.Insert(highSchoolForm.highSchool);
+			await dapper.Insert(highSchoolForm.highSchool);
 		}
 
 		private void ShowHighSchoolList(object sender, RoutedEventArgs e)
@@ -40,10 +40,12 @@ namespace DesktopApp
 			listForm.ShowDialog();
 		}
 
-		private void CreateTables(object sender, RoutedEventArgs e)
+		private async void CreateTables(object sender, RoutedEventArgs e)
 		{
-			dapper.CreateTable<HighSchool>();
-			dapper.CreateTable<HighSchoolProgram>();
+			await dapper.CreateTable<HighSchool>();
+			await dapper.CreateTable<HighSchoolProgram>();
+			await dapper.CreateTable<Student>();
+			await dapper.CreateTable<DataLayer.Structures.Application>();
 		}
 	}
 }

@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DesktopApp\DesktopApp.csproj" />
+    <ProjectReference Include="..\Web\Web.csproj" />
   </ItemGroup>
 
 </Project>
