@@ -1,36 +1,53 @@
 using DataLayer;
+using DesktopApp;
+using System.Collections;
 
 namespace Web
 {
-	public class Program
-	{
-		public static void Main(string[] args)
-		{
-			var builder = WebApplication.CreateBuilder(args);
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            using var dapper = new MyDapper("db.sqlite");
 
-			// Add services to the container.
-			builder.Services.AddControllersWithViews();
+            Thread myApp = new(() =>
+            {
+                var application = new System.Windows.Application();
+                application.Run(new DesktopApp.MainWindow(dapper));
+            });
+            myApp.SetApartmentState(ApartmentState.STA);
+            myApp.Start();
 
-			builder.Services.AddSingleton<DataService>();
+            Environment.SetEnvironmentVariable("ASPNETCORE_URLS", "http://localhost:5146");
+            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
 
-			var app = builder.Build();
+            var builder = WebApplication.CreateBuilder(args);
 
-			// Configure the HTTP request pipeline.
-			if (!app.Environment.IsDevelopment())
-			{
-				app.UseExceptionHandler("/Home/Error");
-			}
-			app.UseStaticFiles();
+            // Add services to the container.
+            builder.Services.AddControllersWithViews();
 
-			app.UseRouting();
+            //builder.Services.AddSingleton<DataService>();
 
-			app.UseAuthorization();
+            var app = builder.Build();
 
-			app.MapControllerRoute(
-				name: "default",
-				pattern: "{controller=Home}/{action=Index}/{id?}");
+            // Configure the HTTP request pipeline.
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseExceptionHandler("/Home/Error");
+            }
 
-			app.Run();
-		}
-	}
+            app.UseStaticFiles();
+
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
+            app.Run();
+        }
+    }
 }
