@@ -77,6 +77,10 @@
         "qpushbutton": "cpp",
         "qjsondocument": "cpp",
         "qbytearray": "cpp",
-        "qjsonarray": "cpp"
+        "qjsonarray": "cpp",
+        "qfiledialog": "cpp",
+        "qtableview": "cpp",
+        "qstandarditemmodel": "cpp",
+        "qaction": "cpp"
     }
 }

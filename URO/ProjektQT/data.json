@@ -6,8 +6,8 @@
         "price": "20$",
         "weight": "235g",
         "images": {
-            "main": "items/1/main.png",
-            "other": ["items/1/1.png", "items/1/2.png"]
+            "main": "../assets/items/1/main.png",
+            "other": ["../assets/items/1/1.png", "../assets/items/1/2.png"]
         }
     },
     {
@@ -17,8 +17,13 @@
         "price": "19.41$",
         "weight": "245g",
         "images": {
-            "main": "items/2/main.png",
-            "other": ["items/2/1.png", "items/2/2.png", "items/2/3.png", "items/2/4.png"]
+            "main": "../assets/items/2/main.png",
+            "other": [
+                "../assets/items/2/1.png",
+                "../assets/items/2/2.png",
+                "../assets/items/2/3.png",
+                "../assets/items/2/4.png"
+            ]
         }
     },
     {
@@ -28,8 +33,8 @@
         "price": "30$",
         "weight": "422g",
         "images": {
-            "main": "items/3/main.png",
-            "other": ["items/3/1.png", "items/3/2.png", "items/3/3.png"]
+            "main": "../assets/items/3/main.png",
+            "other": ["../assets/items/3/1.png", "../assets/items/3/2.png", "../assets/items/3/3.png"]
         }
     },
     {
@@ -39,8 +44,13 @@
         "price": "44$",
         "weight": "340g",
         "images": {
-            "main": "items/4/main.png",
-            "other": ["items/4/1.png", "items/4/2.png", "items/4/3.png", "items/4/4.png"]
+            "main": "../assets/items/4/main.png",
+            "other": [
+                "../assets/items/4/1.png",
+                "../assets/items/4/2.png",
+                "../assets/items/4/3.png",
+                "../assets/items/4/4.png"
+            ]
         }
     }
 ]
