@@ -12,8 +12,4 @@
       <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.8" />
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="C:\Users\Patrik Mintěl\source\repos\Projekt\DesktopApp\DesktopApp.csproj" />
-    </ItemGroup>
-
 </Project>

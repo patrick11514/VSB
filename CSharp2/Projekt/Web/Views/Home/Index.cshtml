@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Hlavní Stránka";
+}
+
+<nav class="font-ubuntu flex flex-row items-center justify-center gap-4">
+    <div class="border-b-text cursor-pointer border-b-4 text-xl font-medium"><i class="bi bi-house-fill"></i> Domů</div>
+    <a href="/form"
+       class="after:border-b-text text-xl font-medium after:block after:origin-bottom-left after:scale-x-0 after:border-b-4 after:transition-all after:hover:scale-x-100">
+        <i class="bi bi-clipboard-fill"></i> Formulář
+    </a>
+</nav>
+
+<div class="my-auto flex flex-col gap-4">
+    <h1 class="font-jaini breath text-center text-6xl font-bold">Přihlášky na Střední Školu</h1>
+
+    <a href="/form" class="mx-auto">
+        <button class="font-ubuntu bg-primary mx-auto scale-100 rounded-md px-4 py-2 text-xl font-bold text-white transition-all duration-300 hover:scale-105 active:translate-y-1">
+            Přihlásit se
+        </button>
+    </a>
+</div>

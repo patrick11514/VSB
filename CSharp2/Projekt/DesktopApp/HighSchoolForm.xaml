@@ -1,0 +1,36 @@
+﻿<Window x:Class="DesktopApp.HighSchoolForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DesktopApp"
+        mc:Ignorable="d"
+        Title="Podrobnosti střední školy" Height="450" Width="800">
+    <StackPanel>
+        <DockPanel>
+            <Label Content="Jméno" />
+            <TextBox Text="{Binding Name}" />
+        </DockPanel>
+        <DockPanel>
+            <Label Content="Kraj" />
+            <TextBox Text="{Binding Region}" />
+        </DockPanel>
+        <DockPanel>
+            <Label Content="Město" />
+            <TextBox Text="{Binding City}" />
+        </DockPanel>
+        <DockPanel>
+            <Label Content="Ulice" />
+            <TextBox Text="{Binding Street}" />
+        </DockPanel>
+        <DockPanel>
+            <Label Content="Číslo popisné" />
+            <TextBox Text="{Binding HouseNumber}" />
+        </DockPanel>
+        <DockPanel>
+            <Label Content="PSČ" />
+            <TextBox Text="{Binding PostalCode}" MaxLength="5" />
+        </DockPanel>
+        <Button Content="Uložit" Click="Save"/>
+    </StackPanel>
+</Window>

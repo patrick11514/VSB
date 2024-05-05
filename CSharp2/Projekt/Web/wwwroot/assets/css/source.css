@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+.breath {
+    animation-name: breath;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: cubic-bezier(0.45, 0.05, 0.55, 0.95);
+}
+
+@keyframes breath {
+    0% {
+        scale: 1;
+    }
+
+    50% {
+        scale: 1.05;
+    }
+
+    100% {
+        scale: 1;
+    }
+}

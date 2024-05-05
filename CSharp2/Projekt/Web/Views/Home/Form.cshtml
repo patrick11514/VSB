@@ -1,0 +1,185 @@
+﻿@{
+	ViewData["Title"] = "Formulář";
+}
+
+<nav class="flex flex-row items-center justify-center gap-4 font-ubuntu">
+    <a href="/"
+       class="text-xl font-medium after:block after:origin-bottom-left after:scale-x-0 after:border-b-4 after:border-b-text after:transition-all after:hover:scale-x-100">
+        <i class="bi bi-house-fill"></i> Domů
+    </a>
+    <div class="cursor-pointer border-b-4 border-b-text text-xl font-medium"><i class="bi bi-clipboard-fill"></i> Formulář</div>
+</nav>
+<div class="my-auto flex flex-col gap-4">
+    <h1 class="breath text-center font-jaini text-6xl font-bold">Přihlášky na Střední Školu</h1>
+    <form id="form1" class="mx-auto flex w-[60%] flex-col gap-4 font-ubuntu">
+        <h2 class="text-4xl font-bold">Základní osobní údaje</h2>
+        <div class="flex w-full flex-row justify-between gap-12">
+            <div class="flex w-[80%] flex-col gap-2">
+                <label class="text-2xl font-medium" for="name">Jméno <span class="text-lg text-red-500">(povinné)</span></label>
+                <input id="name"
+                       name="name"
+                       type="text"
+                       required
+                       class="rounded-md border-2 border-transparent bg-secondary px-2 py-1 font-ubuntu text-xl outline-none focus:border-primary" />
+            </div>
+            <div class="flex w-[80%] flex-col gap-2">
+                <label class="text-2xl font-medium" for="surname">Příjmení <span class="text-lg text-red-500">(povinné)</span></label>
+                <input id="surname"
+                       name="surname"
+                       type="text"
+                       required
+                       class="rounded-md border-2 border-transparent bg-secondary px-2 py-1 font-ubuntu text-xl outline-none focus:border-primary" />
+            </div>
+        </div>
+        <div class="flex w-full flex-row justify-between gap-12">
+            <div class="flex w-[80%] flex-col gap-2">
+                <label class="text-2xl font-medium" for="state">Stát <span class="text-lg text-red-500">(povinné)</span></label>
+                <select id="state"
+                        name="state"
+                        required
+                        class="rounded-md border-2 border-transparent bg-secondary px-2 py-1 font-ubuntu text-xl outline-none focus:border-primary">
+                    <option disabled selected>Vyberte stát</option>
+                    <option value="Česká Republika">Česká Republika</option>
+                    <option value="Slovensko">Slovensko</option>
+                </select>
+            </div>
+            <div class="flex w-[80%] flex-col gap-2">
+                <label class="text-2xl font-medium" for="region">Kraj <span class="text-lg text-red-500">(povinné)</span></label>
+                <select id="region"
+                        name="region"
+                        required
+                        class="rounded-md border-2 border-transparent bg-secondary px-2 py-1 font-ubuntu text-xl outline-none focus:border-primary">
+                    <option disabled selected>Musíte prvně vybrat stát</option>
+                </select>
+            </div>
+        </div>
+        <div class="flex w-full flex-row justify-between gap-12">
+            <div class="flex w-[80%] flex-col gap-2">
+                <label class="text-2xl font-medium" for="town">Město <span class="text-lg text-red-500">(povinné)</span></label>
+                <input id="town"
+                       name="town"
+                       type="text"
+                       required
+                       class="rounded-md border-2 border-transparent bg-secondary px-2 py-1 font-ubuntu text-xl outline-none focus:border-primary" />
+            </div>
+            <div class="flex w-[80%] flex-col gap-2">
+                <label class="text-2xl font-medium" for="street">Ulice <span class="text-lg text-red-500">(povinné)</span></label>
+                <input id="street"
+                       name="street"
+                       type="text"
+                       required
+                       class="rounded-md border-2 border-transparent bg-secondary px-2 py-1 font-ubuntu text-xl outline-none focus:border-primary" />
+            </div>
+        </div>
+        <div class="flex w-full flex-row justify-between gap-12">
+            <div class="flex w-[80%] flex-col gap-2">
+                <label class="text-2xl font-medium" for="housenumber">Číslo popisné <span class="text-lg text-red-500">(povinné)</span></label>
+                <input id="housenumber"
+                       name="housenumber"
+                       type="number"
+                       required
+                       min="0"
+                       class="rounded-md border-2 border-transparent bg-secondary px-2 py-1 font-ubuntu text-xl outline-none focus:border-primary" />
+            </div>
+            <div class="flex w-[80%] flex-col gap-2">
+                <label class="text-2xl font-medium" for="postalcode">PSČ <span class="text-lg text-red-500">(povinné)</span></label>
+                <input id="postalcode"
+                       name="postalcode"
+                       type="number"
+                       required
+                       min="0"
+                       class="rounded-md border-2 border-transparent bg-secondary px-2 py-1 font-ubuntu text-xl outline-none focus:border-primary" />
+            </div>
+        </div>
+        <h2 class="text-4xl font-bold">Kontakt</h2>
+        <div class="flex w-full flex-row justify-between gap-12">
+            <div class="flex w-[80%] flex-col gap-2">
+                <label class="text-2xl font-medium" for="phone">Telefonní číslo <span class="text-lg text-red-500">(povinné)</span></label>
+                <input id="phone"
+                       name="phone"
+                       type="tel"
+                       required
+                       min="0"
+                       class="rounded-md border-2 border-transparent bg-secondary px-2 py-1 font-ubuntu text-xl outline-none focus:border-primary" />
+            </div>
+            <div class="flex w-[80%] flex-col gap-2">
+                <label class="text-2xl font-medium" for="email">Email <span class="text-lg text-red-500">(povinné)</span></label>
+                <input id="email"
+                       name="email"
+                       type="email"
+                       required
+                       class="rounded-md border-2 border-transparent bg-secondary px-2 py-1 font-ubuntu text-xl outline-none focus:border-primary" />
+            </div>
+        </div>
+        <button type="submit"
+                class="w-[25%] scale-100 rounded-md bg-primary px-4 py-2 font-ubuntu text-xl font-bold text-white transition-all duration-300 hover:scale-105 active:translate-y-1">
+            Další krok
+        </button>
+    </form>
+    <form id="form2" class="mx-auto hidden w-[60%] flex-col gap-4 font-ubuntu">
+        <h2 class="text-4xl font-bold">Výběr středních škol a oborů</h2>
+        <div class="flex w-full flex-row justify-between gap-12">
+            <div class="flex w-[80%] flex-col gap-2">
+                <label class="text-2xl font-medium" for="hs1">Střední škola 1 <span class="text-lg text-red-500">(povinné)</span></label>
+                <input id="hs1Real" name="hs1" type="hidden" />
+                <input id="hs1"
+                       type="text"
+                       required
+                       class="rounded-md border-2 border-transparent bg-secondary px-2 py-1 font-ubuntu text-xl outline-none focus:border-primary" />
+                <div id="h1List" class="relative hidden w-full flex-col gap-2 rounded-md bg-secondary p-2"></div>
+            </div>
+            <div class="flex w-[80%] flex-col gap-2">
+                <label class="text-2xl font-medium" for="program1">Obor 1 <span class="text-lg text-red-500">(povinné)</span></label>
+                <select id="program1"
+                        name="program1"
+                        required
+                        class="rounded-md border-2 border-transparent bg-secondary px-2 py-1 font-ubuntu text-xl outline-none focus:border-primary">
+                    <option disabled selected>Vyber školu pro zobrazení oborů</option>
+                </select>
+            </div>
+        </div>
+        <div class="flex w-full flex-row justify-between gap-12">
+            <div class="flex w-[80%] flex-col gap-2">
+                <label class="text-2xl font-medium" for="hs2">Střední škola 2</label>
+                <input id="hs1Rea2" name="hs2" type="hidden" />
+                <input id="hs2" type="text" class="rounded-md border-2 border-transparent bg-secondary px-2 py-1 font-ubuntu text-xl outline-none focus:border-primary" />
+                <div id="h2List" class="relative hidden w-full flex-col gap-2 rounded-md bg-secondary p-2"></div>
+            </div>
+            <div class="flex w-[80%] flex-col gap-2">
+                <label class="text-2xl font-medium" for="program1">Obor 2</label>
+                <select id="program2"
+                        name="program2"
+                        class="rounded-md border-2 border-transparent bg-secondary px-2 py-1 font-ubuntu text-xl outline-none focus:border-primary">
+                    <option disabled selected>Vyber školu pro zobrazení oborů</option>
+                </select>
+            </div>
+        </div>
+        <div class="flex w-full flex-row justify-between gap-12">
+            <div class="flex w-[80%] flex-col gap-2">
+                <label class="text-2xl font-medium" for="hs3">Střední škola 3</label>
+                <input id="hs3Real" name="hs3" type="hidden" />
+                <input id="hs3" type="text" class="rounded-md border-2 border-transparent bg-secondary px-2 py-1 font-ubuntu text-xl outline-none focus:border-primary" />
+                <div id="h3List" class="relative hidden w-full flex-col gap-2 rounded-md bg-secondary p-2"></div>
+            </div>
+            <div class="flex w-[80%] flex-col gap-2">
+                <label class="text-2xl font-medium" for="program3">Obor 3</label>
+                <select id="program3"
+                        name="program3"
+                        class="rounded-md border-2 border-transparent bg-secondary px-2 py-1 font-ubuntu text-xl outline-none focus:border-primary">
+                    <option disabled selected>Vyber školu pro zobrazení oborů</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="flex flex-row gap-4">
+            <button id="back"
+                    class="w-[25%] scale-100 rounded-md bg-primary px-4 py-2 font-ubuntu text-xl font-bold text-white transition-all duration-300 hover:scale-105 active:translate-y-1">
+                Zpět
+            </button>
+            <button type="submit"
+                    class="w-[25%] scale-100 rounded-md bg-primary px-4 py-2 font-ubuntu text-xl font-bold text-white transition-all duration-300 hover:scale-105 active:translate-y-1">
+                Odeslat
+            </button>
+        </div>
+    </form>
+</div>

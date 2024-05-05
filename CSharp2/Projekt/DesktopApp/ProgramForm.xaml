@@ -1,0 +1,28 @@
+﻿<Window x:Class="DesktopApp.ProgramForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DesktopApp"
+        mc:Ignorable="d"
+        Title="Podrobnosti programu" Height="450" Width="800">
+    <StackPanel>
+        <DockPanel>
+            <Label Content="Identifikace" />
+            <TextBox Text="{Binding Identifier}" />
+        </DockPanel>
+        <DockPanel>
+            <Label Content="Název" />
+            <TextBox Text="{Binding Name}" />
+        </DockPanel>
+        <DockPanel>
+            <Label Content="Popis" />
+            <TextBox Text="{Binding Description}" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" MaxHeight="240"/>
+        </DockPanel>
+        <DockPanel>
+            <Label Content="Volná místa" />
+            <TextBox Text="{Binding OpenedPlaces}" />
+        </DockPanel>
+        <Button Content="Uložit" Click="Save"/> 
+    </StackPanel>
+</Window>

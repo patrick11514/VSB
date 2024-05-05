@@ -1,0 +1,84 @@
+﻿<Window x:Class="DesktopApp.ProgramList"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DesktopApp"
+        mc:Ignorable="d"
+        Title="Přehled programů" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+        <DataGrid ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" IsReadOnly="True" AutoGenerateColumns="False" CanUserReorderColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" Grid.Row="0" Margin="10,10,10,10" ItemsSource="{Binding list}">
+            <!-- Scrollovani: https://chat.openai.com/share/7c823018-483d-4b93-b551-edfebcaf2161 !-->
+            <DataGrid.Template>
+                <ControlTemplate TargetType="{x:Type DataGrid}">
+                    <Border Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}">
+                        <ScrollViewer x:Name="DG_ScrollViewer" Focusable="false">
+                            <ScrollViewer.Template>
+                                <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <!-- Place the DataGrid content here -->
+                                        <ScrollContentPresenter Content="{TemplateBinding Content}" />
+
+                                        <!-- Customize the ScrollBars -->
+                                        <ScrollBar Name="PART_VerticalScrollBar"
+                                           Value="{TemplateBinding VerticalOffset}"
+                                           Maximum="{TemplateBinding ScrollableHeight}"
+                                           ViewportSize="{TemplateBinding ViewportHeight}"
+                                           Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                                           Grid.Column="1" 
+                                           Background="{TemplateBinding Background}" />
+                                        <ScrollBar Name="PART_HorizontalScrollBar"
+                                           Orientation="Horizontal"
+                                           Value="{TemplateBinding HorizontalOffset}"
+                                           Maximum="{TemplateBinding ScrollableWidth}"
+                                           ViewportSize="{TemplateBinding ViewportWidth}"
+                                           Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
+                                           Grid.Row="1"
+                                           Background="{TemplateBinding Background}" />
+                                    </Grid>
+                                </ControlTemplate>
+                            </ScrollViewer.Template>
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </DataGrid.Template>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Id" Binding="{Binding Identifier}" />
+                <DataGridTextColumn Header="Jméno" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Popisek" Binding="{Binding Description}" />
+                <DataGridTextColumn Header="Otevřená místa" Binding="{Binding OpenedPlaces}" />
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" MaxHeight="40">
+                                <Button Content="Upravit" Click="EditProgram"/>
+                                <Button Content="Odstranit" Click="RemoveProgram"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        
+        <Button Grid.Row="1" Content="Přidat program" Click="AddProgram" Margin="10,10,10,10" Width="120" HorizontalAlignment="Left" />
+    </Grid>
+</Window>
