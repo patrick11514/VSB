@@ -39,7 +39,7 @@ namespace DesktopApp
 
 		private async Task FetchData()
 		{
-			this.list = new(await dapper.SelectAll<HighSchoolProgram>());
+			this.list = new(await dapper.Select<HighSchoolProgram, String>(new Dictionary<string, object>() { { "HighSchool", highSchool.Id } }));
 		}
 
 		private async void EditProgram(object sender, RoutedEventArgs e)
@@ -68,6 +68,8 @@ namespace DesktopApp
 		{
 			var form = new ProgramForm();
 			form.ShowDialog();
+
+			form.program.HighSchool = highSchool.Id;
 
 			await dapper.Insert(form.program);
 			this.list.Add(form.program);

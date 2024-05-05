@@ -263,7 +263,57 @@ public class MyDapper : IDisposable, IAsyncDisposable
 		var cmd = connection.CreateCommand();
 		cmd.CommandText = sb.ToString();
 		return Iterate<T>(await cmd.ExecuteReaderAsync()).First();
+	}
 
+	public async Task<IEnumerable<T>> Select<T, X>(Dictionary<string, object> search)
+	{
+		var type = typeof(T);
+
+		var properties = type.GetProperties();
+
+		bool ok = true;
+		//check properties in dictionary
+		foreach (var item in search.Keys)
+		{
+			if (!properties.Any((property) =>
+			{
+				return property.Name == item;
+			}))
+			{
+				throw new Exception("Invalid attribute " + item);
+			}
+		}
+
+		StringBuilder sb = new();
+		sb.Append($"SELECT * FROM {type.Name} WHERE ");
+		bool first = true;
+
+		foreach (var property in properties)
+		{
+			if (search.ContainsKey(property.Name))
+			{
+				if (!first)
+				{
+					sb.Append(" AND ");
+				}
+				sb.Append($"{property.Name} = ");
+				if (this.GetType(property.PropertyType) == "Text")
+				{
+					sb.Append($"\"{search[property.Name]}\"");
+				}
+				else
+				{
+					sb.Append(search[property.Name]);
+				}
+
+				first = false;
+			}
+
+		}
+
+		var cmd = connection.CreateCommand();
+		cmd.CommandText = sb.ToString();
+		return Iterate<T>(await cmd.ExecuteReaderAsync());
 	}
 
 	////////////////////////////// UPDATE //////////////////////////////
