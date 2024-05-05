@@ -57,12 +57,12 @@
                             </table>
                         {/if}
                     {:else}
-                        <Container class="ratio ratio-1x1 w-100 h-100" background="secondary">
+                        <Container class="w-100 h-100 flex-1" background="secondary">
                             {#if selected !== null}
-                                <Row class="row-cols-2 m-2">
+                                <Row class="row-cols-2 m-2 h-100">
                                     {#each selected.images.other as image}
-                                        <Col>
-                                            <img class="w-auto h-auto" src={image} alt="Product" />
+                                        <Col class="flex">
+                                            <img class="w-100 m-auto h-auto mh-100" src={image} alt="Product" />
                                         </Col>
                                     {/each}
                                 </Row>
