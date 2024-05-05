@@ -1,0 +1,20 @@
+[
+{
+  "directory": "/home/patrick115/Projects/VSB/URO/ProjektQT/build",
+  "command": "/usr/bin/c++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/home/patrick115/Projects/VSB/URO/ProjektQT/build/main_autogen/include -isystem /usr/include/qt -isystem /usr/include/qt/QtWidgets -isystem /usr/include/qt/QtGui -isystem /usr/include/qt/QtCore -isystem /usr/lib/qt/mkspecs/linux-g++ -std=gnu++17 -fPIC -o CMakeFiles/main.dir/main_autogen/mocs_compilation.cpp.o -c /home/patrick115/Projects/VSB/URO/ProjektQT/build/main_autogen/mocs_compilation.cpp",
+  "file": "/home/patrick115/Projects/VSB/URO/ProjektQT/build/main_autogen/mocs_compilation.cpp",
+  "output": "CMakeFiles/main.dir/main_autogen/mocs_compilation.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/URO/ProjektQT/build",
+  "command": "/usr/bin/c++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/home/patrick115/Projects/VSB/URO/ProjektQT/build/main_autogen/include -isystem /usr/include/qt -isystem /usr/include/qt/QtWidgets -isystem /usr/include/qt/QtGui -isystem /usr/include/qt/QtCore -isystem /usr/lib/qt/mkspecs/linux-g++ -std=gnu++17 -fPIC -o CMakeFiles/main.dir/main.cpp.o -c /home/patrick115/Projects/VSB/URO/ProjektQT/main.cpp",
+  "file": "/home/patrick115/Projects/VSB/URO/ProjektQT/main.cpp",
+  "output": "CMakeFiles/main.dir/main.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/URO/ProjektQT/build",
+  "command": "/usr/bin/c++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/home/patrick115/Projects/VSB/URO/ProjektQT/build/main_autogen/include -isystem /usr/include/qt -isystem /usr/include/qt/QtWidgets -isystem /usr/include/qt/QtGui -isystem /usr/include/qt/QtCore -isystem /usr/lib/qt/mkspecs/linux-g++ -std=gnu++17 -fPIC -o CMakeFiles/main.dir/mainwindow.cpp.o -c /home/patrick115/Projects/VSB/URO/ProjektQT/mainwindow.cpp",
+  "file": "/home/patrick115/Projects/VSB/URO/ProjektQT/mainwindow.cpp",
+  "output": "CMakeFiles/main.dir/mainwindow.cpp.o"
+}
+]

@@ -49,8 +49,12 @@ class MainWindow : public QWidget
     QStandardItemModel *model;
     QTableView *view;
     int currentIndex = -1;
+    bool isEdit = false;
 
     QDialog *opened = nullptr;
+    QFormLayout*openedData = nullptr;
+    QString currentPreviewPath;
+    std::array<QString, 4> currentImagesPaths;
 
     void openNewWindow(bool edit);
     void rerenderTable(bool autoselect);
@@ -58,6 +62,8 @@ class MainWindow : public QWidget
     void deselect();
 
     QList<QList<QStandardItem *>> transformRows() const;
+
+    void rerenderImages() const;
 
 public:
     MainWindow(QWidget *parent = nullptr);

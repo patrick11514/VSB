@@ -2,3 +2,4 @@ env
 build-*Qt*
 build
 !.vscode
+.cache

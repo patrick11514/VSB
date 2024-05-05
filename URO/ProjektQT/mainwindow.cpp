@@ -321,13 +321,15 @@ void MainWindow::openNewWindow(bool edit = false)
         return;
     }
 
+    this->isEdit = edit;
+
     QDialog *window = new QDialog();
     this->opened = window;
     window->setFont(QFont{"Sans Serif", 13});
     window->setWindowTitle(edit ? "Úprava položky" : "Vytváření položky");
     QFormLayout *inputs = new QFormLayout();
+    this->openedData = inputs;
 
-    inputs->addRow("&Id", new QLineEdit());
     inputs->addRow("&Jméno", new QLineEdit());
     inputs->addRow("&Výrobce", new QLineEdit());
     inputs->addRow("&Velikost", new QLineEdit());
@@ -354,41 +356,38 @@ void MainWindow::openNewWindow(bool edit = false)
     {
         const Item &row = this->mainData[this->currentIndex];
 
-        QLineEdit *id = dynamic_cast<QLineEdit *>(inputs->itemAt(1)->widget());
-        if (id != nullptr)
-        {
-            id->setText(QString::fromStdString(std::to_string(this->currentIndex + 1)));
-        }
-
-        QLineEdit *name = dynamic_cast<QLineEdit *>(inputs->itemAt(3)->widget());
+        QLineEdit *name = dynamic_cast<QLineEdit *>(inputs->itemAt(1)->widget());
         if (name != nullptr)
         {
             name->setText(row.name);
         }
 
-        QLineEdit *manufacturer = dynamic_cast<QLineEdit *>(inputs->itemAt(5)->widget());
+        QLineEdit *manufacturer = dynamic_cast<QLineEdit *>(inputs->itemAt(3)->widget());
         if (manufacturer != nullptr)
         {
             manufacturer->setText(row.manufacturer);
         }
 
-        QLineEdit *size = dynamic_cast<QLineEdit *>(inputs->itemAt(7)->widget());
+        QLineEdit *size = dynamic_cast<QLineEdit *>(inputs->itemAt(5)->widget());
         if (size != nullptr)
         {
             size->setText(row.size);
         }
 
-        QLineEdit *weight = dynamic_cast<QLineEdit *>(inputs->itemAt(9)->widget());
+        QLineEdit *weight = dynamic_cast<QLineEdit *>(inputs->itemAt(7)->widget());
         if (weight != nullptr)
         {
             weight->setText(row.weight);
         }
 
-        QLineEdit *price = dynamic_cast<QLineEdit *>(inputs->itemAt(11)->widget());
+        QLineEdit *price = dynamic_cast<QLineEdit *>(inputs->itemAt(9)->widget());
         if (price != nullptr)
         {
             price->setText(row.price);
         }
+
+        this->currentPreviewPath = row.previewPath;
+        this->currentImagesPaths = row.images;
     }
 
     window->setLayout(inputs);
@@ -436,7 +435,53 @@ void MainWindow::closeWindow()
 
 void MainWindow::confirmWindow()
 {
-    qInfo("TODO");
+    Item item;
+    if (this->isEdit) {
+        item = this->mainData[this->currentIndex];
+    }
+
+    QLineEdit *name = dynamic_cast<QLineEdit *>(this->openedData->itemAt(1)->widget());
+    if (name != nullptr)
+    {
+        item.name = name->text();
+    }
+
+    QLineEdit *manufacturer = dynamic_cast<QLineEdit *>(this->openedData->itemAt(3)->widget());
+    if (manufacturer != nullptr)
+    {
+        item.manufacturer = manufacturer->text();
+    }
+
+    QLineEdit *size = dynamic_cast<QLineEdit *>(this->openedData->itemAt(5)->widget());
+    if (size != nullptr)
+    {
+        item.size = size->text();
+    }
+
+    QLineEdit *weight = dynamic_cast<QLineEdit *>(this->openedData->itemAt(7)->widget());
+    if (weight != nullptr)
+    {
+        item.weight = weight->text();
+    }
+
+    QLineEdit *price = dynamic_cast<QLineEdit *>(this->openedData->itemAt(9)->widget());
+    if (price != nullptr)
+    {
+        item.price = price->text();
+    }
+
+    item.previewPath = this->currentPreviewPath;
+    item.images = std::move(this->currentImagesPaths);
+
+    if (isEdit) {
+        this->mainData[this->currentIndex] = item;
+    } else {
+        this->mainData.push_back(item);
+    }
+
+    this->rerenderTable(true);
+    this->rerenderImages();
+    this->isEdit = false;
 
     this->closeWindow();
 }
@@ -449,11 +494,26 @@ void MainWindow::selectPreview()
         return;
     }
 
+    this->currentPreviewPath = fileName;
+
     // do something
 }
 
 void MainWindow::selectImages()
 {
+     QStringList list = QFileDialog::getOpenFileNames(this, "Otevřít soubory (max 4)", "", "*.png");
+     if (list.size() > 4) {
+         QMessageBox::warning(this, "Příliš mnoho obrázků", "Můžete vybrat maximálně 4 obrázky.");
+         return;
+     }
+
+    for (size_t i = 0; i < 4; ++i) {
+        this->currentImagesPaths[i] = "";
+    }
+
+     for (size_t i = 0; i < list.size(); ++i) {
+         this->currentImagesPaths[i] = list[i];
+     }
 }
 
 void MainWindow::rerenderTable(bool autoselect)
@@ -508,4 +568,35 @@ void MainWindow::exitProgram()
 void MainWindow::aboutProgram()
 {
     QMessageBox::information(this, "O programu", "Evodence anime figurem\nVytvořil Patrik Mintěl (MIN0150)");
+}
+
+
+void MainWindow::rerenderImages() const {
+    if (this->currentIndex < 0) return;
+
+    auto &row = this->mainData[this->currentIndex];
+
+    // preview image
+    QPixmap preview(row.previewPath);
+    this->preview->clear();
+    this->preview->addPixmap(preview);
+    this->previewView->setSceneRect(preview.rect());
+
+    // other images
+    for (int i = 0; i < 4; ++i)
+    {
+        auto item = row.images[i];
+
+        auto img = this->images[i];
+        img->clear();
+
+        if (item.size() == 0)
+        {
+            continue;
+        }
+
+        QPixmap image(item);
+        img->addPixmap(image);
+        this->imagesViews[i]->setSceneRect(image.rect());
+    }
 }
