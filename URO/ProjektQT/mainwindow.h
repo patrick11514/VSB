@@ -20,10 +20,20 @@
 #include <QStandardItemModel>
 #include <QTabWidget>
 #include <QPixmap>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsScene>
+#include <QGraphicsView>
 
 #include <QLabel>
 #include <QPushButton>
 #include <QLineEdit>
+
+#include <QMessageBox>
+#include <QFileDialog>
+
+#include <QMenu>
+#include <QMenuBar>
+#include <QAction>
 
 struct Item;
 class MainWindow : public QWidget
@@ -31,15 +41,29 @@ class MainWindow : public QWidget
     Q_OBJECT
 
     QFormLayout *data;
-    QPixmap *map;
-    QLabel *preview;
-    std::array<QLabel *, 4> images;
+    QGraphicsScene *preview;
+    QGraphicsView *previewView;
+    std::array<QGraphicsScene *, 4> images;
+    std::array<QGraphicsView *, 4> imagesViews;
     std::vector<Item> mainData;
+    QStandardItemModel *model;
+    QTableView *view;
     int currentIndex = -1;
+    bool isEdit = false;
 
     QDialog *opened = nullptr;
+    QFormLayout*openedData = nullptr;
+    QString currentPreviewPath;
+    std::array<QString, 4> currentImagesPaths;
 
     void openNewWindow(bool edit);
+    void rerenderTable(bool autoselect);
+
+    void deselect();
+
+    QList<QList<QStandardItem *>> transformRows() const;
+
+    void rerenderImages() const;
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -54,6 +78,12 @@ public slots:
 
     void closeWindow();
     void confirmWindow();
+
+    void selectPreview();
+    void selectImages();
+
+    void exitProgram();
+    void aboutProgram();
 };
 
 struct Item
@@ -63,6 +93,8 @@ struct Item
     QString size;
     QString price;
     QString weight;
+    QString previewPath;
+    std::array<QString, 4> images;
 };
 
 #endif // MAINWINDOW_H
