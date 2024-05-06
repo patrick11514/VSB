@@ -7,6 +7,9 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="ApplicationInfo.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="HighSchoolForm.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -19,8 +22,17 @@
     <Compile Update="ProgramList.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="StudentForm.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="StudentList.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="ApplicationInfo.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="HighSchoolForm.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -34,6 +46,12 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="ProgramList.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="StudentForm.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="StudentList.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

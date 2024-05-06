@@ -16,17 +16,16 @@ using System.Windows.Shapes;
 namespace DesktopApp
 {
     /// <summary>
-    /// Interakční logika pro ProgramForm.xaml
+    /// Interakční logika pro StudentForm.xaml
     /// </summary>
-    public partial class ProgramForm : Window
+    public partial class StudentForm : Window
     {
-        public HighSchoolProgram program { get; set; }
-        public ProgramForm(HighSchoolProgram? program = null)
+        public Student student { get; set; }
+        public StudentForm(Student? student = null)
         {
-            this.program = program ?? new HighSchoolProgram();
+            this.student = student ?? new Student();
             InitializeComponent();
-
-            this.DataContext = this.program;
+            this.DataContext = this.student;
         }
 
         private void Save(object sender, RoutedEventArgs e)

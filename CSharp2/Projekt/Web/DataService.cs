@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace Web
 {
-	internal class DataService
-	{
-		public MyDapper GetDapper()
-		{
-			return Models.DataLayer.dapper;
-		}
-	}
+    public class DataService
+    {
+        public static MyDapper dapper;
+        public MyDapper GetDapper()
+        {
+            return dapper;
+        }
+    }
 }

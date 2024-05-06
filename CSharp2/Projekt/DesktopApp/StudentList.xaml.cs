@@ -18,58 +18,53 @@ using System.Windows.Shapes;
 namespace DesktopApp
 {
     /// <summary>
-    /// Interakční logika pro ProgramList.xaml
+    /// Interakční logika pro StudentList.xaml
     /// </summary>
-    public partial class ProgramList : Window
+    public partial class StudentList : Window
     {
         private MyDapper dapper;
-        private HighSchool highSchool;
-        public ObservableCollection<HighSchoolProgram> list { get; set; }
-        public ProgramList(MyDapper dapper, HighSchool highSchool)
+        public ObservableCollection<Student> list { get; set; }
+        public StudentList(MyDapper dapper)
         {
             this.dapper = dapper;
-            this.highSchool = highSchool;
-
             InitializeComponent();
 
-            _ = this.FetchData();
+            this.FetchData();
 
             this.DataContext = this;
         }
 
-        private async Task FetchData()
+        private async void FetchData()
         {
-            this.list = new(await dapper.Select<HighSchoolProgram, int>(
-                new Dictionary<string, object>() { { "HighSchool", highSchool.Id } })
-                );
+            this.list = new(await this.dapper.SelectAll<Student>());
         }
 
-        private async void EditProgram(object sender, RoutedEventArgs e)
+        private async void EditStudent(object sender, RoutedEventArgs e)
         {
             if (sender is not Button btn)
             {
                 return;
             }
 
-            if (btn.DataContext is not HighSchoolProgram program)
+            if (btn.DataContext is not Student student)
             {
                 return;
             }
 
-            var form = new ProgramForm(program);
-            form.ShowDialog();
+            var studentForm = new StudentForm(student);
+            studentForm.ShowDialog();
 
-            await dapper.Update(form.program);
+            await dapper.Update(studentForm.student);
         }
 
-        private async void RemoveProgram(object sender, RoutedEventArgs e)
+        private async void RemoveStudent(object sender, RoutedEventArgs e)
         {
             if (sender is not Button btn)
             {
                 return;
             }
 
-            if (btn.DataContext is not HighSchoolProgram program)
+            if (btn.DataContext is not Student student)
             {
                 return;
             }
@@ -80,18 +75,25 @@ namespace DesktopApp
                 return;
             }
 
-            await dapper.Delete(program);
-            list.Remove(program);
+            await dapper.Delete(student);
+            await dapper.Delete<DataLayer.Structures.Application>(new Dictionary<string, object> { { "Student", student.Id } });
+            list.Remove(student);
         }
-        private async void AddProgram(object sender, RoutedEventArgs e)
+
+        private void ShowApplication(object sender, RoutedEventArgs e)
         {
-            var form = new ProgramForm();
-            form.ShowDialog();
+            if (sender is not Button btn)
+            {
+                return;
+            }
 
-            form.program.HighSchool = highSchool.Id;
+            if (btn.DataContext is not Student student)
+            {
+                return;
+            }
 
-            await dapper.Insert(form.program);
-            this.list.Add(form.program);
+            var applicationInfo = new ApplicationInfo(dapper, student);
+            applicationInfo.ShowDialog();
         }
     }
 }

@@ -14,38 +14,44 @@ using System.Windows.Shapes;
 
 namespace DesktopApp
 {
-	/// <summary>
-	/// Interaction logic for MainWindow.xaml
-	/// </summary>
-	public partial class MainWindow : Window
-	{
-		MyDapper dapper;
-		public MainWindow(MyDapper dapper)
-		{
-			this.dapper = dapper;
-			InitializeComponent();
-		}
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        MyDapper dapper;
+        public MainWindow(MyDapper dapper)
+        {
+            this.dapper = dapper;
+            InitializeComponent();
+        }
 
-		private async void AddHighSchoolList(object sender, RoutedEventArgs e)
-		{
-			var highSchoolForm = new HighSchoolForm();
-			highSchoolForm.ShowDialog();
+        private async void AddHighSchoolList(object sender, RoutedEventArgs e)
+        {
+            var highSchoolForm = new HighSchoolForm();
+            highSchoolForm.ShowDialog();
 
-			await dapper.Insert(highSchoolForm.highSchool);
-		}
+            await dapper.Insert(highSchoolForm.highSchool);
+        }
 
-		private void ShowHighSchoolList(object sender, RoutedEventArgs e)
-		{
-			var listForm = new HightSchoolList(dapper);
-			listForm.ShowDialog();
-		}
+        private void ShowHighSchoolList(object sender, RoutedEventArgs e)
+        {
+            var listForm = new HightSchoolList(dapper);
+            listForm.ShowDialog();
+        }
 
-		private async void CreateTables(object sender, RoutedEventArgs e)
-		{
-			await dapper.CreateTable<HighSchool>();
-			await dapper.CreateTable<HighSchoolProgram>();
-			await dapper.CreateTable<Student>();
-			await dapper.CreateTable<DataLayer.Structures.Application>();
-		}
-	}
+        private async void CreateTables(object sender, RoutedEventArgs e)
+        {
+            await dapper.CreateTable<HighSchool>();
+            await dapper.CreateTable<HighSchoolProgram>();
+            await dapper.CreateTable<Student>();
+            await dapper.CreateTable<DataLayer.Structures.Application>();
+        }
+
+        private void ShowStudents(object sender, RoutedEventArgs e)
+        {
+            var studentList = new StudentList(dapper);
+            studentList.ShowDialog();
+        }
+    }
 }

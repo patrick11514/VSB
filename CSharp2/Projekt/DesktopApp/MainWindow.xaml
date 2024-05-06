@@ -11,5 +11,7 @@
         <Button Content="Přidat střední školu" HorizontalAlignment="Left" Margin="10,104,0,0" VerticalAlignment="Top" Height="45" Width="130" Click="AddHighSchoolList"/>
         <Button Content="Zobrazit seznam škol" HorizontalAlignment="Left" Margin="145,104,0,0" VerticalAlignment="Top" Height="45" Width="130" Click="ShowHighSchoolList"/>
         <Button Content="Inicializovat databáze" HorizontalAlignment="Left" Margin="10,14,0,0" VerticalAlignment="Top" Height="45" Width="130" Click="CreateTables"/>
+        <TextBlock HorizontalAlignment="Left" Margin="14,177,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="40" Width="261" FontSize="24" FontWeight="Bold"><Run Language="cs-cz" Text="Správa přihlášek"/></TextBlock>
+        <Button Content="Zobrazit studenty" HorizontalAlignment="Left" Margin="10,217,0,0" VerticalAlignment="Top" Height="45" Width="130" Click="ShowStudents"/>
     </Grid>
 </Window>

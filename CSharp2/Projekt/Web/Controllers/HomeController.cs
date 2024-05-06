@@ -15,11 +15,15 @@ namespace Web.Controllers
 
         public IActionResult Index()
         {
-            System.Diagnostics.Debug.WriteLine("AAA");
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Form()
+        {
+            return View();
+        }
+
+        public IActionResult Success()
         {
             return View();
         }

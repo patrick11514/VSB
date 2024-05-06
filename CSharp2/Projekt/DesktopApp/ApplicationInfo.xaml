@@ -1,0 +1,44 @@
+﻿<Window x:Class="DesktopApp.ApplicationInfo"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DesktopApp"
+        mc:Ignorable="d"
+        Title="Detail přihlášky" Height="450" Width="800">
+    <StackPanel>
+        <DockPanel>
+            <Label Content="Datum podání" />
+            <TextBox Text="{Binding application.Date}" />
+        </DockPanel>
+        <DockPanel>
+            <Label Content="1. Škola" />
+            <ComboBox ItemsSource="{Binding highSchoolNames}" SelectedIndex="{Binding highSchool1}" SelectionChanged="School1Changed" />
+        </DockPanel>
+        <DockPanel>
+            <Label Content="Program na 1. škole" />
+            <ComboBox ItemsSource="{Binding programNames1}" SelectedIndex="{Binding program1}" />
+        </DockPanel>
+        <DockPanel>
+            <Label Content="2. Škola" />
+            <ComboBox ItemsSource="{Binding highSchoolNames}" SelectedIndex="{Binding highSchool2}" SelectionChanged="School2Changed" />
+        </DockPanel>
+        <DockPanel>
+            <Label Content="Program na 2. škole" />
+            <ComboBox ItemsSource="{Binding programNames2}" SelectedIndex="{Binding program2}" />
+        </DockPanel>
+        <DockPanel>
+            <Label Content="3. Škola" />
+            <ComboBox ItemsSource="{Binding highSchoolNames}" SelectedIndex="{Binding highSchool3}" SelectionChanged="School3Changed" />
+        </DockPanel>
+        <DockPanel>
+            <Label Content="Program na 3. škole" />
+            <ComboBox ItemsSource="{Binding programNames3}" SelectedIndex="{Binding program3}" />
+        </DockPanel>
+        <StackPanel Orientation="Horizontal">
+            <Button Content="Zavřít" Click="Save"/>
+            <Button Content="Smazat 2. program" Click="DeleteProgram2"/>
+            <Button Content="Smazat 3. program" Click="DeleteProgram3"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

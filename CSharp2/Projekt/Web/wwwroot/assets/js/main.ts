@@ -20,6 +20,19 @@ const regions = {
     sk: ['Trnavský', 'Bratislavský', 'Trenčínský', 'Nitranský', 'Žilinský', 'Banskobystrický', 'Prešovský', 'Košický']
 };
 
+const SwalAlert = async (data: any) => {
+    //@ts-ignore
+    return Swal.fire({
+        toast: true,
+        position: 'top-end',
+        timer: 2000,
+        timerProgressBar: true,
+        showCancelButton: false,
+        showConfirmButton: false,
+        ...data
+    });
+};
+
 const putRegions = (value: string) => {
     const region = document.querySelector('select#region') as HTMLSelectElement;
 
@@ -53,7 +66,35 @@ let state2 = false;
 document.querySelector('form#form1')?.addEventListener('submit', async (ev) => {
     ev.preventDefault();
 
+    const formData = new FormData();
+    formData.append('Phone', (document.querySelector('input#phone') as HTMLInputElement).value);
+    formData.append('Email', (document.querySelector('input#email') as HTMLInputElement).value);
+
     //check if user is not in db by email/phone ig
+    const response = await fetch('/Api/CheckStudent', {
+        method: 'POST',
+        body: formData
+    });
+
+    const json = await response.json();
+
+    if (!json.status) {
+        SwalAlert({
+            icon: 'error',
+            title: json.message
+        });
+        return;
+    }
+
+    const count = json.count;
+
+    if (count != 0) {
+        SwalAlert({
+            icon: 'error',
+            title: 'Email, nebo telefonní číslo bylo již použito'
+        });
+        return;
+    }
 
     state2 = true;
 
@@ -82,12 +123,22 @@ document.querySelector('form#form2')?.addEventListener('submit', async (ev) => {
     }
 
     //send final form
-    fetch('/api', {
+    const response = await fetch('/Api/Form', {
         method: 'POST',
         body: mainForm
     });
 
-    window.location.replace('/success');
+    const json = await response.json();
+
+    if (!json.status) {
+        SwalAlert({
+            icon: 'error',
+            title: json.message
+        });
+        return;
+    }
+
+    window.location.replace('/Home/Success');
 });
 
 document.querySelector('button#back')?.addEventListener('click', (ev) => {
@@ -104,13 +155,20 @@ document.querySelector('button#back')?.addEventListener('click', (ev) => {
 
 const search = async (value: string) => {
     //FETCH API
-    const list = [
-        { id: 0, name: 'Střední Škola akademika Heyrovského příspěvková orgranizase ORG ostrava zábře bnla bla fgsdg sdg sdgsdgs' },
-        { id: 1, name: 'Střední Škola Stavební Praha' },
-        { id: 2, name: 'Střední škola jánského olomouc' },
-        { id: 3, name: 'Střední škola IDK LOOL' },
-        { id: 4, name: 'Nevim něc' }
-    ];
+    const formData = new FormData();
+    formData.append('Text', value);
+    const response = await fetch('/Api/GetSchools', {
+        method: 'POST',
+        body: formData
+    });
+
+    const json = await response.json();
+
+    if (!json.status) {
+        return [];
+    }
+
+    const list = json.items as { id: number; name: string }[];
 
     return list.filter((i) => i.name.includes(value));
 };
@@ -159,14 +217,26 @@ const addListener = (inputId: string, dataId: string, fakeId: string, programs: 
 const loadPrograms = async (id: string, programsId: string) => {
     //FETCH API
 
-    const programs = ['Program1' + id, 'Program2' + id, 'Program3' + id, 'Program4' + id, 'Program5' + id];
+    const formData = new FormData();
+    formData.append('Id', id);
+    const response = await fetch('/Api/GetPrograms', {
+        method: 'POST',
+        body: formData
+    });
+
+    const json = await response.json();
+
+    if (!json.status) {
+        return [];
+    }
+
+    const programs = json.items as { id: number; name: string }[];
 
     const select = document.querySelector(`select#${programsId}`) as HTMLSelectElement;
     let html = '<option disabled selected>Vyber obor</option>';
 
-    for (const programId in programs) {
-        const program = programs[programId];
-        html += `<option value="${programId}">${program}</option>`;
+    for (const program of programs) {
+        html += `<option value="${program.id}">${program.name}</option>`;
     }
 
     select.innerHTML = html;

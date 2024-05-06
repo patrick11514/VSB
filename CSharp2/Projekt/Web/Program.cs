@@ -10,6 +10,8 @@ namespace Web
         {
             using var dapper = new MyDapper("db.sqlite");
 
+            DataService.dapper = dapper;
+
             Thread myApp = new(() =>
             {
                 var application = new System.Windows.Application();
@@ -25,8 +27,7 @@ namespace Web
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-
-            //builder.Services.AddSingleton<DataService>();
+            builder.Services.AddSingleton<DataService>();
 
             var app = builder.Build();
 
