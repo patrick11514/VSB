@@ -6,6 +6,8 @@
 #include <string>
 #include <unordered_map>
 
+#include "../utils/utils.hpp"
+
 /**
  * @brief HTTP Response from server
  */
@@ -21,9 +23,11 @@ class HTTPResponse
 public:
     unsigned short code; ///< response code
     //
-    std::unordered_map<std::string, std::string> headers; ///< headers
+    std::unordered_map<Header, std::string> headers; ///< headers
     //
     std::string_view content = ""; ///< content of response
+    //
+    bool isValid = true;
 
     HTTPResponse(std::string version, unsigned short code); ///< constructor
     HTTPResponse(const std::string& string); ///< Parse response to structure

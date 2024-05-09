@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 #include "utils.hpp"
 
@@ -55,4 +56,36 @@ fs::path decode(const std::string_view &path)
     }
 
     return newPath;
+}
+
+
+std::string Header::to_lower(const std::string& str) const {
+    std::string newStr{str};
+    std::transform(newStr.begin(), newStr.end(), newStr.begin(),
+        [](unsigned char c){ return std::tolower(c); });
+
+    return newStr;
+}
+
+Header::Header(const std::string_view& str): lowerCaseData(to_lower(std::string{str})), originalData(str) {}
+Header::Header(const Header& other): lowerCaseData(other.lowerCaseData), originalData(other.originalData) {}
+Header::Header(Header&& other) {
+    std::swap(this->lowerCaseData, other.lowerCaseData);
+    std::swap(this->originalData, other.originalData);
+}
+
+const std::string& Header::getData() const {
+    return this->lowerCaseData;
+}
+
+const std::string& Header::getOriginal() const {
+    return this->originalData;
+}
+
+bool Header::operator==(const Header& other) const {
+    return this->lowerCaseData == other.lowerCaseData;
+}
+
+bool Header::operator!=(const Header& other) const {
+    return !this->operator==(other);
 }

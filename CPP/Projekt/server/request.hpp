@@ -1,6 +1,7 @@
 #pragma once
 
 #include "payload.hpp"
+#include "../utils/utils.hpp"
 #include <unordered_map>
 
 class HTTPRequest {
@@ -9,7 +10,7 @@ class HTTPRequest {
     std::string method;
     std::string path;
     std::string httpVersion;
-    std::unordered_map<std::string, std::string> headers;
+    std::unordered_map<Header, std::string> headers;
     std::string content;
 
     public:

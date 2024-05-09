@@ -150,6 +150,7 @@ HTTPResponse::HTTPResponse(const std::string& data) {
 
         if (httpParts.size() < 2)
         {
+            this->isValid = false;
             return;
         }
 
@@ -199,14 +200,14 @@ bool HTTPResponse::send(int fd) const
 
     for (auto header : this->headers)
     {
-        headers.append(std::format("{}: {}{}", header.first, header.second, this->separator));
+        headers.append(std::format("{}: {}{}", header.first.getOriginal(), header.second, this->separator));
     }
 
     std::string generated;
     if (this->content.length() == 0 && this->code >= 300)
     {
         std::string content = this->formatDefaultPage(codeText);
-        if (this->headers.find("Content-Length") == this->headers.end())
+        if (this->headers.find(Header{"Content-Length"}) == this->headers.end())
         {
             headers.append(std::format("Content-Length: {}{}", content.length(), this->separator));
         }
@@ -216,12 +217,12 @@ bool HTTPResponse::send(int fd) const
     }
     else
     {
-        if (this->headers.find("Content-Length") == this->headers.end())
+        if (this->headers.find(Header{"Content-Length"}) == this->headers.end())
         {
             headers.append(std::format("Content-Length: {}{}", this->content.length(), this->separator));
         }
         generated = std::format("{}{}{}{}{}", firstLine, this->separator, headers, this->separator, this->content);
     }
 
-    return (int)::send(fd, generated.data(), generated.size(), 0) != -1;
+    return static_cast<int>(::send(fd, generated.data(), generated.size(), 0)) != -1;
 }

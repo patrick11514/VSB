@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <fstream>
 #include <format>
+#include <chrono>
 
 void ServerMode::createDefaultHTMLFile(const fs::path &folderPath, const fs::path &mainConfig, const fs::path &domainConfigs) const
 {
@@ -124,6 +125,7 @@ ServerMode::ServerMode(const ArgParser &parser, Logger *logger, const std::strin
         fs::create_directory(configsPath);
     }
 
+
     for (auto configPath : fs::recursive_directory_iterator(configsPath))
     {
         if (configPath.is_directory())
@@ -158,15 +160,18 @@ ServerMode::ServerMode(const ArgParser &parser, Logger *logger, const std::strin
             throw std::runtime_error(std::format("Config file {} cannot have root and reverse_proxy at the same time", path));
         }
 
-        this->domainConfigs.emplace(configParser.getValue("domain").value(), HostConfig{std::move(configParser)});
+        std::string key {extractRef(configParser.getValue("domain"))};
+        this->domainConfigs.emplace(std::move(key), HostConfig {std::move(configParser)});
     }
 
     // swap logger at the end
     // because we store original streams in ServerMode and we are passing referenes to Logger
     // if this constructor throws error, references will be invalid, and error cannot be written into
     // file
+
     this->accessLog = std::ofstream(this->mainConfig.getValue("access_log").value(), std::fstream::app);
     this->errorLog = std::ofstream(this->mainConfig.getValue("error_log").value(), std::fstream::app);
+
 
     Logger *newMainLogger = new Logger(this->accessLog, this->errorLog, this->accessLog);
     // swap pointers and delete old logger
@@ -190,6 +195,8 @@ ServerMode::ServerMode(const ArgParser &parser, Logger *logger, const std::strin
                 std::string_view(header.begin() + split + 2, header.end()));
         }
     }
+
+
 
     if (this->mainConfig.includes("mime_types") == ValueKind::Array)
     {
@@ -334,22 +341,55 @@ void ServerMode::handleRequest(const ReceivedData &client, const HTTPPayload &da
     request.addHeader("X-Forwarded-Host", host);
     request.send(clientSocket);
 
-    char buffer[1024] = {0};
+    std::string responseData;
+    size_t reserved = 0;
+    bool end = false;
+    bool sentHeader = false;
 
-    if (static_cast<int>(::recv(clientSocket, &buffer, sizeof(buffer), 0)) == -1)
-    {
-        response.code = 502;
-        response.send(client.fd);
-        ::close(client.fd);
-        return;
+    HTTPResponse newResponse("");
+
+    //read headers + some content until response is valid
+    while (!end) {
+        //8*1024
+        char buffer[8192] = {0};
+
+        int readed = static_cast<int>(::recv(clientSocket, &buffer, sizeof(buffer), 0));
+
+        if (readed == -1) {
+            if (sentHeader == false) {
+                response.code = 502;
+                response.send(client.fd);
+            }
+            ::close(client.fd);
+            return;
+        }
+
+        if (readed == 0) {
+            break;
+        }
+
+        if (sentHeader == false) {
+            ++reserved;
+            responseData.reserve(reserved * 8192);
+            responseData.append(std::string{buffer, static_cast<size_t>(readed)});
+
+            newResponse = HTTPResponse(responseData);
+            if (newResponse.isValid) {
+                //add add our headers
+                for (auto& header : response.headers) {
+                    newResponse.headers.emplace(header.first, header.second);
+                }
+
+                newResponse.send(client.fd);
+                sentHeader = true;
+            }
+        } else {
+            if (static_cast<int>(::send(client.fd, buffer, readed, 0)) == -1) {
+                ::close(client.fd);
+                return;
+            }
+        }
     }
 
-    HTTPResponse newResponse(buffer);
-    //Add our headers
-    for (auto& header : response.headers) {
-        newResponse.headers.emplace(header.first, header.second);
-    }
-
-    newResponse.send(client.fd);
     ::close(client.fd);
 }

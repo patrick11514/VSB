@@ -15,7 +15,7 @@ bool HTTPRequest::send(int fd) const {
     std::string mainPart = std::format("{} /{} {}", this->method, this-> path, this->httpVersion);
     std::string headers;
     for (auto& header : this->headers) {
-        headers += std::format("{}: {}{}", header.first, header.second, this->separator);
+        headers += std::format("{}: {}{}", header.first.getOriginal(), header.second, this->separator);
     }
 
     std::string final = std::format("{}{}{}{}", mainPart, this->separator, headers, this->separator, this->content);
