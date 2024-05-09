@@ -43,7 +43,7 @@
                 <CardBody class="d-flex flex-column" style="min-height:240px">
                     {#if category == 'info'}
                         {#if selected == null}
-                            <h4 class="m-auto">Vyber produkt pro zobrazení informací</h4>
+                            <h4 class="m-auto">Vyber položkua pro zobrazení informací</h4>
                         {:else}
                             <table class="table">
                                 <tbody>

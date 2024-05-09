@@ -5,12 +5,12 @@ type OtherColor = 'body' | 'body-secondary' | 'body-tertiary' | 'black' | 'white
 
 export type Color = BaseColor | `${BaseColor}-subtle` | OtherColor;
 
-const item = z.object({
+export const item = z.object({
     name: z.string(),
     manufacturer: z.string(),
-    size: z.number(),
-    price: z.number(),
-    weight: z.number(),
+    size: z.coerce.number(),
+    price: z.coerce.number(),
+    weight: z.coerce.number(),
     images: z.object({
         main: z.string(),
         other: z.array(z.string())

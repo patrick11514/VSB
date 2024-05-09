@@ -5,6 +5,7 @@
     import DropDownItem from '$/components/DropDownItem.svelte';
     import FluidContainer from '$/components/FluidContainer.svelte';
     import FormGroup from '$/components/FormGroup.svelte';
+    import ItemPopup from '$/components/ItemPopup.svelte';
     import ItemShow from '$/components/ItemShow.svelte';
     import ItemsTable from '$/components/ItemsTable.svelte';
     import Modal from '$/components/Modal.svelte';
@@ -12,6 +13,7 @@
     import Navigation from '$/components/Navigation.svelte';
     import Row from '$/components/Row.svelte';
     import SingleRowContainer from '$/components/SingleRowContainer.svelte';
+    import { creating, itemPopupCancel, itemPopupClose, itemPopupData, itemPopupOpen, items, modalAfterConfirm, modalIsOpen, selected } from '$/components/Store.svelte';
     import { API } from '$/lib/api';
     import { addItem, removeItem } from '$/lib/functions';
     import type { Item } from '$/types/types';
@@ -21,14 +23,10 @@
 
     export let data: PageServerData;
 
-    let mainData: Item[] = [];
-    let filteredData: Item[] = [];
-
-    let selected: number | null = null;
+    let filteredData = writable<Item[]>([]);
 
     const handleData = (response: (typeof data)['data']) => {
-        mainData = response;
-        filteredData = response;
+        items.set(response);
     };
     handleData(data.data);
 
@@ -67,12 +65,27 @@
             price: 0
         });
 
-        filteredData = mainData;
+        filteredData.set($items);
     };
 
     const doSearch = () => {
-        //TODO
+        console.log($search);
+        const { name, manufacturer, price, size } = $search;
+        filteredData.set(
+            $items.filter((item) => {
+                return (
+                    (name === '' || item.name.includes(name)) &&
+                    (manufacturer === '' || item.manufacturer.includes(manufacturer)) &&
+                    (price !== undefined || item.price >= price) &&
+                    (size !== undefined || item.size >= size)
+                );
+            })
+        );
     };
+
+    items.subscribe(() => {
+        doSearch();
+    });
 </script>
 
 <svelte:head>
@@ -82,7 +95,7 @@
 <Navigation>
     <NavItem name="File">
         <DropDownItem on:click={addItem}>New Item</DropDownItem>
-        <DropDownItem on:click={() => removeItem(selected)}>Delete Item</DropDownItem>
+        <DropDownItem on:click={() => removeItem($selected)}>Delete Item</DropDownItem>
         <DropDownItem on:click={exit}>Exit Item</DropDownItem>
     </NavItem>
     <NavItem name="Other">
@@ -118,12 +131,12 @@
     <Row class="p-4 h-100">
         <Col class="m-2">
             <Container class="h-100 p-3" background="body-secondary">
-                <ItemsTable data={filteredData} bind:selected />
+                <ItemsTable data={$filteredData} bind:selected={$selected} />
             </Container>
         </Col>
         <Col class="m-2">
             <Container class="h-100" background="body-secondary">
-                <ItemShow selectedId={selected} selected={selected !== null ? filteredData[selected] : null} />
+                <ItemShow selectedId={$selected} selected={$selected !== null ? $filteredData[$selected] : null} />
             </Container>
         </Col>
     </Row>
@@ -136,5 +149,18 @@
     </div>
     <div class="modal-body">
         <h6>Vytvořil <a href="https://patrick115.eu" target="_blank">Patrik Mintěl</a></h6>
+    </div>
+</Modal>
+
+<ItemPopup bind:creating={$creating} bind:data={$itemPopupData} bind:opened={$itemPopupOpen} bind:closeFunction={$itemPopupClose} bind:cancelFunction={$itemPopupCancel} />
+
+<Modal bind:show={$modalIsOpen}>
+    <div class="modal-header">
+        <h5 class="modal-title">Opravdu chceš smazat tuto položku?</h5>
+        <button on:click={() => ($modalIsOpen = false)} type="button" class="btn-close"></button>
+    </div>
+    <div class="modal-footer">
+        <Button color="danger" on:click={$modalAfterConfirm}>Ano</Button>
+        <Button color="secondary" on:click={() => ($modalIsOpen = false)}>Ne</Button>
     </div>
 </Modal>

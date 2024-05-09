@@ -3,6 +3,7 @@
     import ClickOutside from './clickOutside.svelte';
 
     export let show = false;
+    export let closeFunction: () => void = () => (show = false);
 </script>
 
 <Portal target={document.body}>
@@ -13,7 +14,7 @@
 
 <div class="modal" tabindex="-1" style="display: {show ? 'block' : 'none'};">
     <div class="modal-dialog">
-        <ClickOutside class="modal-content" clickoutside={() => (show = false)}>
+        <ClickOutside class="modal-content" clickoutside={closeFunction}>
             <slot />
         </ClickOutside>
     </div>
