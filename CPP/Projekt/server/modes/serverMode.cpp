@@ -333,6 +333,7 @@ void ServerMode::handleRequest(const ReceivedData &client, const HTTPPayload &da
         response.code = 504;
         response.send(client.fd);
         ::close(client.fd);
+        ::close(clientSocket);
         return;
     }
 
@@ -361,6 +362,7 @@ void ServerMode::handleRequest(const ReceivedData &client, const HTTPPayload &da
                 response.send(client.fd);
             }
             ::close(client.fd);
+            ::close(clientSocket);
             return;
         }
 
@@ -386,10 +388,12 @@ void ServerMode::handleRequest(const ReceivedData &client, const HTTPPayload &da
         } else {
             if (static_cast<int>(::send(client.fd, buffer, readed, 0)) == -1) {
                 ::close(client.fd);
+                ::close(clientSocket);
                 return;
             }
         }
     }
 
     ::close(client.fd);
+    ::close(clientSocket);
 }
