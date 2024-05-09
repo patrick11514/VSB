@@ -1,4 +1,6 @@
 --Začátek transakce
+BEGIN TRANSACTION;
+
 CREATE OR REPLACE FUNCTION addGroupToUser(int f_groupId) RETURN BOOLEAN AS
     p_group_id INTEGER;
     p_perm_count INTEGER;
@@ -28,4 +30,5 @@ BEGIN
         VALUES (f_groupId, user, vf_serverId);
 
     RETURN true;
+    COMMIT
 END
