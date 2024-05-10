@@ -125,7 +125,6 @@ ServerMode::ServerMode(const ArgParser &parser, Logger *logger, const std::strin
         fs::create_directory(configsPath);
     }
 
-
     for (auto configPath : fs::recursive_directory_iterator(configsPath))
     {
         if (configPath.is_directory())
@@ -160,8 +159,8 @@ ServerMode::ServerMode(const ArgParser &parser, Logger *logger, const std::strin
             throw std::runtime_error(std::format("Config file {} cannot have root and reverse_proxy at the same time", path));
         }
 
-        std::string key {extractRef(configParser.getValue("domain"))};
-        this->domainConfigs.emplace(std::move(key), HostConfig {std::move(configParser)});
+        std::string key{extractRef(configParser.getValue("domain"))};
+        this->domainConfigs.emplace(std::move(key), HostConfig{std::move(configParser)});
     }
 
     // swap logger at the end
@@ -171,7 +170,6 @@ ServerMode::ServerMode(const ArgParser &parser, Logger *logger, const std::strin
 
     this->accessLog = std::ofstream(this->mainConfig.getValue("access_log").value(), std::fstream::app);
     this->errorLog = std::ofstream(this->mainConfig.getValue("error_log").value(), std::fstream::app);
-
 
     Logger *newMainLogger = new Logger(this->accessLog, this->errorLog, this->accessLog);
     // swap pointers and delete old logger
@@ -196,21 +194,21 @@ ServerMode::ServerMode(const ArgParser &parser, Logger *logger, const std::strin
         }
     }
 
-
-
     if (this->mainConfig.includes("mime_types") == ValueKind::Array)
     {
         // this->customMimeTypes = true;
     }
 }
 
-ServerMode::~ServerMode(){}
+ServerMode::~ServerMode() {}
 
-void ServerMode::handleFolder(const std::string& host, const fs::path&folderPath, const HTTPPayload&data, HTTPResponse& response, const ReceivedData& client, const std::string_view& ipaddress, const std::string& index) {
+void ServerMode::handleFolder(const std::string &host, const fs::path &folderPath, const HTTPPayload &data, HTTPResponse &response, const ReceivedData &client, const std::string_view &ipaddress, const std::string &index)
+{
     fs::path filePath = folderPath / decode(data.path);
     FileRead file(filePath);
 
-    if (!file.exists()) {
+    if (!file.exists())
+    {
         this->logger->info(std::format("{} to {}/{} from {} [404]", data.method, host, data.path, ipaddress));
         response.code = 404;
         response.send(client.fd);
@@ -218,7 +216,8 @@ void ServerMode::handleFolder(const std::string& host, const fs::path&folderPath
         return;
     }
 
-    if (!file.isFolder()) {
+    if (!file.isFolder())
+    {
         this->logger->info(std::format("{} to {}/{} from {} [200]", data.method, host, data.path, ipaddress));
         this->doFile(filePath, data, response, file, client.fd);
         ::close(client.fd);
@@ -227,7 +226,8 @@ void ServerMode::handleFolder(const std::string& host, const fs::path&folderPath
 
     fs::path indexPath(folderPath / index);
 
-    if (!fs::exists(indexPath)) {
+    if (!fs::exists(indexPath))
+    {
         this->logger->info(std::format("{} to {}/{} from {} [404]", data.method, host, std::string(data.path).append(index), ipaddress));
         response.code = 404;
         response.send(client.fd);
@@ -238,6 +238,114 @@ void ServerMode::handleFolder(const std::string& host, const fs::path&folderPath
     this->logger->info(std::format("{} to {}/{} from {} [200]", data.method, host, std::string(data.path).append(index), ipaddress));
     this->doFile(indexPath, data, response, FileRead(indexPath), client.fd);
     ::close(client.fd);
+    return;
+}
+
+void ServerMode::handleProxyPass(const HostConfig &hostConfig, HTTPResponse &response, const ReceivedData &client, const HTTPPayload &data, const std::string_view &ipaddress, const std::string &host)
+{
+    int clientSocket = ::socket(AF_INET, SOCK_STREAM, 0);
+
+    int option = 1;
+    if (setsockopt(clientSocket, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option)) == -1)
+    {
+        this->logger->info(std::format("{} to {}/{} from {} [504]", data.method, host, data.path, ipaddress));
+        response.code = 504;
+        response.send(client.fd);
+        ::close(clientSocket);
+        return;
+    }
+
+    sockaddr_in serverAddress;
+    serverAddress.sin_family = AF_INET;
+    serverAddress.sin_port = htons(hostConfig.port);
+    serverAddress.sin_addr.s_addr = inet_addr(hostConfig.address.data());
+
+    if (connect(clientSocket, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) == -1)
+    {
+        this->logger->info(std::format("{} to {}/{} from {} [504]", data.method, host, data.path, ipaddress));
+        response.code = 504;
+        response.send(client.fd);
+        ::close(clientSocket);
+        return;
+    }
+
+    HTTPRequest request(data);
+    request.addHeader("X-Forwarded-For", std::string(ipaddress));
+    request.addHeader("X-Forwarded-Host", host);
+    request.send(clientSocket);
+
+    std::string responseData;
+    size_t reserved = 0;
+    bool end = false;
+    bool sentHeader = false;
+
+    HTTPResponse newResponse("");
+
+    // read headers + some content until response is valid
+    while (!end)
+    {
+        // 8*1024
+        char buffer[1024 * 1024] = {0};
+        int readed = static_cast<int>(::recv(clientSocket, &buffer, sizeof(buffer), 0));
+
+        if (readed == -1)
+        {
+            if (sentHeader == false)
+            {
+                this->logger->info(std::format("{} to {}/{} from {} [502]", data.method, host, data.path, ipaddress));
+                response.code = 502;
+                response.send(client.fd);
+            }
+            ::close(clientSocket);
+            return;
+        }
+
+        if (readed == 0)
+        {
+            ::close(clientSocket);
+            break;
+        }
+
+        if (sentHeader == false)
+        {
+            ++reserved;
+            responseData.reserve(reserved * 8192);
+            responseData.append(std::string{buffer, static_cast<size_t>(readed)});
+
+            newResponse = HTTPResponse(responseData);
+            if (newResponse.isValid)
+            {
+                // add add our headers
+                for (auto &header : response.headers)
+                {
+                    newResponse.headers.emplace(header.first, header.second);
+                }
+
+                newResponse.send(client.fd);
+                sentHeader = true;
+            }
+        }
+        else
+        {
+            if (static_cast<int>(::send(client.fd, buffer, readed, 0)) == -1)
+            {
+                this->logger->info(std::format("{} to {}/{} from {} [502]", data.method, host, data.path, ipaddress));
+                ::close(clientSocket);
+                return;
+            }
+        }
+
+        std::cout << readed << std::endl;
+
+        if (readed < 1024 * 1024)
+        {
+            std::cout << "CLOSED" << std::endl;
+            ::close(clientSocket);
+            break;
+        }
+    }
+
+    this->logger->info(std::format("{} to {}/{} from {} [200]", data.method, host, data.path, ipaddress));
     return;
 }
 
@@ -288,9 +396,12 @@ void ServerMode::handleRequest(const ReceivedData &client, const HTTPPayload &da
 
         std::string index;
 
-        if (indexFile == std::nullopt) {
+        if (indexFile == std::nullopt)
+        {
             index = "index.html";
-        } else {
+        }
+        else
+        {
             index = extractRef(indexFile);
         }
 
@@ -299,101 +410,33 @@ void ServerMode::handleRequest(const ReceivedData &client, const HTTPPayload &da
         return;
     }
 
-    auto& hostConfig = hostConfigPair->second;
-    auto& hostInit = hostConfig.iniFile;
+    auto &hostConfig = hostConfigPair->second;
+    auto &hostInit = hostConfig.iniFile;
 
-    if (hostInit.getValue("root") != std::nullopt) {
-        //handle root
+    if (hostInit.getValue("root") != std::nullopt)
+    {
+        // handle root
 
         auto indexFile = hostInit.getValue("index");
 
         std::string index;
 
-        if (indexFile == std::nullopt) {
+        if (indexFile == std::nullopt)
+        {
             index = "index.html";
-        } else {
+        }
+        else
+        {
             index = extractRef(indexFile);
         }
 
         this->handleFolder(host, extractRef(hostInit.getValue("root")),
-                            data, response, client, ipaddress, index);
-        return;
-    }
-    //handle reverse proxy
-
-    //connect to proxy server
-    int clientSocket = ::socket(AF_INET, SOCK_STREAM, 0);
-
-    sockaddr_in serverAddress;
-    serverAddress.sin_family = AF_INET;
-    serverAddress.sin_port = htons(hostConfig.port);
-    serverAddress.sin_addr.s_addr = inet_addr(hostConfig.address.data());
-
-    if (connect(clientSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) == -1) {
-        response.code = 504;
-        response.send(client.fd);
-        ::close(client.fd);
-        ::close(clientSocket);
+                           data, response, client, ipaddress, index);
         return;
     }
 
-    HTTPRequest request(data);
-    request.addHeader("X-Forwarded-For", std::string(ipaddress));
-    request.addHeader("X-Forwarded-Host", host);
-    request.send(clientSocket);
-
-    std::string responseData;
-    size_t reserved = 0;
-    bool end = false;
-    bool sentHeader = false;
-
-    HTTPResponse newResponse("");
-
-    //read headers + some content until response is valid
-    while (!end) {
-        //8*1024
-        char buffer[8192] = {0};
-
-        int readed = static_cast<int>(::recv(clientSocket, &buffer, sizeof(buffer), 0));
-
-        if (readed == -1) {
-            if (sentHeader == false) {
-                response.code = 502;
-                response.send(client.fd);
-            }
-            ::close(client.fd);
-            ::close(clientSocket);
-            return;
-        }
-
-        if (readed == 0) {
-            break;
-        }
-
-        if (sentHeader == false) {
-            ++reserved;
-            responseData.reserve(reserved * 8192);
-            responseData.append(std::string{buffer, static_cast<size_t>(readed)});
-
-            newResponse = HTTPResponse(responseData);
-            if (newResponse.isValid) {
-                //add add our headers
-                for (auto& header : response.headers) {
-                    newResponse.headers.emplace(header.first, header.second);
-                }
-
-                newResponse.send(client.fd);
-                sentHeader = true;
-            }
-        } else {
-            if (static_cast<int>(::send(client.fd, buffer, readed, 0)) == -1) {
-                ::close(client.fd);
-                ::close(clientSocket);
-                return;
-            }
-        }
-    }
+    // handle reverse proxy
+    this->handleProxyPass(hostConfig, response, client, data, ipaddress, host);
 
     ::close(client.fd);
-    ::close(clientSocket);
 }
