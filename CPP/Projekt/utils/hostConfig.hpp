@@ -1,7 +1,9 @@
 
-//Helper struct
 #include "iniParser.hpp"
-struct HostConfig {
+
+// Helper struct
+struct HostConfig
+{
     IniParser iniFile;
     std::string address;
     int port;

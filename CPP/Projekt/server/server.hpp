@@ -35,8 +35,8 @@ public:
 
     static Server *instance; ///< Singleton
 
-    static Server *init(const ArgParser &parser);
-    static Server *init(const ArgParser &parser, std::ostream &infoStream, std::ostream &errorStream, std::ostream &warnStream);
+    static Server *init(const ArgParser &parser);                                                                                ///< Factory method with default logger to std out and std err
+    static Server *init(const ArgParser &parser, std::ostream &infoStream, std::ostream &errorStream, std::ostream &warnStream); ///< Factory method with logger to own streams
 
     ~Server(); ///< Destructor
 
