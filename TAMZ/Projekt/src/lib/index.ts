@@ -46,8 +46,26 @@ const bankDataSchema = z.object({
             description: z.string(),
             date: z.number()
         })
+    ),
+    targets: z.array(
+        z.object({
+            id: z.number(),
+            uuid: z.string(),
+            targetValue: z.number(),
+            name: z.string(),
+            description: z.string(),
+            date: z.number()
+        })
     )
 });
+
+const defaultData = () => {
+    return {
+        balance: 0,
+        records: [],
+        targets: []
+    };
+};
 
 export class LocalStorageManager extends EventEmitter<LocalStorageManagerEvents> {
     private banks: Bank[] = [];
@@ -64,6 +82,7 @@ export class LocalStorageManager extends EventEmitter<LocalStorageManagerEvents>
         if (item) {
             try {
                 const json = JSON.parse(item);
+
                 const parsed = z.array(bankSchema).parse(json);
 
                 this.banks = parsed;
@@ -80,14 +99,12 @@ export class LocalStorageManager extends EventEmitter<LocalStorageManagerEvents>
         if (itemData) {
             try {
                 const json = JSON.parse(itemData);
+
                 const parsed = z.record(z.string(), bankDataSchema).parse(json);
 
                 this.banksData = parsed;
                 return;
-            } catch (_) {
-                console.log(itemData);
-                console.log(_);
-            }
+            } catch (_) {}
         }
         localStorage.setItem('banksData', JSON.stringify(this.banksData));
     }
@@ -111,10 +128,7 @@ export class LocalStorageManager extends EventEmitter<LocalStorageManagerEvents>
         const bank = this.banks.find((bank) => bank.uuid === uuid);
         if (!bank) return null;
 
-        const bankData = this.banksData[uuid] ?? {
-            balance: 0,
-            records: []
-        };
+        const bankData = this.banksData[uuid] ?? defaultData();
 
         const revenues = bankData.records.reduce((acc, record) => {
             if (record.value <= 0) {
@@ -160,10 +174,7 @@ export class LocalStorageManager extends EventEmitter<LocalStorageManagerEvents>
     }
 
     public getRecords(uuid: string) {
-        const bankData = this.banksData[uuid] ?? {
-            balance: 0,
-            records: []
-        };
+        const bankData = this.banksData[uuid] ?? defaultData();
 
         return bankData.records.map((record) => {
             return {
@@ -181,14 +192,7 @@ export class LocalStorageManager extends EventEmitter<LocalStorageManagerEvents>
     }
 
     public addRecord(uuid: string, value: number, description = '') {
-        console.log('CALLED');
-
-        const bankData = this.banksData[uuid] ?? {
-            balance: 0,
-            records: []
-        };
-
-        console.log(bankData);
+        const bankData = this.banksData[uuid] ?? defaultData();
 
         bankData.balance += value;
 
@@ -200,26 +204,89 @@ export class LocalStorageManager extends EventEmitter<LocalStorageManagerEvents>
             date: Date.now()
         });
 
-        console.log(bankData);
-
         this.banksData[uuid] = bankData;
 
-        console.log(this.banksData);
+        localStorage.setItem('banksData', JSON.stringify(this.banksData));
+        this.emit('change');
+    }
+
+    public editRecord(uuid: string, id: number, value: number, description: string) {
+        const bankData = this.banksData[uuid] ?? defaultData();
+
+        const record = bankData.records.find((record) => record.id === id);
+        if (!record) return;
+
+        bankData.balance -= record.value;
+        record.value = value;
+        record.description = description;
+        bankData.balance += value;
+
+        this.banksData[uuid] = bankData;
         localStorage.setItem('banksData', JSON.stringify(this.banksData));
         this.emit('change');
     }
 
     public removeRecord(uuid: string, id: number) {
-        const bankData = this.banksData[uuid] ?? {
-            balance: 0,
-            records: []
-        };
+        const bankData = this.banksData[uuid] ?? defaultData();
 
         const record = bankData.records.find((record) => record.id === id);
         if (!record) return;
 
         bankData.balance -= record.value;
         bankData.records = bankData.records.filter((record) => record.id !== id);
+
+        this.banksData[uuid] = bankData;
+        localStorage.setItem('banksData', JSON.stringify(this.banksData));
+        this.emit('change');
+    }
+
+    public getTargets(uuid: string) {
+        const bankData = this.banksData[uuid] ?? defaultData();
+
+        return bankData.targets.map((target) => {
+            return {
+                ...target,
+                date: new Date(target.date)
+            };
+        });
+    }
+
+    public addTarget(uuid: string, targetValue: number, name: string, description: string) {
+        const bankData = this.banksData[uuid] ?? defaultData();
+
+        bankData.targets.push({
+            id: bankData.targets.length,
+            uuid,
+            targetValue,
+            name,
+            description,
+            date: Date.now()
+        });
+
+        this.banksData[uuid] = bankData;
+        localStorage.setItem('banksData', JSON.stringify(this.banksData));
+        this.emit('change');
+    }
+
+    public editTarget(uuid: string, id: number, targetValue: number, name: string, description: string) {
+        const bankData = this.banksData[uuid] ?? defaultData();
+
+        const target = bankData.targets.find((target) => target.id === id);
+        if (!target) return;
+
+        target.targetValue = targetValue;
+        target.name = name;
+        target.description = description;
+
+        this.banksData[uuid] = bankData;
+        localStorage.setItem('banksData', JSON.stringify(this.banksData));
+        this.emit('change');
+    }
+
+    public removeTarget(uuid: string, id: number) {
+        const bankData = this.banksData[uuid] ?? defaultData();
+
+        bankData.targets = bankData.targets.filter((target) => target.id !== id);
 
         this.banksData[uuid] = bankData;
         localStorage.setItem('banksData', JSON.stringify(this.banksData));
@@ -238,4 +305,27 @@ export const updateStoreDoSomething = <T>(store: Writable<T>, newValue: T, befor
     beforeUpdate(get(store));
 
     store.set(newValue);
+};
+
+export const formatDate = (date: Date, seconds = false, miliseconds = false) => {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const secondsFormatted = date.getSeconds().toString().padStart(2, '0');
+    const milisecondsFormatted = date.getMilliseconds().toString().padStart(3, '0');
+
+    let baseString = `${day}.${month}.${year} ${hours}:${minutes}`;
+
+    if (seconds) {
+        baseString += `:${secondsFormatted}`;
+    }
+
+    if (miliseconds) {
+        baseString += `:${milisecondsFormatted}`;
+    }
+
+    return baseString;
 };

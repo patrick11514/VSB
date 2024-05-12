@@ -1,16 +1,18 @@
 <script lang="ts">
     import { title } from '$/components/APP/store.svelte';
-    import { IonButton, IonFabButton, IonInput, IonItemOption, IonItemOptions, IonModal, IonSegment } from '$/components/Ion';
-    import { LocalStorageManager, SwalAlert } from '$/lib';
-    import type { BankRecord, BankWithoutHash } from '$/types/types';
+    import { IonButton, IonFabButton, IonInput, IonItemOption, IonItemOptions, IonModal, IonProgressBar, IonSegment } from '$/components/Ion';
+    import { LocalStorageManager, SwalAlert, formatDate } from '$/lib';
+    import type { BankRecord, BankTarget, BankWithoutHash } from '$/types/types';
     import { goto } from '$app/navigation';
     import { page } from '$app/stores';
     import { add, sadOutline } from 'ionicons/icons';
     import { onMount } from 'svelte';
+    import { writable } from 'svelte/store';
 
     let banks: LocalStorageManager;
     let bankData: BankWithoutHash;
     let records: BankRecord[];
+    let targets: BankTarget[];
     let uuid = $page.params.uuid;
 
     const getData = () => {
@@ -28,6 +30,16 @@
         title.set(`Prohlížení: ${data.name}`);
 
         records = banks.getRecords(uuid);
+
+        //reverse array to be sorted as descending by id
+        records.reverse();
+
+        //
+
+        targets = banks.getTargets(uuid);
+
+        //reverse to be sorted as descending by id
+        targets.reverse();
     };
 
     onMount(() => {
@@ -44,18 +56,31 @@
 
     const addItem = () => {
         if (tab === 'log') {
-            addLogOpened = true;
+            $log.opened = true;
         } else {
-            addTargetOpened = true;
+            $target.opened = true;
         }
     };
 
-    let addLogOpened = false;
-    let logButtonDisabled = false;
-    let value = 0;
-    let description = '';
+    const log = writable({
+        value: '0',
+        description: '',
+        buttonDisabled: false,
+        opened: false
+    });
+
     const addLog = () => {
-        if (value == 0) {
+        if (!$log.value) {
+            SwalAlert({
+                icon: 'error',
+                title: 'Zadej částku'
+            });
+            return;
+        }
+
+        const parsedValue = parseFloat($log.value);
+
+        if (parsedValue == 0) {
             SwalAlert({
                 icon: 'error',
                 title: 'Zadej platnou částku'
@@ -63,24 +88,209 @@
             return;
         }
 
-        logButtonDisabled = true;
+        $log.buttonDisabled = true;
 
-        banks.addRecord(uuid, value, description);
+        banks.addRecord(uuid, parsedValue, $log.description);
         getData();
 
-        value = 0;
-        description = '';
+        SwalAlert({
+            icon: 'success',
+            title: `${parsedValue > 0 ? 'Příjem' : 'Výdaj'} byl úspěšně přidán`
+        });
 
-        addLogOpened = false;
-        logButtonDisabled = false;
+        log.set({
+            opened: false,
+            buttonDisabled: false,
+            value: '0',
+            description: ''
+        });
     };
 
-    let addTargetOpened = false;
-    let targetButtonDisabled = false;
-    let targetValue = 0;
-    let name = '';
-    let targetDescription = '';
-    const addTarget = () => {};
+    const target = writable({
+        name: '',
+        description: '',
+        value: '0',
+        buttonDisabled: false,
+        opened: false
+    });
+    const addTarget = () => {
+        if ($target.name.length == 0) {
+            SwalAlert({
+                icon: 'error',
+                title: 'Zadej název cíle'
+            });
+            return;
+        }
+
+        if ($target.description.length == 0) {
+            SwalAlert({
+                icon: 'error',
+                title: 'Zadej popisek cíle'
+            });
+            return;
+        }
+
+        if (!$target.value) {
+            SwalAlert({
+                icon: 'error',
+                title: 'Zadej částku'
+            });
+            return;
+        }
+
+        const parsedValue = parseFloat($target.value);
+
+        if (parsedValue <= 0) {
+            SwalAlert({
+                icon: 'error',
+                title: 'Zadej platnou částku (>0)'
+            });
+            return;
+        }
+
+        $target.buttonDisabled = true;
+
+        banks.addTarget(uuid, parsedValue, $target.name, $target.description);
+
+        getData();
+
+        SwalAlert({
+            icon: 'success',
+            title: 'Cíl byl úspěšně přidán'
+        });
+
+        target.set({
+            name: '',
+            description: '',
+            value: '0',
+            buttonDisabled: false,
+            opened: false
+        });
+    };
+
+    const logEdit = writable({
+        value: '0',
+        description: '',
+        buttonDisabled: false,
+        opened: false,
+        sliding: null as HTMLIonItemSlidingElement | null,
+        recordId: -1
+    });
+    const openEditLog = (id: number, ev: MouseEvent) => {
+        const record = records.find((record) => record.id === id);
+
+        if (!record) {
+            return;
+        }
+
+        logEdit.set({
+            buttonDisabled: false,
+            value: record.value.toString(),
+            description: record.description,
+            opened: true,
+            sliding: getSliding(ev),
+            recordId: id
+        });
+    };
+
+    const editLog = () => {
+        if ($logEdit.recordId == -1) {
+            return;
+        }
+
+        if (!$logEdit.value) {
+            SwalAlert({
+                icon: 'error',
+                title: 'Zadej částku'
+            });
+            return;
+        }
+
+        const parsedValue = parseFloat($logEdit.value);
+
+        if (parsedValue == 0) {
+            SwalAlert({
+                icon: 'error',
+                title: 'Zadej platnou částku'
+            });
+            return;
+        }
+
+        $logEdit.buttonDisabled = true;
+
+        banks.editRecord(uuid, $logEdit.recordId, parsedValue, $logEdit.description);
+        getData();
+
+        SwalAlert({
+            icon: 'success',
+            title: 'Záznam byl úspěšně upraven'
+        });
+
+        //close sliding when done
+        $logEdit.sliding?.close();
+
+        logEdit.set({
+            opened: false,
+            buttonDisabled: false,
+            value: '0',
+            description: '',
+            sliding: null,
+            recordId: -1
+        });
+    };
+
+    const deleteLog = async (id: number, el: HTMLIonItemSlidingElement | null) => {
+        const confirmation = await SwalAlert({
+            toast: false,
+            position: 'center',
+            timer: 0,
+            title: 'Opravdu cheš smazat tento záznam?',
+            showConfirmButton: true,
+            confirmButtonText: 'Ano',
+            showCancelButton: true,
+            cancelButtonText: 'Ne'
+        });
+
+        if (!confirmation.isConfirmed) {
+            el?.close();
+            return;
+        }
+
+        banks.removeRecord(uuid, id);
+        getData();
+
+        (el as HTMLIonItemSlidingElement | null)?.close();
+
+        SwalAlert({
+            icon: 'success',
+            title: 'Záznam byl úspěšně smazán'
+        });
+    };
+
+    const getSliding = (ev: { currentTarget: EventTarget | null }) => {
+        let target = ev.currentTarget as HTMLElement | null;
+        if (!target) {
+            return null;
+        }
+
+        if (target.localName == 'ion-item-sliding') {
+            return target as HTMLIonItemSlidingElement;
+        }
+
+        while (true) {
+            const parent = target.parentElement as HTMLElement | null;
+
+            if (!parent) {
+                return null;
+            }
+
+            if (target.localName == 'ion-item-sliding') {
+                return target as HTMLIonItemSlidingElement;
+            }
+
+            target = parent;
+        }
+    };
 </script>
 
 <ion-content class="ion-padding">
@@ -131,23 +341,57 @@
                 {#each records as record}
                     <ion-item-sliding>
                         <ion-item>
-                            <div class="flex flex-col">
-                                <ion-label>{record.date}</ion-label>
-                                <ion-label>10</ion-label>
+                            <div class="flex flex-row justify-between w-full">
+                                <div class="flex flex-col my-auto">
+                                    <ion-label>{formatDate(record.date)}</ion-label>
+                                    <ion-label>{record.description}</ion-label>
+                                </div>
+
+                                <div class="flex flex-col">
+                                    <ion-text color={record.value > 0 ? 'success' : 'danger'}><h3>{record.value}Kč</h3></ion-text>
+                                </div>
                             </div>
                         </ion-item>
 
-                        <IonItemOptions onSwipe={console.log} side="end">
-                            <IonItemOption on:click={console.log}>Upravit</IonItemOption>
-                            <IonItemOption on:click={console.log} color="danger" expandable>Smazat</IonItemOption>
+                        <IonItemOptions onSwipe={(el) => deleteLog(record.id, getSliding({ currentTarget: el }))} side="end">
+                            <IonItemOption on:click={(ev) => openEditLog(record.id, ev)}>Upravit</IonItemOption>
+                            <IonItemOption on:click={(ev) => deleteLog(record.id, getSliding(ev))} color="danger" expandable>Smazat</IonItemOption>
                         </IonItemOptions>
                     </ion-item-sliding>
                 {/each}
             </ion-list>
         {:else}
-            <ion-text color="danger">
-                <h2 class="text-center flex justify-center">Nemáš dané žádné cíle <ion-icon class="my-auto" icon={sadOutline} /></h2>
-            </ion-text>
+            {#if targets.length == 0}
+                <ion-text color="danger">
+                    <h2 class="text-center flex justify-center">Nemáš dané žádné cíle <ion-icon class="my-auto" icon={sadOutline} /></h2>
+                </ion-text>
+            {/if}
+            <ion-list inset={true} lines="full">
+                {#each targets as target}
+                    <ion-item-sliding>
+                        <ion-item>
+                            <div class="flex flex-col w-full">
+                                <div class="flex flex-row w-full justify-between">
+                                    <div class="flex flex-col my-auto">
+                                        <ion-label>{target.name}</ion-label>
+                                        <ion-label>{target.description}</ion-label>
+                                    </div>
+
+                                    <div class="flex flex-col">
+                                        <ion-text><h3>{target.targetValue}Kč</h3></ion-text>
+                                    </div>
+                                </div>
+                                <IonProgressBar percentage={100 * (bankData.balance / target.targetValue)} />
+                            </div>
+                        </ion-item>
+
+                        <!--<IonItemOptions onSwipe={(el) => deleteLog(record.id, getSliding({ currentTarget: el }))} side="end">
+                            <IonItemOption on:click={(ev) => openEditLog(record.id, ev)}>Upravit</IonItemOption>
+                            <IonItemOption on:click={(ev) => deleteLog(record.id, getSliding(ev))} color="danger" expandable>Smazat</IonItemOption>
+                        </IonItemOptions>!-->
+                    </ion-item-sliding>
+                {/each}
+            </ion-list>
         {/if}
         <ion-fab horizontal="end" vertical="bottom">
             <IonFabButton on:click={addItem}>
@@ -155,24 +399,71 @@
             </IonFabButton>
         </ion-fab>
 
-        <IonModal bind:opened={addLogOpened}>
+        <IonModal bind:opened={$log.opened}>
             <ion-header>
                 <ion-toolbar>
                     <ion-buttons slot="start">
-                        <IonButton color="danger" on:click={() => (addLogOpened = false)}>Zrušít</IonButton>
+                        <IonButton color="danger" on:click={() => ($log.opened = false)}>Zrušít</IonButton>
                     </ion-buttons>
                     <ion-title>Nový příjem/výdaj</ion-title>
                     <ion-buttons slot="end">
-                        <IonButton bind:disabled={logButtonDisabled} color="success" on:click={addLog}>Přidat</IonButton>
+                        <IonButton bind:disabled={$log.buttonDisabled} color="success" on:click={addLog}>Přidat</IonButton>
                     </ion-buttons>
                 </ion-toolbar>
             </ion-header>
             <ion-content class="ion-padding">
                 <ion-item>
-                    <IonInput label="Částka" type="number" bind:value />
+                    <IonInput label="Částka" placeholder="10" type="number" bind:value={$log.value} />
                 </ion-item>
                 <ion-item>
-                    <IonInput label="Popisek" type="text" bind:value={description} />
+                    <IonInput label="Popisek" placeholder="Kapesné" type="text" bind:value={$log.description} />
+                </ion-item>
+            </ion-content>
+        </IonModal>
+
+        <IonModal bind:opened={$logEdit.opened}>
+            <ion-header>
+                <ion-toolbar>
+                    <ion-buttons slot="start">
+                        <IonButton color="danger" on:click={() => ($logEdit.opened = false)}>Zrušít</IonButton>
+                    </ion-buttons>
+                    <ion-title>Úprava příjmu/výdaje</ion-title>
+                    <ion-buttons slot="end">
+                        <IonButton bind:disabled={$logEdit.buttonDisabled} color="success" on:click={editLog}>Upravit</IonButton>
+                    </ion-buttons>
+                </ion-toolbar>
+            </ion-header>
+            <ion-content class="ion-padding">
+                <ion-item>
+                    <IonInput label="Částka" placeholder="10" type="number" bind:value={$logEdit.value} />
+                </ion-item>
+                <ion-item>
+                    <IonInput label="Popisek" placeholder="Kapesné" type="text" bind:value={$logEdit.description} />
+                </ion-item>
+            </ion-content>
+        </IonModal>
+
+        <IonModal bind:opened={$target.opened}>
+            <ion-header>
+                <ion-toolbar>
+                    <ion-buttons slot="start">
+                        <IonButton color="danger" on:click={() => ($target.opened = false)}>Zrušít</IonButton>
+                    </ion-buttons>
+                    <ion-title>Nový cíl</ion-title>
+                    <ion-buttons slot="end">
+                        <IonButton bind:disabled={$target.buttonDisabled} color="success" on:click={addTarget}>Přidat</IonButton>
+                    </ion-buttons>
+                </ion-toolbar>
+            </ion-header>
+            <ion-content class="ion-padding">
+                <ion-item>
+                    <IonInput label="Jméno" type="text" placeholder="Auto" bind:value={$target.name} />
+                </ion-item>
+                <ion-item>
+                    <IonInput label="Popisek" type="text" placeholder="Hyundai i30 fastback mild hybrid" bind:value={$target.description} />
+                </ion-item>
+                <ion-item>
+                    <IonInput label="Cíl" type="number" placeholder="450467" bind:value={$target.value} />
                 </ion-item>
             </ion-content>
         </IonModal>

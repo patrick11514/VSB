@@ -16,11 +16,7 @@
     $: element?.addEventListener('ionInput', (ev) => {
         const currentValue = (ev.currentTarget as HTMLIonInputElement).value;
 
-        if (type === 'number') {
-            value = currentValue === undefined || currentValue === null ? currentValue : parseFloat(currentValue.toString());
-        } else {
-            value = currentValue;
-        }
+        value = currentValue;
 
         if (onChange) onChange(value);
     });

@@ -7,9 +7,25 @@ import IonInput from './ionInput.svelte';
 import IonItemOption from './ionItemOption.svelte';
 import IonItemOptions from './ionItemOptions.svelte';
 import IonModal from './ionModal.svelte';
+import IonProgressBar from './ionProgressBar.svelte';
 import IonSegment from './ionSegment.svelte';
 import IonSelect from './ionSelect.svelte';
 import RadioGroup from './radioGroup.svelte';
 import SearchBar from './searchBar.svelte';
 
-export { IonActionSheet, IonButton, IonCheckBox, IonDateTime, IonFabButton, IonInput, IonItemOption, IonItemOptions, IonModal, IonSegment, IonSelect, RadioGroup, SearchBar };
+export {
+    IonActionSheet,
+    IonButton,
+    IonCheckBox,
+    IonDateTime,
+    IonFabButton,
+    IonInput,
+    IonItemOption,
+    IonItemOptions,
+    IonModal,
+    IonProgressBar,
+    IonSegment,
+    IonSelect,
+    RadioGroup,
+    SearchBar
+};

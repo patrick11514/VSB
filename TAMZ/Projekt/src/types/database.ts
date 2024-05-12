@@ -23,8 +23,18 @@ export interface Records {
   value: number;
 }
 
+export interface Targets {
+  date: Date;
+  description: string;
+  id: Generated<number>;
+  name: string;
+  targetValue: number;
+  uuid: string;
+}
+
 export interface DB {
   balance: Balance;
   bank: Bank;
   records: Records;
+  targets: Targets;
 }

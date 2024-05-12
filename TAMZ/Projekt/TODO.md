@@ -5,8 +5,8 @@ Kouknout se:
 
 Dodělat:
 
--   [ ] Basic design XD
--   [ ] Přidávání výdaju/příjmů
+-   [x] Basic design XD
+-   [x] Přidávání výdaju/příjmů
 -   [ ] Swipe item, kde budu moci příjem/výdaj upravit/smazat
 -   [ ] Cíle (separátní karta, půjde switchovat), Vytvoření, pokud maḿ na účtě dost na ten cíl, půjde splnit
 -   [ ] Export/Import v jsonu

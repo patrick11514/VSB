@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { Bank, Records } from './database';
+import type { Bank, Records, Targets } from './database';
 
 export type UserData = {
     banks: Omit<Bank, 'name'>[];
@@ -12,6 +12,10 @@ export const bankSchema = z.object({
 });
 
 export type BankRecord = Omit<Records, 'id'> & {
+    id: number;
+};
+
+export type BankTarget = Omit<Targets, 'id'> & {
     id: number;
 };
 

@@ -27,15 +27,21 @@
     };
 
     onMount(() => {
-        localBanks = new LocalStorageManager();
-        localBanks.on('change', () => {
+        const change = () => {
             const bankList = localBanks.getBanks();
             banks.set(bankList.map((bank) => localBanks.getBankData(bank.uuid)!));
-        });
+        };
+
+        localBanks = new LocalStorageManager();
+        localBanks.on('change', change);
         const bankList = localBanks.getBanks();
         banks.set(bankList.map((bank) => localBanks.getBankData(bank.uuid)!));
 
         loadData();
+
+        return () => {
+            localBanks.off('change', change);
+        };
     });
 
     let createOpened = false;
