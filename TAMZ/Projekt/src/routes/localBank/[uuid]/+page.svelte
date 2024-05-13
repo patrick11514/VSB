@@ -471,7 +471,59 @@
         });
     };
 
-    const deleteBank = async () => {};
+    const deleteBank = async () => {
+        const confirmation = await SwalAlert({
+            toast: false,
+            position: 'center',
+            timer: 0,
+            title: 'Opravdu cheš smazat tuto banku?',
+            showConfirmButton: true,
+            confirmButtonText: 'Ano',
+            showCancelButton: true,
+            cancelButtonText: 'Ne'
+        });
+
+        if (!confirmation.isConfirmed) {
+            return;
+        }
+
+        $bankSettings.opened = false;
+
+        banks.removeBank(uuid);
+
+        SwalAlert({
+            icon: 'success',
+            title: 'Bank byla smazána'
+        });
+
+        goto('/');
+    };
+
+    const editBank = () => {
+        if ($bankSettings.name.length == 0) {
+            SwalAlert({
+                icon: 'error',
+                title: 'Zadej platné jméno'
+            });
+            return;
+        }
+
+        $bankSettings.buttonDisabled = true;
+
+        banks.editBank(uuid, $bankSettings.name);
+        getData();
+
+        bankSettings.set({
+            buttonDisabled: false,
+            name: '',
+            opened: false
+        });
+
+        SwalAlert({
+            icon: 'success',
+            title: 'Banka úspěšně upravena.'
+        });
+    };
 </script>
 
 <ion-content class="ion-padding">
@@ -696,7 +748,7 @@
                     </ion-buttons>
                     <ion-title>Úprava banky</ion-title>
                     <ion-buttons slot="end">
-                        <IonButton bind:disabled={$bankSettings.buttonDisabled} color="success" on:click={editTarget}>Upravit</IonButton>
+                        <IonButton bind:disabled={$bankSettings.buttonDisabled} color="success" on:click={editBank}>Upravit</IonButton>
                     </ion-buttons>
                 </ion-toolbar>
             </ion-header>
