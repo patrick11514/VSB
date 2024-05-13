@@ -15,6 +15,9 @@ const config = {
         adapter: adapter(),
         alias: {
             '$/*': 'src/*'
+        },
+        csrf: {
+            checkOrigin: false
         }
         /*paths: {
             base: dev ? '' : '/~min0150'
