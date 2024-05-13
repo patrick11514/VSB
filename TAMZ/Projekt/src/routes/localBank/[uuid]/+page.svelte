@@ -5,7 +5,7 @@
     import type { BankRecord, BankTarget, BankWithoutHash } from '$/types/types';
     import { goto } from '$app/navigation';
     import { page } from '$app/stores';
-    import { add, sadOutline } from 'ionicons/icons';
+    import { add, checkmarkCircleOutline, sadOutline } from 'ionicons/icons';
     import { onMount } from 'svelte';
     import { writable } from 'svelte/store';
 
@@ -267,6 +267,124 @@
         });
     };
 
+    const targetEdit = writable({
+        name: '',
+        description: '',
+        value: '0',
+        buttonDisabled: false,
+        opened: false,
+        sliding: null as HTMLIonItemSlidingElement | null,
+        targetId: -1
+    });
+    const openEditTarget = (id: number, ev: MouseEvent) => {
+        const target = targets.find((target) => target.id === id);
+
+        if (!target) {
+            return;
+        }
+
+        targetEdit.set({
+            name: target.name,
+            description: target.description,
+            value: target.targetValue.toString(),
+            buttonDisabled: false,
+            opened: true,
+            sliding: getSliding(ev),
+            targetId: id
+        });
+    };
+
+    const editTarget = () => {
+        if ($targetEdit.targetId == -1) {
+            return;
+        }
+
+        if ($targetEdit.name.length == 0) {
+            SwalAlert({
+                icon: 'error',
+                title: 'Zadej název cíle'
+            });
+            return;
+        }
+
+        if ($targetEdit.description.length == 0) {
+            SwalAlert({
+                icon: 'error',
+                title: 'Zadej popisek cíle'
+            });
+            return;
+        }
+
+        if (!$targetEdit.value) {
+            SwalAlert({
+                icon: 'error',
+                title: 'Zadej částku'
+            });
+            return;
+        }
+
+        const parsedValue = parseFloat($targetEdit.value);
+
+        if (parsedValue == 0) {
+            SwalAlert({
+                icon: 'error',
+                title: 'Zadej platnou částku'
+            });
+            return;
+        }
+
+        $targetEdit.buttonDisabled = true;
+
+        banks.editTarget(uuid, $targetEdit.targetId, parsedValue, $targetEdit.name, $targetEdit.description);
+        getData();
+
+        SwalAlert({
+            icon: 'success',
+            title: 'Cíl byl úspěšně upraven'
+        });
+
+        //close sliding when done
+        $targetEdit.sliding?.close();
+
+        targetEdit.set({
+            opened: false,
+            buttonDisabled: false,
+            name: '',
+            description: '',
+            value: '0',
+            sliding: null,
+            targetId: -1
+        });
+    };
+
+    const deleteTarget = async (id: number, el: HTMLIonItemSlidingElement | null) => {
+        const confirmation = await SwalAlert({
+            toast: false,
+            position: 'center',
+            timer: 0,
+            title: 'Opravdu cheš smazat tento cíl?',
+            showConfirmButton: true,
+            confirmButtonText: 'Ano',
+            showCancelButton: true,
+            cancelButtonText: 'Ne'
+        });
+
+        if (!confirmation.isConfirmed) {
+            el?.close();
+            return;
+        }
+
+        banks.removeTarget(uuid, id);
+        getData();
+
+        (el as HTMLIonItemSlidingElement | null)?.close();
+
+        SwalAlert({
+            icon: 'success',
+            title: 'Cíl byl úspěšně smazán'
+        });
+    };
+
     const getSliding = (ev: { currentTarget: EventTarget | null }) => {
         let target = ev.currentTarget as HTMLElement | null;
         if (!target) {
@@ -290,6 +408,31 @@
 
             target = parent;
         }
+    };
+
+    const completeTarget = (id: number) => {
+        const target = targets.find((target) => target.id === id);
+        if (!target) {
+            return;
+        }
+
+        if (bankData.balance < target.targetValue) {
+            SwalAlert({
+                icon: 'error',
+                title: 'Nelze splnit cíl, protože jsi nedosáhnul cílové částky.'
+            });
+            return;
+        }
+
+        banks.removeTarget(uuid, id);
+        banks.addRecord(uuid, -1 * target.targetValue, `Cíl: ${target.name}`);
+
+        SwalAlert({
+            icon: 'success',
+            title: 'Cíl byl úspěšně splněn'
+        });
+
+        getData();
     };
 </script>
 
@@ -377,18 +520,27 @@
                                         <ion-label>{target.description}</ion-label>
                                     </div>
 
-                                    <div class="flex flex-col">
+                                    <div class="flex flex-row" style="gap:8px">
                                         <ion-text><h3>{target.targetValue}Kč</h3></ion-text>
+                                        <!-- svelte-ignore a11y-click-events-have-key-events -->
+                                        <!-- svelte-ignore a11y-no-static-element-interactions -->
+                                        <ion-text
+                                            style="cursor:{bankData.balance >= target.targetValue ? 'pointer' : 'not-allowed'}"
+                                            color={bankData.balance >= target.targetValue ? 'success' : 'danger'}
+                                            on:click={() => completeTarget(target.id)}
+                                        >
+                                            <h3><ion-icon icon={checkmarkCircleOutline} /></h3>
+                                        </ion-text>
                                     </div>
                                 </div>
                                 <IonProgressBar percentage={100 * (bankData.balance / target.targetValue)} />
                             </div>
                         </ion-item>
 
-                        <!--<IonItemOptions onSwipe={(el) => deleteLog(record.id, getSliding({ currentTarget: el }))} side="end">
-                            <IonItemOption on:click={(ev) => openEditLog(record.id, ev)}>Upravit</IonItemOption>
-                            <IonItemOption on:click={(ev) => deleteLog(record.id, getSliding(ev))} color="danger" expandable>Smazat</IonItemOption>
-                        </IonItemOptions>!-->
+                        <IonItemOptions onSwipe={(el) => deleteTarget(target.id, getSliding({ currentTarget: el }))} side="end">
+                            <IonItemOption on:click={(ev) => openEditTarget(target.id, ev)}>Upravit</IonItemOption>
+                            <IonItemOption on:click={(ev) => deleteTarget(target.id, getSliding(ev))} color="danger" expandable>Smazat</IonItemOption>
+                        </IonItemOptions>
                     </ion-item-sliding>
                 {/each}
             </ion-list>
@@ -464,6 +616,31 @@
                 </ion-item>
                 <ion-item>
                     <IonInput label="Cíl" type="number" placeholder="450467" bind:value={$target.value} />
+                </ion-item>
+            </ion-content>
+        </IonModal>
+
+        <IonModal bind:opened={$targetEdit.opened}>
+            <ion-header>
+                <ion-toolbar>
+                    <ion-buttons slot="start">
+                        <IonButton color="danger" on:click={() => ($targetEdit.opened = false)}>Zrušít</IonButton>
+                    </ion-buttons>
+                    <ion-title>Úprava cíle</ion-title>
+                    <ion-buttons slot="end">
+                        <IonButton bind:disabled={$targetEdit.buttonDisabled} color="success" on:click={editTarget}>Upravit</IonButton>
+                    </ion-buttons>
+                </ion-toolbar>
+            </ion-header>
+            <ion-content class="ion-padding">
+                <ion-item>
+                    <IonInput label="Jméno" type="text" placeholder="Auto" bind:value={$targetEdit.name} />
+                </ion-item>
+                <ion-item>
+                    <IonInput label="Popisek" type="text" placeholder="Hyundai i30 fastback mild hybrid" bind:value={$targetEdit.description} />
+                </ion-item>
+                <ion-item>
+                    <IonInput label="Cíl" type="number" placeholder="450467" bind:value={$targetEdit.value} />
                 </ion-item>
             </ion-content>
         </IonModal>

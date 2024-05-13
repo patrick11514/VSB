@@ -299,6 +299,14 @@ export class LocalStorageManager extends EventEmitter<LocalStorageManagerEvents>
         this.emit('removeBank', uuid);
         this.emit('change');
     }
+
+    public addBalance(uuid: string, value: number) {
+        const bankData = this.banksData[uuid] ?? defaultData();
+        bankData.balance += value;
+
+        this.banksData[uuid] = bankData;
+        localStorage.setItem('banksData', JSON.stringify(this.banksData));
+    }
 }
 
 export const updateStoreDoSomething = <T>(store: Writable<T>, newValue: T, beforeUpdate: (current: T) => void) => {
