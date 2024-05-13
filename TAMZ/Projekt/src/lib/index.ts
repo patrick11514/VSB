@@ -332,13 +332,14 @@ export class LocalStorageManager extends EventEmitter<LocalStorageManagerEvents>
         const bankData = this.banksData[uuid] ?? defaultData();
 
         return {
+            local: true,
             ...bankBaseData,
             ...bankData
         };
     }
 
     public importBank(json: object): -1 | 0 | 1 {
-        const schema = z.object({ ...bankSchema.shape, ...bankDataSchema.shape });
+        const schema = z.object({ ...bankSchema.shape, ...bankDataSchema.shape, local: z.literal(true) });
 
         const parsed = schema.safeParse(json);
         if (!parsed.success) {

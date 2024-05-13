@@ -1,5 +1,6 @@
 <script lang="ts">
     import { IonButton, IonCheckBox, IonFabButton, IonInput, IonModal } from '$/components/Ion';
+    import FileInput from '$/components/fileInput.svelte';
     import { LocalStorageManager, SwalAlert } from '$/lib';
     import { API } from '$/lib/api';
     import type { BankWithoutHash } from '$/types/types';
@@ -96,6 +97,74 @@
     let name = '';
     let password = '';
     let passwordShow = false;
+
+    const importFile = async (iFiles: (File | null)[]) => {
+        const files = iFiles.filter((file) => file !== null) as File[];
+
+        if (files.length == 0) {
+            SwalAlert({
+                title: 'Vybel jeden soubor',
+                icon: 'error'
+            });
+            return;
+        }
+
+        if (files.length > 1) {
+            SwalAlert({
+                title: 'Vybel pouze jeden soubor',
+                icon: 'error'
+            });
+            return;
+        }
+
+        const file = files[0];
+        const buffer = await file.arrayBuffer();
+
+        const decoder = new TextDecoder('UTF-8');
+        const string = decoder.decode(buffer);
+
+        try {
+            const json = JSON.parse(string) as object;
+
+            if (!('local' in json)) {
+                throw 'Invalid file structure';
+            }
+
+            if (typeof json.local !== 'boolean') {
+                throw 'Invalid local type';
+            }
+
+            if (json.local) {
+                const result = localBanks.importBank(json);
+
+                if (result === -1) {
+                    throw 'Invalid file structure';
+                }
+
+                if (result === 0) {
+                    SwalAlert({
+                        title: 'Tuto banku máš již importnutou',
+                        icon: 'error'
+                    });
+                    return;
+                }
+            } else {
+            }
+
+            SwalAlert({
+                title: 'Banka byla úspěšně importována',
+                icon: 'success'
+            });
+
+            createOpened = false;
+        } catch (_) {
+            SwalAlert({
+                title: 'Vložil jsi neplatný soubor',
+                icon: 'error'
+            });
+            return;
+        }
+    };
 </script>
 
 <ion-content class="ion-padding">
@@ -128,6 +197,9 @@
                 <IonInput bind:value={password} label="Heslo" placeholder="Heslo" type={passwordShow ? 'text' : 'password'} />
                 <IonButton on:click={() => (passwordShow = !passwordShow)}><ion-icon icon={passwordShow ? eyeOutline : eyeOffOutline} /></IonButton>
             </ion-item>
+            <FileInput onDrop={importFile}>
+                <IonButton>Import účtu</IonButton>
+            </FileInput>
         </ion-content>
     </IonModal>
 
