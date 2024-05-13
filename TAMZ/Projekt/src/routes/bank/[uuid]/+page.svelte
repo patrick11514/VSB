@@ -643,6 +643,11 @@
 
         await getData();
 
+        //update password on frontend
+        if ($bankSettings.newPassword !== '') {
+            data.password = $bankSettings.newPassword;
+        }
+
         bankSettings.set({
             buttonDisabled: false,
             name: '',
