@@ -18,25 +18,23 @@ const endpoint = procedure.GET.query(async ({ ctx }) => {
         const banks = await conn
             .selectFrom('bank')
             .leftJoin('balance', 'balance.uuid', 'bank.uuid')
-            .leftJoin('records as rev', (join) =>
-                join
-                    .on(sql`rev.uuid = bank.uuid`)
-                    .on(sql`MONTH(CURDATE()) = MONTH(rev.date)`)
-                    .on('rev.value', '>', 0)
-            )
-            .leftJoin('records as exp', (join) =>
-                join
-                    .on(sql`exp.uuid = bank.uuid`)
-                    .on(sql`MONTH(CURDATE()) = MONTH(exp.date)`)
-                    .on('exp.value', '<', 0)
-            )
-            .select([
+            .select(({ selectFrom }) => [
                 'bank.uuid',
                 'bank.name',
-                'bank.password',
                 'balance.value',
-                sql<number>`COALESCE(SUM(rev.value), 0)`.as('revenues'),
-                sql<number>`COALESCE(SUM(exp.value), 0)`.as('expenses')
+                'bank.password',
+                selectFrom('records')
+                    .select([sql<number>`COALESCE(SUM(records.value), 0)`.as('revenues')])
+                    .whereRef('records.uuid', '=', 'balance.uuid')
+                    .where('records.value', '>', 0)
+                    .where(sql<boolean>`MONTH(CURDATE()) = MONTH(records.date)`)
+                    .as('revenues'),
+                selectFrom('records')
+                    .select([sql<number>`COALESCE(SUM(records.value), 0)`.as('expenses')])
+                    .whereRef('records.uuid', '=', 'balance.uuid')
+                    .where('records.value', '<', 0)
+                    .where(sql<boolean>`MONTH(CURDATE()) = MONTH(records.date)`)
+                    .as('expenses')
             ])
             .where(
                 'bank.uuid',
@@ -58,6 +56,8 @@ const endpoint = procedure.GET.query(async ({ ctx }) => {
                 let newBank = {
                     ...bank,
                     balance: bank.value ?? 0,
+                    revenues: bank.revenues ?? 0,
+                    expenses: bank.expenses ?? 0,
                     password: undefined,
                     value: undefined
                 };

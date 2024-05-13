@@ -30,4 +30,8 @@ export const load = (async ({ params, cookies }) => {
     if (!bcrypt.compareSync(bankData.password, bank.password)) {
         redirect(302, '/');
     }
+
+    return {
+        password: bankData.password
+    };
 }) satisfies PageServerLoad;

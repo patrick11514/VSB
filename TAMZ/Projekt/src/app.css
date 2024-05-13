@@ -169,3 +169,8 @@ http://ionicframework.com/docs/theming/ */
     position: relative;
     height: 100vh;
 }
+
+.blurred {
+    color: transparent;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}

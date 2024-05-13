@@ -17,5 +17,6 @@ const dialect = new MysqlDialect({
 });
 
 export const conn = new Kysely<DB>({
-    dialect
+    dialect,
+    log: ['query']
 });

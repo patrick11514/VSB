@@ -149,6 +149,24 @@
                     return;
                 }
             } else {
+                const request = await API.import(json);
+
+                if (!request.status) {
+                    if (request.message == '-1') {
+                        throw 'Invalid file structure';
+                    }
+
+                    if (request.message == '0') {
+                        SwalAlert({
+                            title: 'Tuto banku máš již importnutou',
+                            icon: 'error'
+                        });
+                        return;
+                    }
+                    return;
+                }
+
+                await loadData();
             }
 
             SwalAlert({
@@ -197,9 +215,13 @@
                 <IonInput bind:value={password} label="Heslo" placeholder="Heslo" type={passwordShow ? 'text' : 'password'} />
                 <IonButton on:click={() => (passwordShow = !passwordShow)}><ion-icon icon={passwordShow ? eyeOutline : eyeOffOutline} /></IonButton>
             </ion-item>
-            <FileInput onDrop={importFile}>
-                <IonButton>Import účtu</IonButton>
-            </FileInput>
+            <div class="flex flex-row justify-around">
+                <FileInput onDrop={importFile}>
+                    <IonButton>Import účtu</IonButton>
+                </FileInput>
+
+                <IonButton>Přihlášení do účtu</IonButton>
+            </div>
         </ion-content>
     </IonModal>
 

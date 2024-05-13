@@ -67,6 +67,9 @@ const defaultData = () => {
     };
 };
 
+export const LocalBankSchema = z.object({ ...bankSchema.shape, ...bankDataSchema.shape, local: z.literal(true) });
+export const OnlineBankSchema = z.object({ ...bankSchema.shape, ...bankDataSchema.shape, local: z.literal(false) });
+
 export class LocalStorageManager extends EventEmitter<LocalStorageManagerEvents> {
     private banks: Bank[] = [];
     private banksData: Record<string, z.infer<typeof bankDataSchema>> = {};
@@ -339,9 +342,7 @@ export class LocalStorageManager extends EventEmitter<LocalStorageManagerEvents>
     }
 
     public importBank(json: object): -1 | 0 | 1 {
-        const schema = z.object({ ...bankSchema.shape, ...bankDataSchema.shape, local: z.literal(true) });
-
-        const parsed = schema.safeParse(json);
+        const parsed = LocalBankSchema.safeParse(json);
         if (!parsed.success) {
             return -1;
         }
@@ -377,7 +378,14 @@ export const updateStoreDoSomething = <T>(store: Writable<T>, newValue: T, befor
     store.set(newValue);
 };
 
-export const formatDate = (date: Date, seconds = false, miliseconds = false) => {
+export const formatDate = (inputDate: Date | string, seconds = false, miliseconds = false) => {
+    let date: Date;
+    if (typeof inputDate === 'string') {
+        date = new Date(inputDate);
+    } else {
+        date = inputDate;
+    }
+
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear();
