@@ -8,6 +8,7 @@
     import { onMount } from 'svelte';
     import { writable } from 'svelte/store';
     import * as uuid from 'uuid';
+    import { z } from 'zod';
 
     let localBanks: LocalStorageManager;
     let banks = writable<BankWithoutHash[]>([]);
@@ -183,6 +184,54 @@
             return;
         }
     };
+
+    const login = writable({
+        uuid: '',
+        password: '',
+        opened: false,
+        disabledButton: false
+    });
+
+    const doLogin = async () => {
+        const parsedUuid = z.string().uuid().safeParse($login.uuid);
+        if (!parsedUuid.success) {
+            SwalAlert({
+                title: 'Uuid banky je neplatné',
+                icon: 'error'
+            });
+            return;
+        }
+
+        if ($login.password.length === 0) {
+            SwalAlert({
+                title: 'Heslo nesmí být prázdné',
+                icon: 'error'
+            });
+            return;
+        }
+
+        const request = await API.addServer({
+            uuid: $login.uuid,
+            password: $login.password
+        });
+
+        if (!request.status) {
+            SwalAlert({
+                title: request.message,
+                icon: 'error'
+            });
+            return;
+        }
+
+        await loadData();
+
+        SwalAlert({
+            title: 'Banka byla úspěšně přidána',
+            icon: 'success'
+        });
+
+        $login.opened = false;
+    };
 </script>
 
 <ion-content class="ion-padding">
@@ -220,7 +269,12 @@
                     <IonButton>Import účtu</IonButton>
                 </FileInput>
 
-                <IonButton>Přihlášení do účtu</IonButton>
+                <IonButton
+                    on:click={() => {
+                        createOpened = false;
+                        $login.opened = true;
+                    }}>Přihlášení do účtu</IonButton
+                >
             </div>
         </ion-content>
     </IonModal>
@@ -263,4 +317,26 @@
             {/each}
         {/if}
     </ion-list>
+
+    <IonModal bind:opened={$login.opened}>
+        <ion-header>
+            <ion-toolbar>
+                <ion-buttons slot="start">
+                    <IonButton color="danger" on:click={() => ($login.opened = false)}>Zrušit</IonButton>
+                </ion-buttons>
+                <ion-title>Přihlášení do účtu</ion-title>
+                <ion-buttons slot="end">
+                    <IonButton bind:disabled={$login.disabledButton} color="success" on:click={doLogin}>Přihlásit se</IonButton>
+                </ion-buttons>
+            </ion-toolbar>
+        </ion-header>
+        <ion-content class="ion-padding">
+            <ion-item>
+                <IonInput label="Uuid banky" placeholder="6e4c1c30-c737-4aa1-8597-412222c75221" bind:value={$login.uuid} type="text" />
+            </ion-item>
+            <ion-item>
+                <IonInput label="Heslo" placeholder="Tajné heslo" bind:value={$login.password} type="password" />
+            </ion-item>
+        </ion-content>
+    </IonModal>
 </ion-content>
