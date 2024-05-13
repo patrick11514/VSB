@@ -544,14 +544,16 @@
         opened: false,
         buttonDisabled: false,
         name: '',
-        password: false
+        password: false,
+        newPassword: ''
     });
     const openSettings = () => {
         bankSettings.set({
             opened: true,
             buttonDisabled: false,
             name: bankData!.name,
-            password: false
+            password: false,
+            newPassword: ''
         });
     };
 
@@ -627,7 +629,8 @@
 
         const request = await API.bank.PATCH({
             uuid,
-            name: $bankSettings.name
+            name: $bankSettings.name,
+            newPassword: $bankSettings.newPassword
         });
 
         if (!request.status) {
@@ -644,7 +647,8 @@
             buttonDisabled: false,
             name: '',
             opened: false,
-            password: false
+            password: false,
+            newPassword: ''
         });
 
         SwalAlert({
@@ -883,6 +887,9 @@
             <ion-content class="ion-padding">
                 <ion-item>
                     <IonInput label="Jméno" type="text" placeholder="Super banka" bind:value={$bankSettings.name} />
+                </ion-item>
+                <ion-item>
+                    <IonInput label="Nové heslo" type="text" placeholder="(prázdné = neměnit)" bind:value={$bankSettings.newPassword} />
                 </ion-item>
                 <div class="flex flex-row justify-around">
                     <IonButton on:click={exportBank}><ion-icon icon={downloadOutline} /> Export účtu</IonButton>
