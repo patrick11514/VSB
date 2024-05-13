@@ -10,7 +10,8 @@
         "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
         "lint": "prettier --check . && eslint .",
         "format": "prettier --write .",
-        "genDatabaseSchema": "kysely-codegen --out-file ./src/types/database.ts"
+        "genDatabaseSchema": "kysely-codegen --out-file ./src/types/database.ts",
+        "start": "node -r dotenv/config build"
     },
     "devDependencies": {
         "@sveltejs/adapter-static": "^3.0.1",
@@ -24,6 +25,7 @@
         "@types/uuid": "^9.0.8",
         "@typescript-eslint/eslint-plugin": "^6.0.0",
         "@typescript-eslint/parser": "^6.0.0",
+        "@vite-pwa/sveltekit": "^0.5.0",
         "eslint": "^8.56.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-svelte": "^2.35.1",
@@ -40,7 +42,9 @@
     "dependencies": {
         "@ionic/core": "^7.7.2",
         "@patrick115/sveltekitapi": "^1.2.5",
+        "@sveltejs/adapter-node": "^5.0.1",
         "bcrypt": "^5.1.1",
+        "dotenv": "^16.4.5",
         "eventemitter3": "^5.0.1",
         "file-saver": "^2.0.5",
         "i": "^0.3.7",
@@ -53,6 +57,7 @@
         "simple-json-db": "^2.0.0",
         "sweetalert2": "^11.10.7",
         "uuid": "^9.0.1",
+        "vite-plugin-pwa": "^0.20.0",
         "zod": "^3.22.4"
     }
 }

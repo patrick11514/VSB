@@ -10,5 +10,5 @@ Dodělat:
 -   [x] Swipe item, kde budu moci příjem/výdaj upravit/smazat
 -   [x] Cíle (separátní karta, půjde switchovat), Vytvoření, pokud maḿ na účtě dost na ten cíl, půjde splnit
 -   [x] Export/Import v jsonu
--   [ ] Share pouze u online, v localu půjde jen exportnout
--   [ ] Design online banek
+-   [x] Share pouze u online, v localu půjde jen exportnout
+-   [x] Design online banek
