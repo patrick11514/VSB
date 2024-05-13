@@ -5,7 +5,8 @@
     import type { BankRecord, BankTarget, BankWithoutHash } from '$/types/types';
     import { goto } from '$app/navigation';
     import { page } from '$app/stores';
-    import { add, checkmarkCircleOutline, sadOutline } from 'ionicons/icons';
+    import FileSaver from 'file-saver';
+    import { add, checkmarkCircleOutline, cogOutline, downloadOutline, sadOutline, trashOutline } from 'ionicons/icons';
     import { onMount } from 'svelte';
     import { writable } from 'svelte/store';
 
@@ -434,6 +435,43 @@
 
         getData();
     };
+
+    const bankSettings = writable({
+        opened: false,
+        buttonDisabled: false,
+        name: ''
+    });
+    const openSettings = () => {
+        bankSettings.set({
+            opened: true,
+            buttonDisabled: false,
+            name: bankData.name
+        });
+    };
+
+    const exportBank = () => {
+        const result = banks.exportBank(uuid);
+        if (result === null) {
+            SwalAlert({
+                icon: 'error',
+                title: 'Export se nepovedl :/'
+            });
+            return;
+        }
+
+        const string = JSON.stringify(result);
+
+        const blob = new Blob([string], { type: 'text/plain;charset=utf-8' });
+
+        FileSaver.saveAs(blob, `export-${uuid}.json`);
+
+        SwalAlert({
+            icon: 'success',
+            title: 'Export byl stažen'
+        });
+    };
+
+    const deleteBank = async () => {};
 </script>
 
 <ion-content class="ion-padding">
@@ -446,6 +484,11 @@
             <div class="flex flex-row justify-between">
                 <ion-text>
                     <h3>Informace o účtu</h3>
+                </ion-text>
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <!-- svelte-ignore a11y-no-static-element-interactions -->
+                <ion-text style="cursor:pointer;" color="primary" on:click={openSettings}>
+                    <h1><ion-icon icon={cogOutline} /></h1>
                 </ion-text>
             </div>
             <div class="flex flex-row justify-between">
@@ -642,6 +685,29 @@
                 <ion-item>
                     <IonInput label="Cíl" type="number" placeholder="450467" bind:value={$targetEdit.value} />
                 </ion-item>
+            </ion-content>
+        </IonModal>
+
+        <IonModal bind:opened={$bankSettings.opened}>
+            <ion-header>
+                <ion-toolbar>
+                    <ion-buttons slot="start">
+                        <IonButton color="danger" on:click={() => ($bankSettings.opened = false)}>Zrušít</IonButton>
+                    </ion-buttons>
+                    <ion-title>Úprava banky</ion-title>
+                    <ion-buttons slot="end">
+                        <IonButton bind:disabled={$bankSettings.buttonDisabled} color="success" on:click={editTarget}>Upravit</IonButton>
+                    </ion-buttons>
+                </ion-toolbar>
+            </ion-header>
+            <ion-content class="ion-padding">
+                <ion-item>
+                    <IonInput label="Jméno" type="text" placeholder="Super banka" bind:value={$bankSettings.name} />
+                </ion-item>
+                <div class="flex flex-row justify-around">
+                    <IonButton on:click={exportBank}><ion-icon icon={downloadOutline} /> Export účtu</IonButton>
+                    <IonButton color="danger" on:click={deleteBank}><ion-icon icon={trashOutline} /> Smazání účtu</IonButton>
+                </div>
             </ion-content>
         </IonModal>
     {/if}

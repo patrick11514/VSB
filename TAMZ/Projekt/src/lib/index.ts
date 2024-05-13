@@ -118,6 +118,7 @@ export class LocalStorageManager extends EventEmitter<LocalStorageManagerEvents>
 
     private syncStorage() {
         localStorage.setItem('banks', JSON.stringify(this.banks));
+        localStorage.setItem('banksData', JSON.stringify(this.banksData));
     }
 
     public getBanks() {
@@ -206,7 +207,7 @@ export class LocalStorageManager extends EventEmitter<LocalStorageManagerEvents>
 
         this.banksData[uuid] = bankData;
 
-        localStorage.setItem('banksData', JSON.stringify(this.banksData));
+        this.syncStorage();
         this.emit('change');
     }
 
@@ -222,7 +223,7 @@ export class LocalStorageManager extends EventEmitter<LocalStorageManagerEvents>
         bankData.balance += value;
 
         this.banksData[uuid] = bankData;
-        localStorage.setItem('banksData', JSON.stringify(this.banksData));
+        this.syncStorage();
         this.emit('change');
     }
 
@@ -236,7 +237,7 @@ export class LocalStorageManager extends EventEmitter<LocalStorageManagerEvents>
         bankData.records = bankData.records.filter((record) => record.id !== id);
 
         this.banksData[uuid] = bankData;
-        localStorage.setItem('banksData', JSON.stringify(this.banksData));
+        this.syncStorage();
         this.emit('change');
     }
 
@@ -264,7 +265,7 @@ export class LocalStorageManager extends EventEmitter<LocalStorageManagerEvents>
         });
 
         this.banksData[uuid] = bankData;
-        localStorage.setItem('banksData', JSON.stringify(this.banksData));
+        this.syncStorage();
         this.emit('change');
     }
 
@@ -279,7 +280,7 @@ export class LocalStorageManager extends EventEmitter<LocalStorageManagerEvents>
         target.description = description;
 
         this.banksData[uuid] = bankData;
-        localStorage.setItem('banksData', JSON.stringify(this.banksData));
+        this.syncStorage();
         this.emit('change');
     }
 
@@ -289,7 +290,7 @@ export class LocalStorageManager extends EventEmitter<LocalStorageManagerEvents>
         bankData.targets = bankData.targets.filter((target) => target.id !== id);
 
         this.banksData[uuid] = bankData;
-        localStorage.setItem('banksData', JSON.stringify(this.banksData));
+        this.syncStorage();
         this.emit('change');
     }
 
@@ -305,7 +306,67 @@ export class LocalStorageManager extends EventEmitter<LocalStorageManagerEvents>
         bankData.balance += value;
 
         this.banksData[uuid] = bankData;
-        localStorage.setItem('banksData', JSON.stringify(this.banksData));
+        this.syncStorage();
+        this.emit('change');
+    }
+
+    public editBank(uuid: string, name: string) {
+        const bank = this.banks.findIndex((bank) => bank.uuid === uuid);
+
+        if (bank === -1) {
+            return;
+        }
+
+        this.banks[bank].name = name;
+
+        this.syncStorage();
+        this.emit('change');
+    }
+
+    public exportBank(uuid: string) {
+        const bankBaseData = this.banks.find((bank) => bank.uuid === uuid);
+        if (!bankBaseData) {
+            return null;
+        }
+
+        const bankData = this.banksData[uuid] ?? defaultData();
+
+        return {
+            ...bankBaseData,
+            ...bankData
+        };
+    }
+
+    public importBank(json: object): -1 | 0 | 1 {
+        const schema = z.object({ ...bankSchema.shape, ...bankDataSchema.shape });
+
+        const parsed = schema.safeParse(json);
+        if (!parsed.success) {
+            return -1;
+        }
+
+        const data = parsed.data;
+
+        //if bank already exists
+        if (this.banks.find((bank) => bank.uuid === data.uuid)) {
+            return 0;
+        }
+
+        this.banks.push({
+            name: data.name,
+            password: data.password,
+            uuid: data.uuid
+        });
+
+        this.banksData[data.uuid] = {
+            balance: data.balance,
+            records: data.records,
+            targets: data.targets
+        };
+
+        this.syncStorage();
+        this.emit('change');
+        return 1;
     }
 }
 

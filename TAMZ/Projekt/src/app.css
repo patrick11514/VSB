@@ -133,6 +133,10 @@ http://ionicframework.com/docs/theming/ */
     justify-content: center;
 }
 
+.justify-around {
+    justify-content: space-around;
+}
+
 .items-between {
     align-items: space-between;
 }
