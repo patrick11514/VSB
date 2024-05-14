@@ -83,3 +83,5 @@ BEGIN
 
    COMMIT;
 END;
+
+SELECT COALESCE(MIN(group_id), -1) FROM user_have_group WHERE user_id = 2 AND server_id = 2
