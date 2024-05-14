@@ -14,12 +14,12 @@
         {% if liked_figures.count == 0 %}
             <h4 class="text-red-500 font-bold">Tento uživatel nemá žádné oblíbené figurky</h4>
         {% endif %}
-        <div class="flex flex-row flex-wrap gap-4">
+        <div class="flex flex-row flex-wrap gap-4 items-stretch">
             {% for like in liked_figures %} 
                 {% if images|hash:like.figure.pk %}
-                    <a href="{% url 'figure' like.figure.pk %}"><img class="max-w-[80px] h-auto" src="{{ images|hash:like.figure.pk }}" alt="figure image" /></a>
+                    <a class="p-1 border-white border-2 rounded-md" href="{% url 'figure' like.figure.pk %}"><img class="max-w-[80px] h-auto" src="{{ images|hash:like.figure.pk }}" alt="figure image" /></a>
                 {% else %}
-                    <a class="my-auto text-xl font-bold" href="{% url 'figure' like.figure.pk %}">{{ like.figure.name }}</a>
+                    <a class="p-1 border-white border-2 rounded-md text-xl font-bold flex" href="{% url 'figure' like.figure.pk %}"><span class="my-auto">{{ like.figure.name }}</span></a>
                 {% endif%}
             {% endfor %}
         </div>

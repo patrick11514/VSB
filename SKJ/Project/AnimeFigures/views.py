@@ -24,11 +24,41 @@ def remove_session_data(request: HttpRequest):
             del request.session[field]
 
 
+def get_figure_images(figures: list[Figure]):
+    images: dict[int, str | None] = {}
+
+    listDict = list(
+        map(
+            lambda figure: {
+                "id": figure.pk,
+                "url": Image.objects.filter(figure=figure).first(),
+            },
+            figures,
+        )
+    )
+
+    for item in listDict:
+        id = item["id"]
+        item = item["url"]
+        if item is not None:
+            item = item.url
+        images[id] = item
+
+    return images
+
+
 def index(request: HttpRequest):
+    figures = Figure.objects.all()
+    users = User.objects.all()
+
+    # first image of each figure
+    images = get_figure_images(figures)
+
     return render(
         request,
         "AnimeFigures/index.html",
-        get_session_data(request),
+        get_session_data(request)
+        | {"users": users, "figures": figures, "images": images},
     )
 
 
@@ -127,24 +157,8 @@ def user(request: HttpRequest, user_id: int):
 
     liked_figures = UserLike.objects.filter(user=user)
 
-    images: dict[int, str | None] = {}
-
-    listDict = list(
-        map(
-            lambda like: {
-                "id": like.figure.pk,
-                "url": Image.objects.filter(figure=like.figure).first(),
-            },
-            list(liked_figures),
-        )
-    )
-
-    for item in listDict:
-        id = item["id"]
-        item = item["url"]
-        if item is not None:
-            item = item.url
-        images[id] = item
+    figures = list(map(lambda like: like.figure, liked_figures))
+    images = get_figure_images(figures)
 
     return render(
         request,

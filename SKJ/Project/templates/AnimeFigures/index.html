@@ -1,4 +1,5 @@
 {% extends "AnimeFigures/base.html" %} 
+{% load filters %}
 
 {% block head %}
 <title>Hlavní Stránka | Anime Figurky</title>
@@ -7,5 +8,21 @@
 {% block body %} 
 <section class="flex flex-col p-2">
     <a href="{% url 'add_figure' %}"><button class="bg-primary font-roboto text-xl px-2 py-1 rounded-lg border-black border-2 hover:bg-accent transition-colors duration-200">Přidat figurku</button></a>
+    <h1 class="text-3xl font-bold font-poppins">Seznam figurek</h1>
+    <main class="flex flex-row flex-wrap gap-4 items-stretch">
+        {% for figure in figures %}
+            {% if images|hash:figure.pk %}
+                <a class="p-1 border-primary border-2 rounded-md" href="{% url 'figure' figure.pk %}"><img class="max-w-[120px] h-auto" src="{{ images|hash:figure.pk }}" alt="figure image" /></a>
+            {% else %}
+                <a class="p-1 border-primary border-2 rounded-md text-xl font-bold flex" href="{% url 'figure' figure.pk %}"><span class="my-auto">{{ figure.name }}</span></a>
+            {% endif%}
+        {% endfor %}
+    </main>
+    <h1 class="text-3xl font-bold font-poppins">Seznam Uživatelů</h1>
+    <main class="flex flex-row flex-wrap gap-4 items-stretch">
+        {% for user in users %}
+            <a class="p-1 border-primary border-2 rounded-md text-xl font-bold flex" href="{% url 'user' user.pk %}"><span class="my-auto">{{ user.name }}</span></a>
+        {% endfor %}
+    </main>
 </section>
 {% endblock %}

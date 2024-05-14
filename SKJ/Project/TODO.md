@@ -1,6 +1,6 @@
 - [x] aplikace bude obsahovat alespoň 6 modelů, které budou vzájemně provázány vazbou // 7
 - [x] k modelům vytvořte adekvátní administrativní rozhraní // Ok
-- [ ] aplikace bude obsahovat alespoň 12 view a s tím spojené URL, které budou s modely pracovat // 13 views
+- [ ] aplikace bude obsahovat alespoň 12 view a s tím spojené URL, které budou s modely pracovat // 11 views
 - [ ] view Vaší aplikace budou obsah předávat templatům (budete tedy implementovat 12 templatů) // 7 templates
 - [ ] aplikace bude obsahovat alespoň 6 formulářů (ať už formulář vázaný na model nebo Váš vlastní) // 4 formuláře
 - [x] výsledná aplikace by měla tvořit nějaký logický celek, tj. jednotlivé stránky na sebe budou odkazoval pomocílinků
@@ -14,7 +14,7 @@
 - [ ] Komentáře na profilu
 - [x] Figurka
 - [ ] Komentáře na figurce
-- [ ] Hlavní stránka (Uživatelé + proklik, Figurky + proklik)
+- [x] Hlavní stránka (Uživatelé + proklik, Figurky + proklik)
 - [ ] Manufacturers list + profil manufacturera (list figurek, co vydal), možnost přidání nového
 - [ ] Mazání obrázků u figurky
 - [ ] Mazání figurky
