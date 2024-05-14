@@ -1,0 +1,14 @@
+{
+  "devDependencies": {
+    "tailwindcss": "^3.4.3"
+  },
+  "name": "animefigures",
+  "version": "1.0.0",
+  "scripts": {
+    "watch": "tailwindcss -i ./assets/css/style.css -o ./assets/css/main.css --watch"
+  },
+  "keywords": [],
+  "author": "Patrik Mintěl",
+  "license": "ISC",
+  "description": "AnimeFigures design"
+}
