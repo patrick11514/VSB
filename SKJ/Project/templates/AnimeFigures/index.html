@@ -1,0 +1,11 @@
+{% extends "AnimeFigures/base.html" %} 
+
+{% block head %}
+<title>Hlavní Stránka | Anime Figurky</title>
+{% endblock %}
+
+{% block body %} 
+<section class="flex flex-col p-2">
+    <a href="{% url 'add_figure' %}"><button class="bg-primary font-roboto text-xl px-2 py-1 rounded-lg border-black border-2 hover:bg-accent transition-colors duration-200">Přidat figurku</button></a>
+</section>
+{% endblock %}

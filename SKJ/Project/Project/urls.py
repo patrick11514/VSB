@@ -14,9 +14,24 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path
 
+from AnimeFigures import views
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
+    path("", views.index, name="index"),
+    path("register", views.register, name="register"),
+    # auth
+    path("login", views.login, name="login"),
+    path("logout", views.logout, name="logout"),
+    # account
+    path("user/<int:user_id>", views.user, name="user"),
+    # figures
+    path("figure/<int:figure_id>", views.figure, name="figure"),
+    path("figure/add", views.add_figure, name="add_figure"),
+    path("search", views.search, name="search"),
+    path("manufacturers", views.manufacturers, name="manufacturers"),
 ]

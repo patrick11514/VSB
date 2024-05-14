@@ -1,0 +1,26 @@
+{% extends "AnimeFigures/base.html" %} 
+
+{% block head %}
+<title>{{ figure.name }} | Anime Figurky</title>
+{% endblock %}
+
+{% block body %} 
+<section class="flex flex-col flex-1 m-auto w-[80%] min-w-72 bg-secondary text-white p-8 rounded-lg">
+    <h1 class="text-3xl font-bold font-poppins">Přehled figurky {{figure.name}}</h1>
+    <h2 class="text-xl font-bold">Přidána dne {{ figure.getDate }} ({{ figure.getDiff }} zpět) uživatelem 
+        {% if figure.added_by.name %} 
+            <a class="text-primary" href="{% url 'user' figure.added_by.pk %}">{{ figure.added_by.name }}</a> 
+        {% else %} 
+            Anonym 
+        {% endif %}
+    </h2>
+    <main class="flex flex-col my-4">
+        <h1 class="text-2xl font-bold font-poppins">Obrázky ({{ pictures.count }}): <a href="{% url 'add_figure' %}"><button class="bg-primary font-roboto text-xl px-2 py-1 rounded-lg border-black border-2 hover:bg-accent transition-colors duration-200">Přidat obrázek</button></a></h1>
+        {% if pictures.count == 0 %}
+            <h4 class="text-red-500 font-bold">Tato figurka nemá žádné obrázky</h4>
+        {% else %}
+            OBR
+        {% endif %}
+    </main>
+</section>
+{% endblock %}

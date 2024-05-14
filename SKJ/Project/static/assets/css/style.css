@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+form p {
+    @apply mx-auto flex w-[50%] flex-col;
+}
+
+form p label {
+    @apply font-poppins text-lg font-medium;
+}
+
+form p input {
+    @apply rounded-md border-2 border-primary px-2 py-0.5 font-roboto text-lg font-medium text-black outline-none;
+}
+
+form p select {
+    @apply rounded-md border-2 border-primary px-2 py-0.5 font-roboto text-lg font-medium text-black outline-none;
+}

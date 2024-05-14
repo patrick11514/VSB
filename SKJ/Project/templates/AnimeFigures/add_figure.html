@@ -1,0 +1,19 @@
+{% extends "AnimeFigures/base.html" %} 
+
+{% block head %}
+<title>Přidání figurky | Anime Figurky</title>
+{% endblock %}
+
+{% block body %} 
+<section class="flex flex-col m-auto h-[50%] w-[50%] min-h-96 min-w-72 bg-secondary text-white p-8 rounded-lg">
+    <h1 class="text-center font-poppins font-bold text-3xl">Přidání figurky</h1>
+    <form class="flex flex-col flex-1 justify-center" method="POST" action="{% url 'add_figure' %}">
+        {% if error %}
+            <p class="text-center text-red-500 font-bold text-lg">{{ error }}</p>
+        {% endif %}
+        {% csrf_token %}
+        {{ figure_form.as_p }}
+        <button type="submit" class="bg-primary hover:bg-accent m-4 w-[50%] mx-auto font-bold text-xl px-2 py-1 rounded-lg font-roboto transition-all duration-200 active:translate-y-1">Přihlásit se</button>
+    </form>
+</section>
+{% endblock %}

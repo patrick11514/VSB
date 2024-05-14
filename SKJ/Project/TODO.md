@@ -1,0 +1,11 @@
+ - [x] aplikace bude obsahovat alespoň 6 modelů, které budou vzájemně provázány vazbou // 7
+ - [x] k modelům vytvořte adekvátní administrativní rozhraní // Ok
+ - [ ] aplikace bude obsahovat alespoň 12 view a s tím spojené URL, které budou s modely pracovat // 6 views
+ - [ ] view Vaší aplikace budou obsah předávat templatům (budete tedy implementovat 12 templatů) // 3 templates
+ - [ ] aplikace bude obsahovat alespoň 6 formulářů (ať už formulář vázaný na model nebo Váš vlastní) // 2 formuláře
+ - [x] výsledná aplikace by měla tvořit nějaký logický celek, tj. jednotlivé stránky na sebe budou odkazoval pomocí linků
+ - [x] blogovací a fórum aplikace nejsou přípustné, neboť jsme je dělali na přednášce
+ - [x] projekt na téma benzínové stanice není přípustný, neboť jsme jej dělali na cvičeních
+ - [x] aplikace by měla obsahovat grafické prvky a CSS styly (pro jednoduchout využijte např. knihovnu Bootstrap)
+ - [x] aplikace nemusí obsahovat geografickou složku
+ - [x] aplikace nesmí obsahovat generické view

@@ -1,13 +1,55 @@
-<!DOCTYPE html>
+{% load static %}
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    {% block head %}
-    {% endblock %}
-</head>
-<body>
-    
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{% static 'assets/css/main.css' %}" />
+        <link rel="stylesheet" href="{% static 'assets/css/bootstrap-icons.min.css' %}" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+            rel="stylesheet"
+        />
+        {% block head %}
+        {% endblock %}
+    </head>
+    <body class="font-roboto bg-background text-text">
+        <section class="flex h-full min-h-screen w-full flex-col">
+            <nav class="flex w-full flex-row gap-8 p-4">
+                <a class="border-b-4 border-b-transparent text-2xl font-medium transition-colors duration-200 hover:border-b-primary" href="{% url 'index' %}">
+                    <i class="bi bi-house-fill"></i> Hlavní Stránka
+                </a>
+                <a class="border-b-4 border-b-transparent text-2xl font-medium transition-colors duration-200 hover:border-b-primary" href="{% url 'search' %}">
+                    <i class="bi bi-search"></i> Vyhledávání
+                </a>
+                <a class="border-b-4 border-b-transparent text-2xl font-medium transition-colors duration-200 hover:border-b-primary" href="{% url 'manufacturers' %}">
+                    <i class="bi bi-gear"></i> Výrobci
+                </a>
+                {% if user_id %}
+                <a class="ml-auto border-b-4 border-b-transparent text-2xl font-medium transition-colors duration-200 hover:border-b-primary" href="{% url 'user' user_id %}">
+                    <i class="bi bi-person"></i> Profil
+                </a>
+                <a class="border-b-4 border-b-transparent text-2xl font-medium transition-colors duration-200 hover:border-b-primary" href="{% url 'logout' %}">
+                    <i class="bi bi-box-arrow-left"></i> Odhlášení
+                </a>
+                {% else %}
+                <a class="ml-auto border-b-4 border-b-transparent text-2xl font-medium transition-colors duration-200 hover:border-b-primary" href="{% url 'register' %}">
+                    <i class="bi bi-person-add"></i> Registrace
+                </a>
+                <a class="border-b-4 border-b-transparent text-2xl font-medium transition-colors duration-200 hover:border-b-primary" href="{% url 'login' %}">
+                    <i class="bi bi-person"></i> Přihlášení
+                </a>
+                {% endif %}
+            </nav>
+            <main class="flex flex-col flex-1 p-4">
+                {% block body %} {% endblock %}
+            </main>
+            <footer class="w-full bg-primary">
+                <h2 class="text-md font-bold text-center font-poppins text-white">Created by <a class="text-orange-400" href="https://patrick115.eu">Patrik Mintěl</a></h2>
+            </footer>
+        </section>
+    </body>
 </html>
