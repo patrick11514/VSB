@@ -85,7 +85,20 @@ const remove = procedure.DELETE.input(
     })
 ).query(async ({ input: { uuid, id } }) => {
     try {
-        await conn.deleteFrom('records').where('uuid', '=', uuid).where('id', '=', id).execute();
+        await conn.transaction().execute(async (trx) => {
+            const data = await trx.selectFrom('records').select('value').where('uuid', '=', uuid).where('id', '=', id).executeTakeFirstOrThrow();
+            await trx.deleteFrom('records').where('uuid', '=', uuid).where('id', '=', id).execute();
+
+            const currentValue = await trx.selectFrom('balance').select('value').where('uuid', '=', uuid).executeTakeFirstOrThrow();
+
+            await trx
+                .updateTable('balance')
+                .set({
+                    value: currentValue.value - data.value
+                })
+                .where('uuid', '=', uuid)
+                .execute();
+        });
 
         return {
             status: true
