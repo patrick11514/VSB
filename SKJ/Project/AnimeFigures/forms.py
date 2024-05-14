@@ -28,4 +28,4 @@ class FigureForm(forms.ModelForm):
 class ImageForm(forms.ModelForm):
     class Meta:
         model = Image
-        exclude = []
+        exclude = ["figure"]

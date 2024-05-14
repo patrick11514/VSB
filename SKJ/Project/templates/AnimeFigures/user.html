@@ -1,4 +1,5 @@
 {% extends "AnimeFigures/base.html" %} 
+{% load filters %}
 
 {% block head %}
 <title>{{ user.name }} | Anime Figurky</title>
@@ -10,10 +11,18 @@
     <h2 class="text-xl font-bold">Připojil se {{ user.getDate }} ({{ user.getDiff }} zpět)</h2>
     <main class="flex flex-col my-4">
         <h1 class="text-2xl font-bold font-poppins">Oblíbené figurky ({{ liked_figures.count }}): </h1>
-        {% for like in liked_figures %} 
-            {{ like.figure.name }}
-            {{ like.user.added }}
-        {% endfor %}
+        {% if liked_figures.count == 0 %}
+            <h4 class="text-red-500 font-bold">Tento uživatel nemá žádné oblíbené figurky</h4>
+        {% endif %}
+        <div class="flex flex-row flex-wrap gap-4">
+            {% for like in liked_figures %} 
+                {% if images|hash:like.figure.pk %}
+                    <a href="{% url 'figure' like.figure.pk %}"><img class="max-w-[80px] h-auto" src="{{ images|hash:like.figure.pk }}" alt="figure image" /></a>
+                {% else %}
+                    <a class="my-auto text-xl font-bold" href="{% url 'figure' like.figure.pk %}">{{ like.figure.name }}</a>
+                {% endif%}
+            {% endfor %}
+        </div>
     </main>
 </section>
 {% endblock %}

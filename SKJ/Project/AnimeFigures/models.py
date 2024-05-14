@@ -62,7 +62,7 @@ class Image(models.Model):
         return f"Image of {self.figure.name}"
 
 
-class UserLikes(models.Model):
+class UserLike(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE)
     figure = models.ForeignKey("Figure", on_delete=models.CASCADE)
 
@@ -70,7 +70,7 @@ class UserLikes(models.Model):
         return f"User {self.user.name} liked {self.figure.name}"
 
 
-class FigureComments(models.Model):
+class FigureComment(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE)
     figure = models.ForeignKey("Figure", on_delete=models.CASCADE)
     comment = models.TextField()
@@ -80,7 +80,7 @@ class FigureComments(models.Model):
         return f"{self.pk} - {self.user.name} commented on {self.figure.name}"
 
 
-class ProfileComments(models.Model):
+class ProfileComment(models.Model):
     user = models.ForeignKey("User", related_name="user", on_delete=models.CASCADE)
     profile = models.ForeignKey(
         "User", related_name="profile", on_delete=models.CASCADE

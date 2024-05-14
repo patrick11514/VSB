@@ -31,6 +31,8 @@ urlpatterns = [
     path("user/<int:user_id>", views.user, name="user"),
     # figures
     path("figure/<int:figure_id>", views.figure, name="figure"),
+    path("figure/<int:figure_id>/addImage", views.add_image, name="add_image"),
+    path("figure/<int:figure_id>/like", views.like, name="like"),
     path("figure/add", views.add_figure, name="add_figure"),
     path("search", views.search, name="search"),
     path("manufacturers", views.manufacturers, name="manufacturers"),

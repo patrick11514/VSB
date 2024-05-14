@@ -6,7 +6,11 @@
 
 {% block body %} 
 <section class="flex flex-col flex-1 m-auto w-[80%] min-w-72 bg-secondary text-white p-8 rounded-lg">
-    <h1 class="text-3xl font-bold font-poppins">Přehled figurky {{figure.name}}</h1>
+    <h1 class="text-3xl font-bold font-poppins">Přehled figurky {{figure.name}} 
+        {% if can_like %}
+            <a href="{% url 'like' figure.pk %}"><i class="bi bi-star-fill {% if liked %} text-yellow-400  {% endif %}"></i></a>
+        {% endif %}
+    </h1>
     <h2 class="text-xl font-bold">Přidána dne {{ figure.getDate }} ({{ figure.getDiff }} zpět) uživatelem 
         {% if figure.added_by.name %} 
             <a class="text-primary" href="{% url 'user' figure.added_by.pk %}">{{ figure.added_by.name }}</a> 
@@ -15,12 +19,49 @@
         {% endif %}
     </h2>
     <main class="flex flex-col my-4">
-        <h1 class="text-2xl font-bold font-poppins">Obrázky ({{ pictures.count }}): <a href="{% url 'add_figure' %}"><button class="bg-primary font-roboto text-xl px-2 py-1 rounded-lg border-black border-2 hover:bg-accent transition-colors duration-200">Přidat obrázek</button></a></h1>
+        <h1 class="text-2xl font-bold font-poppins">Obrázky ({{ pictures.count }}): <a href="{% url 'add_image' figure.pk %}"><button class="bg-primary font-roboto text-xl px-2 py-1 rounded-lg border-black border-2 hover:bg-accent transition-colors duration-200">Přidat obrázek</button></a></h1>
         {% if pictures.count == 0 %}
             <h4 class="text-red-500 font-bold">Tato figurka nemá žádné obrázky</h4>
         {% else %}
-            OBR
+            <div class="flex flex-row flex-wrap">
+                {% for image in pictures %}
+                    <a href="{{ image.url }}" target="_blank"><img class="max-w-[150px] h-auto" src="{{ image.url }}" alt="figure image" /></a>
+                {% endfor %}
+            </div>
         {% endif %}
+        <h1 class="text-2xl font-bold font-poppins">Základní informace:</h1>
+        <table class="border-black border-2 w-max">
+            <tbody>
+                <tr>
+                    <td class="border-black border-2 font-bold">Název:</td>
+                    <td class="border-black border-2">{{ figure.name }}</td>
+                </tr>
+                <tr>
+                    <td class="border-black border-2 font-bold">Anime:</td>
+                    <td class="border-black border-2">{{ figure.anime }}</td>
+                </tr>
+                <tr>
+                    <td class="border-black border-2 font-bold">Velikost:</td>
+                    <td class="border-black border-2">{{ figure.size }}cm</td>
+                </tr>
+                <tr>
+                    <td class="border-black border-2 font-bold">Váha:</td>
+                    <td class="border-black border-2">{{ figure.weight }}g</td>
+                </tr>
+                <tr>
+                    <td class="border-black border-2 font-bold">Cena:</td>
+                    <td class="border-black border-2">{{ figure.price }}CZK</td>
+                </tr>
+                <tr>
+                    <td class="border-black border-2 font-bold">Rok vydání:</td>
+                    <td class="border-black border-2">{{ figure.year }}</td>
+                </tr>
+                <tr>
+                    <td class="border-black border-2 font-bold">Firma:</td>
+                    <td class="border-black border-2">{{ figure.manufacturer.name }}</td>
+                </tr>
+            </tbody>
+        </table>
     </main>
 </section>
 {% endblock %}

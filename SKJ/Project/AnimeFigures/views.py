@@ -2,8 +2,8 @@ from bcrypt import checkpw, gensalt, hashpw
 from django.http import HttpRequest, HttpResponseBadRequest
 from django.shortcuts import get_list_or_404, get_object_or_404, redirect, render
 
-from AnimeFigures.forms import FigureForm, LoginForm, RegisterForm
-from AnimeFigures.models import Figure, Image, User, UserLikes
+from AnimeFigures.forms import FigureForm, ImageForm, LoginForm, RegisterForm
+from AnimeFigures.models import Figure, Image, User, UserLike
 
 session_fields = ["user_id", "username", "email"]
 
@@ -125,7 +125,26 @@ def manufacturers(request: HttpRequest):
 def user(request: HttpRequest, user_id: int):
     user = get_object_or_404(User, pk=user_id)
 
-    liked_figures = UserLikes.objects.filter(user=user)
+    liked_figures = UserLike.objects.filter(user=user)
+
+    images: dict[int, str | None] = {}
+
+    listDict = list(
+        map(
+            lambda like: {
+                "id": like.figure.pk,
+                "url": Image.objects.filter(figure=like.figure).first(),
+            },
+            list(liked_figures),
+        )
+    )
+
+    for item in listDict:
+        id = item["id"]
+        item = item["url"]
+        if item is not None:
+            item = item.url
+        images[id] = item
 
     return render(
         request,
@@ -134,6 +153,7 @@ def user(request: HttpRequest, user_id: int):
         | {
             "user": user,
             "liked_figures": liked_figures,
+            "images": images,
         },
     )
 
@@ -150,6 +170,14 @@ def figure(request: HttpRequest, figure_id: int):
 
     pictures = Image.objects.filter(figure=figure)
 
+    can_like = request.session.get("user_id") is not None
+    liked = None
+
+    if can_like:
+        liked = UserLike.objects.filter(
+            user=request.session.get("user_id"), figure=figure
+        ).first()
+
     return render(
         request,
         "AnimeFigures/figure.html",
@@ -157,6 +185,8 @@ def figure(request: HttpRequest, figure_id: int):
         | {
             "figure": figure,
             "pictures": pictures,
+            "can_like": can_like,
+            "liked": liked,
         },
     )
 
@@ -183,3 +213,57 @@ def add_figure(request: HttpRequest):
             "figure_form": figure_form,
         },
     )
+
+
+def add_image(request: HttpRequest, figure_id: int):
+    if request.session.get("user_id") is None:
+        return redirect("login")
+
+    figure = get_object_or_404(Figure, pk=figure_id)
+
+    if request.method == "POST":
+        image_form = ImageForm(request.POST)
+
+        if image_form.is_valid():
+            image = Image()
+            image.url = image_form.cleaned_data["url"]
+            image.figure = figure
+
+            image.save()
+
+            return redirect("figure", figure_id)
+
+    image_form = ImageForm()
+
+    return render(
+        request,
+        "AnimeFigures/add_image.html",
+        get_session_data(request)
+        | {
+            "image_form": image_form,
+            "figure": figure,
+        },
+    )
+
+
+def like(request: HttpRequest, figure_id: int):
+    if request.session.get("user_id") is None:
+        return redirect("login")
+
+    figure = get_object_or_404(Figure, pk=figure_id)
+
+    like = UserLike.objects.filter(
+        figure=figure.pk, user=request.session.get("user_id")
+    ).first()
+
+    if like is None:
+        like = UserLike()
+        like.figure = figure
+        like.user = User.objects.get(pk=request.session.get("user_id"))
+        like.save()
+
+        return redirect("figure", figure_id)
+
+    like.delete()
+
+    return redirect("figure", figure_id)

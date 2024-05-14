@@ -2,19 +2,19 @@ from django.contrib import admin
 
 from .models import (
     Figure,
-    FigureComments,
+    FigureComment,
     Image,
     Manufacturer,
-    ProfileComments,
+    ProfileComment,
     User,
-    UserLikes,
+    UserLike,
 )
 
 # Register your models here.
 admin.site.register(Figure)
-admin.site.register(FigureComments)
+admin.site.register(FigureComment)
 admin.site.register(Image)
 admin.site.register(Manufacturer)
-admin.site.register(ProfileComments)
+admin.site.register(ProfileComment)
 admin.site.register(User)
-admin.site.register(UserLikes)
+admin.site.register(UserLike)
