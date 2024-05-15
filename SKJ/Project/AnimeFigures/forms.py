@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Figure, Image, Manufacturer, User
+from .models import Figure, FigureComment, Image, Manufacturer, ProfileComment, User
 
 
 class RegisterForm(forms.ModelForm):
@@ -35,3 +35,9 @@ class ManufacturerForm(forms.ModelForm):
     class Meta:
         model = Manufacturer
         exclude = []
+
+
+class UserCommentForm(forms.ModelForm):
+    class Meta:
+        model = ProfileComment
+        fields = ["comment"]

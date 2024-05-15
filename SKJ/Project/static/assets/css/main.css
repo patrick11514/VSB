@@ -558,24 +558,8 @@ video {
   position: static;
 }
 
-.absolute {
-  position: absolute;
-}
-
 .relative {
   position: relative;
-}
-
-.top-full {
-  top: 100%;
-}
-
-.-top-full {
-  top: -100%;
-}
-
-.-top-16 {
-  top: -4rem;
 }
 
 .top-0 {
@@ -633,6 +617,18 @@ video {
   height: 100%;
 }
 
+.max-h-24 {
+  max-height: 6rem;
+}
+
+.min-h-16 {
+  min-height: 4rem;
+}
+
+.min-h-24 {
+  min-height: 6rem;
+}
+
 .min-h-96 {
   min-height: 24rem;
 }
@@ -643,6 +639,10 @@ video {
 
 .w-\[50\%\] {
   width: 50%;
+}
+
+.w-\[60\%\] {
+  width: 60%;
 }
 
 .w-\[80\%\] {
@@ -656,6 +656,10 @@ video {
 .w-max {
   width: -moz-max-content;
   width: max-content;
+}
+
+.min-w-64 {
+  min-width: 16rem;
 }
 
 .min-w-72 {
@@ -702,8 +706,8 @@ video {
   justify-content: center;
 }
 
-.justify-stretch {
-  justify-content: stretch;
+.gap-2 {
+  gap: 0.5rem;
 }
 
 .gap-4 {
@@ -712,10 +716,6 @@ video {
 
 .gap-8 {
   gap: 2rem;
-}
-
-.gap-2 {
-  gap: 0.5rem;
 }
 
 .rounded-lg {
@@ -789,6 +789,16 @@ video {
   padding-right: 0.5rem;
 }
 
+.py-0 {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.py-0\.5 {
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+}
+
 .py-1 {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
@@ -816,6 +826,11 @@ video {
   line-height: 2.25rem;
 }
 
+.text-6xl {
+  font-size: 3.75rem;
+  line-height: 1;
+}
+
 .text-lg {
   font-size: 1.125rem;
   line-height: 1.75rem;
@@ -832,6 +847,16 @@ video {
 
 .font-medium {
   font-weight: 500;
+}
+
+.text-black {
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity));
+}
+
+.text-green-700 {
+  --tw-text-opacity: 1;
+  color: rgb(21 128 61 / var(--tw-text-opacity));
 }
 
 .text-orange-400 {
@@ -864,8 +889,9 @@ video {
   color: rgb(250 204 21 / var(--tw-text-opacity));
 }
 
-.filter {
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+.outline-none {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
 }
 
 .transition-all {
@@ -945,6 +971,11 @@ form p select {
 .hover\:bg-accent:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(86 175 232 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-secondary:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(137 192 227 / var(--tw-bg-opacity));
 }
 
 .active\:translate-y-1:active {

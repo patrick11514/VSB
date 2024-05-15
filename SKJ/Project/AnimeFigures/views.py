@@ -1,5 +1,7 @@
+import json
+
 from bcrypt import checkpw, gensalt, hashpw
-from django.http import HttpRequest, HttpResponseBadRequest
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_list_or_404, get_object_or_404, redirect, render
 
 from AnimeFigures.forms import (
@@ -8,8 +10,17 @@ from AnimeFigures.forms import (
     LoginForm,
     ManufacturerForm,
     RegisterForm,
+    UserCommentForm,
 )
-from AnimeFigures.models import Figure, Image, Manufacturer, User, UserLike
+from AnimeFigures.models import (
+    Figure,
+    FigureComment,
+    Image,
+    Manufacturer,
+    ProfileComment,
+    User,
+    UserLike,
+)
 
 session_fields = ["user_id", "username", "email"]
 
@@ -30,7 +41,7 @@ def remove_session_data(request: HttpRequest):
             del request.session[field]
 
 
-#######################x## INDEX
+########################## INDEX
 
 
 def index(request: HttpRequest):
@@ -115,6 +126,11 @@ def figure(request: HttpRequest, figure_id: int):
 
 
 ########################## IMAGES
+def get_figure_image(figure: Figure):
+    image = Image.objects.filter(figure=figure).first()
+    if image is not None:
+        return image.url
+    return None
 
 
 def get_figure_images(figures: list[Figure]):
@@ -349,6 +365,9 @@ def user(request: HttpRequest, user_id: int):
 
     figures = list(map(lambda like: like.figure, liked_figures))
     images = get_figure_images(figures)
+    comments = ProfileComment.objects.filter(profile=user)
+
+    comment_form = UserCommentForm()
 
     return render(
         request,
@@ -358,6 +377,8 @@ def user(request: HttpRequest, user_id: int):
             "user": user,
             "liked_figures": liked_figures,
             "images": images,
+            "comments": comments,
+            "comment_form": comment_form,
         },
     )
 
@@ -386,4 +407,43 @@ def like(request: HttpRequest, figure_id: int):
 
 
 def search(request: HttpRequest):
+    if request.method == "POST":
+        searchText = request.POST.get("text")
+
+        # search users
+        users = User.objects.filter(name__icontains=searchText).all()
+
+        # search figures
+        figures = Figure.objects.filter(name__icontains=searchText).all()
+
+        # return as json
+        response = HttpResponse()
+        response.headers["Content-Type"] = "application/json"
+
+        usersData = map(
+            lambda user: {
+                "id": user.pk,
+                "name": user.name,
+                "date": user.getDate(),
+                "likes": UserLike.objects.filter(user=user).count(),
+            },
+            list(users),
+        )
+
+        figuresData = map(
+            lambda figure: {
+                "id": figure.pk,
+                "name": figure.name,
+                "manufacturer": figure.manufacturer.name,
+                "price": figure.price,
+                "image": get_figure_image(figure),
+            },
+            list(figures),
+        )
+
+        response.content = json.dumps(
+            {"users": list(usersData), "figures": list(figuresData)}
+        )
+        return response
+
     return render(request, "AnimeFigures/search.html", get_session_data(request))

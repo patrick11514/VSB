@@ -1,0 +1,19 @@
+{% extends "AnimeFigures/base.html" %} 
+{% load static %}
+
+{% block head %}
+<title>Vyhledávání | Anime Figurky</title>
+<script src="{% static 'assets/js/search.js' %}" defer></script>
+{% endblock %}
+
+{% block body %} 
+<section class="flex flex-col w-full h-full text-text p-8 rounded-lg gap-4">
+    <h1 class="text-center font-poppins font-bold text-3xl">Vyhledat</h1>
+    <div class="flex flex-row mx-auto">
+        <input class="rounded-md border-2 border-primary px-2 py-0.5 font-roboto text-lg font-medium text-black outline-none" id="search" type="search" placeholder="Zadej text..." />
+        {% csrf_token %}
+    </div>
+    <div id="results" class="w-full flex flex-col gap-4">
+    </div>
+</section>
+{% endblock %}
