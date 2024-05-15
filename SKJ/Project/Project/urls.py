@@ -40,6 +40,15 @@ urlpatterns = [
     ),
     path("figure/<int:figure_id>/delete", views.delete_figure, name="delete_figure"),
     path("figure/add", views.add_figure, name="add_figure"),
+    # search
     path("search", views.search, name="search"),
+    # manufacturers
     path("manufacturers", views.manufacturers, name="manufacturers"),
+    path("manufacturer/add", views.add_manufacturer, name="add_manufacturer"),
+    path("manufacturer/<int:manufacturer_id>", views.manufacturer, name="manufacturer"),
+    path(
+        "manufacturer/<int:manufacturer_id>/remove",
+        views.remove_manufacturer,
+        name="remove_manufacturer",
+    ),
 ]

@@ -1,0 +1,31 @@
+
+{% extends "AnimeFigures/base.html" %} 
+{% load filters %}
+
+{% block head %}
+<title>{{ manufacturer.name }} | Anime Figurky</title>
+{% endblock %}
+
+{% block body %} 
+<section class="flex flex-col flex-1 m-auto w-[80%] min-w-72 bg-secondary text-white p-8 rounded-lg">
+    <h1 class="text-3xl font-bold font-poppins flex flex-row">
+        Profil výrobce {{ manufacturer.name }}
+        {% if logged %}
+            <a class="ml-auto" href="{% url 'remove_manufacturer' manufacturer.pk %}"><i class="bi bi-trash text-red-500"></i></a>
+        {% endif %}
+    </h1>
+    <h1 class="text-2xl font-bold font-poppins">Figurky výrobce ({{ figures.count }}):</h1>
+    {% if figures.count  == 0 %}
+        <h4 class="font-bold text-red-500">Výrobce nemá žádné figurky</h4>
+    {% endif %}
+    <main class="flex flex-row flex-wrap gap-4 items-stretch">
+        {% for figure in figures %}
+            {% if images|hash:figure.pk %}
+                <a class="p-1 border-primary border-2 rounded-md" href="{% url 'figure' figure.pk %}"><img class="max-w-[120px] h-auto" src="{{ images|hash:figure.pk }}" alt="figure image" /></a>
+            {% else %}
+                <a class="p-1 border-primary border-2 rounded-md text-xl font-bold flex" href="{% url 'figure' figure.pk %}"><span class="my-auto">{{ figure.name }}</span></a>
+            {% endif %}
+        {% endfor %}
+    </main>
+</section>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "AnimeFigures/base.html" %} 
+{% load filters %}
+
+{% block head %}
+<title>Výrobci | Anime Figurky</title>
+{% endblock %}
+
+{% block body %} 
+<section class="flex flex-col p-2 gap-2">
+
+    <a href="{% url 'add_manufacturer' %}"><button class="bg-primary font-roboto text-xl px-2 py-1 rounded-lg border-black border-2 hover:bg-accent transition-colors duration-200">Přidat výrobce</button></a>
+    {% for manufacturer in manufacturers %}
+    <div class="flex flex-col">
+        <a href="{% url 'manufacturer' manufacturer.pk %}" class="text-3xl font-bold font-poppins flex flex-row">
+            {{ manufacturer.name }} ({{ manufacturer.country }}) 
+        </a>
+    </div>
+    {% endfor %}
+</section>
+{% endblock %}

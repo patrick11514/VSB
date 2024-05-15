@@ -2,8 +2,14 @@ from bcrypt import checkpw, gensalt, hashpw
 from django.http import HttpRequest, HttpResponseBadRequest
 from django.shortcuts import get_list_or_404, get_object_or_404, redirect, render
 
-from AnimeFigures.forms import FigureForm, ImageForm, LoginForm, RegisterForm
-from AnimeFigures.models import Figure, Image, User, UserLike
+from AnimeFigures.forms import (
+    FigureForm,
+    ImageForm,
+    LoginForm,
+    ManufacturerForm,
+    RegisterForm,
+)
+from AnimeFigures.models import Figure, Image, Manufacturer, User, UserLike
 
 session_fields = ["user_id", "username", "email"]
 
@@ -269,10 +275,67 @@ def logout(request: HttpRequest):
 
 
 def manufacturers(request: HttpRequest):
+    manufacturers = Manufacturer.objects.all()
+
     return render(
         request,
         "AnimeFigures/manufacturers.html",
-        get_session_data(request),
+        get_session_data(request)
+        | {
+            "manufacturers": manufacturers,
+        },
+    )
+
+
+def add_manufacturer(request: HttpRequest):
+    if request.session.get("user_id") is None:
+        return redirect("login")
+
+    if request.method == "POST":
+        manufacturer_form = ManufacturerForm(request.POST)
+
+        if manufacturer_form.is_valid():
+            manufacturer_form.save()
+            return redirect("manufacturers")
+
+    manufacturer_form = ManufacturerForm()
+
+    return render(
+        request,
+        "AnimeFigures/add_manufacturer.html",
+        get_session_data(request) | {"manufacturer_form": manufacturer_form},
+    )
+
+
+def remove_manufacturer(request: HttpRequest, manufacturer_id: int):
+    if request.session.get("user_id") is None:
+        return redirect("login")
+
+    manufacturer = get_object_or_404(Manufacturer, pk=manufacturer_id)
+
+    manufacturer.delete()
+
+    return redirect("manufacturers")
+
+
+def manufacturer(request: HttpRequest, manufacturer_id: int):
+    manufacturer = get_object_or_404(Manufacturer, pk=manufacturer_id)
+
+    logged = request.session.get("user_id") is not None
+
+    figures = Figure.objects.filter(manufacturer=manufacturer)
+    images = get_figure_images(figures)
+
+    return render(
+        request,
+        "AnimeFigures/manufacturer.html",
+        get_session_data(request)
+        | {
+            "manufacturer": manufacturer,
+            "figures": figures,
+            "images": images,
+            "logged": logged,
+        },
     )
 
 

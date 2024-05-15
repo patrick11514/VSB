@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Figure, Image, User
+from .models import Figure, Image, Manufacturer, User
 
 
 class RegisterForm(forms.ModelForm):
@@ -29,3 +29,9 @@ class ImageForm(forms.ModelForm):
     class Meta:
         model = Image
         exclude = ["figure"]
+
+
+class ManufacturerForm(forms.ModelForm):
+    class Meta:
+        model = Manufacturer
+        exclude = []
