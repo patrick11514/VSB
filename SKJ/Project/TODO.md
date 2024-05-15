@@ -16,6 +16,6 @@
 - [ ] Komentáře na figurce
 - [x] Hlavní stránka (Uživatelé + proklik, Figurky + proklik)
 - [ ] Manufacturers list + profil manufacturera (list figurek, co vydal), možnost přidání nového
-- [ ] Mazání obrázků u figurky
-- [ ] Mazání figurky
+- [x] Mazání obrázků u figurky
+- [x] Mazání figurky
 - [ ] Mazání manufacturera - smaže všechny figurky !!!

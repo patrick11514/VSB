@@ -6,9 +6,10 @@
 
 {% block body %} 
 <section class="flex flex-col flex-1 m-auto w-[80%] min-w-72 bg-secondary text-white p-8 rounded-lg">
-    <h1 class="text-3xl font-bold font-poppins">Přehled figurky {{figure.name}} 
-        {% if can_like %}
+    <h1 class="text-3xl font-bold font-poppins flex flex-row">Přehled figurky {{figure.name}} 
+        {% if logged %}
             <a href="{% url 'like' figure.pk %}"><i class="bi bi-star-fill {% if liked %} text-yellow-400  {% endif %}"></i></a>
+            <a class="ml-auto" href="{% url 'delete_figure' figure.pk %}"><i class="bi bi-trash text-red-500"></i></a>
         {% endif %}
     </h1>
     <h2 class="text-xl font-bold">Přidána dne {{ figure.getDate }} ({{ figure.getDiff }} zpět) uživatelem 
@@ -23,9 +24,16 @@
         {% if pictures.count == 0 %}
             <h4 class="text-red-500 font-bold">Tato figurka nemá žádné obrázky</h4>
         {% else %}
-            <div class="flex flex-row flex-wrap">
+            <div class="flex flex-row flex-wrap items-stretch gap-4">
                 {% for image in pictures %}
-                    <a href="{{ image.url }}" target="_blank"><img class="max-w-[150px] h-auto" src="{{ image.url }}" alt="figure image" /></a>
+                <div class="flex flex-col">
+                    <a class="my-auto" href="{{ image.url }}" target="_blank">
+                        <img class="max-w-[150px] h-auto" src="{{ image.url }}" alt="figure image" />
+                    </a>
+                    {% if logged %}
+                        <a href="{% url 'delete_image' figure.pk image.pk %}"><i class="bi bi-trash text-red-500 relative top-0 cursor-pointer"></i>
+                    {% endif %}
+                </div>
                 {% endfor %}
             </div>
         {% endif %}

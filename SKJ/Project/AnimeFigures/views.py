@@ -8,7 +8,7 @@ from AnimeFigures.models import Figure, Image, User, UserLike
 session_fields = ["user_id", "username", "email"]
 
 
-# Create your views here.
+######################### FUNCTIONS
 def get_session_data(request: HttpRequest):
     dictionary = {}
 
@@ -22,6 +22,93 @@ def remove_session_data(request: HttpRequest):
     for field in session_fields:
         if request.session.get(field) is not None:
             del request.session[field]
+
+
+#######################x## INDEX
+
+
+def index(request: HttpRequest):
+    figures = Figure.objects.all()
+    users = User.objects.all()
+
+    # first image of each figure
+    images = get_figure_images(figures)
+
+    return render(
+        request,
+        "AnimeFigures/index.html",
+        get_session_data(request)
+        | {"users": users, "figures": figures, "images": images},
+    )
+
+
+########################## FIGURES
+
+
+def add_figure(request: HttpRequest):
+    if request.session.get("user_id") is None:
+        return redirect("login")
+
+    if request.method == "POST":
+        figure_form = FigureForm(request.POST)
+
+        if figure_form.is_valid():
+            figure: Figure = figure_form.save(commit=False)
+            figure.added_by = User.objects.get(pk=request.session.get("user_id"))
+            figure.save()
+
+            return redirect("figure", figure.pk)
+
+    figure_form = FigureForm()
+
+    return render(
+        request,
+        "AnimeFigures/add_figure.html",
+        get_session_data(request)
+        | {
+            "figure_form": figure_form,
+        },
+    )
+
+
+def delete_figure(request: HttpRequest, figure_id: int):
+    if request.session.get("user_id") is None:
+        return redirect("login")
+
+    figure = get_object_or_404(Figure, pk=figure_id)
+
+    figure.delete()
+
+    return redirect("index")
+
+
+def figure(request: HttpRequest, figure_id: int):
+    figure = get_object_or_404(Figure, pk=figure_id)
+
+    pictures = Image.objects.filter(figure=figure)
+
+    logged = request.session.get("user_id") is not None
+    liked = None
+
+    if logged:
+        liked = UserLike.objects.filter(
+            user=request.session.get("user_id"), figure=figure
+        ).first()
+
+    return render(
+        request,
+        "AnimeFigures/figure.html",
+        get_session_data(request)
+        | {
+            "figure": figure,
+            "pictures": pictures,
+            "logged": logged,
+            "liked": liked,
+        },
+    )
+
+
+########################## IMAGES
 
 
 def get_figure_images(figures: list[Figure]):
@@ -47,23 +134,50 @@ def get_figure_images(figures: list[Figure]):
     return images
 
 
-def index(request: HttpRequest):
-    figures = Figure.objects.all()
-    users = User.objects.all()
+def add_image(request: HttpRequest, figure_id: int):
+    if request.session.get("user_id") is None:
+        return redirect("login")
 
-    # first image of each figure
-    images = get_figure_images(figures)
+    figure = get_object_or_404(Figure, pk=figure_id)
+
+    if request.method == "POST":
+        image_form = ImageForm(request.POST)
+
+        if image_form.is_valid():
+            image = Image()
+            image.url = image_form.cleaned_data["url"]
+            image.figure = figure
+
+            image.save()
+
+            return redirect("figure", figure_id)
+
+    image_form = ImageForm()
 
     return render(
         request,
-        "AnimeFigures/index.html",
+        "AnimeFigures/add_image.html",
         get_session_data(request)
-        | {"users": users, "figures": figures, "images": images},
+        | {
+            "image_form": image_form,
+            "figure": figure,
+        },
     )
 
 
-def search(request: HttpRequest):
-    return render(request, "AnimeFigures/search.html", get_session_data(request))
+def delete_image(request: HttpRequest, figure_id: int, image_id: int):
+    if request.session.get("user_id") is None:
+        return redirect("login")
+
+    figure = get_object_or_404(Figure, pk=figure_id)
+    image = get_object_or_404(Image, pk=image_id)
+
+    image.delete()
+
+    return redirect("figure", figure.pk)
+
+
+########################## AUTH
 
 
 def register(request: HttpRequest):
@@ -144,12 +258,25 @@ def login(request: HttpRequest):
     return render(request, "AnimeFigures/login.html", {"login_form": login_form})
 
 
+def logout(request: HttpRequest):
+    if request.session.get("user_id") is not None:
+        remove_session_data(request)
+
+    return redirect("index")
+
+
+########################## MANUFACTURER
+
+
 def manufacturers(request: HttpRequest):
     return render(
         request,
         "AnimeFigures/manufacturers.html",
         get_session_data(request),
     )
+
+
+########################## USER
 
 
 def user(request: HttpRequest, user_id: int):
@@ -168,94 +295,6 @@ def user(request: HttpRequest, user_id: int):
             "user": user,
             "liked_figures": liked_figures,
             "images": images,
-        },
-    )
-
-
-def logout(request: HttpRequest):
-    if request.session.get("user_id") is not None:
-        remove_session_data(request)
-
-    return redirect("index")
-
-
-def figure(request: HttpRequest, figure_id: int):
-    figure = get_object_or_404(Figure, pk=figure_id)
-
-    pictures = Image.objects.filter(figure=figure)
-
-    can_like = request.session.get("user_id") is not None
-    liked = None
-
-    if can_like:
-        liked = UserLike.objects.filter(
-            user=request.session.get("user_id"), figure=figure
-        ).first()
-
-    return render(
-        request,
-        "AnimeFigures/figure.html",
-        get_session_data(request)
-        | {
-            "figure": figure,
-            "pictures": pictures,
-            "can_like": can_like,
-            "liked": liked,
-        },
-    )
-
-
-def add_figure(request: HttpRequest):
-    if request.session.get("user_id") is None:
-        return redirect("login")
-
-    if request.method == "POST":
-        figure_form = FigureForm(request.POST)
-
-        if figure_form.is_valid():
-            figure: Figure = figure_form.save()
-
-            return redirect("figure", figure.pk)
-
-    figure_form = FigureForm()
-
-    return render(
-        request,
-        "AnimeFigures/add_figure.html",
-        get_session_data(request)
-        | {
-            "figure_form": figure_form,
-        },
-    )
-
-
-def add_image(request: HttpRequest, figure_id: int):
-    if request.session.get("user_id") is None:
-        return redirect("login")
-
-    figure = get_object_or_404(Figure, pk=figure_id)
-
-    if request.method == "POST":
-        image_form = ImageForm(request.POST)
-
-        if image_form.is_valid():
-            image = Image()
-            image.url = image_form.cleaned_data["url"]
-            image.figure = figure
-
-            image.save()
-
-            return redirect("figure", figure_id)
-
-    image_form = ImageForm()
-
-    return render(
-        request,
-        "AnimeFigures/add_image.html",
-        get_session_data(request)
-        | {
-            "image_form": image_form,
-            "figure": figure,
         },
     )
 
@@ -281,3 +320,7 @@ def like(request: HttpRequest, figure_id: int):
     like.delete()
 
     return redirect("figure", figure_id)
+
+
+def search(request: HttpRequest):
+    return render(request, "AnimeFigures/search.html", get_session_data(request))

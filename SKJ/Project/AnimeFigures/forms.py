@@ -22,7 +22,7 @@ class LoginForm(forms.ModelForm):
 class FigureForm(forms.ModelForm):
     class Meta:
         model = Figure
-        exclude = []
+        exclude = ["added_by"]
 
 
 class ImageForm(forms.ModelForm):

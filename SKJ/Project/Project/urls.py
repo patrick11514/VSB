@@ -33,6 +33,12 @@ urlpatterns = [
     path("figure/<int:figure_id>", views.figure, name="figure"),
     path("figure/<int:figure_id>/addImage", views.add_image, name="add_image"),
     path("figure/<int:figure_id>/like", views.like, name="like"),
+    path(
+        "figure/<int:figure_id>/deleteImage/<int:image_id>",
+        views.delete_image,
+        name="delete_image",
+    ),
+    path("figure/<int:figure_id>/delete", views.delete_figure, name="delete_figure"),
     path("figure/add", views.add_figure, name="add_figure"),
     path("search", views.search, name="search"),
     path("manufacturers", views.manufacturers, name="manufacturers"),

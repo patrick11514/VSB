@@ -7,16 +7,16 @@ def dateDiff(date1: datetime.date, date2: datetime.date) -> int:
     """
     datesDiff = date1 - date2
 
-    diff = abs(datesDiff.days / 365.25)
+    diff = round(abs(datesDiff.days / 365.25))
 
     if diff > 0:
         return f"{diff} let"
 
-    diff = abs(datesDiff.days / 30)
+    diff = round(abs(datesDiff.days / 30))
 
     if diff > 0:
         return f"{diff} měsíců"
 
-    diff = abs(datesDiff.days)
+    diff = round(abs(datesDiff.days))
 
     return f"{diff} dní"
