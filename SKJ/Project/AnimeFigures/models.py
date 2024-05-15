@@ -11,16 +11,16 @@ class User(models.Model):
     name = models.CharField(max_length=25)
     email = models.EmailField()
     password = models.CharField(max_length=255)
-    added = models.DateField(auto_now_add=True)
+    added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
         return self.name
 
     def getDate(self):
-        return self.added.strftime("%d.%m.%Y")
+        return self.added.strftime("%d.%m.%Y %H:%M:%S")
 
     def getDiff(self):
-        return dateDiff(self.added, datetime.date.today())
+        return dateDiff(self.added, datetime.datetime.now(datetime.timezone.utc))
 
 
 class Manufacturer(models.Model):
@@ -41,17 +41,17 @@ class Figure(models.Model):
     manufacturer = models.ForeignKey(
         "Manufacturer", null=False, blank=False, on_delete=models.CASCADE
     )
-    added = models.DateField(auto_now_add=True)
+    added = models.DateTimeField(auto_now_add=True)
     added_by = models.ForeignKey("User", on_delete=models.SET_NULL, null=True)
 
     def __str__(self) -> str:
         return self.name
 
     def getDate(self):
-        return self.added.strftime("%d.%m.%Y")
+        return self.added.strftime("%d.%m.%Y %H:%M:%S")
 
     def getDiff(self):
-        return dateDiff(self.added, datetime.date.today())
+        return dateDiff(self.added, datetime.datetime.now(datetime.timezone.utc))
 
 
 class Image(models.Model):
@@ -74,10 +74,16 @@ class FigureComment(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE)
     figure = models.ForeignKey("Figure", on_delete=models.CASCADE)
     comment = models.TextField()
-    date = models.DateField()
+    date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
         return f"{self.pk} - {self.user.name} commented on {self.figure.name}"
+
+    def getDate(self):
+        return self.date.strftime("%d.%m.%Y %H:%M:%S")
+
+    def getDiff(self):
+        return dateDiff(self.date, datetime.datetime.now(datetime.timezone.utc))
 
 
 class ProfileComment(models.Model):
@@ -86,7 +92,13 @@ class ProfileComment(models.Model):
         "User", related_name="profile", on_delete=models.CASCADE
     )
     comment = models.TextField()
-    date = models.DateField()
+    date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
         return f"{self.pk} - {self.user.name} commented on {self.profile.name}"
+
+    def getDate(self):
+        return self.date.strftime("%d.%m.%Y %H:%M:%S")
+
+    def getDiff(self):
+        return dateDiff(self.date, datetime.datetime.now(datetime.timezone.utc))

@@ -17,3 +17,11 @@ form p input {
 form p select {
     @apply rounded-md border-2 border-primary px-2 py-0.5 font-roboto text-lg font-medium text-black outline-none;
 }
+
+form p textarea {
+    @apply w-[50%] rounded-md border-2 border-primary px-2 py-0.5 font-roboto text-lg font-medium text-black outline-none;
+}
+
+form#comment p {
+    @apply flex w-full flex-col;
+}

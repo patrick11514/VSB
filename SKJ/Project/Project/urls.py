@@ -29,6 +29,7 @@ urlpatterns = [
     path("logout", views.logout, name="logout"),
     # account
     path("user/<int:user_id>", views.user, name="user"),
+    path("user/<int:user_id>/comment", views.user_add_comment, name="user_add_comment"),
     # figures
     path("figure/<int:figure_id>", views.figure, name="figure"),
     path("figure/<int:figure_id>/addImage", views.add_image, name="add_image"),
@@ -39,6 +40,11 @@ urlpatterns = [
         name="delete_image",
     ),
     path("figure/<int:figure_id>/delete", views.delete_figure, name="delete_figure"),
+    path(
+        "figure/<int:figure_id>/comment",
+        views.figure_add_comment,
+        name="figure_add_comment",
+    ),
     path("figure/add", views.add_figure, name="add_figure"),
     # search
     path("search", views.search, name="search"),

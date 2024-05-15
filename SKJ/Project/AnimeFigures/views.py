@@ -1,10 +1,12 @@
 import json
+from multiprocessing.managers import BaseManager
 
 from bcrypt import checkpw, gensalt, hashpw
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_list_or_404, get_object_or_404, redirect, render
 
 from AnimeFigures.forms import (
+    FigureCommentForm,
     FigureForm,
     ImageForm,
     LoginForm,
@@ -100,9 +102,21 @@ def delete_figure(request: HttpRequest, figure_id: int):
 
 
 def figure(request: HttpRequest, figure_id: int):
+    sortType = request.GET.get("sort")
+
     figure = get_object_or_404(Figure, pk=figure_id)
 
+    comments: BaseManager[FigureComment]
+    if (sortType is None) or (sortType == "desc"):
+        sortType = "desc"
+        comments = FigureComment.objects.filter(figure=figure).order_by("-date")
+    else:
+        sortType = "asc"
+        comments = FigureComment.objects.filter(figure=figure).order_by("date")
+
     pictures = Image.objects.filter(figure=figure)
+
+    comment_form = FigureCommentForm()
 
     logged = request.session.get("user_id") is not None
     liked = None
@@ -121,6 +135,9 @@ def figure(request: HttpRequest, figure_id: int):
             "pictures": pictures,
             "logged": logged,
             "liked": liked,
+            "comments": comments,
+            "sortType": sortType,
+            "comment_form": comment_form,
         },
     )
 
@@ -197,6 +214,22 @@ def delete_image(request: HttpRequest, figure_id: int, image_id: int):
     image.delete()
 
     return redirect("figure", figure.pk)
+
+
+def figure_add_comment(request: HttpRequest, figure_id: int):
+    if request.session.get("user_id") is None:
+        return redirect("login")
+
+    if request.method == "POST":
+        comment_form = FigureCommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = FigureComment()
+            comment.user = User.objects.get(pk=request.session.get("user_id"))
+            comment.figure = Figure.objects.get(pk=figure_id)
+            comment.comment = comment_form.cleaned_data["comment"]
+            comment.save()
+
+            return redirect("figure", figure_id)
 
 
 ########################## AUTH
@@ -359,13 +392,23 @@ def manufacturer(request: HttpRequest, manufacturer_id: int):
 
 
 def user(request: HttpRequest, user_id: int):
+    sortType = request.GET.get("sort")
+
     user = get_object_or_404(User, pk=user_id)
+
+    comments: BaseManager[ProfileComment]
+    if (sortType is None) or (sortType == "desc"):
+        sortType = "desc"
+        comments = ProfileComment.objects.filter(profile=user).order_by("-date")
+    else:
+        sortType = "asc"
+        comments = ProfileComment.objects.filter(profile=user).order_by("date")
 
     liked_figures = UserLike.objects.filter(user=user)
 
     figures = list(map(lambda like: like.figure, liked_figures))
     images = get_figure_images(figures)
-    comments = ProfileComment.objects.filter(profile=user)
+    logged = request.session.get("user_id") is not None
 
     comment_form = UserCommentForm()
 
@@ -379,6 +422,8 @@ def user(request: HttpRequest, user_id: int):
             "images": images,
             "comments": comments,
             "comment_form": comment_form,
+            "logged": logged,
+            "sortType": sortType,
         },
     )
 
@@ -404,6 +449,25 @@ def like(request: HttpRequest, figure_id: int):
     like.delete()
 
     return redirect("figure", figure_id)
+
+
+def user_add_comment(request: HttpRequest, user_id: int):
+    if request.session.get("user_id") is None:
+        return redirect("login")
+
+    if request.method == "POST":
+        comment_form = UserCommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = ProfileComment()
+            comment.user = User.objects.get(pk=request.session.get("user_id"))
+            comment.profile = User.objects.get(pk=user_id)
+            comment.comment = comment_form.cleaned_data["comment"]
+            comment.save()
+
+            return redirect("user", user_id)
+
+
+########################## SEARCH
 
 
 def search(request: HttpRequest):

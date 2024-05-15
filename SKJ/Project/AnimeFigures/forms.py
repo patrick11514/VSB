@@ -41,3 +41,9 @@ class UserCommentForm(forms.ModelForm):
     class Meta:
         model = ProfileComment
         fields = ["comment"]
+
+
+class FigureCommentForm(forms.ModelForm):
+    class Meta:
+        model = FigureComment
+        fields = ["comment"]

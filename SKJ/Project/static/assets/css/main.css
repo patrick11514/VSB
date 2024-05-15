@@ -658,6 +658,10 @@ video {
   width: max-content;
 }
 
+.min-w-56 {
+  min-width: 14rem;
+}
+
 .min-w-64 {
   min-width: 16rem;
 }
@@ -961,6 +965,32 @@ form p select {
   color: rgb(0 0 0 / var(--tw-text-opacity));
   outline: 2px solid transparent;
   outline-offset: 2px;
+}
+
+form p textarea {
+  width: 50%;
+  border-radius: 0.375rem;
+  border-width: 2px;
+  --tw-border-opacity: 1;
+  border-color: rgb(85 152 194 / var(--tw-border-opacity));
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+  font-family: Roboto, sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 500;
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity));
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+form#comment p {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
 }
 
 .hover\:border-b-primary:hover {

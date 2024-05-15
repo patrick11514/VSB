@@ -11,12 +11,13 @@
 - [x] aplikace nesmí obsahovat generické view
 
 - [x] Profil
-- [ ] Komentáře na profilu
+- [x] Komentáře na profilu
 - [x] Figurka
-- [ ] Komentáře na figurce
+- [x] Komentáře na figurce
 - [x] Hlavní stránka (Uživatelé + proklik, Figurky + proklik)
 - [x] Manufacturers list (list figurek, co vydal), možnost přidání nového
 - [x] Mazání obrázků u figurky
 - [x] Mazání figurky
 - [x] Mazání manufacturera - smaže všechny figurky !!!
 - [x] Search
+- [ ] Nastavení profilu - změna emailu/hesla

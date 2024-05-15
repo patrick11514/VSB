@@ -31,7 +31,7 @@
                         <img class="max-w-[150px] h-auto" src="{{ image.url }}" alt="figure image" />
                     </a>
                     {% if logged %}
-                        <a href="{% url 'delete_image' figure.pk image.pk %}"><i class="bi bi-trash text-red-500 relative top-0 cursor-pointer"></i>
+                        <a href="{% url 'delete_image' figure.pk image.pk %}"><i class="bi bi-trash text-red-500 relative top-0 cursor-pointer"></i></a>
                     {% endif %}
                 </div>
                 {% endfor %}
@@ -71,5 +71,36 @@
             </tbody>
         </table>
     </main>
+    <div class="flex flex-col gap-2">
+        <h1 class="text-2xl font-bold">Komentáře ({{ comments.count }}):</h1>
+        {% if logged %}
+            <form id="comment" action="{% url 'figure_add_comment' user.pk %}" method="POST">
+                {% csrf_token %}
+                {{ comment_form.as_p }}
+                <button type="submit" class="bg-primary hover:bg-accent m-4 w-[50%] mx-auto font-bold text-xl px-2 py-1 rounded-lg font-roboto transition-all duration-200 active:translate-y-1">Odeslat komentář</button>
+            </form>
+        {% endif %}
+
+        {% if comments.count == 0%}
+            <h4 class="text-red-500 font-bold">Tento uživatel nemá žádné komentáře pod profilem</h4>
+        {% else %}
+            {% if sortType == "desc" %}
+                <a href="{% url 'user' user.pk %}?sort=asc"><button class="bg-primary font-roboto text-xl px-2 py-1 rounded-lg border-black border-2 hover:bg-accent transition-colors duration-200">Seřadit od nejnovějšího</button></a>
+            {% else %}
+                <a href="{% url 'user' user.pk %}?sort=desc"><button class="bg-primary font-roboto text-xl px-2 py-1 rounded-lg border-black border-2 hover:bg-accent transition-colors duration-200">Seřadit od nejstaršího</button></a>
+            {% endif %}
+        {% endif %}
+        <div class="flex flex-col gap-4">
+            
+            {% for comment in comments %}
+                <div class="flex flex-col border-primary border-2 p-2 rounded-md w-[50%] min-w-56">
+                    <h2 class="text-xl font-bold">{{ comment.user.name }}</h2>
+                    <h3>Dne {{ comment.getDate }} ({{ comment.getDiff }} zpět)</h3>
+                    <hr />
+                    <p class="text-lg">{{ comment.comment }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 </section>
 {% endblock %}
