@@ -124,7 +124,7 @@ const update = procedure.PATCH.input(
         await conn.transaction().execute(async (trx) => {
             const data = await trx.selectFrom('records').select('value').where('uuid', '=', uuid).where('id', '=', id).executeTakeFirstOrThrow();
 
-            await conn
+            await trx
                 .updateTable('records')
                 .set({
                     value: value,
