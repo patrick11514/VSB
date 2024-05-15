@@ -74,7 +74,7 @@
     <div class="flex flex-col gap-2">
         <h1 class="text-2xl font-bold">Komentáře ({{ comments.count }}):</h1>
         {% if logged %}
-            <form id="comment" action="{% url 'figure_add_comment' user.pk %}" method="POST">
+            <form id="comment" action="{% url 'figure_add_comment' figure.pk %}" method="POST">
                 {% csrf_token %}
                 {{ comment_form.as_p }}
                 <button type="submit" class="bg-primary hover:bg-accent m-4 w-[50%] mx-auto font-bold text-xl px-2 py-1 rounded-lg font-roboto transition-all duration-200 active:translate-y-1">Odeslat komentář</button>

@@ -6,11 +6,14 @@ from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_list_or_404, get_object_or_404, redirect, render
 
 from AnimeFigures.forms import (
+    EmailChangeForm,
     FigureCommentForm,
     FigureForm,
     ImageForm,
     LoginForm,
     ManufacturerForm,
+    NameChangeForm,
+    PasswordChangeForm,
     RegisterForm,
     UserCommentForm,
 )
@@ -465,6 +468,91 @@ def user_add_comment(request: HttpRequest, user_id: int):
             comment.save()
 
             return redirect("user", user_id)
+
+
+def settings(request: HttpRequest):
+    password_form = PasswordChangeForm()
+    name_form = NameChangeForm()
+    email_form = EmailChangeForm()
+
+    return render(
+        request,
+        "AnimeFigures/settings.html",
+        get_session_data(request)
+        | {
+            "password_form": password_form,
+            "name_form": name_form,
+            "email_form": email_form,
+        },
+    )
+
+
+def change_password(request: HttpRequest):
+    if request.session.get("user_id") is None:
+        return redirect("login")
+
+    if request.method == "POST":
+        password_form = PasswordChangeForm(request.POST)
+        if password_form.is_valid():
+            user = User.objects.get(pk=request.session.get("user_id"))
+            if not checkpw(
+                password_form.cleaned_data["old_password"].encode(),
+                user.password.encode(),
+            ):
+                password_form = PasswordChangeForm()
+                name_form = NameChangeForm()
+                email_form = EmailChangeForm()
+
+                return render(
+                    request,
+                    "AnimeFigures/settings.html",
+                    get_session_data(request)
+                    | {
+                        "password_form": password_form,
+                        "name_form": name_form,
+                        "email_form": email_form,
+                        "password_error": "Špatné heslo.",
+                    },
+                )
+
+            user.password = hashpw(
+                password_form.cleaned_data["new_password"].encode(), gensalt()
+            ).decode()
+            user.save()
+
+            return redirect("settings")
+
+
+def change_name(request: HttpRequest):
+    if request.session.get("user_id") is None:
+        return redirect("login")
+
+    if request.method == "POST":
+        name_form = NameChangeForm(request.POST)
+        if name_form.is_valid():
+            user = User.objects.get(pk=request.session.get("user_id"))
+            user.name = name_form.cleaned_data["name"]
+            user.save()
+
+            request.session["username"] = user.name
+
+            return redirect("settings")
+
+
+def change_email(request: HttpRequest):
+    if request.session.get("user_id") is None:
+        return redirect("login")
+
+    if request.method == "POST":
+        email_form = EmailChangeForm(request.POST)
+        if email_form.is_valid():
+            user = User.objects.get(pk=request.session.get("user_id"))
+            user.email = email_form.cleaned_data["email"]
+            user.save()
+
+            request.session["email"] = user.email
+
+            return redirect("settings")
 
 
 ########################## SEARCH

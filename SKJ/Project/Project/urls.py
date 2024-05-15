@@ -30,6 +30,11 @@ urlpatterns = [
     # account
     path("user/<int:user_id>", views.user, name="user"),
     path("user/<int:user_id>/comment", views.user_add_comment, name="user_add_comment"),
+    path("settings", views.settings, name="settings"),
+    path("settings/changePassword", views.change_password, name="change_password"),
+    path("settings/changeName", views.change_name, name="change_name"),
+    path("settings/changeEmail", views.change_email, name="change_email"),
+    # path("settings/deleteAccount", views.delete_account, name="delete_account"),
     # figures
     path("figure/<int:figure_id>", views.figure, name="figure"),
     path("figure/<int:figure_id>/addImage", views.add_image, name="add_image"),

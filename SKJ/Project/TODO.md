@@ -1,8 +1,8 @@
 - [x] aplikace bude obsahovat alespoň 6 modelů, které budou vzájemně provázány vazbou // 7
 - [x] k modelům vytvořte adekvátní administrativní rozhraní // Ok
-- [x] aplikace bude obsahovat alespoň 12 view a s tím spojené URL, které budou s modely pracovat // 18 views
-- [ ] view Vaší aplikace budou obsah předávat templatům (budete tedy implementovat 12 templatů) // 11 templates
-- [ ] aplikace bude obsahovat alespoň 6 formulářů (ať už formulář vázaný na model nebo Váš vlastní) // 4 formuláře
+- [x] aplikace bude obsahovat alespoň 12 view a s tím spojené URL, které budou s modely pracovat // 24 views
+- [x] view Vaší aplikace budou obsah předávat templatům (budete tedy implementovat 12 templatů) // 12/13 templates
+- [x] aplikace bude obsahovat alespoň 6 formulářů (ať už formulář vázaný na model nebo Váš vlastní) // 10 formuláře
 - [x] výsledná aplikace by měla tvořit nějaký logický celek, tj. jednotlivé stránky na sebe budou odkazoval pomocílinků
 - [x] blogovací a fórum aplikace nejsou přípustné, neboť jsme je dělali na přednášce
 - [x] projekt na téma benzínové stanice není přípustný, neboť jsme jej dělali na cvičeních
@@ -20,4 +20,4 @@
 - [x] Mazání figurky
 - [x] Mazání manufacturera - smaže všechny figurky !!!
 - [x] Search
-- [ ] Nastavení profilu - změna emailu/hesla
+- [x] Nastavení profilu - změna emailu/hesla

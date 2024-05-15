@@ -7,8 +7,16 @@
 
 {% block body %} 
 <section class="flex flex-col flex-1 m-auto w-[80%] min-w-72 bg-secondary text-white p-8 rounded-lg">
-    <h1 class="text-3xl font-bold font-poppins">Profil uživatele {{user.name}}</h1>
+    <h1 class="text-3xl font-bold font-poppins flex flex-row">
+        Profil uživatele {{user.name}}
+        {% if logged and user.pk == user_id %}
+            <a class="ml-auto" href="{% url 'settings' %}"><i class="bi bi-gear text-gray-600"></i></a>
+        {% endif %}
+    </h1>
     <h2 class="text-xl font-bold">Připojil se {{ user.getDate }} ({{ user.getDiff }} zpět)</h2>
+    {% if logged and user.pk == user_id %}
+        <h3 class="text-lg font-bold">Email: {{ email }}</h3>
+    {% endif %}
     <main class="flex flex-col my-4">
         <h1 class="text-2xl font-bold font-poppins">Oblíbené figurky ({{ liked_figures.count }}): </h1>
         {% if liked_figures.count == 0 %}
