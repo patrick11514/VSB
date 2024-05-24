@@ -35,3 +35,62 @@
 [19:10:22] [INFO] Added 1 custom mime types.
 [19:10:24] [INFO] GET to localhost:8080/aa.test from 127.0.0.1 [200]
 [19:10:24] [INFO] GET to localhost:8080/favicon.ico from 127.0.0.1 [404]
+[19:12:42] [INFO] Loaded 2 domain config files
+[19:12:42] [INFO] Added 1 custom mime types.
+[19:12:44] [INFO] GET to 10.10.10.210:8080/aa.test from 10.10.10.210 [200]
+[19:12:44] [INFO] GET to 10.10.10.210:8080/favicon.ico from 10.10.10.210 [404]
+[19:12:57] [INFO] Loaded 2 domain config files
+[19:12:57] [INFO] Added 1 custom mime types.
+[19:13:02] [INFO] GET to 127.0.0.1:8080/aa.test from 127.0.0.1 [200]
+[19:13:03] [INFO] GET to 127.0.0.1:8080/favicon.ico from 127.0.0.1 [404]
+[19:13:46] [INFO] Loaded 2 domain config files
+[19:13:46] [INFO] Added 1 custom mime types.
+[19:13:49] [INFO] GET to 127.0.0.1:8080/aa.test from 127.0.0.1 [200]
+[19:13:49] [INFO] GET to 127.0.0.1:8080/favicon.ico from 127.0.0.1 [404]
+[19:14:49] [INFO] Loaded 2 domain config files
+[19:14:49] [INFO] Added 1 custom mime types.
+[19:14:52] [INFO] GET to 127.0.0.1:8080/aa.test from 127.0.0.1 [200]
+[19:14:52] [INFO] GET to 127.0.0.1:8080/favicon.ico from 127.0.0.1 [404]
+[19:15:52] [INFO] GET to druhastranka:8080/aa.test from 127.0.0.1 [504]
+[19:15:52] [INFO] GET to druhastranka:8080/favicon.ico from 127.0.0.1 [504]
+[19:15:54] [INFO] GET to druhastranka:8080/ from 127.0.0.1 [504]
+[19:15:54] [INFO] GET to druhastranka:8080/favicon.ico from 127.0.0.1 [504]
+[19:19:23] [INFO] Loaded 2 domain config files
+[19:19:23] [INFO] Added 1 custom mime types.
+[19:21:16] [INFO] Loaded 2 domain config files
+[19:21:16] [INFO] Added 1 custom mime types.
+[19:22:07] [INFO] Loaded 2 domain config files
+[19:22:07] [INFO] Added 1 custom mime types.
+[19:22:40] [INFO] Loaded 2 domain config files
+[19:22:40] [INFO] Added 1 custom mime types.
+[19:23:07] [INFO] Loaded 2 domain config files
+[19:23:07] [INFO] Added 1 custom mime types.
+[19:24:26] [INFO] Loaded 2 domain config files
+[19:24:26] [INFO] Added 1 custom mime types.
+[19:26:35] [INFO] Loaded 2 domain config files
+[19:26:35] [INFO] Added 1 custom mime types.
+[19:30:04] [INFO] Loaded 2 domain config files
+[19:30:04] [INFO] Added 1 custom mime types.
+[19:31:11] [INFO] Loaded 2 domain config files
+[19:31:11] [INFO] Added 1 custom mime types.
+[19:31:31] [INFO] Loaded 2 domain config files
+[19:31:31] [INFO] Added 1 custom mime types.
+[19:32:50] [INFO] Loaded 2 domain config files
+[19:32:50] [INFO] Added 1 custom mime types.
+[19:33:45] [INFO] Loaded 2 domain config files
+[19:33:45] [INFO] Added 1 custom mime types.
+[19:34:30] [INFO] Loaded 2 domain config files
+[19:34:30] [INFO] Added 1 custom mime types.
+[19:35:09] [INFO] Loaded 2 domain config files
+[19:35:09] [INFO] Added 1 custom mime types.
+[19:35:23] [INFO] Loaded 2 domain config files
+[19:35:23] [INFO] Added 1 custom mime types.
+[19:40:16] [INFO] Loaded 2 domain config files
+[19:40:16] [INFO] Added 1 custom mime types.
+[19:40:58] [INFO] Loaded 2 domain config files
+[19:40:58] [INFO] Added 1 custom mime types.
+[19:42:40] [INFO] GET to druhastranka:8080/Tales%20of%20Shadybug%20and%20Claw%20Noir.mp4 from 127.0.0.1 [502]
+[19:42:48] [INFO] Loaded 2 domain config files
+[19:42:48] [INFO] Added 1 custom mime types.
+[19:42:53] [INFO] Loaded 2 domain config files
+[19:42:53] [INFO] Added 1 custom mime types.
