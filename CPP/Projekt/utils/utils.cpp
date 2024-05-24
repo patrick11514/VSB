@@ -58,34 +58,63 @@ fs::path decode(const std::string_view &path)
     return newPath;
 }
 
-
-std::string Header::to_lower(const std::string& str) const {
+std::string Header::to_lower(const std::string &str) const
+{
     std::string newStr{str};
     std::transform(newStr.begin(), newStr.end(), newStr.begin(),
-        [](unsigned char c){ return std::tolower(c); });
+                   [](unsigned char c)
+                   { return std::tolower(c); });
 
     return newStr;
 }
 
-Header::Header(const std::string_view& str): lowerCaseData(to_lower(std::string{str})), originalData(str) {}
-Header::Header(const Header& other): lowerCaseData(other.lowerCaseData), originalData(other.originalData) {}
-Header::Header(Header&& other) {
+Header::Header(const std::string_view &str) : lowerCaseData(to_lower(std::string{str})), originalData(str) {}
+Header::Header(const Header &other) : lowerCaseData(other.lowerCaseData), originalData(other.originalData) {}
+Header::Header(Header &&other)
+{
     std::swap(this->lowerCaseData, other.lowerCaseData);
     std::swap(this->originalData, other.originalData);
 }
 
-const std::string& Header::getData() const {
+const std::string &Header::getData() const
+{
     return this->lowerCaseData;
 }
 
-const std::string& Header::getOriginal() const {
+const std::string &Header::getOriginal() const
+{
     return this->originalData;
 }
 
-bool Header::operator==(const Header& other) const {
+bool Header::operator==(const Header &other) const
+{
     return this->lowerCaseData == other.lowerCaseData;
 }
 
-bool Header::operator!=(const Header& other) const {
+bool Header::operator!=(const Header &other) const
+{
     return !this->operator==(other);
+}
+
+DomainLogger::DomainLogger(const std::string &accessPath, const std::string &errorPath)
+    : accessLog(accessPath, std::ios::app), errorLog(errorPath, std::ios::app)
+{
+    this->logger = new Logger(this->accessLog, this->errorLog, this->accessLog);
+}
+
+DomainLogger::DomainLogger(DomainLogger &&other)
+{
+    // we cannot swap loggers, because in swapped logger will be invalid references, so we delete current logger
+    delete this->logger;
+
+    std::swap(this->accessLog, other.accessLog);
+    std::swap(this->errorLog, other.errorLog);
+
+    // create new and old logger in other will be deleted with destructor
+    this->logger = new Logger(this->accessLog, this->errorLog, this->accessLog);
+}
+
+DomainLogger::~DomainLogger()
+{
+    delete this->logger;
 }

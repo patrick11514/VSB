@@ -14,6 +14,7 @@ Logger::~Logger()
 void Logger::info(const std::string_view &text)
 {
     std::lock_guard<std::mutex> lock(Logger::mutex);
+
     this->infoStream << "[" << this->getTime() << "] [INFO] " << text << "\n";
 }
 

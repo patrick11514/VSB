@@ -1,5 +1,6 @@
 
 #include "iniParser.hpp"
+#include "../server/server.hpp"
 
 // Helper struct
 struct HostConfig

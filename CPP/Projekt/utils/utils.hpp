@@ -3,6 +3,9 @@
 #include <filesystem>
 #include <optional>
 #include <stdexcept>
+#include <fstream>
+
+#include "logger.hpp"
 
 namespace fs = std::filesystem;
 
@@ -14,7 +17,8 @@ using optionalRef = std::optional<std::reference_wrapper<T>>;
 template <typename T>
 T &extractRef(optionalRef<T> value)
 {
-    if (!value.has_value()) {
+    if (!value.has_value())
+    {
         throw std::runtime_error("No value in optional");
     }
 
@@ -24,7 +28,8 @@ T &extractRef(optionalRef<T> value)
 /**
  * @brief Structure to hold header name, because we want to ignore case
  */
-class Header {
+class Header
+{
     std::string lowerCaseData; ///< Lowercase name
     std::string originalData;  ///< Original name
 
@@ -33,27 +38,43 @@ class Header {
      * @param str Input string
      * @return lower case string
      */
-    std::string to_lower(const std::string& str) const;
+    std::string to_lower(const std::string &str) const;
+
 public:
-    Header(const std::string_view& string); ///< Constructor from header
-    Header(const Header& other); ///< Copy constructor
-    Header(Header&& other); ///< Move constructor
+    Header(const std::string_view &string); ///< Constructor from header
+    Header(const Header &other);            ///< Copy constructor
+    Header(Header &&other);                 ///< Move constructor
 
-    const std::string& getData() const; ///< Get lowercase name
-    const std::string& getOriginal() const; ///< Get original name
+    const std::string &getData() const;     ///< Get lowercase name
+    const std::string &getOriginal() const; ///< Get original name
 
-    bool operator==(const Header& other) const;
-    bool operator!=(const Header& other) const;
+    bool operator==(const Header &other) const;
+    bool operator!=(const Header &other) const;
+};
+
+class DomainLogger
+{
+private:
+    std::ofstream accessLog;
+    std::ofstream errorLog;
+
+public:
+    Logger *logger = nullptr;
+
+    DomainLogger(const std::string &accessPath, const std::string &errorPath);
+    DomainLogger(DomainLogger &&other);
+    ~DomainLogger();
 };
 
 /**
  * @brief Implement hash function
  */
-namespace std {
+namespace std
+{
     template <>
     struct hash<Header>
     {
-        std::size_t operator()(const Header& header) const
+        std::size_t operator()(const Header &header) const
         {
             return std::hash<std::string>{}(header.getData());
         }

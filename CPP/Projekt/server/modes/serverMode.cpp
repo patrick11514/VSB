@@ -160,7 +160,19 @@ ServerMode::ServerMode(const ArgParser &parser, Logger *logger, const std::strin
         }
 
         std::string key{extractRef(configParser.getValue("domain"))};
-        this->domainConfigs.emplace(std::move(key), HostConfig{std::move(configParser)});
+
+        // logger for host
+        auto accessLog = configParser.getValue("access_log");
+        auto errorLog = configParser.getValue("error_log");
+        if (accessLog.has_value() && errorLog.has_value())
+        {
+            auto accessLogPath = extractRef(accessLog);
+            auto errorLogPath = extractRef(errorLog);
+
+            this->domainLoggers.emplace(key, DomainLogger{accessLogPath, errorLogPath});
+        }
+
+        this->domainConfigs.emplace(key, HostConfig{std::move(configParser)});
     }
 
     // swap logger at the end
@@ -202,14 +214,14 @@ ServerMode::ServerMode(const ArgParser &parser, Logger *logger, const std::strin
 
 ServerMode::~ServerMode() {}
 
-void ServerMode::handleFolder(const std::string &host, const fs::path &folderPath, const HTTPPayload &data, HTTPResponse &response, const ReceivedData &client, const std::string_view &ipaddress, const std::string &index)
+void ServerMode::handleFolder(const std::string &host, const fs::path &folderPath, const HTTPPayload &data, HTTPResponse &response, const ReceivedData &client, const std::string_view &ipaddress, const std::string &index, Logger *logger)
 {
     fs::path filePath = folderPath / decode(data.path);
     FileRead file(filePath);
 
     if (!file.exists())
     {
-        this->logger->info(std::format("{} to {}/{} from {} [404]", data.method, host, data.path, ipaddress));
+        logger->info(std::format("{} to {}/{} from {} [404]", data.method, host, data.path, ipaddress));
         response.code = 404;
         response.send(client.fd);
         ::close(client.fd);
@@ -218,7 +230,7 @@ void ServerMode::handleFolder(const std::string &host, const fs::path &folderPat
 
     if (!file.isFolder())
     {
-        this->logger->info(std::format("{} to {}/{} from {} [200]", data.method, host, data.path, ipaddress));
+        logger->info(std::format("{} to {}/{} from {} [200]", data.method, host, data.path, ipaddress));
         this->doFile(filePath, data, response, file, client.fd);
         ::close(client.fd);
         return;
@@ -228,27 +240,27 @@ void ServerMode::handleFolder(const std::string &host, const fs::path &folderPat
 
     if (!fs::exists(indexPath))
     {
-        this->logger->info(std::format("{} to {}/{} from {} [404]", data.method, host, std::string(data.path).append(index), ipaddress));
+        logger->info(std::format("{} to {}/{} from {} [404]", data.method, host, std::string(data.path).append(index), ipaddress));
         response.code = 404;
         response.send(client.fd);
         ::close(client.fd);
         return;
     }
 
-    this->logger->info(std::format("{} to {}/{} from {} [200]", data.method, host, std::string(data.path).append(index), ipaddress));
+    logger->info(std::format("{} to {}/{} from {} [200]", data.method, host, std::string(data.path).append(index), ipaddress));
     this->doFile(indexPath, data, response, FileRead(indexPath), client.fd);
     ::close(client.fd);
     return;
 }
 
-void ServerMode::handleProxyPass(const HostConfig &hostConfig, HTTPResponse &response, const ReceivedData &client, const HTTPPayload &data, const std::string_view &ipaddress, const std::string &host)
+void ServerMode::handleProxyPass(const HostConfig &hostConfig, HTTPResponse &response, const ReceivedData &client, const HTTPPayload &data, const std::string_view &ipaddress, const std::string &host, Logger *logger)
 {
     int clientSocket = ::socket(AF_INET, SOCK_STREAM, 0);
 
     int option = 1;
     if (setsockopt(clientSocket, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option)) == -1)
     {
-        this->logger->info(std::format("{} to {}/{} from {} [504]", data.method, host, data.path, ipaddress));
+        logger->info(std::format("{} to {}/{} from {} [504]", data.method, host, data.path, ipaddress));
         response.code = 504;
         response.send(client.fd);
         ::close(clientSocket);
@@ -262,7 +274,7 @@ void ServerMode::handleProxyPass(const HostConfig &hostConfig, HTTPResponse &res
 
     if (connect(clientSocket, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) == -1)
     {
-        this->logger->info(std::format("{} to {}/{} from {} [504]", data.method, host, data.path, ipaddress));
+        logger->info(std::format("{} to {}/{} from {} [504]", data.method, host, data.path, ipaddress));
         response.code = 504;
         response.send(client.fd);
         ::close(clientSocket);
@@ -296,7 +308,7 @@ void ServerMode::handleProxyPass(const HostConfig &hostConfig, HTTPResponse &res
         {
             if (sentHeader == false)
             {
-                this->logger->info(std::format("{} to {}/{} from {} [502]", data.method, host, data.path, ipaddress));
+                logger->info(std::format("{} to {}/{} from {} [502]", data.method, host, data.path, ipaddress));
                 response.code = 502;
                 response.send(client.fd);
             }
@@ -343,7 +355,7 @@ void ServerMode::handleProxyPass(const HostConfig &hostConfig, HTTPResponse &res
         {
             if (static_cast<int>(::send(client.fd, buffer, readed, 0)) == -1)
             {
-                this->logger->info(std::format("{} to {}/{} from {} [502]", data.method, host, data.path, ipaddress));
+                logger->info(std::format("{} to {}/{} from {} [502]", data.method, host, data.path, ipaddress));
                 ::close(clientSocket);
                 return;
             }
@@ -359,7 +371,7 @@ void ServerMode::handleProxyPass(const HostConfig &hostConfig, HTTPResponse &res
         }
     }
 
-    this->logger->info(std::format("{} to {}/{} from {} [200]", data.method, host, data.path, ipaddress));
+    logger->info(std::format("{} to {}/{} from {} [200]", data.method, host, data.path, ipaddress));
     return;
 }
 
@@ -420,12 +432,21 @@ void ServerMode::handleRequest(const ReceivedData &client, const HTTPPayload &da
         }
 
         this->handleFolder(host, extractRef(this->mainConfig.getValue("default_root")),
-                           data, response, client, ipaddress, index);
+                           data, response, client, ipaddress, index, this->logger);
+
         return;
     }
 
     auto &hostConfig = hostConfigPair->second;
     auto &hostInit = hostConfig.iniFile;
+
+    auto hostLogger = this->domainLoggers.find(host);
+
+    Logger *currentLogger = this->logger;
+    if (hostLogger != this->domainLoggers.end())
+    {
+        currentLogger = hostLogger->second.logger;
+    }
 
     if (hostInit.getValue("root") != std::nullopt)
     {
@@ -445,12 +466,12 @@ void ServerMode::handleRequest(const ReceivedData &client, const HTTPPayload &da
         }
 
         this->handleFolder(host, extractRef(hostInit.getValue("root")),
-                           data, response, client, ipaddress, index);
+                           data, response, client, ipaddress, index, currentLogger);
         return;
     }
 
     // handle reverse proxy
-    this->handleProxyPass(hostConfig, response, client, data, ipaddress, host);
+    this->handleProxyPass(hostConfig, response, client, data, ipaddress, host, currentLogger);
 
     ::close(client.fd);
 }

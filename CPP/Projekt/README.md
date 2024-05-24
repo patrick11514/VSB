@@ -25,7 +25,7 @@ Dev mode:
  --port=8080 - start dev server on specific port
  --path=/path/to/folder - server files in specified folder
 Server mode:
- --path=/etc/tondik - path to config file
+ --path=/etc/tondik - path to config folder
 ```
 
 ## Modes
@@ -38,8 +38,16 @@ Used to serve only one folder. By default started on 127.0.0.1 on port 8080 and 
 - --port=1234 - change port
 - --path=/path/to/folder - change folder
 
-### Server mode (Not implemented yet)
+### Server mode (Fully implemented)
 Used to serve multiple folders based on domains/subdomains/hostnames.
+
+#### Start
+- On default port 80:
+```BASH
+sudo ./main
+```
+*Port can by changed in config file, default ./main.ini*
+
 
 #### Config file specifications (Based on INI)
 - key=value - set value to key
@@ -77,6 +85,9 @@ index=index.html
     root=/var/www/example.com
     ; default index will be index.html, but can be changed by this option
     index=index.htm
+    ; access_log and error_log is optional and will be inherited from main config
+    ; but when specifying custom paths fro access and error log, both must be set
+    ; otherwise single option will be ignored
     access_log=/var/log/webserver/example.com/access.log
     error_log=/var/log/webserver/example.com/error.log
     ```
@@ -97,6 +108,7 @@ index=index.html
     - supported only in VLC, because browsers are using same connection to do this and we don't support keep-alive connections
 
 ## Testing
+### Dev mode
 - Logs are written in /tmp/log.txt
     ```BASH
     ❯ wrk -t12 -c1000 -d30s http://localhost:8080
@@ -123,3 +135,28 @@ index=index.html
     Requests/sec:  19697.31
     Transfer/sec:      8.75MB
     ```
+### Server mode
+
+- Static files
+❯ wrk -t12 -c1000 -d30s http://prvnistranka:8080
+Running 30s test @ http://prvnistranka:8080
+  12 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    38.23ms    6.38ms 132.58ms   78.05%
+    Req/Sec     2.16k   313.94     3.09k    68.12%
+  775178 requests in 30.10s, 1.00GB read
+  Socket errors: connect 0, read 775161, write 0, timeout 0
+Requests/sec:  25754.62
+Transfer/sec:     33.92MB
+
+- Reverse proxy
+❯ wrk -t12 -c1000 -d30s http://druhastranka:8080
+Running 30s test @ http://druhastranka:8080
+  12 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   418.07ms   29.97ms 459.64ms   97.89%
+    Req/Sec   210.67    109.07   595.00     65.80%
+  71001 requests in 30.05s, 604.70MB read
+  Socket errors: connect 0, read 71001, write 0, timeout 0
+Requests/sec:   2362.55
+Transfer/sec:     20.12MB
