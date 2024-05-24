@@ -282,10 +282,14 @@ void ServerMode::handleProxyPass(const HostConfig &hostConfig, HTTPResponse &res
     HTTPResponse newResponse("");
 
     // read headers + some content until response is valid
+    // https://stackoverflow.com/a/49823228
+    size_t targetContentLength = 0;
+    size_t contentSent = 0;
     while (!end)
     {
+        constexpr const size_t size = 8 * 1024;
         // 8*1024
-        char buffer[1024 * 1024] = {0};
+        char buffer[size] = {0};
         int readed = static_cast<int>(::recv(clientSocket, &buffer, sizeof(buffer), 0));
 
         if (readed == -1)
@@ -300,6 +304,8 @@ void ServerMode::handleProxyPass(const HostConfig &hostConfig, HTTPResponse &res
             return;
         }
 
+        std::cout << std::format("===================\n{} (R) >> {} \n {} \n=============", data.path, readed, std::string(buffer, readed)) << std::endl;
+
         if (readed == 0)
         {
             ::close(clientSocket);
@@ -309,12 +315,20 @@ void ServerMode::handleProxyPass(const HostConfig &hostConfig, HTTPResponse &res
         if (sentHeader == false)
         {
             ++reserved;
-            responseData.reserve(reserved * 8192);
+            responseData.reserve(reserved * size);
             responseData.append(std::string{buffer, static_cast<size_t>(readed)});
 
             newResponse = HTTPResponse(responseData);
             if (newResponse.isValid)
             {
+                auto header = newResponse.headers.find(Header{"Content-Length"});
+
+                if (header != newResponse.headers.end())
+                {
+                    std::cout << data.path << " >> " << header->first.getOriginal() << ": " << header->second << std::endl;
+                    targetContentLength = std::stoul(header->second);
+                }
+
                 // add add our headers
                 for (auto &header : response.headers)
                 {
@@ -324,6 +338,10 @@ void ServerMode::handleProxyPass(const HostConfig &hostConfig, HTTPResponse &res
                 newResponse.send(client.fd);
                 sentHeader = true;
             }
+
+            std::cout << data.path << " (CS) >> " << newResponse.content.size() << std::endl;
+
+            contentSent += newResponse.content.size();
         }
         else
         {
@@ -333,15 +351,17 @@ void ServerMode::handleProxyPass(const HostConfig &hostConfig, HTTPResponse &res
                 ::close(clientSocket);
                 return;
             }
+
+            contentSent += readed;
         }
 
-        std::cout << readed << std::endl;
+        std::cout << data.path << " >> " << contentSent << " / " << targetContentLength << std::endl;
 
-        if (readed < 1024 * 1024)
+        // if we sent all data, close and don't read again
+        if (contentSent >= targetContentLength && sentHeader == true)
         {
-            std::cout << "CLOSED" << std::endl;
             ::close(clientSocket);
-            break;
+            return;
         }
     }
 

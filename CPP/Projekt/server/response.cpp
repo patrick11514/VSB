@@ -111,15 +111,16 @@ std::string HTTPResponse::formatDefaultPage(const std::string &codeText) const
 
 HTTPResponse::HTTPResponse(std::string version, unsigned short code) : version(version), code(code) {}
 
-HTTPResponse::HTTPResponse(const std::string& data) {
+HTTPResponse::HTTPResponse(const std::string &data)
+{
     std::string_view restOfData(data);
     std::vector<std::string_view> sws;
 
     while (true)
     {
-        size_t occurence = restOfData.find("\r\n");
+        size_t occurence = restOfData.find(this->separator);
 
-        if (occurence == std::string_view::npos)
+        if (occurence == std::string_view::npos || sws.size() == 2)
         {
             sws.push_back(std::string_view(restOfData.begin(), restOfData.end()));
             break;
@@ -129,70 +130,81 @@ HTTPResponse::HTTPResponse(const std::string& data) {
         restOfData = std::string_view(restOfData.begin() + occurence + 2, restOfData.end());
     }
 
+    std::cout << "=============== PARSED ============" << std::endl;
+    for (auto sw : sws)
+    {
+        std::cout << sw << std::endl
+                  << "============================" << std::endl;
+    }
+
     // parse first line
-        std::vector<std::string_view> httpParts;
-        std::string_view part = sws[0];
-        //
-        httpParts.reserve(2);
+    std::vector<std::string_view> httpParts;
+    std::string_view part = sws[0];
+    //
+    httpParts.reserve(2);
 
-        while (true)
+    while (true)
+    {
+        size_t space = part.find(' ');
+        if (space == std::string_view::npos)
         {
-            size_t space = part.find(' ');
-            if (space == std::string_view::npos)
-            {
-                httpParts.push_back(std::string_view(part.begin(), part.end()));
-                break;
-            }
-
-            httpParts.push_back(std::string_view(part.begin(), part.begin() + space));
-            part = std::string_view(part.begin() + space + 1, part.end());
+            httpParts.push_back(std::string_view(part.begin(), part.end()));
+            break;
         }
 
-        if (httpParts.size() < 2)
+        httpParts.push_back(std::string_view(part.begin(), part.begin() + space));
+        part = std::string_view(part.begin() + space + 1, part.end());
+    }
+
+    if (httpParts.size() < 2)
+    {
+        this->isValid = false;
+        return;
+    }
+
+    this->version = httpParts[0];
+    this->code = static_cast<unsigned short>(std::stoul(std::string(httpParts[1])));
+    if (httpParts.size() == 3)
+    {
+        this->codeText = httpParts[2];
+    }
+
+    // headers
+    size_t i = 1;
+    for (; i < sws.size() - 1; ++i)
+    {
+        if (sws[i].size() == 0)
         {
-            this->isValid = false;
-            return;
+            break;
         }
-
-        this->version = httpParts[0];
-        this->code = static_cast<unsigned short>(std::stoul(std::string(httpParts[1])));
-        if (httpParts.size() == 3) {
-            this->codeText = httpParts[2];
-        }
-
-        // headers
-        size_t i = 1;
-        for (; i < sws.size(); ++i)
+        std::string_view &row = sws[i];
+        size_t separator = row.find(": ");
+        if (separator == std::string_view::npos)
         {
-            if (sws[i].size() == 0)
+            if (Server::instance != nullptr)
             {
-                break;
+                Server::instance->l->warn(std::format("Cannot parse header: {}", row));
             }
-            std::string_view &row = sws[i];
-            size_t separator = row.find(": ");
-            if (separator == std::string_view::npos)
-            {
-                if (Server::instance != nullptr)
-                {
-                    Server::instance->l->warn(std::format("Cannot parse header: {}", row));
-                }
-                continue;
-            }
-
-            this->headers.emplace(
-                std::string_view(row.begin(), row.begin() + separator),
-                std::string_view(row.begin() + separator + 2, row.end()));
+            continue;
         }
 
-        this->content = sws[i + 1];
+        this->headers.emplace(
+            std::string_view(row.begin(), row.begin() + separator),
+            std::string_view(row.begin() + separator + 2, row.end()));
+    }
+
+    this->content = sws[i + 1];
 }
 
 bool HTTPResponse::send(int fd) const
 {
     std::string codeText;
-    if (this->codeText == std::nullopt) {
+    if (this->codeText == std::nullopt)
+    {
         codeText = this->codeToText();
-    } else {
+    }
+    else
+    {
         codeText = this->codeText.value();
     }
     std::string firstLine = std::format("{} {} {}", this->version, this->code, codeText);
