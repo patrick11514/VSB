@@ -57,6 +57,9 @@ sudo ./main
 - ;comment - single line comments
 - [section] - section, keys under this section will be: section.key, section will be ended when another section starts
 - array[]=value - add value to array
+- if something is before comment, then it isn't threated as comment, so: 
+mime_types[]=test,text/plain; charset=UTF-8
+will be treated as new item to mime_type array with value "test,text/plain; charset=UTF-8"
 
 #### Main config file
 ```INI
@@ -66,13 +69,13 @@ config_directory=/etc/tondik/configs
 ;if local=false, server is started on 0.0.0.0, if local=true then server is started on 127.0.0.1 (optional) - default value false
 local=false
 ;custom response headers (optional) -  array of strings
-headers[] = Server: SuperWebServer
-headers[] = Header: CustomHeaderValue
+headers[]=Server: SuperWebServer
+headers[]=Header: CustomHeaderValue
 ;custom mime types (optional) - array of strings
 ;format: "extension,mime_type"
-mime_types[] = php,text/php
-mime_types[] = html,text/html
-mime_types[] = htm,text/html
+mime_types[]=php,text/php
+mime_types[]=html,text/html
+mime_types[]=htm,text/html
 access_log=/var/log/webserver/access.log
 error_log=/var/log/webserver/error.log
 ; default root folder if no domain is found

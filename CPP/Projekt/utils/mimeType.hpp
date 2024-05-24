@@ -15,4 +15,5 @@ class MimeType
 
 public:
     static const std::string &get(const fs::path &extension); ///< get mime type based of extension
+    static void add(const fs::path &path, const std::string &value);
 };

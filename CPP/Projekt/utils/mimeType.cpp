@@ -1,4 +1,5 @@
 #include "mimeType.hpp"
+#include <iostream>
 
 std::unordered_map<fs::path, std::string> MimeType::mimeTypes = {
     // text formats
@@ -52,4 +53,9 @@ const std::string &MimeType::get(const fs::path &extension)
     {
         return MimeType::mimeTypes["DEFAULT_TYPE"];
     }
+}
+
+void MimeType::add(const fs::path &path, const std::string &value)
+{
+    MimeType::mimeTypes.emplace(path, value);
 }

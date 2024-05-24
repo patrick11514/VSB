@@ -1,5 +1,6 @@
 #include "serverMode.hpp"
 #include "../../utils/utils.hpp"
+#include "../../utils/mimeType.hpp"
 #include "../server.hpp"
 #include "../request.hpp"
 
@@ -208,7 +209,26 @@ ServerMode::ServerMode(const ArgParser &parser, Logger *logger, const std::strin
 
     if (this->mainConfig.includes("mime_types") == ValueKind::Array)
     {
-        // this->customMimeTypes = true;
+        size_t count = 0;
+
+        auto data = extractRef(this->mainConfig.getArray("mime_types"));
+        for (auto row : data)
+        {
+            auto split = row.find(',');
+            if (split == row.npos)
+            {
+                this->logger->warn("Unable to parse custom mime type: " + row);
+                continue;
+            }
+
+            MimeType::add(
+                std::format(".{}", std::string{row.begin(), row.begin() + split}),
+                std::string{row.begin() + split + 1, row.end()});
+
+            ++count;
+        }
+
+        this->logger->info(std::format("Added {} custom mime types.", count));
     }
 }
 

@@ -1,0 +1,37 @@
+[19:00:36] [INFO] Loaded 2 domain config files
+[19:01:27] [INFO] Loaded 2 domain config files
+[19:01:27] [WARN] Unable to parse custom mime type: "testtext/plain"
+[19:04:09] [INFO] Loaded 2 domain config files
+[19:04:09] [INFO] Added 1 custo mime types.
+[19:04:23] [INFO] Loaded 2 domain config files
+[19:04:23] [INFO] Added 1 custom mime types.
+[19:04:46] [INFO] GET to localhost:8080/index.html from 127.0.0.1 [200]
+[19:04:50] [INFO] GET to localhost:8080/aa.test from 127.0.0.1 [200]
+[19:04:54] [INFO] GET to localhost:8080/aa.test from 127.0.0.1 [200]
+[19:05:39] [INFO] Loaded 2 domain config files
+[19:05:39] [INFO] Added 1 custom mime types.
+[19:05:40] [INFO] GET to localhost:8080/aa.test from 127.0.0.1 [200]
+[19:06:29] [INFO] Loaded 2 domain config files
+[19:06:29] [INFO] Added 1 custom mime types.
+[19:06:31] [INFO] GET to localhost:8080/index.html from 127.0.0.1 [200]
+[19:06:31] [INFO] GET to localhost:8080/favicon.ico from 127.0.0.1 [404]
+[19:06:36] [INFO] GET to localhost:8080/aa.test from 127.0.0.1 [200]
+[19:07:28] [INFO] Loaded 2 domain config files
+[19:07:28] [INFO] Added 1 custom mime types.
+[19:07:30] [INFO] GET to localhost:8080/aa.test from 127.0.0.1 [200]
+[19:08:18] [INFO] Loaded 2 domain config files
+[19:08:18] [INFO] Added 1 custom mime types.
+[19:08:36] [INFO] Loaded 2 domain config files
+[19:08:36] [INFO] Added 1 custom mime types.
+[19:08:53] [INFO] Loaded 2 domain config files
+[19:08:53] [INFO] Added 1 custom mime types.
+[19:09:13] [INFO] Loaded 2 domain config files
+[19:09:13] [INFO] Added 1 custom mime types.
+[19:09:57] [INFO] Loaded 2 domain config files
+[19:09:57] [INFO] Added 1 custom mime types.
+[19:09:58] [INFO] GET to localhost:8080/aa.test from 127.0.0.1 [200]
+[19:09:58] [INFO] GET to localhost:8080/favicon.ico from 127.0.0.1 [404]
+[19:10:22] [INFO] Loaded 2 domain config files
+[19:10:22] [INFO] Added 1 custom mime types.
+[19:10:24] [INFO] GET to localhost:8080/aa.test from 127.0.0.1 [200]
+[19:10:24] [INFO] GET to localhost:8080/favicon.ico from 127.0.0.1 [404]
