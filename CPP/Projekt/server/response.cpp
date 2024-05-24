@@ -113,87 +113,105 @@ HTTPResponse::HTTPResponse(std::string version, unsigned short code) : version(v
 
 HTTPResponse::HTTPResponse(const std::string &data)
 {
-    std::string_view restOfData(data);
-    std::vector<std::string_view> sws;
+    std::string_view rest{data.begin(), data.end()};
 
-    while (true)
-    {
-        size_t occurence = restOfData.find(this->separator);
+    /// PARSE FIRST LINE HTTP/VER CODE TEXT
 
-        if (occurence == std::string_view::npos || sws.size() == 2)
-        {
-            sws.push_back(std::string_view(restOfData.begin(), restOfData.end()));
-            break;
-        }
-
-        sws.push_back(std::string_view(restOfData.begin(), restOfData.begin() + occurence));
-        restOfData = std::string_view(restOfData.begin() + occurence + 2, restOfData.end());
-    }
-
-    std::cout << "=============== PARSED ============" << std::endl;
-    for (auto sw : sws)
-    {
-        std::cout << sw << std::endl
-                  << "============================" << std::endl;
-    }
-
-    // parse first line
-    std::vector<std::string_view> httpParts;
-    std::string_view part = sws[0];
-    //
-    httpParts.reserve(2);
-
-    while (true)
-    {
-        size_t space = part.find(' ');
-        if (space == std::string_view::npos)
-        {
-            httpParts.push_back(std::string_view(part.begin(), part.end()));
-            break;
-        }
-
-        httpParts.push_back(std::string_view(part.begin(), part.begin() + space));
-        part = std::string_view(part.begin() + space + 1, part.end());
-    }
-
-    if (httpParts.size() < 2)
+    auto endOfLine = rest.find(this->separator);
+    if (endOfLine == rest.npos)
     {
         this->isValid = false;
         return;
     }
 
-    this->version = httpParts[0];
-    this->code = static_cast<unsigned short>(std::stoul(std::string(httpParts[1])));
-    if (httpParts.size() == 3)
-    {
-        this->codeText = httpParts[2];
-    }
+    std::string_view versionCode{rest.begin(), rest.begin() + endOfLine};
 
-    // headers
-    size_t i = 1;
-    for (; i < sws.size() - 1; ++i)
+    std::vector<std::string_view> parts;
+    parts.reserve(3);
+
+    while (true)
     {
-        if (sws[i].size() == 0)
+        auto split = versionCode.find(' ');
+        if (split == versionCode.npos)
         {
+            if (parts.size() < 1)
+            {
+                this->isValid = false;
+                return;
+            }
+
+            parts.push_back({versionCode.begin(), versionCode.end()});
             break;
         }
-        std::string_view &row = sws[i];
-        size_t separator = row.find(": ");
-        if (separator == std::string_view::npos)
+
+        parts.push_back({versionCode.begin(), versionCode.begin() + split});
+        versionCode = {versionCode.begin() + split + 1, versionCode.end()};
+    }
+
+    this->version = parts[0];
+    this->code = static_cast<unsigned short>(std::stoul(std::string{parts[1]}));
+
+    if (parts.size() > 2)
+    {
+        this->codeText = parts[2];
+    }
+
+    /// PARSE HEADERS KEY:VALUE\r\nKEY:VALUE\r\n...
+
+    rest = std::string_view{rest.begin() + endOfLine + this->separator.size(), rest.end()};
+
+    auto endOfHeaders = rest.find(std::format("{}{}", this->separator, this->separator));
+    if (endOfHeaders == rest.npos)
+    {
+        this->isValid = false;
+        return;
+    }
+
+    std::string_view headers{rest.begin(), rest.begin() + endOfHeaders};
+
+    /// Put headers to map
+
+    while (true)
+    {
+        auto sep = headers.find(this->separator);
+        bool end = false;
+
+        std::string_view keyValue;
+
+        if (sep == headers.npos)
         {
-            if (Server::instance != nullptr)
-            {
-                Server::instance->l->warn(std::format("Cannot parse header: {}", row));
-            }
-            continue;
+            end = true;
+
+            keyValue = headers;
+        }
+        else
+        {
+            keyValue = {headers.begin(), headers.begin() + sep};
+        }
+
+        auto colon = keyValue.find(": ");
+
+        if (colon == keyValue.npos)
+        {
+            this->isValid = false;
+            return;
         }
 
         this->headers.emplace(
-            std::string_view(row.begin(), row.begin() + separator),
-            std::string_view(row.begin() + separator + 2, row.end()));
+            Header{std::string_view{keyValue.begin(), keyValue.begin() + colon}},
+            std::string{
+                keyValue.begin() + colon + 2,
+                keyValue.end()});
+
+        if (end)
+        {
+            break;
+        }
+
+        headers = {headers.begin() + sep + this->separator.size(), headers.end()};
     }
 
-    this->content = sws[i + 1];
+    this->content = {rest.begin() + endOfHeaders + this->separator.size() * 2, rest.end()};
 }
 
 bool HTTPResponse::send(int fd) const

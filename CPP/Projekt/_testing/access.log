@@ -2509,3 +2509,9 @@ function instance($$self, $$props, $$invalidate) {
 [14:29:33] [INFO] GET to druhastranka:8080/favicon.png from 127.0.0.1 [200]
 [14:31:08] [INFO] Loaded 2 domain config files
 [14:31:17] [INFO] GET to druhastranka:8080/favicon.png from 127.0.0.1 [200]
+[15:14:50] [INFO] Loaded 2 domain config files
+[15:23:18] [INFO] Loaded 2 domain config files
+[15:29:08] [INFO] Loaded 2 domain config files
+[15:53:27] [INFO] Loaded 2 domain config files
+[15:53:31] [INFO] GET to druhastranka:8080/node_modules/.pnpm/bootstrap-icons@1.11.3/node_modules/bootstrap-icons/font/bootstrap-icons.min.css from 127.0.0.1 [502]
+[15:53:42] [INFO] Loaded 2 domain config files

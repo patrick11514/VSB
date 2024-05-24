@@ -10,7 +10,7 @@
       |     
  - [X] If configs directory doesn't exists, create it
  - [X] Load all .ini files from configs directory
- - [ ] fixnout parsování, tedy udělat to takto: Najít první \r\n -> první řádek, pak najít \r\n\r\n =>konec headerů a začátek contentu a headery separátnout zvlášť
+ - [X] fixnout parsování, tedy udělat to takto: Najít první \r\n -> první řádek, pak najít \r\n\r\n =>konec headerů a začátek contentu a headery separátnout zvlášť
 
 
 ### Milestone do půlky semestru
