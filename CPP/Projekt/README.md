@@ -10,7 +10,7 @@
 ## CMD Line
 
 ```BASH
-> ./main
+> ./main --help
 Tondík Web Server
 
 Argument types:
@@ -48,6 +48,9 @@ sudo ./main
 ```
 *Port can by changed in config file, default ./main.ini*
 
+```BASH
+./main --path=/path/to/config/folder
+```
 
 #### Config file specifications (Based on INI)
 - key=value - set value to key
