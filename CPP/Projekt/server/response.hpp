@@ -28,9 +28,11 @@ public:
     std::string_view content = ""; ///< content of response
     //
     bool isValid = true;
+    //
+    bool addCustomContent = true; ///< if we want to add custom content like error page on send
 
     HTTPResponse(std::string version, unsigned short code); ///< constructor
-    HTTPResponse(const std::string& string); ///< Parse response to structure
+    HTTPResponse(const std::string &string);                ///< Parse response to structure
 
     bool send(int fd) const; ///< send response to client
 };

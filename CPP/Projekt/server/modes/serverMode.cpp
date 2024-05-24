@@ -307,7 +307,6 @@ void ServerMode::handleProxyPass(const HostConfig &hostConfig, HTTPResponse &res
     request.send(clientSocket);
 
     std::string responseData;
-    size_t reserved = 0;
     bool end = false;
     bool sentHeader = false;
 
@@ -344,8 +343,6 @@ void ServerMode::handleProxyPass(const HostConfig &hostConfig, HTTPResponse &res
 
         if (sentHeader == false)
         {
-            ++reserved;
-            responseData.reserve(reserved * size);
             responseData.append(std::string{buffer, static_cast<size_t>(readed)});
 
             newResponse = HTTPResponse(responseData);
@@ -355,7 +352,6 @@ void ServerMode::handleProxyPass(const HostConfig &hostConfig, HTTPResponse &res
 
                 if (header != newResponse.headers.end())
                 {
-
                     targetContentLength = std::stoul(header->second);
                 }
 
@@ -363,6 +359,12 @@ void ServerMode::handleProxyPass(const HostConfig &hostConfig, HTTPResponse &res
                 for (auto &header : response.headers)
                 {
                     newResponse.headers.emplace(header.first, header.second);
+                }
+
+                // missing content, or empty content, which will be sent in another read - python does this, or php (idk why they don't send content in first read)
+                if (newResponse.content.size() != targetContentLength)
+                {
+                    newResponse.addCustomContent = false;
                 }
 
                 newResponse.send(client.fd);
@@ -426,13 +428,14 @@ void ServerMode::handleRequest(const ReceivedData &client, const HTTPPayload &da
     }
 
     HTTPResponse response(std::string(data.httpVersion), 200);
-    response.headers.emplace("Server", "Tondik/" + Server::version);
 
-    // custom headers
+    // custom headers first, because custom headers are prioritizied so we can set custom server name, etc..
     for (auto &header : this->customHeaders)
     {
         response.headers.emplace(header.first, header.second);
     }
+
+    response.headers.emplace("Server", "Tondik/" + Server::version);
 
     auto hostConfigPair = this->domainConfigs.find(host);
 

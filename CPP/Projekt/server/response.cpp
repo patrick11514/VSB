@@ -132,7 +132,7 @@ HTTPResponse::HTTPResponse(const std::string &data)
     while (true)
     {
         auto split = versionCode.find(' ');
-        if (split == versionCode.npos)
+        if (split == versionCode.npos || parts.size() > 1)
         {
             if (parts.size() < 1)
             {
@@ -234,7 +234,7 @@ bool HTTPResponse::send(int fd) const
     }
 
     std::string generated;
-    if (this->content.length() == 0 && this->code >= 300)
+    if (this->content.length() == 0 && this->code >= 300 && this->addCustomContent == true)
     {
         std::string content = this->formatDefaultPage(codeText);
         if (this->headers.find(Header{"Content-Length"}) == this->headers.end())
