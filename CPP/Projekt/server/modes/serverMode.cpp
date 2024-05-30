@@ -400,7 +400,7 @@ void ServerMode::handleProxyPass(const HostConfig &hostConfig, HTTPResponse &res
 void ServerMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
 {
     std::string_view ipaddress = client.address;
-    auto ipForwaredHeader = data.headers.find("X-Forwarded-For");
+    auto ipForwaredHeader = data.headers.find(Header{"X-Forwarded-For"});
     if (ipForwaredHeader != data.headers.end())
     {
         ipaddress = ipForwaredHeader->second;
@@ -408,14 +408,14 @@ void ServerMode::handleRequest(const ReceivedData &client, const HTTPPayload &da
 
     std::string host;
 
-    auto hostFowardedHeader = data.headers.find("X-Forwarded-Host");
+    auto hostFowardedHeader = data.headers.find(Header{"X-Forwarded-Host"});
     if (hostFowardedHeader != data.headers.end())
     {
         host = hostFowardedHeader->second;
     }
     else
     {
-        auto hostHeader = data.headers.find("Host");
+        auto hostHeader = data.headers.find(Header{"Host"});
         if (hostHeader == data.headers.end())
         {
             // host is empty

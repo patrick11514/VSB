@@ -1,7 +1,5 @@
 #include "threadPool.hpp"
 
-#include <iostream>
-
 ThreadPool::ThreadPool()
 {
     unsigned int concurent = std::thread::hardware_concurrency();

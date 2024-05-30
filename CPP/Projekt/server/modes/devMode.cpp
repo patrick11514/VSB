@@ -20,7 +20,7 @@ DevMode::~DevMode() {}
 void DevMode::handleRequest(const ReceivedData &client, const HTTPPayload &data)
 {
     std::string_view ipaddress = client.address;
-    auto header = data.headers.find("X-Forwarded-For");
+    auto header = data.headers.find(Header{"X-Forwarded-For"});
 
     if (header != data.headers.end())
     {

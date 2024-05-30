@@ -94,3 +94,71 @@
 [19:42:48] [INFO] Added 1 custom mime types.
 [19:42:53] [INFO] Loaded 2 domain config files
 [19:42:53] [INFO] Added 1 custom mime types.
+[18:11:36] [INFO] Loaded 2 domain config files
+[18:11:36] [INFO] Added 1 custom mime types.
+[18:12:02] [INFO] GET to druhastranka:8080/ from 127.0.0.1 [504]
+[18:12:02] [INFO] GET to druhastranka:8080/.svelte-kit/generated/client/nodes/0.js from 127.0.0.1 [504]
+[18:12:02] [INFO] GET to druhastranka:8080/.svelte-kit/generated/client/nodes/1.js from 127.0.0.1 [504]
+[18:12:02] [INFO] GET to druhastranka:8080/.svelte-kit/generated/client/nodes/3.js from 127.0.0.1 [504]
+[18:12:02] [INFO] GET to druhastranka:8080/ from 127.0.0.1 [504]
+[18:12:02] [INFO] GET to druhastranka:8080/ from 127.0.0.1 [504]
+[18:12:02] [INFO] GET to druhastranka:8080/favicon.ico from 127.0.0.1 [504]
+[18:13:25] [INFO] GET to druhastranka:8080/_app/immutable/nodes/16.CQCu5lCF.js from 127.0.0.1 [504]
+[18:13:25] [INFO] GET to druhastranka:8080/_app/immutable/chunks/message.rGZuD-UX.js from 127.0.0.1 [504]
+[18:13:25] [INFO] GET to druhastranka:8080/_app/immutable/chunks/pre.BA35CQpj.js from 127.0.0.1 [504]
+[18:13:25] [INFO] GET to druhastranka:8080/_app/immutable/chunks/tag.B5yKQy0m.js from 127.0.0.1 [504]
+[18:13:25] [INFO] GET to druhastranka:8080/projects/__data.json?x-sveltekit-invalidated=01 from 127.0.0.1 [504]
+[18:13:25] [INFO] GET to druhastranka:8080/projects/__data.json?x-sveltekit-invalidated=1 from 127.0.0.1 [504]
+[18:13:25] [INFO] GET to druhastranka:8080/projects from 127.0.0.1 [504]
+[18:13:26] [INFO] GET to druhastranka:8080/favicon.ico from 127.0.0.1 [504]
+[18:21:33] [INFO] Loaded 2 domain config files
+[18:21:33] [INFO] Added 1 custom mime types.
+[18:22:02] [INFO] Loaded 2 domain config files
+[18:22:02] [INFO] Added 1 custom mime types.
+[18:22:33] [INFO] Loaded 2 domain config files
+[18:22:33] [INFO] Added 1 custom mime types.
+[18:23:04] [INFO] POST to druhastranka:8080/api/auth/login from 127.0.0.1 [200]
+[18:24:04] [INFO] Loaded 2 domain config files
+[18:24:04] [INFO] Added 1 custom mime types.
+[18:24:08] [INFO] POST to druhastranka:8080/api/auth/login from 127.0.0.1 [200]
+[18:24:21] [INFO] POST to druhastranka:8080/api/auth/login from 127.0.0.1 [200]
+[18:24:41] [INFO] Loaded 2 domain config files
+[18:24:41] [INFO] Added 1 custom mime types.
+[18:29:42] [INFO] Loaded 2 domain config files
+[18:29:42] [INFO] Added 1 custom mime types.
+[18:30:56] [INFO] Loaded 2 domain config files
+[18:30:56] [INFO] Added 1 custom mime types.
+[18:32:07] [INFO] Loaded 2 domain config files
+[18:32:07] [INFO] Added 1 custom mime types.
+[18:33:02] [INFO] Loaded 2 domain config files
+[18:33:02] [INFO] Added 1 custom mime types.
+[18:33:31] [INFO] Loaded 2 domain config files
+[18:33:31] [INFO] Added 1 custom mime types.
+[18:33:42] [INFO] Loaded 2 domain config files
+[18:33:42] [INFO] Added 1 custom mime types.
+[18:34:11] [INFO] Loaded 2 domain config files
+[18:34:11] [INFO] Added 1 custom mime types.
+[18:35:58] [INFO] Loaded 2 domain config files
+[18:35:58] [INFO] Added 1 custom mime types.
+[18:36:13] [INFO] Loaded 2 domain config files
+[18:36:13] [INFO] Added 1 custom mime types.
+[18:39:07] [INFO] Loaded 2 domain config files
+[18:39:07] [INFO] Added 1 custom mime types.
+[18:39:30] [INFO] Loaded 2 domain config files
+[18:39:30] [INFO] Added 1 custom mime types.
+[18:39:42] [INFO] Loaded 2 domain config files
+[18:39:42] [INFO] Added 1 custom mime types.
+[18:39:56] [INFO] Loaded 2 domain config files
+[18:39:56] [INFO] Added 1 custom mime types.
+[18:40:08] [INFO] Loaded 2 domain config files
+[18:40:08] [INFO] Added 1 custom mime types.
+[18:40:24] [INFO] Loaded 2 domain config files
+[18:40:24] [INFO] Added 1 custom mime types.
+[18:41:10] [INFO] Loaded 2 domain config files
+[18:41:10] [INFO] Added 1 custom mime types.
+[18:43:51] [INFO] Loaded 2 domain config files
+[18:43:51] [INFO] Added 1 custom mime types.
+[18:44:12] [INFO] Loaded 2 domain config files
+[18:44:12] [INFO] Added 1 custom mime types.
+[18:58:49] [INFO] Loaded 2 domain config files
+[18:58:49] [INFO] Added 1 custom mime types.

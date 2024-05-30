@@ -104,11 +104,34 @@ std::optional<ReceivedData> Socket::accept()
         return std::nullopt;
     }
 
-    char buffer[1024] = {0};
+    constexpr const size_t size = 1 * 1024;
+    char buffer[size] = {0};
 
-    if (static_cast<int>(recv(client, &buffer, sizeof(buffer), 0)) == -1)
+    std::string data;
+    data.reserve(size);
+
+    while (true)
     {
-        throw std::runtime_error("Unable to read input");
+        int readed = static_cast<int>(recv(client, &buffer, sizeof(buffer), 0));
+        if (readed == -1)
+        {
+            throw std::runtime_error("Unable to read input");
+        }
+
+        if (readed == 0)
+        {
+            break;
+        }
+        else
+        {
+            data.append(buffer, readed);
+        }
+
+        if (readed < static_cast<int>(size))
+        {
+            break;
+        }
     }
-    return ReceivedData{client, std::string(buffer), this->getAddress(&address)};
+
+    return ReceivedData{client, std::move(data), this->getAddress(&address)};
 }

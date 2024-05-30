@@ -5,7 +5,6 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-#include <iostream>
 #include <thread>
 
 #include "../utils/threadPool.hpp"

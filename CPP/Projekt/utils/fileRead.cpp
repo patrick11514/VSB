@@ -1,8 +1,6 @@
 #include "fileRead.hpp"
 #include "mimeType.hpp"
 
-#include <iostream>
-
 std::unordered_map<fs::path, bool> FileRead::textTypes = {
     {".css", true},
     {".csv", true},

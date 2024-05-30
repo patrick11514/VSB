@@ -1,5 +1,4 @@
 #include "mimeType.hpp"
-#include <iostream>
 
 std::unordered_map<fs::path, std::string> MimeType::mimeTypes = {
     // text formats

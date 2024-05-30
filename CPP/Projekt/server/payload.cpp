@@ -4,48 +4,44 @@
 HTTPPayload::HTTPPayload(const ReceivedData &data)
 {
     this->payload = data.data;
-    std::string_view restOfData = this->payload;
-    std::vector<std::string_view> sws;
 
-    while (true)
+    std::string_view rest{this->payload.begin(), this->payload.end()};
+
+    /// PARSE FIRST LINE HTTP/VER CODE TEXT
+
+    auto endOfLine = rest.find(this->separator);
+    if (endOfLine == rest.npos)
     {
-        size_t occurence = restOfData.find("\r\n");
-
-        if (occurence == std::string_view::npos)
-        {
-            sws.push_back(std::string_view(restOfData.begin(), restOfData.end()));
-            break;
-        }
-
-        sws.push_back(std::string_view(restOfData.begin(), restOfData.begin() + occurence));
-        restOfData = std::string_view(restOfData.begin() + occurence + 2, restOfData.end());
-    }
-
-    // parse first line
-    std::vector<std::string_view> httpParts;
-    std::string_view part = sws[0];
-    httpParts.reserve(3);
-
-    while (true)
-    {
-        size_t space = part.find(' ');
-        if (space == std::string_view::npos)
-        {
-            httpParts.push_back(std::string_view(part.begin(), part.end()));
-            break;
-        }
-
-        httpParts.push_back(std::string_view(part.begin(), part.begin() + space));
-        part = std::string_view(part.begin() + space + 1, part.end());
-    }
-
-    if (httpParts.size() < 3)
-    {
+        this->isValid = false;
         return;
     }
 
-    this->method = httpParts[0];
-    std::string_view tempPath = httpParts[1];
+    std::string_view versionCode{rest.begin(), rest.begin() + endOfLine};
+
+    std::vector<std::string_view> parts;
+    parts.reserve(3);
+
+    while (true)
+    {
+        auto split = versionCode.find(' ');
+        if (split == versionCode.npos || parts.size() > 1)
+        {
+            if (parts.size() < 1)
+            {
+                this->isValid = false;
+                return;
+            }
+
+            parts.push_back({versionCode.begin(), versionCode.end()});
+            break;
+        }
+
+        parts.push_back({versionCode.begin(), versionCode.begin() + split});
+        versionCode = {versionCode.begin() + split + 1, versionCode.end()};
+    }
+
+    this->method = parts[0];
+    std::string_view tempPath = parts[1];
 
     if (tempPath.find("..") != tempPath.npos)
     {
@@ -61,33 +57,64 @@ HTTPPayload::HTTPPayload(const ReceivedData &data)
     {
         this->path = tempPath;
     }
-    this->httpVersion = httpParts[2];
+    this->httpVersion = parts[2];
 
-    // headers
-    size_t i = 1;
-    for (; i < sws.size(); ++i)
+    /// PARSE HEADERS KEY:VALUE\r\nKEY:VALUE\r\n...
+
+    rest = std::string_view{rest.begin() + endOfLine + this->separator.size(), rest.end()};
+
+    auto endOfHeaders = rest.find(std::format("{}{}", this->separator, this->separator));
+    if (endOfHeaders == rest.npos)
     {
-        if (sws[i].size() == 0)
+        this->isValid = false;
+        return;
+    }
+
+    std::string_view headers{rest.begin(), rest.begin() + endOfHeaders};
+
+    /// Put headers to map
+
+    while (true)
+    {
+        auto sep = headers.find(this->separator);
+        bool end = false;
+
+        std::string_view keyValue;
+
+        if (sep == headers.npos)
         {
-            break;
+            end = true;
+
+            keyValue = headers;
         }
-        std::string_view &row = sws[i];
-        size_t separator = row.find(": ");
-        if (separator == std::string_view::npos)
+        else
         {
-            if (Server::instance != nullptr)
-            {
-                Server::instance->l->warn(std::format("Cannot parse header: {}", row));
-            }
-            continue;
+            keyValue = {headers.begin(), headers.begin() + sep};
+        }
+
+        auto colon = keyValue.find(": ");
+
+        if (colon == keyValue.npos)
+        {
+            this->isValid = false;
+            return;
         }
 
         this->headers.emplace(
-            std::string_view(row.begin(), row.begin() + separator),
-            std::string_view(row.begin() + separator + 2, row.end()));
+            Header{std::string_view{keyValue.begin(), keyValue.begin() + colon}},
+            std::string{
+                keyValue.begin() + colon + 2,
+                keyValue.end()});
+
+        if (end)
+        {
+            break;
+        }
+
+        headers = {headers.begin() + sep + this->separator.size(), headers.end()};
     }
 
-    this->content = sws[i + 1];
+    this->content = {rest.begin() + endOfHeaders + this->separator.size() * 2, rest.end()};
 
     this->isValid = true;
 }

@@ -21,9 +21,9 @@ void MainMode::doFile(const fs::path &filePath, const HTTPPayload &payload, HTTP
     // if client asks for specific range (sadly works only in VLC), browsers
     // ask this through same connection and because we don't support keepalive
     // connection, browsers doesn't support jumping into unbuffered part of vieo
-    if (payload.headers.find("Range") != payload.headers.end())
+    if (payload.headers.find(Header{"Range"}) != payload.headers.end())
     {
-        std::string_view range = payload.headers.at("Range");
+        std::string_view range = payload.headers.at(Header{"Range"});
 
         if (!range.starts_with("bytes="))
         {
