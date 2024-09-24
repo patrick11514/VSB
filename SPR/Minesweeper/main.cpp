@@ -1,68 +1,77 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cstdio>
 
-int getCount(const std::vector<int> &data, int row, int col, int w, int h)
+void increase(std::vector<int> &data, int x, int y, int w, int h)
 {
-    int count = 0;
     for (int i = -1; i <= 1; ++i)
     {
-        int y = row + i;
-        if (y < 0 || y >= h)
-            continue;
+        int row = y + i;
 
-        for (int j = -1; j <= 1; ++j)
+        if (row < 0 || row >= h)
         {
-            int x = col + j;
+            continue;
+        }
 
-            if (x < 0 || x >= w)
-                continue;
+        for (int l = -1; l <= 1; ++l)
+        {
+            int col = x + l;
 
-            if (data[y * w + x] == -1)
+            if (col < 0 || col >= w)
             {
-                ++count;
+                continue;
+            }
+
+            int index = row * w + col;
+
+            if (row == y && col == x)
+            {
+                data[index] = -1;
+                continue;
+            }
+
+            if (data[index] >= 0)
+            {
+                data[index]++;
             }
         }
     }
-
-    return count;
 }
 
 void solve(int w, int h)
 {
-    std::vector<int> data;
-    data.reserve(w * h);
-    std::string row;
-    row.reserve(w);
+    std::vector<int> data(w * h, 0);
 
-    for (int i = 0; i < h; ++i)
+    for (int y = 0; y < h; ++y)
     {
+        std::string row;
+        row.reserve(w);
         std::cin >> row;
 
-        for (int j = 0; j < w; ++j)
+        for (int x = 0; x < w; ++x)
         {
-            if (row[j] == '.')
+            if (row[x] != '*')
             {
-                data[w * i + j] = 0;
+                continue;
             }
-            else
-            {
-                data[w * i + j] = -1;
-            }
+
+            increase(data, x, y, w, h);
         }
     }
 
-    for (int i = 0; i < h; ++i)
+    for (int y = 0; y < h; ++y)
     {
-        for (int j = 0; j < w; ++j)
+        for (int x = 0; x < w; ++x)
         {
-            if (data[w * i + j] == -1)
+            int n = data[y * w + x];
+            if (n == -1)
             {
                 std::cout << "*";
             }
             else
             {
-                std::cout << getCount(data, i, j, w, h);
+                std::cout << n;
             }
         }
         std::endl(std::cout);
@@ -71,18 +80,26 @@ void solve(int w, int h)
 
 int main()
 {
-    int w, h;
+    int w, h, count = 1;
 
     while (true)
     {
-        std::cin >> w >> h;
+        std::cin >> h >> w;
 
         if (w == 0 && h == 0)
         {
             break;
         }
 
+        if (count > 1)
+        {
+            std::endl(std::cout);
+        }
+
+        std::cout << "Field #" << count << ":" << std::endl;
         solve(w, h);
+
+        ++count;
     }
     return 0;
 }
