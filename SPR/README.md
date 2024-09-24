@@ -1,0 +1,1 @@
+# SPR - Seminář z Programování
