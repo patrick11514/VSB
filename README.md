@@ -40,3 +40,7 @@ This repository contains laboratories and homeworks.
 [**TAMZ - Creation of mobile APPS**](https://github.com/patrick11514/VSB/tree/main/TAMZ)
 
 [**URO - User Interfaces**](https://github.com/patrick11514/VSB/tree/main/URO)
+
+## 5. semester
+[**VIA**](https://github.com/patrick11514/VSB/tree/main/VIA)
+[**SPR**](https://github.com/patrick11514/VSB/tree/main/SPR)
