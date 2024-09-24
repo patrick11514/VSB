@@ -1,0 +1,37 @@
+table {
+    border-collapse: collapse;
+
+    th {
+        white-space: wrap;
+        background-color: gray;
+    }
+
+    th,
+    td {
+        border: 2px lightgray solid;
+        color: white;
+        text-align: center;
+    }
+
+    td {
+        background-color: #333333;
+
+        &:first-child {
+            background-color: gray;
+        }
+
+        &.presentation {
+            background-color: red;
+
+            .row {
+                display: flex;
+                gap: 2px;
+            }
+
+            .note {
+                display: inline-block;
+                font-weight: bold;
+            }
+        }
+    }
+}
