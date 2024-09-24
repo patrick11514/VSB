@@ -1,0 +1,14 @@
+[
+{
+  "directory": "/home/patrick115/Projects/VSB/ZPG/build",
+  "command": "/usr/bin/c++    -g -fsanitize=address -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/CMakeFiles/3.30.3/CompilerIdCXX/CMakeCXXCompilerId.cpp.o -c /home/patrick115/Projects/VSB/ZPG/build/CMakeFiles/3.30.3/CompilerIdCXX/CMakeCXXCompilerId.cpp",
+  "file": "/home/patrick115/Projects/VSB/ZPG/build/CMakeFiles/3.30.3/CompilerIdCXX/CMakeCXXCompilerId.cpp",
+  "output": "CMakeFiles/main.dir/CMakeFiles/3.30.3/CompilerIdCXX/CMakeCXXCompilerId.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/ZPG/build",
+  "command": "/usr/bin/c++    -g -fsanitize=address -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/main.cpp.o -c /home/patrick115/Projects/VSB/ZPG/main.cpp",
+  "file": "/home/patrick115/Projects/VSB/ZPG/main.cpp",
+  "output": "CMakeFiles/main.dir/main.cpp.o"
+}
+]
