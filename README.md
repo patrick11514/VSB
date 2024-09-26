@@ -47,3 +47,4 @@ This repository contains laboratories and homeworks.
 [**ZPG**](https://github.com/patrick11514/VSB/tree/main/ZPG)
 [**TAMZII**](https://github.com/patrick11514/VSB/tree/main/TAMZ2)
 [**OSY**](https://github.com/patrick11514/VSB/tree/main/OSY)
+[**ZSU**](https://github.com/patrick11514/VSB/tree/main/ZSU)
