@@ -44,3 +44,6 @@ This repository contains laboratories and homeworks.
 ## 5. semester
 [**VIA**](https://github.com/patrick11514/VSB/tree/main/VIA)
 [**SPR**](https://github.com/patrick11514/VSB/tree/main/SPR)
+[**ZPG**](https://github.com/patrick11514/VSB/tree/main/ZPG)
+[**TAMZII**](https://github.com/patrick11514/VSB/tree/main/TAMZ2)
+[**OSY**](https://github.com/patrick11514/VSB/tree/main/OSY)
