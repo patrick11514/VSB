@@ -162,3 +162,22 @@
 [18:44:12] [INFO] Added 1 custom mime types.
 [18:58:49] [INFO] Loaded 2 domain config files
 [18:58:49] [INFO] Added 1 custom mime types.
+[21:17:15] [INFO] Loaded 2 domain config files
+[21:17:15] [INFO] Added 1 custom mime types.
+[21:17:30] [INFO] GET to localhost:8080/index.html from 127.0.0.1 [200]
+[21:17:30] [INFO] GET to localhost:8080/favicon.ico from 127.0.0.1 [404]
+[21:17:38] [INFO] Loaded 2 domain config files
+[21:17:38] [INFO] Added 1 custom mime types.
+[21:17:40] [INFO] GET to localhost/index.html from 127.0.0.1 [200]
+[21:17:45] [INFO] GET to prvnistranka/index.html from 127.0.0.1 [200]
+[21:18:11] [INFO] Loaded 2 domain config files
+[21:18:11] [INFO] Added 1 custom mime types.
+[21:18:29] [INFO] GET to druhastranka/ from 127.0.0.1 [504]
+[21:18:29] [INFO] GET to druhastranka/favicon.ico from 127.0.0.1 [504]
+[21:18:36] [INFO] GET to druhastranka/assets/favicon/favicon-196x196.png from 127.0.0.1 [502]
+[18:48:38] [INFO] Loaded 2 domain config files
+[18:48:38] [INFO] Added 1 custom mime types.
+[18:48:43] [INFO] GET to localhost/index.html from 127.0.0.1 [200]
+[18:48:43] [INFO] GET to localhost/favicon.ico from 127.0.0.1 [404]
+[18:49:42] [INFO] GET to druhastranka/projects from 127.0.0.1 [504]
+[18:49:42] [INFO] GET to druhastranka/favicon.ico from 127.0.0.1 [504]
