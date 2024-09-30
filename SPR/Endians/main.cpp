@@ -1,18 +1,5 @@
 #include <iostream>
 #include <string>
-#include <bitset>
-
-using std::size_t;
-
-int toInt(std::bitset<32> &bits)
-{
-    if (bits[31] == 1)
-    {
-        // should be negative
-        return -1;
-    }
-    return static_cast<int>(bits.to_ulong());
-}
 
 int main()
 {
@@ -27,32 +14,17 @@ int main()
         }
 
         int number = std::stoi(line);
-        std::bitset<32> bits(number);
 
-        std::cout << "PRE" << std::endl;
-        for (int i = 0; i < 32; ++i)
-        {
-            std::cout << bits[i];
-        }
-        std::endl(std::cout);
-        std::cout << number << std::endl;
+        char *bytes = (char *)&number;
+        char newBytes[4] = {0};
 
-        for (int i = 0; i < 16; ++i)
+        for (int i = 0; i < 4; ++i)
         {
-            bool tmp = bits[i];
-            bits[i] = bits[31 - i];
-            bits[31 - i] = tmp;
+            newBytes[4 - i - 1] = bytes[i];
         }
 
-        std::cout << "POST" << std::endl;
-        for (int i = 0; i < 32; ++i)
-        {
-            std::cout << bits[i];
-        }
-
-        std::endl(std::cout);
-
-        std::cout << toInt(bits) << std::endl;
+        int result = *(int *)newBytes;
+        std::cout << number << " converts to " << result << std::endl;
     }
 
     return 0;
