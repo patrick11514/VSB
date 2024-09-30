@@ -70,5 +70,9 @@ table {
             background-image: url('https://edison.sso.vsb.cz/wps/.cz.vsb.edison.edu.study.pass.portlet/img/icons/small/active/zoom.png');
             background-repeat: no-repeat;
         }
+
+        .end {
+            margin-left: auto;
+        }
     }
 }

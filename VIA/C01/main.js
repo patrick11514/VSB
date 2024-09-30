@@ -319,6 +319,7 @@ for (const [day, subjects] of Object.entries(agregated)) {
 
             const group = document.createElement('div');
             group.innerText = popped.group;
+            group.classList.add('end');
             room.appendChild(group);
 
             td.appendChild(room);
