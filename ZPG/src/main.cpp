@@ -42,9 +42,10 @@ static void button_callback(GLFWwindow *window, int button, int action, int mode
 }
 
 float points[] = {
-    0.0f, 0.5f, 0.0f,
+    0.5f, 0.5f, 0.0f,
     0.5f, -0.5f, 0.0f,
-    -0.5f, -0.5f, 0.0f};
+    -0.5f, -0.5f, 0.0f,
+    -0.5f, 0.5f, 0.0f};
 
 const char *vertex_shader =
     "#version 330\n"
@@ -170,7 +171,7 @@ int main(void)
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
         // draw triangles
-        glDrawArrays(GL_TRIANGLES, 0, 3); // mode,first,count
+        glDrawArrays(GL_QUADS, 0, 4); // mode,first,count
         // update other events like input handling
         glfwPollEvents();
         // put the stuff we’ve been drawing onto the display
