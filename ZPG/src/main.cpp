@@ -45,7 +45,10 @@ float points[] = {
     0.5f, 0.5f, 0.0f,
     0.5f, -0.5f, 0.0f,
     -0.5f, -0.5f, 0.0f,
-    -0.5f, 0.5f, 0.0f};
+    -0.5f, 0.5f, 0.0f,
+    0.75f, 1.0f, 0.0f,
+    1.0f, 0.5f, 0.0f,
+    0.5f, 0.5f, 0.0f};
 
 const char *vertex_shader =
     "#version 330\n"
@@ -174,6 +177,8 @@ int main(void)
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
         // draw triangles
+        glDrawArrays(GL_TRIANGLES, 4, 3); // mode,first,count
+
         glDrawArrays(GL_QUADS, 0, 4); // mode,first,count
         // update other events like input handling
         glfwPollEvents();
