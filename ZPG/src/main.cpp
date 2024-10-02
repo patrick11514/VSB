@@ -67,6 +67,20 @@ const char *fragment_shader =
     "     frag_colour = vec4 (color, 1.0);"
     "}";
 
+const char *vertex_shader2 =
+    "#version 330\n"
+    "layout(location=0) in vec3 vp;"
+    "void main () {"
+    "     gl_Position = vec4 (vp, 1.0);"
+    "}";
+
+const char *fragment_shader2 =
+    "#version 330\n"
+    "out vec4 frag_colour;"
+    "void main () {"
+    "     frag_colour = vec4 (0.5, 0.0, 0.5, 1.0);"
+    "}";
+
 int main(void)
 {
     GLFWwindow *window;
@@ -170,6 +184,35 @@ int main(void)
         return (EXIT_FAILURE);
     }
 
+    GLuint vertexShader2 = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader2, 1, &vertex_shader2, NULL);
+    glCompileShader(vertexShader2);
+    GLuint fragmentShader2 = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader2, 1, &fragment_shader2, NULL);
+    glCompileShader(fragmentShader2);
+    GLuint shaderProgram2 = glCreateProgram();
+    glAttachShader(shaderProgram2, fragmentShader2);
+    glAttachShader(shaderProgram2, vertexShader2);
+    glLinkProgram(shaderProgram2);
+
+    GLint status2;
+    glGetProgramiv(shaderProgram2, GL_LINK_STATUS, &status2);
+    if (status2 == GL_FALSE)
+    {
+        GLint infoLogLength;
+        glGetProgramiv(shaderProgram2, GL_INFO_LOG_LENGTH, &infoLogLength);
+        GLchar *strInfoLog = new GLchar[infoLogLength + 1];
+        glGetProgramInfoLog(shaderProgram2, infoLogLength, NULL, strInfoLog);
+        fprintf(stderr, "Linker failure: %s\n", strInfoLog);
+        delete[] strInfoLog;
+
+        glfwDestroyWindow(window);
+
+        glfwTerminate();
+
+        return (EXIT_FAILURE);
+    }
+
     while (!glfwWindowShouldClose(window))
     {
         // clear color and depth buffer
@@ -179,6 +222,7 @@ int main(void)
         // draw triangles
         glDrawArrays(GL_TRIANGLES, 4, 3); // mode,first,count
 
+        glUseProgram(shaderProgram2);
         glDrawArrays(GL_QUADS, 0, 4); // mode,first,count
         // update other events like input handling
         glfwPollEvents();
