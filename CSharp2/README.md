@@ -15,3 +15,6 @@
     ![C05](https://upload.patrick115.eu/screenshot/jan_CSharp2.5.png)
 * [**WPF**](https://github.com/patrick11514/VSB/tree/main/CSharp2/C06)
     ![C06](https://upload.patrick115.eu/screenshot/jan_CSharp2.6.png)
+* [**ASP.NET Core Basics**](https://github.com/patrick11514/VSB/tree/main/CSharp2/C07)
+* [**ASP.NET Core Controllers**](https://github.com/patrick11514/VSB/tree/main/CSharp2/C08)
+* [**Web requests**](https://github.com/patrick11514/VSB/tree/main/CSharp2/C09)
