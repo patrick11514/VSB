@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "TCyd6tz/lfQ=",
+  "success": true,
+  "projectFilePath": "/home/patrick115/Projects/VSB/VIS/BlazorApp1/BlazorApp1/BlazorApp1.csproj",
+  "expectedPackageFiles": [
+    "/home/patrick115/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.8/microsoft.aspnetcore.app.ref.8.0.8.nupkg.sha512"
+  ],
+  "logs": []
+}
