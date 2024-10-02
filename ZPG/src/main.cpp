@@ -225,6 +225,9 @@ int main(void)
         glUseProgram(shaderProgram2);
         glDrawArrays(GL_QUADS, 0, 4); // mode,first,count
         // update other events like input handling
+
+        glUseProgram(0);
+
         glfwPollEvents();
         // put the stuff we’ve been drawing onto the display
         glfwSwapBuffers(window);
