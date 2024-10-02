@@ -1,3 +1,5 @@
 #!/bin/bash
-./STATIC/build.sh
-./DYNAMIC/build.sh
+cd STATIC && ./build.sh
+cd ../DYNAMIC && ./build.sh
+
+echo "export LD_LIBRARY_PATH=./DYNAMIC"
