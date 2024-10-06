@@ -68,15 +68,18 @@ void App::createShaders()
 
 void App::createModels()
 {
-    Object object(new float[21]{
+    Object object(new float[]{
                       0.5f, 0.5f, 0.0f,
                       0.5f, -0.5f, 0.0f,
                       -0.5f, -0.5f, 0.0f,
                       -0.5f, 0.5f, 0.0f,
                       0.75f, 1.0f, 0.0f,
                       1.0f, 0.5f, 0.0f,
-                      0.5f, 0.5f, 0.0f},
-                  21);
+                      0.5f, 0.5f, 0.0f,
+                      0.0f, 0.5f, 0.0f,
+                      0.5f, -0.5f, 0.0f,
+                      -0.5f, -0.5f, 0.0f},
+                  30);
 
     this->addObject("BasicObjects", object);
 }
@@ -92,7 +95,7 @@ void App::run()
         this->setObject("BasicObjects");
         // draw triangles
         glDrawArrays(GL_TRIANGLES, 4, 3); // mode,first,count
-
+        //
         this->setShaderProgram("ColorPurple");
         glDrawArrays(GL_QUADS, 0, 4); // mode,first,count
         //  update other events like input handling
