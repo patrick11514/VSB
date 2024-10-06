@@ -22,12 +22,6 @@ Object::~Object()
 
 void Object::setArray()
 {
-    for (int i = 0; i < 9; i++)
-    {
-        printf("%f\n", this->points[i]);
-    }
-
-    printf("Setting array %d\n", this->VAO);
     glBindVertexArray(this->VAO);
 }
 
