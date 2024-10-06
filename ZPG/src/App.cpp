@@ -43,6 +43,23 @@ void App::createShaders()
 
         ShaderProgram shaderProgram(vertexShader, fragmentShader);
         this->addShaderProgram("ColorByCoords", shaderProgram);
+
+        Shader vertexShader2("#version 330\n"
+                             "layout(location=0) in vec3 vp;"
+                             "void main () {"
+                             "     gl_Position = vec4 (vp, 1.0);"
+                             "}",
+                             ShaderType::Vertex);
+
+        Shader fragmentShader2("#version 330\n"
+                               "out vec4 frag_colour;"
+                               "void main () {"
+                               "     frag_colour = vec4 (0.5, 0.0, 0.5, 1.0);"
+                               "}",
+                               ShaderType::Fragment);
+
+        ShaderProgram shaderProgram2(vertexShader2, fragmentShader2);
+        this->addShaderProgram("ColorPurple", shaderProgram2);
     }
     catch (const std::runtime_error &)
     {
@@ -76,10 +93,11 @@ void App::run()
         this->setShaderProgram("ColorByCoords");
         this->setObject("BasicObjects");
         // draw triangles
-        glDrawArrays(GL_TRIANGLES, 0, 3); // mode,first,count
+        glDrawArrays(GL_TRIANGLES, 4, 3); // mode,first,count
 
+        this->setShaderProgram("ColorPurple");
         // glUseProgram(shaderProgram2);
-        // glDrawArrays(GL_QUADS, 0, 4); // mode,first,count
+        glDrawArrays(GL_QUADS, 0, 4); // mode,first,count
         //  update other events like input handling
 
         ShaderProgram::resetProgram();
