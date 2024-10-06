@@ -69,14 +69,15 @@ void App::createShaders()
 
 void App::createModels()
 {
-    Object object(new float[]{
-        0.5f, 0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f,
-        -0.5f, 0.5f, 0.0f,
-        0.75f, 1.0f, 0.0f,
-        1.0f, 0.5f, 0.0f,
-        0.5f, 0.5f, 0.0f});
+    Object object(new float[21]{
+                      0.5f, 0.5f, 0.0f,
+                      0.5f, -0.5f, 0.0f,
+                      -0.5f, -0.5f, 0.0f,
+                      -0.5f, 0.5f, 0.0f,
+                      0.75f, 1.0f, 0.0f,
+                      1.0f, 0.5f, 0.0f,
+                      0.5f, 0.5f, 0.0f},
+                  21);
 
     this->addObject("BasicObjects", object);
 }

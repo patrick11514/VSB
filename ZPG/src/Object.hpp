@@ -12,7 +12,7 @@ private:
     float *points;
 
 public:
-    Object(float *points /* TODO: args for glVertexAttribPointer */);
+    Object(float *points, size_t count /* TODO: args for glVertexAttribPointer */);
     ~Object();
 
     void setArray();

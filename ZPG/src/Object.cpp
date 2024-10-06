@@ -1,11 +1,11 @@
 #include "Object.hpp"
 
-Object::Object(float *points)
+Object::Object(float *points, size_t count)
 {
     this->points = points;
     glGenBuffers(1, &this->VBO); // generate the VBO
     glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->points), this->points, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, count * sizeof(float), this->points, GL_STATIC_DRAW);
 
     // Vertex Array Object (VAO)
     glGenVertexArrays(1, &this->VAO); // generate the VAO
@@ -22,6 +22,11 @@ Object::~Object()
 
 void Object::setArray()
 {
+    for (int i = 0; i < 9; i++)
+    {
+        printf("%f\n", this->points[i]);
+    }
+
     printf("Setting array %d\n", this->VAO);
     glBindVertexArray(this->VAO);
 }
