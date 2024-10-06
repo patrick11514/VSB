@@ -9,9 +9,11 @@ class Object
 private:
     GLuint VAO = 0;
     GLuint VBO = 0;
+    float *points;
 
 public:
     Object(float *points /* TODO: args for glVertexAttribPointer */);
+    ~Object();
 
     void setArray();
 

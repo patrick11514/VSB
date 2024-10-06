@@ -69,16 +69,14 @@ void App::createShaders()
 
 void App::createModels()
 {
-    float points[] = {
+    Object object(new float[]{
         0.5f, 0.5f, 0.0f,
         0.5f, -0.5f, 0.0f,
         -0.5f, -0.5f, 0.0f,
         -0.5f, 0.5f, 0.0f,
         0.75f, 1.0f, 0.0f,
         1.0f, 0.5f, 0.0f,
-        0.5f, 0.5f, 0.0f};
-
-    Object object(points);
+        0.5f, 0.5f, 0.0f});
 
     this->addObject("BasicObjects", object);
 }
@@ -96,7 +94,6 @@ void App::run()
         glDrawArrays(GL_TRIANGLES, 4, 3); // mode,first,count
 
         this->setShaderProgram("ColorPurple");
-        // glUseProgram(shaderProgram2);
         glDrawArrays(GL_QUADS, 0, 4); // mode,first,count
         //  update other events like input handling
 

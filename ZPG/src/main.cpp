@@ -9,5 +9,5 @@ int main(void)
     app.run();
     app.destroy();
 
-    return 0;
+    return EXIT_SUCCESS;
 }

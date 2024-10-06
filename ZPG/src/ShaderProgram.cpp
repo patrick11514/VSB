@@ -29,7 +29,7 @@ ShaderProgram::ShaderProgram(Shader &vertexShader, Shader &fragmentShader)
 
 void ShaderProgram::setProgram() const
 {
-    printf("Setting program\n");
+    printf("Setting program %d\n", this->programId);
     glUseProgram(this->programId);
 }
 
