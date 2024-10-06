@@ -16,6 +16,7 @@ Object::Object(float *points)
 
 void Object::setArray()
 {
+    printf("Setting array\n");
     glBindVertexArray(this->VAO);
 }
 

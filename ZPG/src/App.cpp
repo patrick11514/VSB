@@ -46,7 +46,7 @@ void App::createShaders()
     }
     catch (const std::runtime_error &)
     {
-        this->destroy();
+        this->destroy(EXIT_FAILURE);
     }
 }
 
@@ -76,7 +76,7 @@ void App::run()
         this->setShaderProgram("ColorByCoords");
         this->setObject("BasicObjects");
         // draw triangles
-        glDrawArrays(GL_TRIANGLES, 4, 3); // mode,first,count
+        glDrawArrays(GL_TRIANGLES, 0, 3); // mode,first,count
 
         // glUseProgram(shaderProgram2);
         // glDrawArrays(GL_QUADS, 0, 4); // mode,first,count
@@ -90,12 +90,12 @@ void App::run()
     }
 }
 
-void App::destroy()
+void App::destroy(int status)
 {
     glfwDestroyWindow(this->window);
     glfwTerminate();
 
-    exit(EXIT_FAILURE);
+    exit(status);
 }
 
 void App::createWindow()
@@ -117,7 +117,7 @@ void App::createWindow()
     this->printVersionInfo();
 
     int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
+    glfwGetFramebufferSize(this->window, &width, &height);
     float ratio = width / (float)height;
     glViewport(0, 0, width, height);
 }

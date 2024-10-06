@@ -11,10 +11,11 @@ ShaderProgram::ShaderProgram(Shader &vertexShader, Shader &fragmentShader)
     glAttachShader(this->programId, vertexShader.shaderId);
     glLinkProgram(this->programId);
 
-    GLint status2;
-    glGetProgramiv(this->programId, GL_LINK_STATUS, &status2);
-    if (status2 == GL_FALSE)
+    GLint status;
+    glGetProgramiv(this->programId, GL_LINK_STATUS, &status);
+    if (status == GL_FALSE)
     {
+        printf("ERROR LINK\n");
         GLint infoLogLength;
         glGetProgramiv(this->programId, GL_INFO_LOG_LENGTH, &infoLogLength);
         GLchar *strInfoLog = new GLchar[infoLogLength + 1];
@@ -28,6 +29,7 @@ ShaderProgram::ShaderProgram(Shader &vertexShader, Shader &fragmentShader)
 
 void ShaderProgram::setProgram() const
 {
+    printf("Setting program\n");
     glUseProgram(this->programId);
 }
 

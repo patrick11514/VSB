@@ -38,5 +38,5 @@ public:
     void createShaders();
     void createModels();
     void run();
-    void destroy();
+    void destroy(int status = EXIT_SUCCESS);
 };
