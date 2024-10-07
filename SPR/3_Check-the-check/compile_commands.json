@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/patrick115/Projects/VSB/SPR/3_Check-the-check/build",
+  "command": "/usr/bin/c++    -g -fsanitize=address -std=gnu++11 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/main.cpp.o -c /home/patrick115/Projects/VSB/SPR/3_Check-the-check/main.cpp",
+  "file": "/home/patrick115/Projects/VSB/SPR/3_Check-the-check/main.cpp",
+  "output": "CMakeFiles/main.dir/main.cpp.o"
+}
+]
