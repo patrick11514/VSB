@@ -1,0 +1,79 @@
+table {
+    border-collapse: collapse;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    width: 100%;
+
+    th {
+        white-space: wrap;
+        background-color: gray;
+        padding: 0.25rem 1rem;
+    }
+
+    th,
+    td {
+        border: 2px lightgray solid;
+        color: white;
+        text-align: center;
+    }
+
+    td {
+        background-color: #333333;
+        text-align: left;
+        font-size: 0.65rem;
+
+        &:first-child {
+            background-color: gray;
+        }
+
+        &.lecture {
+            background-color: red;
+        }
+
+        &.excercises {
+            background-color: blue;
+        }
+
+        a {
+            text-wrap: nowrap;
+            color: #1a89ea;
+        }
+
+        & > div {
+            &:first-child,
+            &:nth-child(2) {
+                margin-bottom: 0.25rem;
+            }
+            &:last-child,
+            &:nth-child(2) {
+                margin-top: 0.25rem;
+            }
+        }
+
+        .row {
+            display: flex;
+            gap: 2px;
+        }
+
+        .note {
+            display: inline-block;
+            font-weight: bold;
+            font-size: 0.6rem;
+            margin-right: auto;
+        }
+
+        .icon {
+            width: 10px;
+            background-size: cover;
+            margin: 2px;
+            cursor: pointer;
+            aspect-ratio: 1 / 1;
+            background-image: url('https://edison.sso.vsb.cz/wps/.cz.vsb.edison.edu.study.pass.portlet/img/icons/small/active/zoom.png');
+            background-repeat: no-repeat;
+        }
+
+        .end {
+            margin-left: auto;
+        }
+    }
+}
