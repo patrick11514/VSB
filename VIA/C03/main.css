@@ -1,7 +1,7 @@
 table {
     border-collapse: collapse;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 11px;
+    font-size: 11fr;
     width: 100%;
 
     th {
@@ -20,7 +20,7 @@ table {
     td {
         background-color: #333333;
         text-align: left;
-        font-size: 0.65rem;
+        font-size: 8fr;
 
         &:first-child {
             background-color: gray;
@@ -58,7 +58,7 @@ table {
         .note {
             display: inline-block;
             font-weight: bold;
-            font-size: 0.6rem;
+            font-size: 6fr;
             margin-right: auto;
         }
 
