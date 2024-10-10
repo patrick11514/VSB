@@ -4,82 +4,73 @@
 
 enum Orientation
 {
-    ROW,
-    COL
+    Top,
+    Right,
+    Bottom,
+    Left
 };
 
-struct Piece
+struct Move
 {
-    Orientation orientation;
+    Orientation direction;
 
-    Piece(Orientation orientation)
+    Move(Orientation direction)
     {
-        this->orientation = orientation;
-    }
-
-    void swap()
-    {
-        if (this->orientation == Orientation::ROW)
-        {
-            this->orientation = Orientation::COL;
-        }
-        else
-        {
-            this->orientation = Orientation::ROW;
-        }
+        this->direction = direction;
     }
 
     char getChar() const
     {
-        if (this->orientation == Orientation::ROW)
+        switch (this->direction)
         {
-            return '_';
+        case Orientation::Bottom:
+            return 'b';
+        case Orientation::Left:
+            return 'l';
+        case Orientation::Right:
+            return 'r';
+        case Orientation::Top:
+            return 't';
         }
-        return '|';
     }
 };
 
-void print(const std::vector<std::vector<Piece>> &layout)
+using Moves = std::vector<Move>;
+
+void print(const Moves &moves)
 {
-    for (const auto &row : layout)
+    for (const auto &move : moves)
     {
-        for (const auto &item : row)
-        {
-            std::cout << item.getChar();
-        }
-
-        std::endl(std::cout);
+        std::cout << move.getChar();
     }
+
+    std::endl(std::cout);
 }
 
-void addRotation(std::vector<std::vector<Piece>> &layout, int rotX, int rotY)
-{
-    std::vector<std::vector<Piece>> copy{layout};
-}
-
-void makeFolds(int folds, int iterations, std::vector<std::vector<Piece>> &layout, int width, int height)
+void makeFolds(int folds, int iterations, Moves &moves, int width, int height)
 {
     if (folds == 0)
     {
-        print(layout);
+        print(moves);
         std::cout << "^" << std::endl;
         return;
     }
 
-    if (layout.size() == 0)
+    if (moves.size() == 0)
     {
-        layout.push_back({Piece{Orientation::ROW}, Piece{Orientation::COL}});
-        return makeFolds(folds - 1, 2, layout, 2, 1);
+        moves.push_back(Move{Orientation::Right});
+        moves.push_back(Move{Orientation::Top});
+        return makeFolds(folds - 1, 2, moves, 2, 1);
     }
 
     std::vector<std::vector<Piece>> rotated;
 
-    for (int col = 0; col < layout[0].size(); ++col)
+    for (int col = 0; col < moves[0].size(); ++col)
     {
         std::vector<Piece> newRow;
-        for (size_t row = 0; row < layout.size(); ++row)
+        for (size_t row = 0; row < moves.size(); ++row)
         {
-            auto item = layout[row][col];
+            auto item = moves[row][col];
             item.swap();
             newRow.push_back(item);
         }
@@ -87,7 +78,7 @@ void makeFolds(int folds, int iterations, std::vector<std::vector<Piece>> &layou
     }
 
     std::cout << "NORMAL: " << std::endl;
-    print(layout);
+    print(moves);
     std::cout << "ROTATED: " << std::endl;
     print(rotated);
     std::cout << "W: " << width << " H: " << height << std::endl;
