@@ -24,37 +24,18 @@ void App::createShaders()
 {
     try
     {
-        Shader vertexShader("#version 330\n"
-                            "layout(location=0) in vec3 vp;"
-                            "out vec3 color;"
-                            "void main () {"
-                            "     gl_Position = vec4 (vp, 1.0);"
-                            "     color = vp;"
-                            "}",
+        Shader vertexShader("../shaders/vertex/ColorByCoords.vert",
                             ShaderType::Vertex);
-        Shader fragmentShader("#version 330\n"
-                              "in vec3 color;"
-                              "out vec4 frag_colour;"
-                              "void main () {"
-                              "     frag_colour = vec4 (color, 1.0);"
-                              "}",
+        Shader fragmentShader("../shaders/fragment/ColorByCoords.frag",
                               ShaderType::Fragment);
 
         ShaderProgram shaderProgram(vertexShader, fragmentShader);
         this->addShaderProgram("ColorByCoords", shaderProgram);
 
-        Shader vertexShader2("#version 330\n"
-                             "layout(location=0) in vec3 vp;"
-                             "void main () {"
-                             "     gl_Position = vec4 (vp, 1.0);"
-                             "}",
+        Shader vertexShader2("../shaders/vertex/Purple.vert",
                              ShaderType::Vertex);
 
-        Shader fragmentShader2("#version 330\n"
-                               "out vec4 frag_colour;"
-                               "void main () {"
-                               "     frag_colour = vec4 (0.5, 0.0, 0.5, 1.0);"
-                               "}",
+        Shader fragmentShader2("../shaders/fragment/Purple.frag",
                                ShaderType::Fragment);
 
         ShaderProgram shaderProgram2(vertexShader2, fragmentShader2);

@@ -13,7 +13,7 @@ private:
     GLuint shaderId;
 
 public:
-    Shader(const char *code, ShaderType shader);
+    Shader(const char *path, ShaderType shader);
 
     // ShaderProgram is a friend class of Shader
     friend class ShaderProgram;
