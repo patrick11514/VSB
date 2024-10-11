@@ -1,5 +1,6 @@
 #pragma once
 #include <GL/glew.h>
+#include <string>
 
 enum ShaderType
 {
@@ -11,6 +12,7 @@ class Shader
 {
 private:
     GLuint shaderId;
+    std::string program;
 
 public:
     Shader(const char *path, ShaderType shader);
