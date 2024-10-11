@@ -1,11 +1,10 @@
-#include "Object.hpp"
+#include "ObjectData.hpp"
 
-Object::Object(float *points, size_t count)
+ObjectData::ObjectData(Model &model)
 {
-    this->points = points;
     glGenBuffers(1, &this->VBO); // generate the VBO
     glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-    glBufferData(GL_ARRAY_BUFFER, count * sizeof(float), this->points, GL_STATIC_DRAW);
+    model.putDataToBuffer();
 
     // Vertex Array Object (VAO)
     glGenVertexArrays(1, &this->VAO); // generate the VAO
@@ -15,17 +14,12 @@ Object::Object(float *points, size_t count)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 }
 
-Object::~Object()
-{
-    delete[] this->points;
-}
-
-void Object::setArray()
+void ObjectData::setArray()
 {
     glBindVertexArray(this->VAO);
 }
 
-bool Object::operator==(const Object &other) const
+bool ObjectData::operator==(const ObjectData &other) const
 {
     return this->VAO == other.VAO;
 }
