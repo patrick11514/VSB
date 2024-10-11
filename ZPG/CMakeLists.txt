@@ -15,7 +15,7 @@ find_package(GLEW REQUIRED)
 find_package(glfw3 3.3 REQUIRED)
 include_directories(${GLEW_INCLUDE_DIRS})
 
-file(GLOB_RECURSE SOURCES "src/*.cpp")
+file(GLOB_RECURSE SOURCES "src/*.cpp" "src/**/*.cpp")
 
 add_executable(main ${SOURCES})
 

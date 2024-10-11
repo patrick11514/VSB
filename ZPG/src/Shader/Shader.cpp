@@ -9,7 +9,7 @@ Shader::Shader(const char *path, ShaderType shader)
     std::ifstream file(path);
     if (!file)
     {
-        throw new std::runtime_error("Unable to open shader file");
+        throw std::runtime_error("Unable to open shader file");
     }
 
     std::stringstream data;

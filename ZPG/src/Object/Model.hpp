@@ -9,10 +9,14 @@ class Model
 {
 private:
     float *points;
-    size_t size;
 
 public:
+    size_t size;
+    Model();
     Model(std::vector<float> points);
+    Model(const float points[], size_t size);
+    Model(const Model &other);
+    Model(Model &&other);
     ~Model();
 
     void putDataToBuffer() const;

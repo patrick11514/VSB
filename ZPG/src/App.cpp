@@ -1,5 +1,7 @@
 #include "App.hpp"
-#include "Shader.hpp"
+#include "Shader/Shader.hpp"
+#include "Object/ObjectData.hpp"
+#include "Object/Objects.hpp"
 
 #include <stdexcept>
 
@@ -30,7 +32,7 @@ void App::createShaders()
                               ShaderType::Fragment);
 
         ShaderProgram shaderProgram(vertexShader, fragmentShader);
-        this->addShaderProgram("ColorByCoords", shaderProgram);
+        this->shaders.addShaderProgram("ColorByCoords", shaderProgram);
 
         Shader vertexShader2("../shaders/vertex/Purple.vert",
                              ShaderType::Vertex);
@@ -39,7 +41,7 @@ void App::createShaders()
                                ShaderType::Fragment);
 
         ShaderProgram shaderProgram2(vertexShader2, fragmentShader2);
-        this->addShaderProgram("ColorPurple", shaderProgram2);
+        this->shaders.addShaderProgram("ColorPurple", shaderProgram2);
     }
     catch (const std::runtime_error &)
     {
@@ -49,37 +51,61 @@ void App::createShaders()
 
 void App::createModels()
 {
-    Object object(new float[]{
-                      0.5f, 0.5f, 0.0f,
-                      0.5f, -0.5f, 0.0f,
-                      -0.5f, -0.5f, 0.0f,
-                      -0.5f, 0.5f, 0.0f,
-                      0.75f, 1.0f, 0.0f,
-                      1.0f, 0.5f, 0.0f,
-                      0.5f, 0.5f, 0.0f,
-                      0.0f, 0.5f, 0.0f,
-                      0.5f, -0.5f, 0.0f,
-                      -0.5f, -0.5f, 0.0f},
-                  30);
+    Scene scene;
 
-    this->addObject("BasicObjects", object);
+    Model model({0.5f, 0.5f, 0.0f,
+                 0.5f, -0.5f, 0.0f,
+                 -0.5f, -0.5f, 0.0f,
+                 -0.5f, 0.5f, 0.0f,
+                 0.75f, 1.0f, 0.0f,
+                 1.0f, 0.5f, 0.0f,
+                 0.5f, 0.5f, 0.0f,
+                 0.0f, 0.5f, 0.0f,
+                 0.5f, -0.5f, 0.0f,
+                 -0.5f, -0.5f, 0.0f});
+    ObjectData data(model);
+
+    scene.addObject(Object(
+        data,
+        this->shaders.getShaderProgram("ColorByCoords"),
+        Transformations(),
+        []()
+        {
+            glDrawArrays(GL_TRIANGLES, 4, 3);
+        }));
+
+    scene.addObject(Object(
+        data,
+        this->shaders.getShaderProgram("ColorPurple"),
+        Transformations(),
+        []()
+        {
+            glDrawArrays(GL_QUADS, 0, 4);
+        }));
+
+    this->addScene("objects", scene);
+
+    Scene ballScene;
+
+    ballScene.addObject(createBall(this->shaders.getShaderProgram("ColorByCoords"), Transformations()));
+
+    this->addScene("ball", ballScene);
+
+    this->currentScene = "ball";
 }
 
 void App::run()
 {
+    glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(this->window))
     {
         // clear color and depth buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        this->setShaderProgram("ColorByCoords");
-        this->setObject("BasicObjects");
-        // draw triangles
-        glDrawArrays(GL_TRIANGLES, 4, 3); // mode,first,count
-        //
-        this->setShaderProgram("ColorPurple");
-        glDrawArrays(GL_QUADS, 0, 4); // mode,first,count
-        //  update other events like input handling
+        if (this->currentScene.has_value())
+        {
+            this->getScene(this->currentScene.value()).render();
+        }
 
         ShaderProgram::resetProgram();
 
@@ -95,6 +121,23 @@ void App::destroy(int status)
     glfwTerminate();
 
     exit(status);
+}
+
+void App::addScene(const std::string &name, Scene scene)
+{
+    this->scenes.emplace(name, scene);
+}
+
+const Scene &App::getScene(const std::string &name) const
+{
+    auto it = this->scenes.find(name);
+
+    if (it == this->scenes.end())
+    {
+        throw std::runtime_error("Cannot find scene");
+    }
+
+    return it->second;
 }
 
 void App::createWindow()
@@ -131,34 +174,4 @@ void App::printVersionInfo()
     int major, minor, revision;
     glfwGetVersion(&major, &minor, &revision);
     printf("Using GLFW %i.%i.%i\n", major, minor, revision);
-}
-
-void App::addShaderProgram(const std::string &name, ShaderProgram &shaderProgram)
-{
-    this->shaderPrograms.emplace(name, shaderProgram);
-}
-
-void App::setShaderProgram(const std::string &name)
-{
-    auto it = this->shaderPrograms.find(name);
-
-    if (it != this->shaderPrograms.end())
-    {
-        it->second.setProgram();
-    }
-}
-
-void App::addObject(const std::string &name, Object &object)
-{
-    this->objects.emplace(name, object);
-}
-
-void App::setObject(const std::string &name)
-{
-    auto it = this->objects.find(name);
-
-    if (it != this->objects.end())
-    {
-        it->second.setArray();
-    }
 }

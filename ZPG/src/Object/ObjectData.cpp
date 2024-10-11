@@ -1,20 +1,39 @@
 #include "ObjectData.hpp"
 
-ObjectData::ObjectData(Model &model)
+ObjectData::ObjectData(Model model, size_t numberOfAttrs, std::function<void()> sliceAttrs) : model(model), sliceAttrs(sliceAttrs), numberOfAttrs(numberOfAttrs)
 {
     glGenBuffers(1, &this->VBO); // generate the VBO
     glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-    model.putDataToBuffer();
+    this->model.putDataToBuffer();
 
     // Vertex Array Object (VAO)
     glGenVertexArrays(1, &this->VAO); // generate the VAO
     glBindVertexArray(this->VAO);     // bind the VAO
-    glEnableVertexAttribArray(0);     // enable vertex attributes
+
+    for (size_t i = 0; i < this->numberOfAttrs; ++i)
+    {
+        glEnableVertexAttribArray(i); // enable vertex attributes
+    }
+
     glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+    this->sliceAttrs();
+}
+
+ObjectData::ObjectData(const ObjectData &other) : ObjectData(other.model, other.numberOfAttrs, other.sliceAttrs)
+{
+}
+
+ObjectData::ObjectData(ObjectData &&other)
+    : model(std::move(other.model)), VAO(other.VAO), VBO(other.VBO), numberOfAttrs(other.numberOfAttrs)
+{
+}
+
+void ObjectData::defaultSlice()
+{
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 }
 
-void ObjectData::setArray()
+void ObjectData::setArray() const
 {
     glBindVertexArray(this->VAO);
 }

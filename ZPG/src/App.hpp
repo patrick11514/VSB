@@ -7,9 +7,10 @@
 #include <stdio.h>
 #include <unordered_map>
 #include <string>
+#include <optional>
 
-#include "ShaderProgram.hpp"
-#include "Object.hpp"
+#include "Scenes/Scene.hpp"
+#include "Shader/ShaderStorage.hpp"
 
 #pragma once
 
@@ -17,21 +18,19 @@ class App
 {
     GLFWwindow *window;
 
-    std::unordered_map<std::string, ShaderProgram> shaderPrograms;
-    std::unordered_map<std::string, Object> objects;
+    ShaderStorage shaders;
+    std::unordered_map<std::string, Scene> scenes;
+    std::optional<std::string> currentScene = std::nullopt;
 
 private:
     void createWindow();
     void printVersionInfo();
 
-    void addShaderProgram(const std::string &name, ShaderProgram &shaderProgram);
-    void setShaderProgram(const std::string &name);
-
-    void addObject(const std::string &name, Object &object);
-    void setObject(const std::string &name);
-
     // callbacks
     static void error_callback(int error, const char *description);
+
+    void addScene(const std::string &name, Scene scene);
+    const Scene &getScene(const std::string &name) const;
 
 public:
     void initialize();

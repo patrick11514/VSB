@@ -4,6 +4,11 @@
 #include <algorithm>
 #include <cstdio>
 
+Model::Model()
+{
+    this->points = new float[0];
+}
+
 Model::Model(std::vector<float> points)
 {
     this->size = points.size();
@@ -12,9 +17,30 @@ Model::Model(std::vector<float> points)
     std::copy(points.begin(), points.end(), this->points);
 }
 
+Model::Model(const float points[], size_t size)
+{
+    this->size = size;
+    this->points = new float[this->size];
+
+    std::copy(points, points + size, this->points);
+}
+
+Model::Model(const Model &other)
+{
+    this->size = other.size;
+    this->points = new float[this->size];
+    std::copy(other.points, other.points + other.size - 1, this->points);
+}
+
+Model::Model(Model &&other)
+{
+    std::swap(this->size, other.size);
+    std::swap(this->points, other.points);
+}
+
 Model::~Model()
 {
-    delete this->points;
+    delete[] this->points;
 }
 
 void Model::putDataToBuffer() const

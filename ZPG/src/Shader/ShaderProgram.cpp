@@ -29,11 +29,13 @@ ShaderProgram::ShaderProgram(Shader &vertexShader, Shader &fragmentShader)
 
 void ShaderProgram::setProgram() const
 {
+    printf("Binding shader\n");
     glUseProgram(this->programId);
 }
 
 void ShaderProgram::resetProgram()
 {
+    printf("Resetting shader\n");
     glUseProgram(0);
 }
 
