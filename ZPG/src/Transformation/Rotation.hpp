@@ -4,6 +4,6 @@
 
 class Rotation : public Transformation {
 public:
-    Rotation(float angle, glm::vec3& axis);
+    Rotation(float angle, const glm::vec3& axis);
 };
 
