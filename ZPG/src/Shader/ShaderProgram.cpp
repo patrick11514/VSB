@@ -29,14 +29,21 @@ ShaderProgram::ShaderProgram(Shader &vertexShader, Shader &fragmentShader)
 
 void ShaderProgram::setProgram() const
 {
-    printf("Binding shader\n");
     glUseProgram(this->programId);
 }
 
 void ShaderProgram::resetProgram()
 {
-    printf("Resetting shader\n");
     glUseProgram(0);
+}
+
+GLint ShaderProgram::getMatrixPosition() const {
+    GLint position = glGetUniformLocation(this->programId, "modelMatrix");
+    if (position == -1) {
+        throw std::runtime_error("Unable to find modelMatrix position");
+    }
+
+    return position;
 }
 
 bool ShaderProgram::operator==(const ShaderProgram &other) const

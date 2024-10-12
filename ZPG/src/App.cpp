@@ -2,7 +2,9 @@
 #include "Shader/Shader.hpp"
 #include "Object/ObjectData.hpp"
 #include "Object/Objects.hpp"
+#include "Transformation/Rotation.hpp"
 
+#include <glm/ext/matrix_float4x4.hpp>
 #include <stdexcept>
 
 void App::error_callback(int error, const char *description)
@@ -42,6 +44,12 @@ void App::createShaders()
 
         ShaderProgram shaderProgram2(vertexShader2, fragmentShader2);
         this->shaders.addShaderProgram("ColorPurple", shaderProgram2);
+
+        Shader vertexMat("../shaders/vertex/Rotation.vert", ShaderType::Vertex);
+
+        ShaderProgram shaderMat(vertexMat, fragmentShader);
+
+        this->shaders.addShaderProgram("MatShader", shaderMat);
     }
     catch (const std::runtime_error &)
     {
@@ -69,7 +77,7 @@ void App::createModels()
         data,
         this->shaders.getShaderProgram("ColorByCoords"),
         Transformations(),
-        []()
+        [](const glm::mat4x4&, const ShaderProgram&)
         {
             glDrawArrays(GL_TRIANGLES, 4, 3);
         }));
@@ -78,7 +86,7 @@ void App::createModels()
         data,
         this->shaders.getShaderProgram("ColorPurple"),
         Transformations(),
-        []()
+        [](const glm::mat4x4&, const ShaderProgram&)
         {
             glDrawArrays(GL_QUADS, 0, 4);
         }));
@@ -87,7 +95,11 @@ void App::createModels()
 
     Scene ballScene;
 
-    ballScene.addObject(createBall(this->shaders.getShaderProgram("ColorByCoords"), Transformations()));
+    Transformations tran;
+    glm::vec3 vec(1.0f, 0.f, 0.f);
+    tran.addTransformation(Rotation(500.f, vec));
+
+    ballScene.addObject(createBall(this->shaders.getShaderProgram("MatShader"), tran));
 
     this->addScene("ball", ballScene);
 

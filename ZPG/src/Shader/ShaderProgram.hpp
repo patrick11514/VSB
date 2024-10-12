@@ -14,6 +14,8 @@ public:
 
     static void resetProgram();
 
+    GLint getMatrixPosition() const;
+
     // operators
     bool operator==(const ShaderProgram &other) const;
 };
