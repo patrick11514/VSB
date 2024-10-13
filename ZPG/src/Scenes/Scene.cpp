@@ -1,4 +1,6 @@
 #include "Scene.hpp"
+#include <GLFW/glfw3.h>
+#include <glm/ext/matrix_float4x4.hpp>
 
 void Scene::addObject(Object object)
 {
@@ -7,8 +9,10 @@ void Scene::addObject(Object object)
 
 void Scene::render() const
 {
+    float time = glfwGetTime();
+
     for (const auto &object : this->objects)
     {
-        object.draw();
+        object.draw(time);
     }
 }

@@ -1,12 +1,21 @@
 #include "App.hpp"
 #include "Object/ObjectData.hpp"
 #include "Object/Objects.hpp"
+#include "Object/Transformations.hpp"
+#include "Scenes/Forest.hpp"
 #include "Shader/Shader.hpp"
+#include "Shader/ShaderProgram.hpp"
 #include "Transformation/Rotation.hpp"
 #include "Transformation/Scale.hpp"
+#include "Transformation/Translate.hpp"
 
+#include <GLFW/glfw3.h>
 #include <glm/ext/matrix_float4x4.hpp>
+#include <glm/ext/vector_float3.hpp>
+#include <optional>
 #include <stdexcept>
+
+std::optional<std::string> App::currentScene = std::nullopt;
 
 void App::error_callback(int error, const char *description) {
   fputs(description, stderr);
@@ -20,6 +29,20 @@ void App::initialize() {
   }
 
   this->createWindow();
+  glfwSetKeyCallback(this->window, key_callback);
+}
+
+void App::key_callback(GLFWwindow *window, int key, int scancode, int action,
+                       int mods) {
+  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    glfwSetWindowShouldClose(window, GL_TRUE);
+  printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);
+
+  if (key == GLFW_KEY_A && action == GLFW_PRESS) {
+    App::currentScene = "obj";
+  } else if (key == GLFW_KEY_B && action == GLFW_PRESS) {
+    App::currentScene = "forest";
+  }
 }
 
 void App::createShaders() {
@@ -46,53 +69,100 @@ void App::createShaders() {
 
     this->shaders.addShaderProgram("MatShader", shaderMat);
 
-    Shader vertexMaxStatic("../shaders/vertex/RotationStaticColor.vert",
+    Shader vertexMatStatic("../shaders/vertex/RotationStaticColor.vert",
                            ShaderType::Vertex);
-    ShaderProgram shaderMatStatic(vertexMaxStatic, fragmentShader2);
+    ShaderProgram shaderMatStatic(vertexMatStatic, fragmentShader2);
 
     this->shaders.addShaderProgram("MatShaderStatic", shaderMatStatic);
 
+    Shader fragmentBlue("../shaders/fragment/Blue.frag", ShaderType::Fragment);
+    Shader fragmentRed("../shaders/fragment/Red.frag", ShaderType::Fragment);
+
+    ShaderProgram blueProgram(vertexMatStatic, fragmentBlue);
+    ShaderProgram redProgram(vertexMatStatic, fragmentRed);
+    this->shaders.addShaderProgram("blue", blueProgram);
+    this->shaders.addShaderProgram("red", redProgram);
+
+    Shader fragmentGreen("../shaders/fragment/Green.frag",
+                         ShaderType::Fragment);
+    Shader fragmentDarkGreen("../shaders/fragment/GreenDark.frag",
+                             ShaderType::Fragment);
+
+    ShaderProgram greenProgram(vertexMatStatic, fragmentGreen);
+    ShaderProgram darkGreenProgram(vertexMatStatic, fragmentDarkGreen);
+
+    this->shaders.addShaderProgram("green", greenProgram);
+    this->shaders.addShaderProgram("darkGreen", darkGreenProgram);
+
+    Shader fragmentGreenByCoord("../shaders/fragment/GreenByCoords.frag",
+                                ShaderType::Fragment);
+    Shader vertexGreenByCoord("../shaders/vertex/GreenByCoords.vert",
+                              ShaderType::Vertex);
+    ShaderProgram greenByCoord(vertexGreenByCoord, fragmentGreenByCoord);
+
+    this->shaders.addShaderProgram("greenByCoord", greenByCoord);
+
+    Shader idkBarvyVertex("../shaders/vertex/IdkBarvy.vert",
+                          ShaderType::Vertex);
+
+    ShaderProgram idkBarvy(idkBarvyVertex, fragmentShader);
+    this->shaders.addShaderProgram("idk", idkBarvy);
   } catch (const std::runtime_error &) {
     this->destroy(EXIT_FAILURE);
   }
 }
 
 void App::createModels() {
-  Scene scene;
-
-  Model model({0.5f, 0.5f,  0.0f, 0.5f,  -0.5f, 0.0f, -0.5f, -0.5f,
-               0.0f, -0.5f, 0.5f, 0.0f,  0.75f, 1.0f, 0.0f,  1.0f,
-               0.5f, 0.0f,  0.5f, 0.5f,  0.0f,  0.0f, 0.5f,  0.0f,
-               0.5f, -0.5f, 0.0f, -0.5f, -0.5f, 0.0f});
-  ObjectData data(model);
-
-  scene.addObject(Object(data, this->shaders.getShaderProgram("ColorByCoords"),
-                         Transformations(),
-                         [](const glm::mat4x4 &, const ShaderProgram &) {
-                           glDrawArrays(GL_TRIANGLES, 4, 3);
-                         }));
-
-  scene.addObject(Object(data, this->shaders.getShaderProgram("ColorPurple"),
-                         Transformations(),
-                         [](const glm::mat4x4 &, const ShaderProgram &) {
-                           glDrawArrays(GL_QUADS, 0, 4);
-                         }));
-
-  this->addScene("objects", scene);
-
-  Scene ballScene;
+  /*Scene scene;*/
+  /**/
+  /*Model model({0.5f, 0.5f,  0.0f, 0.5f,  -0.5f, 0.0f, -0.5f, -0.5f,*/
+  /*             0.0f, -0.5f, 0.5f, 0.0f,  0.75f, 1.0f, 0.0f,  1.0f,*/
+  /*             0.5f, 0.0f,  0.5f, 0.5f,  0.0f,  0.0f, 0.5f,  0.0f,*/
+  /*             0.5f, -0.5f, 0.0f, -0.5f, -0.5f, 0.0f});*/
+  /*ObjectData data(model);*/
+  /**/
+  /*scene.addObject(Object(data,
+   * this->shaders.getShaderProgram("ColorByCoords"),*/
+  /*                       Transformations(),*/
+  /*                       [](const glm::mat4x4 &, const ShaderProgram &) {*/
+  /*                         glDrawArrays(GL_TRIANGLES, 4, 3);*/
+  /*                       }));*/
+  /**/
+  /*scene.addObject(Object(data,
+   * this->shaders.getShaderProgram("ColorPurple"),*/
+  /*                       Transformations(),*/
+  /*                       [](const glm::mat4x4 &, const ShaderProgram &) {*/
+  /*                         glDrawArrays(GL_QUADS, 0, 4);*/
+  /*                       }));*/
+  /**/
+  /*this->addScene("objects", scene);*/
+  /**/
+  Scene objScene;
 
   Transformations tran;
-  glm::vec3 vec(1.0f, 0.f, 0.f);
+
   /*tran.addTransformation(Rotation(1.f, vec));*/
-  tran.addTransformation(Scale(glm::vec3(1.f)));
+  tran.addTransformation(Scale(glm::vec3(0.2f)))
+      ->addTransformation(Translate(glm::vec3(1.f, 0.f, 0.f)));
 
-  ballScene.addObject(
-      createGift(this->shaders.getShaderProgram("MatShaderStatic"), tran));
+  objScene.addObject(
+      createBall(this->shaders.getShaderProgram("MatShader"), tran));
 
-  this->addScene("ball", ballScene);
+  Transformations tran2;
+  tran2.addTransformation(Translate(glm::vec3(-0.5f, 0.5f, 0.f)));
 
-  this->currentScene = "ball";
+  objScene.addObject(createBush(this->shaders.getShaderProgram("blue"), tran2));
+
+  Transformations tran3;
+  tran3.addTransformation(Scale(glm::vec3(.1f)));
+
+  objScene.addObject(createTree(this->shaders.getShaderProgram("red"), tran3));
+
+  this->addScene("obj", objScene);
+
+  App::currentScene = "obj";
+
+  this->addScene("forest", Forest(this->shaders));
 }
 
 void App::run() {
