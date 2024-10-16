@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">C03</string>
+    <string name="app_name">Úroková kalkulačka</string>
+    <string name="money_put">Vklad: %dKč</string>
+    <string name="interest_put">Úrok: %d%%</string>
+    <string name="period_put">Období: %d let</string>
+    <string name="money">Naspořená suma: %dKč</string>
+    <string name="interest">Z toho úroky %dKč</string>
 </resources>
