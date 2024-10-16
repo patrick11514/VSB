@@ -1,12 +1,33 @@
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 using charMap = std::unordered_map<char, char>;
+using wordMap = std::unordered_map<std::string, std::vector<std::string>>;
 
-bool solve(std::string &line, std::vector<std::string> &words, charMap &solved,
-           size_t begin) {
+std::string getHash(const std::string &word) {
+  std::string hash;
+  std::unordered_map<char, int> numToInt;
+  int i = 0;
+
+  for (const char c : word) {
+    auto find = numToInt.find(c);
+    if (find == numToInt.end()) {
+      numToInt.emplace(c, i);
+      ++i;
+      hash.push_back('0' + i);
+      continue;
+    }
+
+    hash.push_back('0' + find->second);
+  }
+
+  return hash;
+}
+
+bool solve(std::string &line, wordMap &wordMap, charMap &solved, size_t begin) {
 
   std::string cut{line.begin() + begin, line.end()};
 
@@ -20,22 +41,28 @@ bool solve(std::string &line, std::vector<std::string> &words, charMap &solved,
 
   std::string guessWord{cut.begin(), cut.begin() + space};
 
-  std::string foundWord;
+  std::string hash = getHash(guessWord);
 
-  for (const auto &word : words) {
-    if (word.size() != guessWord.size())
-      continue;
+  auto it = wordMap.find(hash);
 
-    // found word with same length
+  // no map found
+  if (it == wordMap.end()) {
+    return false;
+  }
 
+  for (const auto &word : it->second) {
     bool isWrong = false;
+
+    charMap newMap{solved};
 
     // try to fit already guessed chars, and see, if word is correct
     for (size_t i = 0; i < guessWord.size(); ++i) {
-      auto it = solved.find(guessWord[i]);
+      auto it = newMap.find(guessWord[i]);
 
-      if (it == solved.end())
+      if (it == newMap.end()) {
+        newMap.emplace(guessWord[i], word[i]);
         continue;
+      }
 
       // we found decrypted char, so we compare it with the word
       if (word[i] != it->second) {
@@ -45,23 +72,13 @@ bool solve(std::string &line, std::vector<std::string> &words, charMap &solved,
     }
 
     if (!isWrong) {
-      foundWord = word;
-
-      charMap newMap{solved};
-
-      // add new chars
-      for (size_t i = 0; i < guessWord.size(); ++i) {
-        newMap.emplace(guessWord[i], foundWord[i]);
-      }
-
-      // run new iteration
-
+      // if last
       if (last) {
         solved.swap(newMap);
         return true;
       }
 
-      bool result = solve(line, words, newMap, begin + space + 1);
+      bool result = solve(line, wordMap, newMap, begin + space + 1);
 
       if (!result)
         continue;
@@ -105,8 +122,19 @@ int main() {
       break;
 
     charMap charMap;
+    wordMap wordMap;
 
-    bool result = solve(line, words, charMap, 0);
+    for (const auto &word : words) {
+      std::string hash = getHash(word);
+      auto it = wordMap.find(hash);
+      if (it == wordMap.end()) {
+        wordMap.emplace(hash, std::vector<std::string>{word});
+        continue;
+      }
+      it->second.emplace_back(word);
+    }
+
+    bool result = solve(line, wordMap, charMap, 0);
     for (size_t i = 0; i < line.size(); ++i) {
       char c = line[i];
 
