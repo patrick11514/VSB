@@ -41,9 +41,15 @@ bool solve(std::string &line, wordMap &wordMap, charMap &solved, size_t begin) {
 
   std::string guessWord{cut.begin(), cut.begin() + space};
 
+<<<<<<< HEAD
   std::string hash = getHash(guessWord);
 
   auto it = wordMap.find(hash);
+=======
+  for (const auto &word : words) {
+    if (word.size() != guessWord.size())
+      continue;
+>>>>>>> 8c0a753c (idk)
 
   // no map found
   if (it == wordMap.end()) {
@@ -71,8 +77,38 @@ bool solve(std::string &line, wordMap &wordMap, charMap &solved, size_t begin) {
       } // this word is not correct :/
     }
 
+<<<<<<< HEAD
     if (!isWrong) {
       // if last
+=======
+    //now we need to check characters in full word , because for example aba can't be and etc..
+    charMap localDict;
+    for (size_t i = 0; i < guessWord.size(); ++i) {
+        char c = guessWord[i];
+        auto it = localDict.find(c);
+        if (it == localDict.end()) {
+            localDict.emplace(c, word[i]);
+            continue;
+        }
+
+        if (word[i] != it->second) {
+            isWrong = true;
+            break;
+        }
+    }
+
+    if (!isWrong) {
+        std::cout << "quessed word " << word << " as " << guessWord << std::endl;
+    charMap newMap(solved);
+
+      // add new chars
+      for (size_t i = 0; i < guessWord.size(); ++i) {
+        newMap.emplace(guessWord[i], word[i]);
+      }
+
+      // run new iteration
+
+>>>>>>> 8c0a753c (idk)
       if (last) {
         solved.swap(newMap);
         return true;
@@ -80,8 +116,12 @@ bool solve(std::string &line, wordMap &wordMap, charMap &solved, size_t begin) {
 
       bool result = solve(line, wordMap, newMap, begin + space + 1);
 
-      if (!result)
-        continue;
+      if (!result) {
+                std::cout << "word " << word << " failed" << std::endl;
+                continue;
+            }
+
+            std::cout << "word " << word << " suceed" << std::endl;
 
       // pass the solved map to parent
       solved.swap(newMap);
