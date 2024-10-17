@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
       int ret = read(pipe1.output, buffer, sizeof(buffer));
       if (ret <= 0)
         break;
-
+      buff[ret] = '\0';
       buffer[strlen(buffer) - 1] = '\0';
 
       char outputBuffer[200] = {0};
@@ -119,8 +119,8 @@ int main(int argc, char **argv) {
       int ret = read(pipe2.output, buffer, sizeof(buffer));
       if (ret <= 0)
         break;
-
       buffer[ret] = '\0';
+
       int pos, first, second;
       char op;
       sscanf(buffer, "%d. %d%c%d\n", &pos, &first, &op, &second);
