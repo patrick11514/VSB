@@ -1,12 +1,20 @@
 package com.patrick115.c03;
 
+import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -30,6 +38,13 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    enum GraphType {
+        Bar,
+        Pie
+    };
+
+    GraphType graphType = GraphType.Bar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,8 +56,9 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        BarChart chart = findViewById(R.id.chart);
-        chart.setBackgroundColor(Color.WHITE);
+
+        BarChart chart = findViewById(R.id.bar_chart);
+        chart.setBackgroundColor(getColor(R.color.white));
         chart.setPinchZoom(false);
         chart.setDrawGridBackground(false);
 
@@ -72,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
 
             }
+
         });
 
         SeekBar seekInterest = findViewById(R.id.interestBar);
@@ -113,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         recalculate();
+        ResolveGraphDisplay();
     }
 
     private void recalculate() {
@@ -130,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         savedMoney.setText(getString(R.string.money, (int)result));
         savedInterest.setText(getString(R.string.interest, (int)interest));
 
-        BarChart chart = findViewById(R.id.chart);
+        BarChart chart = findViewById(R.id.bar_chart);
 
         float graphMin = Math.max(0, (float)Math.min(money, interest) - 10000);
 
@@ -152,5 +170,34 @@ public class MainActivity extends AppCompatActivity {
         data.setColor(Color.CYAN);
         chart.setData(new BarData(data, data2));
         chart.invalidate();
+    }
+
+    private void ResolveGraphDisplay() {
+        BarChart barChart = findViewById(R.id.bar_chart);
+        switch (graphType) {
+            case Bar:
+                barChart.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int myId = item.getItemId();
+
+        if (myId == R.id.menu_graph_type) {
+            Intent intend = new Intent(MainActivity.this, GraphTypeSelector.class);
+            startActivity(intend);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
