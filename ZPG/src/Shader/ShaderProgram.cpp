@@ -1,52 +1,76 @@
 #include "ShaderProgram.hpp"
+#include "../Controller.hpp"
 
-#include <stdio.h>
 #include <GLFW/glfw3.h>
-#include <stdexcept>
+#include <iostream>
+#include <stdio.h>
 
-ShaderProgram::ShaderProgram(Shader &vertexShader, Shader &fragmentShader)
-{
-    this->programId = glCreateProgram();
-    glAttachShader(this->programId, fragmentShader.shaderId);
-    glAttachShader(this->programId, vertexShader.shaderId);
-    glLinkProgram(this->programId);
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/string_cast.hpp>
 
-    GLint status;
-    glGetProgramiv(this->programId, GL_LINK_STATUS, &status);
-    if (status == GL_FALSE)
-    {
-        printf("ERROR LINK\n");
-        GLint infoLogLength;
-        glGetProgramiv(this->programId, GL_INFO_LOG_LENGTH, &infoLogLength);
-        GLchar *strInfoLog = new GLchar[infoLogLength + 1];
-        glGetProgramInfoLog(this->programId, infoLogLength, NULL, strInfoLog);
-        fprintf(stderr, "Linker failure: %s\n", strInfoLog);
-        delete[] strInfoLog;
+ShaderProgram::ShaderProgram(Shader &vertexShader, Shader &fragmentShader,
+                             Controller *controller)
+    : Observer(), controller(controller) {
+  this->programId = glCreateProgram();
+  glAttachShader(this->programId, fragmentShader.shaderId);
+  glAttachShader(this->programId, vertexShader.shaderId);
+  glLinkProgram(this->programId);
 
-        throw std::runtime_error("Linker failure");
-    }
+  printf("Constructing program\n");
+
+  GLint status;
+  glGetProgramiv(this->programId, GL_LINK_STATUS, &status);
+  if (status == GL_FALSE) {
+    printf("ERROR LINK\n");
+    GLint infoLogLength;
+    glGetProgramiv(this->programId, GL_INFO_LOG_LENGTH, &infoLogLength);
+    GLchar *strInfoLog = new GLchar[infoLogLength + 1];
+    glGetProgramInfoLog(this->programId, infoLogLength, NULL, strInfoLog);
+    fprintf(stderr, "Linker failure: %s\n", strInfoLog);
+    delete[] strInfoLog;
+
+    throw std::runtime_error("Linker failure");
+  }
+
+  // Does my shader have projection matrix
+  if (this->checkParameter("projectionMatrix")) {
+    // add me as observer
+    printf("Adding me as observer\n");
+    this->controller->getCamera().addObserver(this);
+
+    this->viewMatrix = this->controller->getCamera().calculateViewMatrix();
+  }
 }
 
-void ShaderProgram::setProgram() const
-{
-    glUseProgram(this->programId);
+ShaderProgram::~ShaderProgram() { printf("Destructing :(\n"); }
+
+bool ShaderProgram::checkParameter(const std::string &name) const {
+  GLint position = glGetUniformLocation(this->programId, name.c_str());
+  return position != -1;
 }
 
-void ShaderProgram::resetProgram()
-{
-    glUseProgram(0);
+void ShaderProgram::setProgram() const {
+  glUseProgram(this->programId);
+  if (this->checkParameter("viewMatrix")) {
+    std::cout << "Puttin viewMatrix " << glm::to_string(this->viewMatrix)
+              << std::endl;
+    this->putParameter("viewMatrix", this->viewMatrix[0][0]);
+  }
+  if (this->checkParameter("projectionMatrix")) {
+    std::cout << "Puttin projectionMatrix "
+              << glm::to_string(this->projectionMatrix) << std::endl;
+    this->putParameter("projectionMatrix", this->projectionMatrix[0][0]);
+  }
 }
 
-GLint ShaderProgram::getMatrixPosition() const {
-    GLint position = glGetUniformLocation(this->programId, "modelMatrix");
-    if (position == -1) {
-        throw std::runtime_error("Unable to find modelMatrix position");
-    }
+void ShaderProgram::resetProgram() { glUseProgram(0); }
 
-    return position;
+bool ShaderProgram::operator==(const ShaderProgram &other) const {
+  return this->programId == other.programId;
 }
 
-bool ShaderProgram::operator==(const ShaderProgram &other) const
-{
-    return this->programId == other.programId;
+void ShaderProgram::update(glm::mat4 &projectionMatrix) {
+  this->projectionMatrix = projectionMatrix;
 }
+
+void ShaderProgram::call() const { printf("HERE!!!!!\n"); }

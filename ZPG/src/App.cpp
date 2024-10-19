@@ -1,4 +1,5 @@
 #include "App.hpp"
+#include "Controller.hpp"
 #include "Object/ObjectData.hpp"
 #include "Object/Objects.hpp"
 #include "Object/Transformations.hpp"
@@ -10,12 +11,15 @@
 #include "Transformation/Translate.hpp"
 
 #include <GLFW/glfw3.h>
+#include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/vector_float3.hpp>
 #include <optional>
 #include <stdexcept>
 
-std::optional<std::string> App::currentScene = std::nullopt;
+App::App() : camera(Camera()) { this->controller = new Controller(this); }
+
+App::~App() { delete this->controller; }
 
 void App::error_callback(int error, const char *description) {
   fputs(description, stderr);
@@ -29,20 +33,17 @@ void App::initialize() {
   }
 
   this->createWindow();
-  glfwSetKeyCallback(this->window, key_callback);
-}
-
-void App::key_callback(GLFWwindow *window, int key, int scancode, int action,
-                       int mods) {
-  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    glfwSetWindowShouldClose(window, GL_TRUE);
-  printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);
-
-  if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-    App::currentScene = "obj";
-  } else if (key == GLFW_KEY_B && action == GLFW_PRESS) {
-    App::currentScene = "forest";
-  }
+  glfwSetWindowUserPointer(window, this->controller);
+  glfwSetKeyCallback(this->window, [](GLFWwindow *window, int key, int scancode,
+                                      int action, int mods) {
+    static_cast<Controller *>(glfwGetWindowUserPointer(window))
+        ->onKeyPress(window, key, scancode, action, mods);
+  });
+  glfwSetCursorPosCallback(
+      this->window, [](GLFWwindow *window, double x, double y) {
+        static_cast<Controller *>(glfwGetWindowUserPointer(window))
+            ->onMouse(window, x, y);
+      });
 }
 
 void App::createShaders() {
@@ -52,7 +53,8 @@ void App::createShaders() {
     Shader fragmentShader("../shaders/fragment/ColorByCoords.frag",
                           ShaderType::Fragment);
 
-    ShaderProgram shaderProgram(vertexShader, fragmentShader);
+    ShaderProgram *shaderProgram =
+        new ShaderProgram(vertexShader, fragmentShader, this->controller);
     this->shaders.addShaderProgram("ColorByCoords", shaderProgram);
 
     Shader vertexShader2("../shaders/vertex/Purple.vert", ShaderType::Vertex);
@@ -60,26 +62,31 @@ void App::createShaders() {
     Shader fragmentShader2("../shaders/fragment/Purple.frag",
                            ShaderType::Fragment);
 
-    ShaderProgram shaderProgram2(vertexShader2, fragmentShader2);
+    ShaderProgram *shaderProgram2 =
+        new ShaderProgram(vertexShader2, fragmentShader2, this->controller);
     this->shaders.addShaderProgram("ColorPurple", shaderProgram2);
 
     Shader vertexMat("../shaders/vertex/Rotation.vert", ShaderType::Vertex);
 
-    ShaderProgram shaderMat(vertexMat, fragmentShader);
+    ShaderProgram *shaderMat =
+        new ShaderProgram(vertexMat, fragmentShader, this->controller);
 
     this->shaders.addShaderProgram("MatShader", shaderMat);
 
     Shader vertexMatStatic("../shaders/vertex/RotationStaticColor.vert",
                            ShaderType::Vertex);
-    ShaderProgram shaderMatStatic(vertexMatStatic, fragmentShader2);
+    ShaderProgram *shaderMatStatic =
+        new ShaderProgram(vertexMatStatic, fragmentShader2, this->controller);
 
     this->shaders.addShaderProgram("MatShaderStatic", shaderMatStatic);
 
     Shader fragmentBlue("../shaders/fragment/Blue.frag", ShaderType::Fragment);
     Shader fragmentRed("../shaders/fragment/Red.frag", ShaderType::Fragment);
 
-    ShaderProgram blueProgram(vertexMatStatic, fragmentBlue);
-    ShaderProgram redProgram(vertexMatStatic, fragmentRed);
+    ShaderProgram *blueProgram =
+        new ShaderProgram(vertexMatStatic, fragmentBlue, this->controller);
+    ShaderProgram *redProgram =
+        new ShaderProgram(vertexMatStatic, fragmentRed, this->controller);
     this->shaders.addShaderProgram("blue", blueProgram);
     this->shaders.addShaderProgram("red", redProgram);
 
@@ -88,8 +95,10 @@ void App::createShaders() {
     Shader fragmentDarkGreen("../shaders/fragment/GreenDark.frag",
                              ShaderType::Fragment);
 
-    ShaderProgram greenProgram(vertexMatStatic, fragmentGreen);
-    ShaderProgram darkGreenProgram(vertexMatStatic, fragmentDarkGreen);
+    ShaderProgram *greenProgram =
+        new ShaderProgram(vertexMatStatic, fragmentGreen, this->controller);
+    ShaderProgram *darkGreenProgram =
+        new ShaderProgram(vertexMatStatic, fragmentDarkGreen, this->controller);
 
     this->shaders.addShaderProgram("green", greenProgram);
     this->shaders.addShaderProgram("darkGreen", darkGreenProgram);
@@ -98,14 +107,18 @@ void App::createShaders() {
                                 ShaderType::Fragment);
     Shader vertexGreenByCoord("../shaders/vertex/GreenByCoords.vert",
                               ShaderType::Vertex);
-    ShaderProgram greenByCoord(vertexGreenByCoord, fragmentGreenByCoord);
+    ShaderProgram *greenByCoord = new ShaderProgram(
+        vertexGreenByCoord, fragmentGreenByCoord, this->controller);
 
     this->shaders.addShaderProgram("greenByCoord", greenByCoord);
 
     Shader idkBarvyVertex("../shaders/vertex/IdkBarvy.vert",
                           ShaderType::Vertex);
 
-    ShaderProgram idkBarvy(idkBarvyVertex, fragmentShader);
+    printf("CREATING SHADER\n");
+    ShaderProgram *idkBarvy =
+        new ShaderProgram(idkBarvyVertex, fragmentShader, this->controller);
+    printf("ADDING SHADER\n");
     this->shaders.addShaderProgram("idk", idkBarvy);
   } catch (const std::runtime_error &) {
     this->destroy(EXIT_FAILURE);
@@ -160,7 +173,7 @@ void App::createModels() {
 
   this->addScene("obj", objScene);
 
-  App::currentScene = "obj";
+  this->currentScene = "obj";
 
   this->addScene("forest", Forest(this->shaders));
 }
@@ -223,6 +236,9 @@ void App::createWindow() {
   int width, height;
   glfwGetFramebufferSize(this->window, &width, &height);
   float ratio = width / (float)height;
+  printf("RATIO: %f\n", ratio);
+  this->projectionMatrix = glm::perspective(60.f, ratio, .1f, 100.f);
+
   glViewport(0, 0, width, height);
 }
 

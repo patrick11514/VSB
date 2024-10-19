@@ -1,18 +1,19 @@
 #pragma once
 
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 
 #include "ShaderProgram.hpp"
 
-class ShaderStorage
-{
+class ShaderStorage {
 private:
-    std::unordered_map<std::string, ShaderProgram> shaders;
+  std::unordered_map<std::string, ShaderProgram *> shaders;
 
 public:
-    void addShaderProgram(const std::string &name, ShaderProgram &shader);
-    void removeShader(const std::string &name);
+  ~ShaderStorage();
 
-    const ShaderProgram &getShaderProgram(const std::string &name) const;
+  void addShaderProgram(const std::string &name, ShaderProgram *shader);
+  void removeShader(const std::string &name);
+
+  const ShaderProgram *getShaderProgram(const std::string &name) const;
 };

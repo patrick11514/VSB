@@ -22,27 +22,27 @@ Forest::Forest(const ShaderStorage &shaderStorage) : Scene() {
     float s = scale(rng);
     float xCoord = (x(rng) - 0.25f) * 8;
     float yCoord = y(rng) - 1;
-    float zCoord = z(rng) - .5f;
+    float zCoord = z(rng) - 0.5f;
 
-    // printf("%f %f %f (%f)\n", xCoord, yCoord, zCoord, s);
+    printf("%f %f %f (%f)\n", xCoord, yCoord, zCoord, s);
 
     Transformations tran;
-    tran.addTransformation(Scale(glm::vec3(s)));
+    tran.addTransformation(Scale(glm::vec3(0.1)));
     tran.addTransformation(
         Translate(glm::vec3(xCoord * 4, yCoord * 4, zCoord * 4)));
 
     auto tree =
         createTree(shaderStorage.getShaderProgram("greenByCoord"), tran);
 
-    tree.setAnimationFunction([](const glm::mat4x4 &tran, float time) {
+    /*tree.setAnimationFunction([](const glm::mat4x4 &tran, float time) {
       auto rotation = Rotation(time, glm::vec3(1.f, 1.f, 1.f));
       return tran * rotation.getMatrix();
-    });
+    });*/
 
     this->addObject(tree);
   }
 
-  for (int i = 0; i < 10; ++i) {
+  for (int i = 0; i < 0; ++i) {
     float s = 0.5 + scale(rng);
     float xCoord = (x(rng) - 0.25f) * 4;
     float yCoord = y(rng) - 1;

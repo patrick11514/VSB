@@ -1,21 +1,45 @@
 #pragma once
 
+#include "../Patterns/Observer.hpp"
 #include "Shader.hpp"
 
-class ShaderProgram
-{
+#include <stdexcept>
+
+class Controller;
+
+class ShaderProgram : public Observer {
 private:
-    GLuint programId;
+  GLuint programId;
+  glm::mat4 viewMatrix;
+  glm::mat4 projectionMatrix;
+  Controller *controller;
 
 public:
-    ShaderProgram(Shader &vertexShader, Shader &fragmentShader);
+  ShaderProgram(Shader &vertexShader, Shader &fragmentShader,
+                Controller *controller);
 
-    void setProgram() const;
+  ~ShaderProgram();
 
-    static void resetProgram();
+  void setProgram() const;
 
-    GLint getMatrixPosition() const;
+  static void resetProgram();
 
-    // operators
-    bool operator==(const ShaderProgram &other) const;
+  bool checkParameter(const std::string &name) const;
+
+  template <typename T>
+  void putParameter(const std::string &name, T &value) const {
+    GLint position = glGetUniformLocation(this->programId, name.c_str());
+    if (position == -1) {
+      throw std::runtime_error("Unable to find modelMatrix position");
+    }
+
+    glUniformMatrix4fv(position, 1, GL_FALSE, &value);
+  }
+
+  // operators
+  bool operator==(const ShaderProgram &other) const;
+
+  void update(glm::mat4 &projectionMatrix) override;
+
+  void call() const override;
 };
