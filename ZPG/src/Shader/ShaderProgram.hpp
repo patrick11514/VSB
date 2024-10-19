@@ -39,7 +39,7 @@ public:
   // operators
   bool operator==(const ShaderProgram &other) const;
 
-  void update(glm::mat4 &projectionMatrix) override;
+  void update(glm::mat4 &viewMatrix) override;
 
   void call() const override;
 };

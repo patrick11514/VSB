@@ -1,6 +1,9 @@
 #include "Camera.hpp"
 #include <cstdio>
 #include <glm/ext/matrix_transform.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/string_cast.hpp>
+#include <iostream>
 
 Camera::Camera() { this->recalculateTarget(); }
 
@@ -30,9 +33,17 @@ void Camera::broadcast() const {
 }
 
 void Camera::recalculateTarget() {
-  this->target.x = std::sin(this->pitch) * std::cos(this->yaw);
-  this->target.z = std::sin(this->pitch) * std::sin(this->yaw);
-  this->target.y = std::cos(this->pitch);
+  double radMul = std::numbers::pi / 180;
+
+  this->target.x =
+      std::cos(this->pitch * radMul) * std::cos(this->yaw * radMul);
+  this->target.z =
+      std::cos(this->pitch * radMul) * std::sin(this->yaw * radMul);
+  this->target.y = std::sin(this->pitch * radMul);
+
+  std::cout << "Pitch: " << this->pitch << " Yaw: " << this->yaw << std::endl;
+  std::cout << "Target: " << glm::to_string(this->target)
+            << " Eye: " << glm::to_string(this->eye) << std::endl;
 
   this->broadcast();
 }
@@ -84,11 +95,9 @@ void Camera::changePitch(float deg) {
     this->pitch = -90.f;
   }
 
-  if (this->pitch >= 360) {
-    this->pitch -= 360;
-  }
+  this->recalculateTarget();
 }
 glm::mat4 Camera::calculateViewMatrix() const {
 
-  return glm::lookAt(this->eye, this->target, this->up);
+  return glm::lookAt(this->eye, this->eye + this->target, this->up);
 }

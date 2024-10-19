@@ -237,7 +237,7 @@ void App::createWindow() {
   glfwGetFramebufferSize(this->window, &width, &height);
   float ratio = width / (float)height;
   printf("RATIO: %f\n", ratio);
-  this->projectionMatrix = glm::perspective(60.f, ratio, .1f, 100.f);
+  this->projectionMatrix = glm::perspective(30.f, ratio, .1f, 1000.f);
 
   glViewport(0, 0, width, height);
 }

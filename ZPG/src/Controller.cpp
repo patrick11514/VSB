@@ -23,10 +23,10 @@ void Controller::onKeyPress(GLFWwindow *window, int key, int scancode,
       this->app->currentScene = "forest";
       break;
     case GLFW_KEY_Q:
-      this->app->camera.changeYaw(10.f);
+      this->app->camera.changeYaw(-10.f);
       break;
     case GLFW_KEY_E:
-      this->app->camera.changeYaw(-10.f);
+      this->app->camera.changeYaw(+10.f);
       break;
     case GLFW_KEY_W:
       this->app->camera.forward();

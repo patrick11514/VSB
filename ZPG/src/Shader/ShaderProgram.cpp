@@ -32,14 +32,16 @@ ShaderProgram::ShaderProgram(Shader &vertexShader, Shader &fragmentShader,
     throw std::runtime_error("Linker failure");
   }
 
-  // Does my shader have projection matrix
-  if (this->checkParameter("projectionMatrix")) {
+  // Does my shader have view matrix
+  if (this->checkParameter("viewMatrix")) {
     // add me as observer
     printf("Adding me as observer\n");
     this->controller->getCamera().addObserver(this);
 
     this->viewMatrix = this->controller->getCamera().calculateViewMatrix();
   }
+
+  this->projectionMatrix = this->controller->getProjectionMatrix();
 }
 
 ShaderProgram::~ShaderProgram() { printf("Destructing :(\n"); }
@@ -52,13 +54,13 @@ bool ShaderProgram::checkParameter(const std::string &name) const {
 void ShaderProgram::setProgram() const {
   glUseProgram(this->programId);
   if (this->checkParameter("viewMatrix")) {
-    std::cout << "Puttin viewMatrix " << glm::to_string(this->viewMatrix)
-              << std::endl;
+    // std::cout << "Puttin viewMatrix " << glm::to_string(this->viewMatrix)
+    //           << std::endl;
     this->putParameter("viewMatrix", this->viewMatrix[0][0]);
   }
   if (this->checkParameter("projectionMatrix")) {
-    std::cout << "Puttin projectionMatrix "
-              << glm::to_string(this->projectionMatrix) << std::endl;
+    // std::cout << "Puttin projectionMatrix "
+    //           << glm::to_string(this->projectionMatrix) << std::endl;
     this->putParameter("projectionMatrix", this->projectionMatrix[0][0]);
   }
 }
@@ -69,8 +71,8 @@ bool ShaderProgram::operator==(const ShaderProgram &other) const {
   return this->programId == other.programId;
 }
 
-void ShaderProgram::update(glm::mat4 &projectionMatrix) {
-  this->projectionMatrix = projectionMatrix;
+void ShaderProgram::update(glm::mat4 &viewMatrix) {
+  this->viewMatrix = viewMatrix;
 }
 
 void ShaderProgram::call() const { printf("HERE!!!!!\n"); }

@@ -11,9 +11,9 @@ private:
 
   glm::vec3 eye{0, 0, 0};
   glm::vec3 target{0};
-  glm::vec3 up{0, 1, 0};
+  glm::vec3 up{0, -1, 0};
 
-  float pitch = 90;
+  float pitch = 0;
   float yaw = 0;
 
   void recalculateTarget();
