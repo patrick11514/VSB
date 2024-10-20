@@ -34,6 +34,13 @@ public:
    * @param y Y position of mouse
    */
   void onMouse(GLFWwindow *window, double x, double y);
+  /**
+   * @brief On window resize
+   * @param window GLFWwindow
+   * @param width width of window
+   * @param height height of window
+   */
+  void onResize(GLFWwindow *window, int width, int height);
 
   void onFrame(); ///< This function is called every frame in main App loop
 

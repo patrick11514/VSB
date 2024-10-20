@@ -39,6 +39,12 @@ void App::initialize() {
         static_cast<Controller *>(glfwGetWindowUserPointer(window))
             ->onMouse(window, x, y);
       });
+
+  glfwSetWindowSizeCallback(
+      this->window, [](GLFWwindow *window, int width, int height) {
+        static_cast<Controller *>(glfwGetWindowUserPointer(window))
+            ->onResize(window, width, height);
+      });
 }
 
 void App::createShaders() {
@@ -173,6 +179,7 @@ void App::createWindow() {
     exit(EXIT_FAILURE);
   }
 
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   glfwMakeContextCurrent(this->window);
   glfwSwapInterval(1);
 
@@ -184,12 +191,9 @@ void App::createWindow() {
 
   int width, height;
   glfwGetFramebufferSize(this->window, &width, &height);
+
   float ratio = width / (float)height;
-  printf("RATIO: %f\n", ratio);
   this->projectionMatrix = glm::perspective(30.f, ratio, .1f, 1000.f);
-
-  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
   glViewport(0, 0, width, height);
 }
 

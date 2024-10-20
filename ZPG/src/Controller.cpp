@@ -1,7 +1,9 @@
 #include "Controller.hpp"
+#include "App.hpp"
 
 #include <GLFW/glfw3.h>
 #include <cstdio>
+#include <glm/ext/matrix_clip_space.hpp>
 
 Controller::Controller(App *app) : app(app) {}
 
@@ -37,6 +39,14 @@ void Controller::onMouse([[maybe_unused]] GLFWwindow *window, double x,
 
   this->getCamera().changeYaw(xDiff / 4);
   this->getCamera().changePitch(yDiff / 4);
+}
+
+void Controller::onResize([[maybe_unused]] GLFWwindow *window, int width,
+                          int height) {
+  printf("resize: %dx%d\n", width, height);
+  glViewport(0, 0, width, height);
+  float ratio = width / (float)height;
+  this->app->projectionMatrix = glm::perspective(30.f, ratio, .1f, 1000.f);
 }
 
 void Controller::onFrame() {

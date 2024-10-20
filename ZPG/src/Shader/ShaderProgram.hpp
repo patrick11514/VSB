@@ -13,10 +13,9 @@ class Controller;
  */
 class ShaderProgram : public Observer {
 private:
-  GLuint programId;           ///< If of program
-  glm::mat4 viewMatrix;       ///< View matrix of window
-  glm::mat4 projectionMatrix; ///< Projection matrix of camera
-  Controller *controller;     ///< Pointer to controller
+  GLuint programId;       ///< If of program
+  glm::mat4 viewMatrix;   ///< View matrix of window
+  Controller *controller; ///< Pointer to controller
 
 public:
   /**

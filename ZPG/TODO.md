@@ -2,3 +2,5 @@
 - [x] Transformations using composite + correct multiply
 - [x] Share points between same objects
 - [x] go through code, add consts + cleanup
+- [x] update projectionMatrix when resize
+- [ ] fix up vector to face 0,1,0 instead of 0,-1,0

@@ -38,8 +38,6 @@ ShaderProgram::ShaderProgram(const Shader &vertexShader,
 
     this->viewMatrix = this->controller->getCamera().calculateViewMatrix();
   }
-
-  this->projectionMatrix = this->controller->getProjectionMatrix();
 }
 
 ShaderProgram::ShaderProgram(const char *vertexShaderPath,
@@ -64,7 +62,8 @@ void ShaderProgram::setProgram() const {
   if (this->checkParameter("projectionMatrix")) {
     // std::cout << "Puttin projectionMatrix "
     //           << glm::to_string(this->projectionMatrix) << std::endl;
-    this->putParameter("projectionMatrix", this->projectionMatrix[0][0]);
+    this->putParameter("projectionMatrix",
+                       this->controller->getProjectionMatrix()[0][0]);
   }
 }
 
