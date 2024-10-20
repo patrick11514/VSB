@@ -12,6 +12,7 @@ ShaderProgram::ShaderProgram(const Shader &vertexShader,
                              const Shader &fragmentShader,
                              Controller *controller)
     : Observer(), controller(controller) {
+  printf("CREATE\n");
   this->programId = glCreateProgram();
   glAttachShader(this->programId, fragmentShader.shaderId);
   glAttachShader(this->programId, vertexShader.shaderId);

@@ -49,76 +49,57 @@ void App::initialize() {
 
 void App::createShaders() {
   try {
-    Shader vertexShader("../shaders/vertex/ColorByCoords.vert",
-                        ShaderType::Vertex);
-    Shader fragmentShader("../shaders/fragment/ColorByCoords.frag",
-                          ShaderType::Fragment);
+    this->shaders.addShaderProgram(
+        "ColorByCoords",
+        new ShaderProgram("../shaders/vertex/ColorByCoords.vert",
+                          "../shaders/fragment/ColorByCoords.frag",
+                          this->controller));
 
-    ShaderProgram *shaderProgram =
-        new ShaderProgram(vertexShader, fragmentShader, this->controller);
-    this->shaders.addShaderProgram("ColorByCoords", shaderProgram);
+    this->shaders.addShaderProgram(
+        "ColorPurple",
+        new ShaderProgram("../shaders/vertex/Purple.vert",
+                          "../shaders/fragment/Purple.frag", this->controller));
 
-    Shader vertexShader2("../shaders/vertex/Purple.vert", ShaderType::Vertex);
+    this->shaders.addShaderProgram(
+        "MatShader", new ShaderProgram("../shaders/vertex/Rotation.vert",
+                                       "../shaders/fragment/ColorByCoords.frag",
+                                       this->controller));
 
-    Shader fragmentShader2("../shaders/fragment/Purple.frag",
-                           ShaderType::Fragment);
+    this->shaders.addShaderProgram(
+        "MatShaderStatic",
+        new ShaderProgram("../shaders/vertex/RotationStaticColor.vert",
+                          "../shaders/fragment/Purple.frag", this->controller));
 
-    ShaderProgram *shaderProgram2 =
-        new ShaderProgram(vertexShader2, fragmentShader2, this->controller);
-    this->shaders.addShaderProgram("ColorPurple", shaderProgram2);
+    this->shaders.addShaderProgram(
+        "blue",
+        new ShaderProgram("../shaders/vertex/RotationStaticColor.vert",
+                          "../shaders/fragment/Blue.frag", this->controller));
+    this->shaders.addShaderProgram(
+        "red",
+        new ShaderProgram("../shaders/vertex/RotationStaticColor.vert",
+                          "../shaders/fragment/Red.frag", this->controller));
 
-    Shader vertexMat("../shaders/vertex/Rotation.vert", ShaderType::Vertex);
+    this->shaders.addShaderProgram(
+        "green",
+        new ShaderProgram("../shaders/vertex/RotationStaticColor.vert",
+                          "../shaders/fragment/Green.frag", this->controller));
+    this->shaders.addShaderProgram(
+        "darkGreen",
+        new ShaderProgram("../shaders/vertex/RotationStaticColor.vert",
+                          "../shaders/fragment/GreenDark.frag",
+                          this->controller));
 
-    ShaderProgram *shaderMat =
-        new ShaderProgram(vertexMat, fragmentShader, this->controller);
+    this->shaders.addShaderProgram(
+        "greenByCoord",
+        new ShaderProgram("../shaders/vertex/GreenByCoords.vert",
+                          "../shaders/fragment/GreenByCoords.frag",
 
-    this->shaders.addShaderProgram("MatShader", shaderMat);
+                          this->controller));
 
-    Shader vertexMatStatic("../shaders/vertex/RotationStaticColor.vert",
-                           ShaderType::Vertex);
-    ShaderProgram *shaderMatStatic =
-        new ShaderProgram(vertexMatStatic, fragmentShader2, this->controller);
-
-    this->shaders.addShaderProgram("MatShaderStatic", shaderMatStatic);
-
-    Shader fragmentBlue("../shaders/fragment/Blue.frag", ShaderType::Fragment);
-    Shader fragmentRed("../shaders/fragment/Red.frag", ShaderType::Fragment);
-
-    ShaderProgram *blueProgram =
-        new ShaderProgram(vertexMatStatic, fragmentBlue, this->controller);
-    ShaderProgram *redProgram =
-        new ShaderProgram(vertexMatStatic, fragmentRed, this->controller);
-    this->shaders.addShaderProgram("blue", blueProgram);
-    this->shaders.addShaderProgram("red", redProgram);
-
-    Shader fragmentGreen("../shaders/fragment/Green.frag",
-                         ShaderType::Fragment);
-    Shader fragmentDarkGreen("../shaders/fragment/GreenDark.frag",
-                             ShaderType::Fragment);
-
-    ShaderProgram *greenProgram =
-        new ShaderProgram(vertexMatStatic, fragmentGreen, this->controller);
-    ShaderProgram *darkGreenProgram =
-        new ShaderProgram(vertexMatStatic, fragmentDarkGreen, this->controller);
-
-    this->shaders.addShaderProgram("green", greenProgram);
-    this->shaders.addShaderProgram("darkGreen", darkGreenProgram);
-
-    Shader fragmentGreenByCoord("../shaders/fragment/GreenByCoords.frag",
-                                ShaderType::Fragment);
-    Shader vertexGreenByCoord("../shaders/vertex/GreenByCoords.vert",
-                              ShaderType::Vertex);
-    ShaderProgram *greenByCoord = new ShaderProgram(
-        vertexGreenByCoord, fragmentGreenByCoord, this->controller);
-
-    this->shaders.addShaderProgram("greenByCoord", greenByCoord);
-
-    Shader idkBarvyVertex("../shaders/vertex/IdkBarvy.vert",
-                          ShaderType::Vertex);
-
-    ShaderProgram *idkBarvy =
-        new ShaderProgram(idkBarvyVertex, fragmentShader, this->controller);
-    this->shaders.addShaderProgram("idk", idkBarvy);
+    this->shaders.addShaderProgram(
+        "idk", new ShaderProgram("../shaders/vertex/IdkBarvy.vert",
+                                 "../shaders/fragment/ColorByCoords.frag",
+                                 this->controller));
   } catch (const std::runtime_error &) {
     this->destroy(EXIT_FAILURE);
   }
