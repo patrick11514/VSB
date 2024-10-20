@@ -114,6 +114,10 @@ void App::createModels() {
 
 void App::run() {
   glEnable(GL_DEPTH_TEST);
+
+  double prevTime;
+  int frames;
+
   while (!glfwWindowShouldClose(this->window)) {
     // clear color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -129,6 +133,14 @@ void App::run() {
     this->controller->onFrame();
     // put the stuff we’ve been drawing onto the display
     glfwSwapBuffers(this->window);
+
+    double currentTime = glfwGetTime();
+    if (currentTime - prevTime >= 1.0) {
+      printf("FPS: %d\n", frames);
+      frames = 0;
+      prevTime = currentTime;
+    }
+    ++frames;
   }
 }
 
