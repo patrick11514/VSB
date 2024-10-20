@@ -192,8 +192,14 @@ void App::createWindow() {
   int width, height;
   glfwGetFramebufferSize(this->window, &width, &height);
 
+  this->calculateProjectionMatrix(width, height);
+}
+
+void App::calculateProjectionMatrix(int width, int height, float fov,
+                                    float zNear, float zFar) {
   float ratio = width / (float)height;
-  this->projectionMatrix = glm::perspective(30.f, ratio, .1f, 1000.f);
+  this->projectionMatrix =
+      glm::perspective(glm::radians(fov), ratio, zNear, zFar);
   glViewport(0, 0, width, height);
 }
 

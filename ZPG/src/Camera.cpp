@@ -26,24 +26,23 @@ void Camera::broadcast() const {
 }
 
 void Camera::recalculateTarget() {
-  double radMul = std::numbers::pi / 180;
+  double radPitch = glm::radians(this->pitch);
+  double radYaw = glm::radians(this->yaw);
 
-  this->target.x =
-      std::cos(this->pitch * radMul) * std::cos(this->yaw * radMul);
-  this->target.z =
-      std::cos(this->pitch * radMul) * std::sin(this->yaw * radMul);
-  this->target.y = std::sin(this->pitch * radMul);
+  this->target.x = std::cos(radPitch) * std::cos(radYaw);
+  this->target.z = std::cos(radPitch) * std::sin(radYaw);
+  this->target.y = std::sin(radPitch);
 
   this->broadcast();
 }
 
 void Camera::toLeft(float rate) {
-  this->eye += glm::normalize(glm::cross(this->target, this->up)) * rate;
+  this->eye -= glm::normalize(glm::cross(this->target, this->up)) * rate;
   this->broadcast();
 }
 
 void Camera::toRight(float rate) {
-  this->eye -= glm::normalize(glm::cross(this->target, this->up)) * rate;
+  this->eye += glm::normalize(glm::cross(this->target, this->up)) * rate;
 
   this->broadcast();
 }

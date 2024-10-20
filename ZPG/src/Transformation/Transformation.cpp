@@ -8,7 +8,7 @@ Transformation::addTransformation(Transformation *tran) {
 }
 
 glm::mat4 Transformation::getMatrix() const {
-  glm::mat4 mat{1};
+  glm::mat4 mat{1.f};
 
   for (auto &tran : this->transformations) {
     mat = tran->getMatrix() * mat;

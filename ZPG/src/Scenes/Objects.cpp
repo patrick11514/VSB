@@ -6,6 +6,7 @@
 
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/vector_float3.hpp>
+#include <memory>
 
 Objects::Objects(const ShaderStorage &shaderStorage) : Scene() {
 
@@ -24,4 +25,7 @@ Objects::Objects(const ShaderStorage &shaderStorage) : Scene() {
       createTree(shaderStorage.getShaderProgram("MatShaderStatic"),
                  std::make_shared<Transformation>()->addTransformation(
                      new Scale(glm::vec3(.1f)))));
+
+  this->addObject(createGift(shaderStorage.getShaderProgram("idk"),
+                             std::make_shared<Transformation>()));
 }

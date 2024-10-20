@@ -14,7 +14,7 @@ private:
 
   glm::vec3 eye{0, 0, 0}; ///< Eye position, default 0,0,0
   glm::vec3 target;       ///< Target on which we are looking
-  glm::vec3 up{0, -1, 0}; ///< up Somehow is down???
+  glm::vec3 up{0, 1, 0};  ///< Vector defining where is up
 
   float pitch = 0; ///< Pitch (-60, 90)
   float yaw = 0;   ///< Yaw (0, 360>

@@ -44,9 +44,7 @@ void Controller::onMouse([[maybe_unused]] GLFWwindow *window, double x,
 void Controller::onResize([[maybe_unused]] GLFWwindow *window, int width,
                           int height) {
   printf("resize: %dx%d\n", width, height);
-  glViewport(0, 0, width, height);
-  float ratio = width / (float)height;
-  this->app->projectionMatrix = glm::perspective(30.f, ratio, .1f, 1000.f);
+  this->app->calculateProjectionMatrix(width, height);
 }
 
 void Controller::onFrame() {

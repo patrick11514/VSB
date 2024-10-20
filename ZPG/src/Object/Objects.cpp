@@ -23,10 +23,8 @@ Object createBall(const ShaderProgram *shaderProgram,
   return Object(
       dataStorage.getObject("ball"), shaderProgram, transformations,
       [](const glm::mat4x4 &matrix, const ShaderProgram *shaderProgram) {
-        // GLuint paramId = shaderProgram.getMatrixPosition();
-
         shaderProgram->putParameter("modelMatrix", matrix[0][0]);
-        // glUniformMatrix4fv(paramId, 1, GL_FALSE, &matrix[0][0]);
+
         glDrawArrays(GL_TRIANGLES, 0, 2880);
       });
 }
@@ -89,9 +87,6 @@ Object createGift(const ShaderProgram *shaderProgram,
       [](const glm::mat4x4 &matrix, const ShaderProgram *shaderProgram) {
         shaderProgram->putParameter("modelMatrix", matrix[0][0]);
 
-        // GLuint paramId = shaderProgram.getMatrixPosition();
-
-        // glUniformMatrix4fv(paramId, 1, GL_FALSE, &matrix[0][0]);
         glDrawArrays(GL_TRIANGLES, 0, 66624);
       });
 }
