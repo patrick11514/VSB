@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <cstdio>
 
-Model::Model() { this->points = new float[0]; }
+Model::Model() : points(nullptr) {}
 
 Model::Model(std::vector<float> points) {
   this->size = points.size();

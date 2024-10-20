@@ -10,7 +10,6 @@ ShaderStorage::~ShaderStorage() {
 
 void ShaderStorage::addShaderProgram(const std::string &name,
                                      ShaderProgram *shader) {
-  printf("EMLACING\n");
   this->shaders.emplace(name, shader);
 }
 void ShaderStorage::removeShader(const std::string &name) {

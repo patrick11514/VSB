@@ -1,14 +1,9 @@
 #include "App.hpp"
 #include "Controller.hpp"
-#include "Object/ObjectData.hpp"
-#include "Object/Objects.hpp"
-#include "Object/Transformations.hpp"
 #include "Scenes/Forest.hpp"
+#include "Scenes/Objects.hpp"
 #include "Shader/Shader.hpp"
 #include "Shader/ShaderProgram.hpp"
-#include "Transformation/Rotation.hpp"
-#include "Transformation/Scale.hpp"
-#include "Transformation/Translate.hpp"
 
 #include <GLFW/glfw3.h>
 #include <glm/ext/matrix_clip_space.hpp>
@@ -21,7 +16,7 @@ App::App() : camera(Camera()) { this->controller = new Controller(this); }
 
 App::~App() { delete this->controller; }
 
-void App::error_callback(int error, const char *description) {
+void App::error_callback([[maybe_unused]] int error, const char *description) {
   fputs(description, stderr);
 }
 
@@ -115,10 +110,8 @@ void App::createShaders() {
     Shader idkBarvyVertex("../shaders/vertex/IdkBarvy.vert",
                           ShaderType::Vertex);
 
-    printf("CREATING SHADER\n");
     ShaderProgram *idkBarvy =
         new ShaderProgram(idkBarvyVertex, fragmentShader, this->controller);
-    printf("ADDING SHADER\n");
     this->shaders.addShaderProgram("idk", idkBarvy);
   } catch (const std::runtime_error &) {
     this->destroy(EXIT_FAILURE);
@@ -126,53 +119,7 @@ void App::createShaders() {
 }
 
 void App::createModels() {
-  /*Scene scene;*/
-  /**/
-  /*Model model({0.5f, 0.5f,  0.0f, 0.5f,  -0.5f, 0.0f, -0.5f, -0.5f,*/
-  /*             0.0f, -0.5f, 0.5f, 0.0f,  0.75f, 1.0f, 0.0f,  1.0f,*/
-  /*             0.5f, 0.0f,  0.5f, 0.5f,  0.0f,  0.0f, 0.5f,  0.0f,*/
-  /*             0.5f, -0.5f, 0.0f, -0.5f, -0.5f, 0.0f});*/
-  /*ObjectData data(model);*/
-  /**/
-  /*scene.addObject(Object(data,
-   * this->shaders.getShaderProgram("ColorByCoords"),*/
-  /*                       Transformations(),*/
-  /*                       [](const glm::mat4x4 &, const ShaderProgram &) {*/
-  /*                         glDrawArrays(GL_TRIANGLES, 4, 3);*/
-  /*                       }));*/
-  /**/
-  /*scene.addObject(Object(data,
-   * this->shaders.getShaderProgram("ColorPurple"),*/
-  /*                       Transformations(),*/
-  /*                       [](const glm::mat4x4 &, const ShaderProgram &) {*/
-  /*                         glDrawArrays(GL_QUADS, 0, 4);*/
-  /*                       }));*/
-  /**/
-  /*this->addScene("objects", scene);*/
-  /**/
-  Scene objScene;
-
-  Transformations tran;
-
-  /*tran.addTransformation(Rotation(1.f, vec));*/
-  tran.addTransformation(Scale(glm::vec3(0.2f)))
-      ->addTransformation(Translate(glm::vec3(1.f, 0.f, 0.f)));
-
-  objScene.addObject(
-      createBall(this->shaders.getShaderProgram("MatShader"), tran));
-
-  Transformations tran2;
-  tran2.addTransformation(Translate(glm::vec3(-0.5f, 0.5f, 0.f)));
-
-  objScene.addObject(createBush(this->shaders.getShaderProgram("blue"), tran2));
-
-  Transformations tran3;
-  tran3.addTransformation(Scale(glm::vec3(.1f)));
-
-  objScene.addObject(createTree(this->shaders.getShaderProgram("red"), tran3));
-
-  this->addScene("obj", objScene);
-
+  this->addScene("obj", Objects(this->shaders));
   this->currentScene = "obj";
 
   this->addScene("forest", Forest(this->shaders));
@@ -191,6 +138,8 @@ void App::run() {
     ShaderProgram::resetProgram();
 
     glfwPollEvents();
+
+    this->controller->onFrame();
     // put the stuff we’ve been drawing onto the display
     glfwSwapBuffers(this->window);
   }
@@ -238,6 +187,8 @@ void App::createWindow() {
   float ratio = width / (float)height;
   printf("RATIO: %f\n", ratio);
   this->projectionMatrix = glm::perspective(30.f, ratio, .1f, 1000.f);
+
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   glViewport(0, 0, width, height);
 }

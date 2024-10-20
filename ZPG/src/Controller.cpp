@@ -1,5 +1,6 @@
 #include "Controller.hpp"
 
+#include <GLFW/glfw3.h>
 #include <cstdio>
 
 Controller::Controller(App *app) : app(app) {}
@@ -11,8 +12,35 @@ void Controller::onKeyPress(GLFWwindow *window, int key, int scancode,
   printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);
 
   switch (action) {
-
   case GLFW_PRESS:
+    this->pressedKeys.emplace_back(key);
+    break;
+  case GLFW_RELEASE:
+    printf("%d RELASE\n", key);
+    for (auto begin = this->pressedKeys.begin();
+         begin != this->pressedKeys.end(); ++begin) {
+      if (*begin == key) {
+        this->pressedKeys.erase(begin);
+        break;
+      }
+    }
+    break;
+  }
+}
+
+void Controller::onMouse([[maybe_unused]] GLFWwindow *window, double x,
+                         double y) {
+  double xDiff = x - this->prevX;
+  this->prevX = x;
+  double yDiff = this->prevY - y;
+  this->prevY = y;
+
+  this->getCamera().changeYaw(xDiff / 4);
+  this->getCamera().changePitch(yDiff / 4);
+}
+
+void Controller::onFrame() {
+  for (const int key : this->pressedKeys) {
     switch (key) {
     case GLFW_KEY_V:
       // App::currentScene = "obj";
@@ -22,36 +50,21 @@ void Controller::onKeyPress(GLFWwindow *window, int key, int scancode,
       // App::currentScene = "forest";
       this->app->currentScene = "forest";
       break;
-    case GLFW_KEY_Q:
-      this->app->camera.changeYaw(-10.f);
-      break;
-    case GLFW_KEY_E:
-      this->app->camera.changeYaw(+10.f);
-      break;
     case GLFW_KEY_W:
-      this->app->camera.forward();
+      this->getCamera().forward();
       break;
     case GLFW_KEY_S:
-      this->app->camera.backward();
+      this->getCamera().backward();
       break;
     case GLFW_KEY_A:
-      this->app->camera.toLeft();
+      this->getCamera().toLeft();
       break;
     case GLFW_KEY_D:
-      this->app->camera.toRight();
-      break;
-    case GLFW_KEY_R:
-      this->app->camera.changePitch(10.f);
-      break;
-    case GLFW_KEY_T:
-      this->app->camera.changePitch(-10.f);
+      this->getCamera().toRight();
       break;
     }
-    break;
   }
 }
-
-void Controller::onMouse(GLFWwindow *window, double x, double y) {}
 
 glm::mat4 Controller::getProjectionMatrix() const {
   return this->app->projectionMatrix;

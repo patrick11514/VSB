@@ -2,21 +2,27 @@
 #include <GL/glew.h>
 #include <string>
 
-enum ShaderType
-{
-    Fragment,
-    Vertex
-};
+/*
+ * @brief Type of shader
+ */
+enum ShaderType { Fragment, Vertex };
 
-class Shader
-{
+/**
+ * @brief Class which repesents program (vertex/fragment...) in OpenGL
+ */
+class Shader {
 private:
-    GLuint shaderId;
-    std::string program;
+  GLuint shaderId;     ///< Id of program
+  std::string program; ///< Code of program
 
 public:
-    Shader(const char *path, ShaderType shader);
+  /**
+   * @brief Basic constructor for Shader
+   * @param path to program
+   * @param shader type of Shader
+   */
+  Shader(const char *path, ShaderType shader);
 
-    // ShaderProgram is a friend class of Shader
-    friend class ShaderProgram;
+  // ShaderProgram is a friend class of Shader
+  friend class ShaderProgram;
 };

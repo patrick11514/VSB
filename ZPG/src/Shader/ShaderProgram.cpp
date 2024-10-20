@@ -1,22 +1,21 @@
 #include "ShaderProgram.hpp"
 #include "../Controller.hpp"
+#include "Shader.hpp"
 
 #include <GLFW/glfw3.h>
-#include <iostream>
 #include <stdio.h>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/string_cast.hpp>
 
-ShaderProgram::ShaderProgram(Shader &vertexShader, Shader &fragmentShader,
+ShaderProgram::ShaderProgram(const Shader &vertexShader,
+                             const Shader &fragmentShader,
                              Controller *controller)
     : Observer(), controller(controller) {
   this->programId = glCreateProgram();
   glAttachShader(this->programId, fragmentShader.shaderId);
   glAttachShader(this->programId, vertexShader.shaderId);
   glLinkProgram(this->programId);
-
-  printf("Constructing program\n");
 
   GLint status;
   glGetProgramiv(this->programId, GL_LINK_STATUS, &status);
@@ -35,7 +34,6 @@ ShaderProgram::ShaderProgram(Shader &vertexShader, Shader &fragmentShader,
   // Does my shader have view matrix
   if (this->checkParameter("viewMatrix")) {
     // add me as observer
-    printf("Adding me as observer\n");
     this->controller->getCamera().addObserver(this);
 
     this->viewMatrix = this->controller->getCamera().calculateViewMatrix();
@@ -44,7 +42,12 @@ ShaderProgram::ShaderProgram(Shader &vertexShader, Shader &fragmentShader,
   this->projectionMatrix = this->controller->getProjectionMatrix();
 }
 
-ShaderProgram::~ShaderProgram() { printf("Destructing :(\n"); }
+ShaderProgram::ShaderProgram(const char *vertexShaderPath,
+                             const char *fragmentShaderPath,
+                             Controller *controller)
+    : ShaderProgram(Shader(vertexShaderPath, ShaderType::Vertex),
+                    Shader(fragmentShaderPath, ShaderType::Fragment),
+                    controller) {}
 
 bool ShaderProgram::checkParameter(const std::string &name) const {
   GLint position = glGetUniformLocation(this->programId, name.c_str());
@@ -74,5 +77,3 @@ bool ShaderProgram::operator==(const ShaderProgram &other) const {
 void ShaderProgram::update(glm::mat4 &viewMatrix) {
   this->viewMatrix = viewMatrix;
 }
-
-void ShaderProgram::call() const { printf("HERE!!!!!\n"); }

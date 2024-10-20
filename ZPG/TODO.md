@@ -1,0 +1,4 @@
+- [x] Mouse control
+- [x] Transformations using composite + correct multiply
+- [x] Share points between same objects
+- [x] go through code, add consts + cleanup

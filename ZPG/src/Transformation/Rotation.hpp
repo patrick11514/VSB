@@ -2,10 +2,23 @@
 
 #include "Transformation.hpp"
 #include <glm/ext/matrix_float4x4.hpp>
+#include <glm/ext/vector_float3.hpp>
 
+/**
+ * @brief Basic Rotation Transformation
+ */
 class Rotation : public Transformation {
-public:
-    Rotation(float angle, const glm::vec3& axis);
-  //  Rotation(const glm::mat4x4&, float angel, const::glm::vec3 &axis);
-};
+private:
+  glm::mat4 finalMatrix; ///< Final matrix created by constructor
 
+public:
+  /**
+   * @brief Create Transformation matrix for Rotation
+   * @param angle Angle of rotation
+   * @axes axes vector which defines axis around which will be rotation
+   * performed
+   */
+  Rotation(float angle, glm::vec3 axes);
+
+  glm::mat4 getMatrix() const; ///< Return finalMatrix
+};

@@ -5,19 +5,22 @@
 
 using std::size_t;
 
-class Model
-{
+/**
+ * @brief Class for holding raw float data of specific size
+ */
+class Model {
 private:
-    float *points;
+  float *points;
+  size_t size;
 
 public:
-    size_t size;
-    Model();
-    Model(std::vector<float> points);
-    Model(const float points[], size_t size);
-    Model(const Model &other);
-    Model(Model &&other);
-    ~Model();
+  Model();                          ///< Raw constructor
+  Model(std::vector<float> points); ///< Constructor from vector of points
+  Model(const float points[],
+        size_t size);        ///< constructor from float array and size of data
+  Model(const Model &other); ///< copy constructor
+  Model(Model &&other);      ///< move constructor
+  ~Model();                  ///< destructor
 
-    void putDataToBuffer() const;
+  void putDataToBuffer() const; ///< put data to gpu
 };

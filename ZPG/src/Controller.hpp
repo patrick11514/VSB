@@ -2,21 +2,41 @@
 
 #include "App.hpp"
 
+/**
+ * @brief Main Controller, which handles keyboard, mouse etc...
+ */
 class Controller {
 private:
-  App *app;
-  // Camera& camera;
+  App *app; ///< Pointer to main Application
 
-  double prevX = -1;
-  double prevY = -1;
+  std::vector<int> pressedKeys; ///< Vector of all currently pressed keys
+
+  double prevX = 0; ///< previous x position of mouse
+  double prevY = 0; ///< previsout y position of mouse
 
 public:
-  Controller(App *app);
+  Controller(App *app); ///< Default constructor which get app pointer
 
+  /**
+   * @brief On key press
+   * @param window GLFWwindow
+   * @param key number of key pressed
+   * @param scancode ?
+   * @param action if key was pressed/relesed
+   * @param mods ?
+   */
   void onKeyPress(GLFWwindow *window, int key, int scancode, int action,
                   int mods);
+  /**
+   * @brief On mouse move
+   * @param window GLFWwindow
+   * @param x X position of mouse
+   * @param y Y position of mouse
+   */
   void onMouse(GLFWwindow *window, double x, double y);
 
-  glm::mat4 getProjectionMatrix() const;
-  Camera &getCamera();
+  void onFrame(); ///< This function is called every frame in main App loop
+
+  glm::mat4 getProjectionMatrix() const; ///< Get projection matrix from APP
+  Camera &getCamera();                   ///< Get camera from APP
 };
