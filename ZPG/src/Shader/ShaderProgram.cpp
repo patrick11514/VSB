@@ -12,7 +12,6 @@ ShaderProgram::ShaderProgram(const Shader &vertexShader,
                              const Shader &fragmentShader,
                              Controller *controller)
     : Observer(), controller(controller) {
-  printf("CREATE\n");
   this->programId = glCreateProgram();
   glAttachShader(this->programId, fragmentShader.shaderId);
   glAttachShader(this->programId, vertexShader.shaderId);
@@ -34,10 +33,9 @@ ShaderProgram::ShaderProgram(const Shader &vertexShader,
 
   // Does my shader have view matrix
   if (this->checkParameter("viewMatrix")) {
-    // add me as observer
-    this->controller->getCamera().addObserver(this);
-
-    this->viewMatrix = this->controller->getCamera().calculateViewMatrix();
+    // add me as observe
+    this->controller->getCamera().registerObserver(this);
+    this->update();
   }
 }
 
@@ -55,16 +53,15 @@ bool ShaderProgram::checkParameter(const std::string &name) const {
 
 void ShaderProgram::setProgram() const {
   glUseProgram(this->programId);
-  if (this->checkParameter("viewMatrix")) {
-    // std::cout << "Puttin viewMatrix " << glm::to_string(this->viewMatrix)
-    //           << std::endl;
-    this->putParameter("viewMatrix", this->viewMatrix[0][0]);
-  }
   if (this->checkParameter("projectionMatrix")) {
     // std::cout << "Puttin projectionMatrix "
     //           << glm::to_string(this->projectionMatrix) << std::endl;
     this->putParameter("projectionMatrix",
                        this->controller->getProjectionMatrix()[0][0]);
+  }
+
+  if (this->checkParameter("viewMatrix")) {
+    this->putParameter("viewMatrix", this->viewMatrix[0][0]);
   }
 }
 
@@ -74,6 +71,6 @@ bool ShaderProgram::operator==(const ShaderProgram &other) const {
   return this->programId == other.programId;
 }
 
-void ShaderProgram::update(glm::mat4 &viewMatrix) {
-  this->viewMatrix = viewMatrix;
+void ShaderProgram::update() {
+  this->viewMatrix = this->controller->getCamera().calculateViewMatrix();
 }

@@ -4,27 +4,6 @@
 
 Camera::Camera() { this->recalculateTarget(); }
 
-void Camera::addObserver(Observer *observer) {
-  this->observers.emplace_back(observer);
-}
-
-void Camera::removeObserver(Observer *observer) {
-  for (auto begin = this->observers.begin(); begin != this->observers.end();
-       ++begin) {
-    if (*begin == observer) {
-      this->observers.erase(begin);
-      return;
-    }
-  }
-}
-
-void Camera::broadcast() const {
-  glm::mat4 newMatrix = this->calculateViewMatrix();
-  for (Observer *observer : this->observers) {
-    observer->update(newMatrix);
-  }
-}
-
 void Camera::recalculateTarget() {
   double radPitch = glm::radians(this->pitch);
   double radYaw = glm::radians(this->yaw);
@@ -33,30 +12,30 @@ void Camera::recalculateTarget() {
   this->target.z = std::cos(radPitch) * std::sin(radYaw);
   this->target.y = std::sin(radPitch);
 
-  this->broadcast();
+  this->notifyObservers();
 }
 
 void Camera::toLeft(float rate) {
   this->eye -= glm::normalize(glm::cross(this->target, this->up)) * rate;
-  this->broadcast();
+  this->notifyObservers();
 }
 
 void Camera::toRight(float rate) {
   this->eye += glm::normalize(glm::cross(this->target, this->up)) * rate;
 
-  this->broadcast();
+  this->notifyObservers();
 }
 
 void Camera::forward(float rate) {
   this->eye += glm::normalize(this->target) * rate;
 
-  this->broadcast();
+  this->notifyObservers();
 }
 
 void Camera::backward(float rate) {
   this->eye -= glm::normalize(this->target) * rate;
 
-  this->broadcast();
+  this->notifyObservers();
 }
 
 void Camera::changeYaw(float deg) {

@@ -14,8 +14,8 @@ class Controller;
 class ShaderProgram : public Observer {
 private:
   GLuint programId;       ///< If of program
-  glm::mat4 viewMatrix;   ///< View matrix of window
   Controller *controller; ///< Pointer to controller
+  glm::mat4 viewMatrix;   ///< View matrix
 
 public:
   /**
@@ -69,6 +69,5 @@ public:
   // operators
   bool operator==(const ShaderProgram &other) const; ///< compare operator
 
-  void
-  update(glm::mat4 &viewMatrix) override; ///< Update viewMatrix from Camera
+  void update() override; ///< Update viewMatrix from Camera
 };

@@ -1,17 +1,15 @@
 #pragma once
 
 #include <glm/ext/matrix_transform.hpp>
-#include <vector>
 
+#include "Patterns/Observable.hpp"
 #include "Patterns/Observer.hpp"
 
 /**
  * @brief Camera of our scene
  */
-class Camera {
+class Camera : public Observable {
 private:
-  std::vector<Observer *> observers; ///< List of observers
-
   glm::vec3 eye{0, 0, 0}; ///< Eye position, default 0,0,0
   glm::vec3 target;       ///< Target on which we are looking
   glm::vec3 up{0, 1, 0};  ///< Vector defining where is up
@@ -24,11 +22,6 @@ private:
 
 public:
   Camera(); ///< Default constructor, which will recalculateTarget
-
-  void addObserver(Observer *observer);    ///< Add Observer
-  void removeObserver(Observer *observer); ///< Remove Observer
-
-  void broadcast() const; ///< Broadcast viewMatrix to Observers
 
   void toLeft(float rate = 0.1f);   ///< Move eye to left with specific rate
   void toRight(float rate = 0.1f);  ///< Move eye to right with specific rate
