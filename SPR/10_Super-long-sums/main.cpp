@@ -1,6 +1,8 @@
 #include <cstdio>
 #include <vector>
 
+static char buffer[4];
+
 int main() {
   int summs;
   scanf("%d\n", &summs);
@@ -16,11 +18,9 @@ int main() {
     std::vector<int> summed(digits, 0);
 
     for (int d = 0; d < digits; ++d) {
-      int n1, n2;
+      fread(buffer, sizeof(char), 4, stdin);
 
-      scanf("%d %d\n", &n1, &n2);
-
-      summed[d] = n1 + n2;
+      summed[d] = buffer[0] - '0' + buffer[2] - '0';
 
       for (int dBack = d; dBack >= 0; --dBack) {
         if (summed[dBack] < 10)
