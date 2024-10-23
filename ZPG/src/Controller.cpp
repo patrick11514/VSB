@@ -58,6 +58,11 @@ void Controller::onFrame() {
       // App::currentScene = "forest";
       this->app->currentScene = "forest";
       break;
+    case GLFW_KEY_N:
+      // App::currentScene = "forest";
+      this->app->currentScene = "light";
+      break;
+
     case GLFW_KEY_W:
       this->getCamera().forward();
       break;

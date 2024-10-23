@@ -1,6 +1,7 @@
 #include "App.hpp"
 #include "Controller.hpp"
 #include "Scenes/Forest.hpp"
+#include "Scenes/Light.hpp"
 #include "Scenes/Objects.hpp"
 #include "Shader/Shader.hpp"
 #include "Shader/ShaderProgram.hpp"
@@ -100,16 +101,21 @@ void App::createShaders() {
         "idk", new ShaderProgram("../shaders/vertex/IdkBarvy.vert",
                                  "../shaders/fragment/ColorByCoords.frag",
                                  this->controller));
+    this->shaders.addShaderProgram(
+        "light",
+        new ShaderProgram("../shaders/vertex/Light.vert",
+                          "../shaders/fragment/Light.frag", this->controller));
   } catch (const std::runtime_error &) {
     this->destroy(EXIT_FAILURE);
   }
 }
 
 void App::createModels() {
-  this->addScene("obj", Objects(this->shaders));
   this->currentScene = "obj";
 
+  this->addScene("obj", Objects(this->shaders));
   this->addScene("forest", Forest(this->shaders));
+  this->addScene("light", Light(this->shaders));
 }
 
 void App::run() {

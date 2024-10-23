@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "watch": "tailwindcss -i ./src/assets/css/tailwind.css -o ./src/assets/css/main.css --watch",
+    "build": "tailwindcss -i ./src/assets/css/tailwind.css -o ./src/assets/css/main.css",
+    "serve": "cd src && python -m http.server 5173",
+    "all": "npm run watch; npm run serve"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwind-css": "^1.5.0",
+    "tailwindcss": "^3.4.14"
+  }
+}
