@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:title="Typ grafu" android:id="@+id/menu_graph_type" />
-    <item android:title="Item" />
-    <item android:title="Item" />
+    <item android:title="Nastavení" android:id="@+id/menu_settings" />
+    <item android:title="Historie" android:id="@+id/menu_history" />
+    <item android:title="Uložit" android:id="@+id/menu_save" />
 </menu>

@@ -5,4 +5,5 @@
     <string name="period_put">Období: %d let</string>
     <string name="money">Naspořená suma: %dKč</string>
     <string name="interest">Z toho úroky %dKč</string>
+    <string name="month_put">Měsíční vklad: %dKč</string>
 </resources>
