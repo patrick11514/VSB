@@ -5,8 +5,8 @@ layout(location=1) in vec3 norm;
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-out worldPosition;
-out worldNormal;
+out vec4 worldPosition;
+out vec3 worldNormal;
 //uniform mat3 normalMatrix; //(M-1)T
 
 void main(void){

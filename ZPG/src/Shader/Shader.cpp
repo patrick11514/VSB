@@ -19,4 +19,18 @@ Shader::Shader(const char *path, ShaderType shader) {
       shader == ShaderType::Vertex ? GL_VERTEX_SHADER : GL_FRAGMENT_SHADER);
   glShaderSource(this->shaderId, 1, &program, NULL);
   glCompileShader(this->shaderId);
+
+  GLint status;
+  glGetShaderiv(this->shaderId, GL_COMPILE_STATUS, &status);
+  if (status == GL_FALSE) {
+    printf("ERROR COMPILE\n");
+    GLint infoLogLength;
+    glGetShaderiv(this->shaderId, GL_INFO_LOG_LENGTH, &infoLogLength);
+    GLchar *strInfoLog = new GLchar[infoLogLength + 1];
+    glGetShaderInfoLog(this->shaderId, infoLogLength, NULL, strInfoLog);
+    fprintf(stderr, "Compile failure: %s\n", strInfoLog);
+    delete[] strInfoLog;
+
+    throw std::runtime_error("Compile failure");
+  }
 }
