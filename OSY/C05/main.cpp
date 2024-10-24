@@ -38,7 +38,6 @@ int main(int argc, char **argv) {
   struct Pipe pipe3 = createPipe();
 
   if (fork() == 0) {
-    printf("fork1\n");
     closePipe(pipe1, false, true);
     closePipe(pipe2, true, true);
     closePipe(pipe3, true, true);
@@ -51,7 +50,6 @@ int main(int argc, char **argv) {
   }
 
   if (fork() == 0) {
-    printf("fork1\n");
     closePipe(pipe1, true, false);
     closePipe(pipe2, false, true);
     closePipe(pipe3, true, true);
@@ -66,7 +64,6 @@ int main(int argc, char **argv) {
   }
 
   if (fork() == 0) {
-    printf("fork1\n");
     closePipe(pipe1, true, true);
     closePipe(pipe2, true, false);
     closePipe(pipe3, false, true);
@@ -85,15 +82,30 @@ int main(int argc, char **argv) {
   }
 
   if (fork() == 0) {
-    printf("fork1\n");
     closePipe(pipe1, true, true);
     closePipe(pipe2, true, true);
     closePipe(pipe3, true, false);
 
-    dup2(pipe3.output, STDIN_FILENO);
+    int fd = open(argv[2], O_WRONLY | O_CREAT, 0644);
+    while (true) {
+      char buffer[1024];
+      int readed = read(pipe3.output, buffer, sizeof(buffer) - 1);
+      if (readed <= 0)
+        break;
+
+      buffer[readed] = '\0';
+
+      size_t size = strlen(buffer);
+      write(STDOUT_FILENO, buffer, size);
+      write(fd, buffer, size);
+    }
+
+    close(fd);
+
+    // dup2(pipe3.output, STDIN_FILENO);
     closePipe(pipe3, false, true);
 
-    execlp("tee", "tee", argv[2], nullptr);
+    // execlp("tee", "tee", argv[2], nullptr);
   }
 
   closePipe(pipe1, true, true);
