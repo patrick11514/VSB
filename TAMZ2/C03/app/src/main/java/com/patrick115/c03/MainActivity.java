@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         /*SOURCE: https://investovaniproholky.cz/kalkulacka-slozeneho-uroceni/
-         const investedValue=monthlyInvestment*(investmentYears*12)+startInvestment;
+          const investedValue=monthlyInvestment*(investmentYears*12)+startInvestment;
           const rate=annualInterestRate/12;
           const pow=Math.pow(1+rate,investmentYears*12);
           const pmt=-1*monthlyInvestment;const pv=-1*startInvestment;
@@ -181,13 +181,13 @@ public class MainActivity extends AppCompatActivity {
         editor.putInt("monthly", seekMonthly.getProgress());
         editor.apply();
 
-        money = seekMoney.getProgress() * 10000;
+        double startMoney = seekMoney.getProgress() * 10000;
         double inter = (double)seekInterest.getProgress() / 100;
         double period = seekPeriod.getProgress();
         double monthly = seekMonthly.getProgress() * 1000;
 
         TextView moneyText = findViewById(R.id.moneyPut);
-        moneyText.setText(getString(R.string.money_put, (int)money));
+        moneyText.setText(getString(R.string.money_put, (int)startMoney));
 
         TextView interestText = findViewById(R.id.interest);
         interestText.setText(getString(R.string.interest_put, (int)(inter * 100)));
@@ -198,13 +198,13 @@ public class MainActivity extends AppCompatActivity {
         TextView monthlyText = findViewById(R.id.monthInvestText);
         monthlyText.setText(getString(R.string.month_put, (int)monthly));
 
-        double investedValue = monthly * (period * 12) + money;
+        money = monthly * (period * 12) + startMoney;
         double monthRate = inter / 12;
         double pow = Math.pow(1+monthRate, period * 12);
         double pmt = -1 * monthly;
-        double pv = -1 * money;
+        double pv = -1 * startMoney;
         double result = (pmt * (1-pow) / monthRate)-pv*pow;
-        interest = result - investedValue;
+        interest = result - money;
         savedMoney.setText(getString(R.string.money, (int)result));
         savedInterest.setText(getString(R.string.interest, (int)interest));
 
