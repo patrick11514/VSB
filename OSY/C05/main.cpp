@@ -71,14 +71,27 @@ int main(int argc, char **argv) {
     dup2(pipe2.output, STDIN_FILENO);
     closePipe(pipe2, false, true);
 
-    dup2(pipe3.input, STDOUT_FILENO);
-    closePipe(pipe3, true, false);
+    char buffer[256];
+    int line = 0;
 
-    char buffer[120];
+    while (fgets(buffer, sizeof(buffer), stdin)) {
+      ++line;
+
+      if (buffer[0] != argv[1][0])
+        continue;
+
+      char newData[512];
+      sprintf(newData, "%d:%s", line, buffer);
+      write(pipe3.input, newData, strlen(newData));
+    }
+
+    // dup2(pipe3.input, STDOUT_FILENO);
+    closePipe(pipe3, true, false);
+    /*char buffer[120];
     int len = sprintf(buffer, "^%c", argv[1][0]);
     buffer[len] = '\0';
 
-    execlp("grep", "grep", "-n", buffer, nullptr);
+    execlp("grep", "grep", "-n", buffer, nullptr);*/
   }
 
   if (fork() == 0) {
