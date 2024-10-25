@@ -45,6 +45,7 @@ void Controller::onResize([[maybe_unused]] GLFWwindow *window, int width,
                           int height) {
   printf("resize: %dx%d\n", width, height);
   this->app->calculateProjectionMatrix(width, height);
+  this->getCamera().notifyObservers();
 }
 
 void Controller::onFrame() {

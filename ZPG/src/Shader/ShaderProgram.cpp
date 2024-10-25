@@ -50,15 +50,7 @@ bool ShaderProgram::checkParameter(const std::string &name) const {
   return position != -1;
 }
 
-void ShaderProgram::setProgram() const {
-  glUseProgram(this->programId);
-  if (this->checkParameter("projectionMatrix")) {
-    // std::cout << "Puttin projectionMatrix "
-    //           << glm::to_string(this->projectionMatrix) << std::endl;
-    this->putParameter("projectionMatrix",
-                       glm::value_ptr(this->controller->getProjectionMatrix()));
-  }
-}
+void ShaderProgram::setProgram() const { glUseProgram(this->programId); }
 
 void ShaderProgram::resetProgram() { glUseProgram(0); }
 
@@ -71,5 +63,8 @@ void ShaderProgram::update() {
   this->putParameter(
       "viewMatrix",
       glm::value_ptr(this->controller->getCamera().calculateViewMatrix()));
+  this->putParameter("projectionMatrix",
+                     glm::value_ptr(this->controller->getProjectionMatrix()));
+
   ShaderProgram::resetProgram();
 }
