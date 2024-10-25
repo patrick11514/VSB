@@ -72,5 +72,7 @@ bool ShaderProgram::operator==(const ShaderProgram &other) const {
 }
 
 void ShaderProgram::update() {
-  this->viewMatrix = this->controller->getCamera().calculateViewMatrix();
+  this->setProgram();
+  this->putParameter("viewMatrix", glm::get_value()) this->viewMatrix =
+      this->controller->getCamera().calculateViewMatrix();
 }

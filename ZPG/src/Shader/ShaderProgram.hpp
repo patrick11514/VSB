@@ -15,7 +15,6 @@ class ShaderProgram : public Observer {
 private:
   GLuint programId;       ///< If of program
   Controller *controller; ///< Pointer to controller
-  glm::mat4 viewMatrix;   ///< View matrix
 
 public:
   /**
