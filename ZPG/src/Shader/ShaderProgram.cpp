@@ -1,12 +1,11 @@
+
 #include "ShaderProgram.hpp"
 #include "../Controller.hpp"
 #include "Shader.hpp"
 
 #include <GLFW/glfw3.h>
+#include <glm/gtc/type_ptr.hpp>
 #include <stdio.h>
-
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/string_cast.hpp>
 
 ShaderProgram::ShaderProgram(const Shader &vertexShader,
                              const Shader &fragmentShader,
@@ -57,11 +56,7 @@ void ShaderProgram::setProgram() const {
     // std::cout << "Puttin projectionMatrix "
     //           << glm::to_string(this->projectionMatrix) << std::endl;
     this->putParameter("projectionMatrix",
-                       this->controller->getProjectionMatrix()[0][0]);
-  }
-
-  if (this->checkParameter("viewMatrix")) {
-    this->putParameter("viewMatrix", this->viewMatrix[0][0]);
+                       glm::value_ptr(this->controller->getProjectionMatrix()));
   }
 }
 
@@ -73,6 +68,8 @@ bool ShaderProgram::operator==(const ShaderProgram &other) const {
 
 void ShaderProgram::update() {
   this->setProgram();
-  this->putParameter("viewMatrix", glm::get_value()) this->viewMatrix =
-      this->controller->getCamera().calculateViewMatrix();
+  this->putParameter(
+      "viewMatrix",
+      glm::value_ptr(this->controller->getCamera().calculateViewMatrix()));
+  ShaderProgram::resetProgram();
 }

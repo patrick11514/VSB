@@ -56,13 +56,13 @@ public:
    * parameter
    */
   template <typename T>
-  void putParameter(const std::string &name, T &value) const {
+  void putParameter(const std::string &name, T *value) const {
     GLint position = glGetUniformLocation(this->programId, name.c_str());
     if (position == -1) {
       throw std::runtime_error("Unable to find modelMatrix position");
     }
 
-    glUniformMatrix4fv(position, 1, GL_FALSE, &value);
+    glUniformMatrix4fv(position, 1, GL_FALSE, value);
   }
 
   // operators
