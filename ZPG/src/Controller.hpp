@@ -45,5 +45,5 @@ public:
   void onFrame(); ///< This function is called every frame in main App loop
 
   glm::mat4 getProjectionMatrix() const; ///< Get projection matrix from APP
-  Camera &getCamera();                   ///< Get camera from APP
+  Camera *getCamera();                   ///< Get camera from Current scene
 };

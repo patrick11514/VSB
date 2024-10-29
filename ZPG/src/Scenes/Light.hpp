@@ -1,14 +1,12 @@
 #pragma once
 
-#include "../Shader/ShaderStorage.hpp"
-#include "Scene.hpp"
+#include "StaticScene.hpp"
 
 /**
  * @brief Light scene, with some objects
  */
-class Light : public Scene {
+class Light : public StaticScene {
 public:
-  Light(const ShaderStorage &
-            shaderStorage); ///< Basic constructor, which will create some
-                            ///< objects and store them to parent objects vector
+  Light(const ShaderStorage &shaderStorage) : StaticScene(shaderStorage) {};
+  void addObjects() override;
 };

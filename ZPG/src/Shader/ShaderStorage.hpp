@@ -34,5 +34,5 @@ public:
    * @return ShaderProgram stored under name
    * @throws std::runtime_error when shaderProgram was not found
    */
-  const ShaderProgram *getShaderProgram(const std::string &name) const;
+  ShaderProgram *getShaderProgram(const std::string &name) const;
 };

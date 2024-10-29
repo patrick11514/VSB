@@ -8,24 +8,24 @@
 #include <glm/ext/vector_float3.hpp>
 #include <memory>
 
-Objects::Objects(const ShaderStorage &shaderStorage) : Scene() {
+void Objects::addObjects() {
 
   this->addObject(createBall(
-      shaderStorage.getShaderProgram("MatShader"),
+      this->shaderStorage.getShaderProgram("MatShader"),
       std::make_shared<Transformation>()
           ->addTransformation(new Scale(glm::vec3(0.2f)))
           ->addTransformation(new Translate(glm::vec3(1.f, 0.f, 0.f)))));
 
   this->addObject(
-      createBush(shaderStorage.getShaderProgram("idk"),
+      createBush(this->shaderStorage.getShaderProgram("idk"),
                  std::make_shared<Transformation>()->addTransformation(
                      new Translate(glm::vec3(-0.5f, 0.5f, 0.f)))));
 
   this->addObject(
-      createTree(shaderStorage.getShaderProgram("MatShaderStatic"),
+      createTree(this->shaderStorage.getShaderProgram("MatShaderStatic"),
                  std::make_shared<Transformation>()->addTransformation(
                      new Scale(glm::vec3(.1f)))));
 
-  this->addObject(createGift(shaderStorage.getShaderProgram("idk"),
+  this->addObject(createGift(this->shaderStorage.getShaderProgram("idk"),
                              std::make_shared<Transformation>()));
 }

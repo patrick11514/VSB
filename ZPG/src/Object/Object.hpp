@@ -15,23 +15,25 @@ using RenderFunction =
 using AnimationFunction = std::function<glm::mat4x4(
     const glm::mat4x4 &transformationMatrix, float elapsedTime)>;
 
+class Scene;
+
 /**
  * @brief This class put ObjectData, ShaderProgram, Transformations together
  * into single object
  */
 class Object {
 private:
-  std::shared_ptr<ObjectData> data;   ///< Sliced data of object
-  const ShaderProgram *shaderProgram; ///< Shader program used on object
+  std::shared_ptr<ObjectData> data; ///< Sliced data of object
+  ShaderProgram *shaderProgram;     ///< Shader program used on object
   std::shared_ptr<Transformation> transformations; ///< Object transformations
   RenderFunction
       renderFunction; ///< Function which will be called to render the object
   AnimationFunction
-      animationFunction; ///< Function which will be called to
-                         ///< perform dynamic animations
-                         ///< TODO: System which will automatically animate
-                         ///< dynamic animations, if specified
-
+      animationFunction;    ///< Function which will be called to
+                            ///< perform dynamic animations
+                            ///< TODO: System which will automatically animate
+                            ///< dynamic animations, if specified
+  Scene *myScene = nullptr; ///< Scene in which is current object presented
 public:
   /**
    * @brief Basic constructor used, when you don't want to animate object
@@ -41,7 +43,7 @@ public:
    * @param transformations Pointer to transformations used on this object
    * @param renderFunction Render function to render Object(s) from slided data
    */
-  Object(std::shared_ptr<ObjectData> data, const ShaderProgram *shaderProgram,
+  Object(std::shared_ptr<ObjectData> data, ShaderProgram *shaderProgram,
          std::shared_ptr<Transformation> transformations,
          RenderFunction renderFunction);
   /**
@@ -60,7 +62,7 @@ public:
    * dynamic, it will automatically get the current time TODO: make it :)
    */
 
-  Object(std::shared_ptr<ObjectData> data, const ShaderProgram *shaderProgram,
+  Object(std::shared_ptr<ObjectData> data, ShaderProgram *shaderProgram,
          std::shared_ptr<Transformation> transformations,
          RenderFunction renderFunction, AnimationFunction animationFunction);
   /**
@@ -74,6 +76,9 @@ public:
    * dynamic, it will automatically get the current time TODO: make it :)
    */
   void setAnimationFunction(AnimationFunction animationFunction);
+
+  void assignScene(Scene *scene); ///< Assign scene to object automatically
+                                  ///< called inside Scene::addObject
 
   /**
    * @brief Draw object using the renderFunction

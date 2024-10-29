@@ -13,9 +13,14 @@
 #include <optional>
 #include <stdexcept>
 
-App::App() : camera(Camera()) { this->controller = new Controller(this); }
+App::App() { this->controller = new Controller(this); }
 
-App::~App() { delete this->controller; }
+App::~App() {
+  delete this->controller;
+  for (auto pair : this->scenes) {
+    delete pair.second;
+  }
+}
 
 void App::error_callback([[maybe_unused]] int error, const char *description) {
   fputs(description, stderr);
@@ -46,6 +51,14 @@ void App::initialize() {
         static_cast<Controller *>(glfwGetWindowUserPointer(window))
             ->onResize(window, width, height);
       });
+}
+
+void App::prepareScenes() {
+  this->currentScene = "obj";
+
+  this->addScene("obj", new Objects(this->shaders));
+  this->addScene("forest", new Forest(this->shaders));
+  this->addScene("light", new Light(this->shaders));
 }
 
 void App::createShaders() {
@@ -105,17 +118,19 @@ void App::createShaders() {
         "light",
         new ShaderProgram("../shaders/vertex/Light.vert",
                           "../shaders/fragment/Light.frag", this->controller));
-  } catch (const std::runtime_error &) {
+  } catch (const std::runtime_error &ex) {
+    printf("Shader Exception: %s\n", ex.what());
     this->destroy(EXIT_FAILURE);
   }
 }
 
 void App::createModels() {
-  this->currentScene = "obj";
-
-  this->addScene("obj", Objects(this->shaders));
-  this->addScene("forest", Forest(this->shaders));
-  this->addScene("light", Light(this->shaders));
+  for (auto &pair : this->scenes) {
+    // if scene is StaticScene, run addObjects on them
+    if (dynamic_cast<StaticScene *>(pair.second) != nullptr) {
+      static_cast<StaticScene *>(pair.second)->addObjects();
+    }
+  }
 }
 
 void App::run() {
@@ -129,7 +144,7 @@ void App::run() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if (this->currentScene.has_value()) {
-      this->getScene(this->currentScene.value()).render();
+      this->getScene(this->currentScene.value())->render();
     }
 
     ShaderProgram::resetProgram();
@@ -157,11 +172,11 @@ void App::destroy(int status) {
   exit(status);
 }
 
-void App::addScene(const std::string &name, Scene scene) {
+void App::addScene(const std::string &name, Scene *scene) {
   this->scenes.emplace(name, scene);
 }
 
-const Scene &App::getScene(const std::string &name) const {
+Scene *App::getScene(const std::string &name) {
   auto it = this->scenes.find(name);
 
   if (it == this->scenes.end()) {
@@ -192,6 +207,13 @@ void App::createWindow() {
   glfwGetFramebufferSize(this->window, &width, &height);
 
   this->calculateProjectionMatrix(width, height);
+}
+
+Scene *App::getCurrentScene() {
+  if (!this->currentScene.has_value()) {
+    throw std::runtime_error("No scene was found");
+  }
+  return this->getScene(this->currentScene.value());
 }
 
 void App::calculateProjectionMatrix(int width, int height, float fov,

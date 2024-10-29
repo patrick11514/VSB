@@ -1,6 +1,7 @@
 
 #include "ShaderProgram.hpp"
 #include "../Controller.hpp"
+#include "../Scenes/Scene.hpp"
 #include "Shader.hpp"
 
 #include <GLFW/glfw3.h>
@@ -29,13 +30,6 @@ ShaderProgram::ShaderProgram(const Shader &vertexShader,
 
     throw std::runtime_error("Linker failure");
   }
-
-  // Does my shader have view matrix
-  if (this->checkParameter("viewMatrix")) {
-    // add me as observe
-    this->controller->getCamera().registerObserver(this);
-    this->update();
-  }
 }
 
 ShaderProgram::ShaderProgram(const char *vertexShaderPath,
@@ -54,15 +48,25 @@ void ShaderProgram::setProgram() const { glUseProgram(this->programId); }
 
 void ShaderProgram::resetProgram() { glUseProgram(0); }
 
+void ShaderProgram::registerToCamera(Scene *scene) {
+  // Does my shader have view matrix
+  if (this->checkParameter("viewMatrix")) {
+    this->camera = scene->getCamera();
+
+    // add me as observe
+    this->camera->registerObserver(this);
+    this->update();
+  }
+}
+
 bool ShaderProgram::operator==(const ShaderProgram &other) const {
   return this->programId == other.programId;
 }
 
 void ShaderProgram::update() {
   this->setProgram();
-  this->putParameter(
-      "viewMatrix",
-      glm::value_ptr(this->controller->getCamera().calculateViewMatrix()));
+  this->putParameter("viewMatrix",
+                     glm::value_ptr(this->camera->calculateViewMatrix()));
   this->putParameter("projectionMatrix",
                      glm::value_ptr(this->controller->getProjectionMatrix()));
 

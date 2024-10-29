@@ -22,8 +22,7 @@ void ShaderStorage::removeShader(const std::string &name) {
   this->shaders.erase(it);
 }
 
-const ShaderProgram *
-ShaderStorage::getShaderProgram(const std::string &name) const {
+ShaderProgram *ShaderStorage::getShaderProgram(const std::string &name) const {
   auto it = this->shaders.find(name);
 
   if (it == this->shaders.end()) {

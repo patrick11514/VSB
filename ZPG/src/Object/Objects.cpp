@@ -8,7 +8,7 @@
 #include "ObjectData.hpp"
 #include <glm/gtc/type_ptr.hpp>
 
-Object createBall(const ShaderProgram *shaderProgram,
+Object createBall(ShaderProgram *shaderProgram,
                   std::shared_ptr<Transformation> transformations) {
   if (!dataStorage.hasObject("ball")) {
     Model model{sphere, sizeof(sphere) / sizeof(float)};
@@ -30,7 +30,7 @@ Object createBall(const ShaderProgram *shaderProgram,
       });
 }
 
-Object createTree(const ShaderProgram *shaderProgram,
+Object createTree(ShaderProgram *shaderProgram,
                   std::shared_ptr<Transformation> transformations) {
   if (!dataStorage.hasObject("tree")) {
     Model model{tree, sizeof(tree) / sizeof(float)};
@@ -50,7 +50,7 @@ Object createTree(const ShaderProgram *shaderProgram,
         glDrawArrays(GL_TRIANGLES, 0, 92814);
       });
 }
-Object createBush(const ShaderProgram *shaderProgram,
+Object createBush(ShaderProgram *shaderProgram,
                   std::shared_ptr<Transformation> transformations) {
   if (!dataStorage.hasObject("bush")) {
     Model model{bushes, sizeof(bushes) / sizeof(float)};
@@ -70,7 +70,7 @@ Object createBush(const ShaderProgram *shaderProgram,
         glDrawArrays(GL_TRIANGLES, 0, 8730);
       });
 }
-Object createGift(const ShaderProgram *shaderProgram,
+Object createGift(ShaderProgram *shaderProgram,
                   std::shared_ptr<Transformation> transformations) {
   if (!dataStorage.hasObject("gift")) {
     Model model{gift, sizeof(gift) / sizeof(float)};

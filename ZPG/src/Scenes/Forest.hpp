@@ -1,14 +1,12 @@
 #pragma once
 
-#include "../Shader/ShaderStorage.hpp"
-#include "Scene.hpp"
+#include "StaticScene.hpp"
 
 /**
  * @brief Forest Scene
  */
-class Forest : public Scene {
+class Forest : public StaticScene {
 public:
-  Forest(const ShaderStorage
-             &shaderStorage); ///< Constructor, which will create the scene and
-                              ///< store object to parent Objects vector
+  Forest(const ShaderStorage &shaderStorage) : StaticScene(shaderStorage) {};
+  void addObjects() override;
 };

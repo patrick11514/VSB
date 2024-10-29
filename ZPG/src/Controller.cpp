@@ -37,15 +37,15 @@ void Controller::onMouse([[maybe_unused]] GLFWwindow *window, double x,
   double yDiff = this->prevY - y;
   this->prevY = y;
 
-  this->getCamera().changeYaw(xDiff / 4);
-  this->getCamera().changePitch(yDiff / 4);
+  this->getCamera()->changeYaw(xDiff / 4);
+  this->getCamera()->changePitch(yDiff / 4);
 }
 
 void Controller::onResize([[maybe_unused]] GLFWwindow *window, int width,
                           int height) {
   printf("resize: %dx%d\n", width, height);
   this->app->calculateProjectionMatrix(width, height);
-  this->getCamera().notifyObservers();
+  this->getCamera()->notifyObservers();
 }
 
 void Controller::onFrame() {
@@ -65,16 +65,16 @@ void Controller::onFrame() {
       break;
 
     case GLFW_KEY_W:
-      this->getCamera().forward();
+      this->getCamera()->forward();
       break;
     case GLFW_KEY_S:
-      this->getCamera().backward();
+      this->getCamera()->backward();
       break;
     case GLFW_KEY_A:
-      this->getCamera().toLeft();
+      this->getCamera()->toLeft();
       break;
     case GLFW_KEY_D:
-      this->getCamera().toRight();
+      this->getCamera()->toRight();
       break;
     }
   }
@@ -84,4 +84,6 @@ glm::mat4 Controller::getProjectionMatrix() const {
   return this->app->projectionMatrix;
 }
 
-Camera &Controller::getCamera() { return this->app->camera; }
+Camera *Controller::getCamera() {
+  return this->app->getCurrentScene()->getCamera();
+}

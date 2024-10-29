@@ -11,7 +11,7 @@ static ObjectDataStorage dataStorage; ///< Global ObjectData storage
  * @param transformations Transformation which will be applied on Object
  * @return Ball Object
  */
-Object createBall(const ShaderProgram *shaderProgram,
+Object createBall(ShaderProgram *shaderProgram,
                   std::shared_ptr<Transformation> transformations);
 /**
  * @brief Create Tree from data located at /Object/Models/tree.h
@@ -19,7 +19,7 @@ Object createBall(const ShaderProgram *shaderProgram,
  * @param transformations Transformation which will be applied on Object
  * @return Tree Object
  */
-Object createTree(const ShaderProgram *shaderProgram,
+Object createTree(ShaderProgram *shaderProgram,
                   std::shared_ptr<Transformation> transformations);
 /**
  * @brief Create Bush from data located at /Object/Models/bushes.h
@@ -27,7 +27,7 @@ Object createTree(const ShaderProgram *shaderProgram,
  * @param transformations Transformation which will be applied on Object
  * @return Bush Object
  */
-Object createBush(const ShaderProgram *shaderProgram,
+Object createBush(ShaderProgram *shaderProgram,
                   std::shared_ptr<Transformation> transformations);
 /**
  * @brief Create Gift from data located at /Object/Models/gift.h
@@ -35,5 +35,5 @@ Object createBush(const ShaderProgram *shaderProgram,
  * @param transformations Transformation which will be applied on Object
  * @return Ball Gift
  */
-Object createGift(const ShaderProgram *shaderProgram,
+Object createGift(ShaderProgram *shaderProgram,
                   std::shared_ptr<Transformation> transformations);

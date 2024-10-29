@@ -3,13 +3,12 @@
 #include "../Transformation/Rotation.hpp"
 #include "../Transformation/Scale.hpp"
 #include "../Transformation/Translate.hpp"
-#include "Scene.hpp"
 
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/vector_float3.hpp>
 #include <random>
 
-Forest::Forest(const ShaderStorage &shaderStorage) : Scene() {
+void Forest::addObjects() {
   std::random_device dev;
   std::mt19937 rng(dev());
 
@@ -30,7 +29,7 @@ Forest::Forest(const ShaderStorage &shaderStorage) : Scene() {
         ->addTransformation(new Rotation(rotate, glm::vec3(0.f, 1.f, 0.f)));
 
     auto tree =
-        createTree(shaderStorage.getShaderProgram("greenByCoord"), tran);
+        createTree(this->shaderStorage.getShaderProgram("greenByCoord"), tran);
 
     /*tree.setAnimationFunction([](const glm::mat4x4 &tran, float time) {
       auto rotation = Rotation(time, glm::vec3(1.f, 1.f, 1.f));
@@ -49,6 +48,7 @@ Forest::Forest(const ShaderStorage &shaderStorage) : Scene() {
     tran->addTransformation(new Scale(glm::vec3(s)));
     tran->addTransformation(new Translate(glm::vec3(xCoord, 0, zCoord)));
 
-    this->addObject(createBush(shaderStorage.getShaderProgram("idk"), tran));
+    this->addObject(
+        createBush(this->shaderStorage.getShaderProgram("idk"), tran));
   }
 }

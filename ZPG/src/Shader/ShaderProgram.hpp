@@ -1,11 +1,13 @@
 #pragma once
 
+#include "../Camera.hpp"
 #include "../Patterns/Observer.hpp"
 #include "Shader.hpp"
 
 #include <stdexcept>
 
 class Controller;
+class Scene;
 
 /**
  * @brief Shader program is class, which consists of Fragment Shader and Vertex
@@ -15,6 +17,7 @@ class ShaderProgram : public Observer {
 private:
   GLuint programId;       ///< If of program
   Controller *controller; ///< Pointer to controller
+  Camera *camera;         ///< Pointer to camera
 
 public:
   /**
@@ -64,6 +67,8 @@ public:
 
     glUniformMatrix4fv(position, 1, GL_FALSE, value);
   }
+
+  void registerToCamera(Scene *scene);
 
   // operators
   bool operator==(const ShaderProgram &other) const; ///< compare operator

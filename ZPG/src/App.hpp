@@ -10,7 +10,6 @@
 #include <string>
 #include <unordered_map>
 
-#include "Camera.hpp"
 #include "Scenes/Scene.hpp"
 #include "Shader/ShaderStorage.hpp"
 
@@ -24,10 +23,9 @@ class App {
 private:
   GLFWwindow *window;     ///< GLFW window
   Controller *controller; ///< Controller, which controlls keys/mouse...
-  Camera camera;          ///< Main Camera
 
   ShaderStorage shaders; ///< Storage of all shaders
-  std::unordered_map<std::string, Scene>
+  std::unordered_map<std::string, Scene *>
       scenes;                              ///< Key-Value storage of all scenes
   std::optional<std::string> currentScene; ///< Current Scene
 
@@ -42,14 +40,14 @@ private:
                                 ///< so it sayed here
 
   void addScene(const std::string &name,
-                Scene scene); ///< Internally add new Scene called name
+                Scene *scene); ///< Internally add new Scene called name
   /**
    * @brief Get scene by name
    * @param name Name of scene
    * @return Scene
    * @throws std::runtime_error when scene was not found
    */
-  const Scene &getScene(const std::string &name) const;
+  Scene *getScene(const std::string &name);
 
   glm::mat4 projectionMatrix; ///< Projection matrix of window
 
@@ -61,13 +59,15 @@ public:
   ~App(); ///< Destructor
 
   void initialize();    ///< Initialize window and GLFW
+  void prepareScenes(); ///< Create scenes, but not fill them with objects yet
   void createShaders(); ///< Create shaders and store them in ShaderStorage
-  void createModels();  ///< Create Models and scenes
+  void createModels();  ///< Fill predefined scenes with Objects
   void run();           ///< Main render loop
   void
   destroy(int status =
               EXIT_SUCCESS); ///< Destroy full Application and exit with status
 
+  Scene *getCurrentScene(); ///< Get current scene
   // Controller is our friend
   friend class Controller;
 };
