@@ -40,6 +40,12 @@ void App::initialize() {
     static_cast<Controller *>(glfwGetWindowUserPointer(window))
         ->onKeyPress(window, key, scancode, action, mods);
   });
+  glfwSetMouseButtonCallback(
+      this->window, [](GLFWwindow *window, int key, int action, int mod) {
+        static_cast<Controller *>(glfwGetWindowUserPointer(window))
+            ->onMouseButton(window, key, action, mod);
+      });
+
   glfwSetCursorPosCallback(
       this->window, [](GLFWwindow *window, double x, double y) {
         static_cast<Controller *>(glfwGetWindowUserPointer(window))
@@ -193,7 +199,7 @@ void App::createWindow() {
     exit(EXIT_FAILURE);
   }
 
-  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   glfwMakeContextCurrent(this->window);
   glfwSwapInterval(1);
 

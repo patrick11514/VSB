@@ -30,12 +30,29 @@ void Controller::onKeyPress(GLFWwindow *window, int key, int scancode,
   }
 }
 
+void Controller::onMouseButton([[maybe_unused]] GLFWwindow *window, int key,
+                               int action, int mod) {
+  printf("mouse_button_callback [%d,%d,%d] \n", key, action, mod);
+
+  switch (action) {
+  case GLFW_PRESS:
+    this->pressedMouseButtons[key] = true;
+    break;
+  case GLFW_RELEASE:
+    this->pressedMouseButtons[key] = false;
+    break;
+  }
+}
+
 void Controller::onMouse([[maybe_unused]] GLFWwindow *window, double x,
                          double y) {
   double xDiff = x - this->prevX;
   this->prevX = x;
   double yDiff = this->prevY - y;
   this->prevY = y;
+
+  if (!this->pressedMouseButtons[GLFW_MOUSE_BUTTON_RIGHT])
+    return;
 
   this->getCamera()->changeYaw(xDiff / 4);
   this->getCamera()->changePitch(yDiff / 4);
