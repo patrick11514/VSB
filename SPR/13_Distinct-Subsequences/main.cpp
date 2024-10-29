@@ -1,54 +1,101 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <string>
 #include <unistd.h>
-#include <unordered_map>
+#include <vector>
+
+class CustomNumber {
+private:
+  std::vector<short> digits;
+
+public:
+  CustomNumber() : digits({0}) {};
+  CustomNumber(unsigned int init) {
+    while (init >= 1) {
+      this->digits.emplace_back(init % 10);
+      init /= 10;
+    }
+  };
+
+  void print() const {
+    for (size_t i = this->digits.size(); i > 0; --i) {
+      putchar('0' + this->digits[i - 1]);
+    }
+  }
+
+  CustomNumber &operator+=(const CustomNumber &other) {
+    if (other.digits.size() >= this->digits.size()) {
+      // resize for 1 digit in reserve for overflow
+      this->digits.reserve(other.digits.size() + 1);
+    }
+
+    short carry = 0;
+    for (size_t i = 0; i < other.digits.size() || carry > 0; ++i) {
+      short sum = carry;
+
+      if (this->digits.size() > i)
+        sum += this->digits[i];
+
+      if (other.digits.size() > i)
+        sum += other.digits[i];
+
+      if (carry > 0)
+        carry = 0;
+      if (sum >= 10) {
+        carry = 1;
+        sum -= 10;
+      }
+
+      if (i < this->digits.size())
+        this->digits[i] = sum;
+      else
+        this->digits.emplace_back(sum);
+    }
+
+    return *this;
+  }
+
+  friend CustomNumber operator+(CustomNumber lhs, const CustomNumber &rhs) {
+    lhs += rhs;
+    return lhs;
+  }
+};
 
 static char wordBuffer[12000];
 static char subBuffer[12000];
-static std::unordered_map<std::string, int> cache;
 
-void print(size_t word, size_t subword) {
-  printf("===================\n");
-  printf("%s\n", wordBuffer);
-  for (size_t i = 0; i < word; ++i) {
-    putchar(' ');
+void findSubsesquences(char *word, size_t len, char *sub, size_t subLen) {
+  CustomNumber summs[(subLen + 1) * 2];
+
+  // fill init
+  for (size_t i = 0; i <= subLen; ++i) {
+    summs[i] = i > 0 ? 0 : 1;
   }
-  printf("I\n");
 
-  printf("%s\n", subBuffer);
-  for (size_t i = 0; i < subword; ++i) {
-    putchar(' ');
-  }
-  printf("I\n");
-  printf("===================\n");
-}
+  size_t firstStart = 0;
+  size_t secondStart = subLen + 1;
 
-int findSubsesquences(char *word, size_t len, char *sub, size_t subLen,
-                      int subs = 0) {
-  int conLen = 0;
-  for (size_t i = 0, l = 0; i < len;) {
+  for (size_t i = 0; i < len; ++i) {
     char c = word[i];
-    char cS = sub[l];
 
-    print(i, l);
+    for (size_t l = 0; l <= subLen; ++l) {
+      char c2;
+      if (l == 0)
+        c2 = '\0';
+      else
+        c2 = sub[l - 1];
 
-    if (c == cS && l < subLen) {
-      ++i;
-      ++conLen;
+      if (c == c2)
+        summs[secondStart + l] =
+            summs[firstStart + l - 1] + summs[firstStart + l];
+      else
+        summs[secondStart + l] = summs[firstStart + l];
     }
-    if ((c != cS && l > 0 && conLen > 0) || (i >= len)) {
-      printf("ADDED SUBS\n");
-      ++subs;
-      l = -1;
-      conLen = 0;
-    }
 
-    ++l;
+    std::swap(firstStart, secondStart);
   }
 
-  return subs;
+  summs[(subLen + 1) * 2 - 1].print();
 }
 
 int main() {
@@ -61,9 +108,9 @@ int main() {
     fgets(subBuffer, sizeof(subBuffer), stdin);
     subBuffer[strlen(subBuffer) - 1] = '\0';
 
-    int result = findSubsesquences(wordBuffer, strlen(wordBuffer), subBuffer,
-                                   strlen(subBuffer));
-    printf("RESULT: %d\n", result);
+    findSubsesquences(wordBuffer, strlen(wordBuffer), subBuffer,
+                      strlen(subBuffer));
+    printf("\n");
   }
 
   return 0;
