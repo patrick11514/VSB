@@ -51,10 +51,9 @@ void ShaderProgram::resetProgram() { glUseProgram(0); }
 void ShaderProgram::registerToCamera(Scene *scene) {
   // Does my shader have view matrix
   if (this->checkParameter("viewMatrix")) {
-    this->camera = scene->getCamera();
-
+    printf("registering %d\n", this->programId);
     // add me as observe
-    this->camera->registerObserver(this);
+    scene->getCamera()->registerObserver(this);
     this->update();
   }
 }
@@ -65,8 +64,9 @@ bool ShaderProgram::operator==(const ShaderProgram &other) const {
 
 void ShaderProgram::update() {
   this->setProgram();
-  this->putParameter("viewMatrix",
-                     glm::value_ptr(this->camera->calculateViewMatrix()));
+  this->putParameter(
+      "viewMatrix",
+      glm::value_ptr(this->controller->getCamera()->calculateViewMatrix()));
   this->putParameter("projectionMatrix",
                      glm::value_ptr(this->controller->getProjectionMatrix()));
 

@@ -1,8 +1,13 @@
 #include "Camera.hpp"
+#include <GLFW/glfw3.h>
 #include <cstdio>
+#include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
 
-Camera::Camera() { this->recalculateTarget(); }
+Camera::Camera() {
+  this->recalculateTarget();
+  this->calculateProjectionMatrix(int width, int height);
+}
 
 void Camera::recalculateTarget() {
   double radPitch = glm::radians(this->pitch);
@@ -59,6 +64,13 @@ void Camera::changePitch(float deg) {
   }
 
   this->recalculateTarget();
+}
+void Camera::calculateProjectionMatrix(int width, int height, float fov,
+                                       float zNear, float zFar) {
+  float ratio = width / (float)height;
+  this->projectionMatrix =
+      glm::perspective(glm::radians(fov), ratio, zNear, zFar);
+  glViewport(0, 0, width, height);
 }
 glm::mat4 Camera::calculateViewMatrix() const {
 

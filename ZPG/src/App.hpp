@@ -49,11 +49,6 @@ private:
    */
   Scene *getScene(const std::string &name);
 
-  glm::mat4 projectionMatrix; ///< Projection matrix of window
-
-  void calculateProjectionMatrix(int width, int height, float fov = 60.f,
-                                 float zNear = 0.1f, float zFar = 100.f);
-
 public:
   App();  ///< Constructor
   ~App(); ///< Destructor

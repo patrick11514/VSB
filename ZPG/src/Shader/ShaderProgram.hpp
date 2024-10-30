@@ -17,7 +17,7 @@ class ShaderProgram : public Observer {
 private:
   GLuint programId;       ///< If of program
   Controller *controller; ///< Pointer to controller
-  Camera *camera;         ///< Pointer to camera
+  Camera *camera;         ///< Vector to pointer to camera
 
 public:
   /**

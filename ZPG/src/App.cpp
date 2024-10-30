@@ -211,8 +211,6 @@ void App::createWindow() {
 
   int width, height;
   glfwGetFramebufferSize(this->window, &width, &height);
-
-  this->calculateProjectionMatrix(width, height);
 }
 
 Scene *App::getCurrentScene() {
@@ -220,14 +218,6 @@ Scene *App::getCurrentScene() {
     throw std::runtime_error("No scene was found");
   }
   return this->getScene(this->currentScene.value());
-}
-
-void App::calculateProjectionMatrix(int width, int height, float fov,
-                                    float zNear, float zFar) {
-  float ratio = width / (float)height;
-  this->projectionMatrix =
-      glm::perspective(glm::radians(fov), ratio, zNear, zFar);
-  glViewport(0, 0, width, height);
 }
 
 void App::printVersionInfo() {

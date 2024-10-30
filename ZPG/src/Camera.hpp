@@ -17,8 +17,9 @@ private:
   float pitch = 0; ///< Pitch (-60, 90)
   float yaw = 0;   ///< Yaw (0, 360>
 
-  void recalculateTarget(); ///< Function which will recalculate target
-                            ///< position, based of pitch and yaw
+  void recalculateTarget();   ///< Function which will recalculate target
+                              ///< position, based of pitch and yaw
+  glm::mat4 projectionMatrix; ///< Projection matrix of window
 
 public:
   Camera(); ///< Default constructor, which will recalculateTarget
@@ -32,4 +33,6 @@ public:
 
   glm::mat4
   calculateViewMatrix() const; ///< calculateViewMatrix from eye, traget and up
+  void calculateProjectionMatrix(int width, int height, float fov = 60.f,
+                                 float zNear = 0.1f, float zFar = 100.f);
 };
