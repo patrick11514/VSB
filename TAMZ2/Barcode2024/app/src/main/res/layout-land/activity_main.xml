@@ -11,11 +11,11 @@
     <com.example.barcode_2024.BarcodeView
         android:id="@+id/barcodeView"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="39dp"
-        android:layout_marginTop="114dp"
-        android:layout_marginEnd="39dp"
-        android:layout_marginBottom="63dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="78dp"
+        android:layout_marginTop="38dp"
+        android:layout_marginEnd="78dp"
+        android:layout_marginBottom="19dp"
         app:code="661234588780"
         app:layout_constraintBottom_toTopOf="@+id/errorText"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,21 +24,18 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="7dp"
-        android:layout_marginTop="411dp"
-        android:layout_marginEnd="7dp"
-        android:layout_marginBottom="232dp"
+        android:layout_width="240dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toTopOf="@+id/saveButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/errorText">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/codeInput"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="50dp"
             android:hint="Enter new code"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -49,19 +46,21 @@
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="144dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="218dp"
+        android:layout_marginEnd="36dp"
         android:text="Update Code"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/saveButton"
+        app:layout_constraintEnd_toStartOf="@+id/saveButton"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/errorText"
-        android:layout_width="226dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="65dp"
+        android:layout_width="520dp"
+        android:layout_height="88dp"
+        android:layout_marginStart="107dp"
+        android:layout_marginEnd="107dp"
+        android:layout_marginBottom="35dp"
         android:text=""
         android:textAlignment="center"
         android:textColor="#FF0000"
@@ -74,13 +73,14 @@
 
     <Button
         android:id="@+id/saveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="21dp"
-        android:layout_marginBottom="70dp"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="218dp"
+        android:layout_marginBottom="39dp"
         android:text="Save Code"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/button"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
 
 

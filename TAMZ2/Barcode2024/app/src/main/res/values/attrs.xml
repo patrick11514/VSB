@@ -1,0 +1,5 @@
+<resources>
+    <declare-styleable name="BarcodeView">
+        <attr name="code" format="string" />
+    </declare-styleable>
+</resources>
