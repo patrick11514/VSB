@@ -217,18 +217,22 @@ public class BarcodeView extends View {
         for (int i = 0; i < segments; ++i) {
             int number = code[(left ? 0 : segments) + i];
             int code;
+            Log.i("NUM", String.valueOf(number));
             if (left)
                 code = L[number]; // get number reprezentation
             else
                 code = R[number];
 
+
+            Log.i("HEXA", String.format("0x%08X", number));
+
             for (int l = 0; l < width; ++l) {
-                drawLine(canvas, i * width + l, ((code >> width - l - 1) & 1) == 1 ? black : white);
+                drawLine(canvas, l, ((code >> width - l - 1) & 1) == 1 ? black : white);
+                Log.i("QR", "Drawing " + number + " Side: " + left + " Index: " + l + " Shift: " + (width - l - 1) + " Result: " + (((code >> width - l - 1) & 1) == 1));
                 sb.append(((code >> width - l - 1) & 1) == 1 ? 1 : 0);
             }
+            this.offset += width * this.lineWidth;
         }
-
-        this.offset += segments * width * this.lineWidth;
     }
     private void drawMiddle(Canvas canvas, Paint black, Paint white) {
         int width = 5;
