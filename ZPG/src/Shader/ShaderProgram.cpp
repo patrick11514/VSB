@@ -6,6 +6,7 @@
 
 #include <GLFW/glfw3.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
 #include <stdio.h>
 
 ShaderProgram::ShaderProgram(const Shader &vertexShader,
@@ -64,9 +65,11 @@ bool ShaderProgram::operator==(const ShaderProgram &other) const {
 
 void ShaderProgram::update() {
   this->setProgram();
+
   this->putParameter(
       "viewMatrix",
       glm::value_ptr(this->controller->getCamera()->calculateViewMatrix()));
+
   this->putParameter("projectionMatrix",
                      glm::value_ptr(this->controller->getProjectionMatrix()));
 

@@ -12,6 +12,7 @@
 
 #include "Scenes/Scene.hpp"
 #include "Shader/ShaderStorage.hpp"
+#include "Window.hpp"
 
 // forward declaration
 class Controller;
@@ -21,8 +22,8 @@ class Controller;
  */
 class App {
 private:
-  GLFWwindow *window;     ///< GLFW window
   Controller *controller; ///< Controller, which controlls keys/mouse...
+  Window *window;         ///< Window object, that manages window
 
   ShaderStorage shaders; ///< Storage of all shaders
   std::unordered_map<std::string, Scene *>

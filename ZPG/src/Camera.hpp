@@ -4,6 +4,7 @@
 
 #include "Patterns/Observable.hpp"
 #include "Patterns/Observer.hpp"
+#include "Window.hpp"
 
 /**
  * @brief Camera of our scene
@@ -21,8 +22,14 @@ private:
                               ///< position, based of pitch and yaw
   glm::mat4 projectionMatrix; ///< Projection matrix of window
 
+  float fov;
+  float zNear;
+  float zFar;
+
 public:
-  Camera(); ///< Default constructor, which will recalculateTarget
+  Camera(float fov = 60.f, float zNear = 0.1f,
+         float zFar =
+             100.f); ///< Default constructor, which will recalculateTarget
 
   void toLeft(float rate = 0.1f);   ///< Move eye to left with specific rate
   void toRight(float rate = 0.1f);  ///< Move eye to right with specific rate
@@ -33,6 +40,6 @@ public:
 
   glm::mat4
   calculateViewMatrix() const; ///< calculateViewMatrix from eye, traget and up
-  void calculateProjectionMatrix(int width, int height, float fov = 60.f,
-                                 float zNear = 0.1f, float zFar = 100.f);
+
+  friend class Window;
 };

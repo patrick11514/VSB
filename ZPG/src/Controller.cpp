@@ -61,7 +61,7 @@ void Controller::onMouse([[maybe_unused]] GLFWwindow *window, double x,
 void Controller::onResize([[maybe_unused]] GLFWwindow *window, int width,
                           int height) {
   printf("resize: %dx%d\n", width, height);
-  this->app->calculateProjectionMatrix(width, height);
+  this->app->window->updateResolution(width, height, this->getCamera());
   this->getCamera()->notifyObservers();
 }
 
@@ -98,7 +98,7 @@ void Controller::onFrame() {
 }
 
 glm::mat4 Controller::getProjectionMatrix() const {
-  return this->app->projectionMatrix;
+  return this->app->window->getProjectionMatrix();
 }
 
 Camera *Controller::getCamera() {

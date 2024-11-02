@@ -17,6 +17,7 @@ App::App() { this->controller = new Controller(this); }
 
 App::~App() {
   delete this->controller;
+  delete this->window;
   for (auto pair : this->scenes) {
     delete pair.second;
   }
@@ -34,26 +35,28 @@ void App::initialize() {
   }
 
   this->createWindow();
-  glfwSetWindowUserPointer(window, this->controller);
-  glfwSetKeyCallback(this->window, [](GLFWwindow *window, int key, int scancode,
-                                      int action, int mods) {
-    static_cast<Controller *>(glfwGetWindowUserPointer(window))
-        ->onKeyPress(window, key, scancode, action, mods);
-  });
+  glfwSetWindowUserPointer(this->window->getWindow(), this->controller);
+  glfwSetKeyCallback(
+      this->window->getWindow(),
+      [](GLFWwindow *window, int key, int scancode, int action, int mods) {
+        static_cast<Controller *>(glfwGetWindowUserPointer(window))
+            ->onKeyPress(window, key, scancode, action, mods);
+      });
   glfwSetMouseButtonCallback(
-      this->window, [](GLFWwindow *window, int key, int action, int mod) {
+      this->window->getWindow(),
+      [](GLFWwindow *window, int key, int action, int mod) {
         static_cast<Controller *>(glfwGetWindowUserPointer(window))
             ->onMouseButton(window, key, action, mod);
       });
 
   glfwSetCursorPosCallback(
-      this->window, [](GLFWwindow *window, double x, double y) {
+      this->window->getWindow(), [](GLFWwindow *window, double x, double y) {
         static_cast<Controller *>(glfwGetWindowUserPointer(window))
             ->onMouse(window, x, y);
       });
 
   glfwSetWindowSizeCallback(
-      this->window, [](GLFWwindow *window, int width, int height) {
+      this->window->getWindow(), [](GLFWwindow *window, int width, int height) {
         static_cast<Controller *>(glfwGetWindowUserPointer(window))
             ->onResize(window, width, height);
       });
@@ -145,7 +148,7 @@ void App::run() {
   double prevTime;
   int frames;
 
-  while (!glfwWindowShouldClose(this->window)) {
+  while (!glfwWindowShouldClose(this->window->getWindow())) {
     // clear color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -159,7 +162,7 @@ void App::run() {
 
     this->controller->onFrame();
     // put the stuff we’ve been drawing onto the display
-    glfwSwapBuffers(this->window);
+    glfwSwapBuffers(this->window->getWindow());
 
     double currentTime = glfwGetTime();
     if (currentTime - prevTime >= 1.0) {
@@ -172,7 +175,7 @@ void App::run() {
 }
 
 void App::destroy(int status) {
-  glfwDestroyWindow(this->window);
+  this->window->destroy();
   glfwTerminate();
 
   exit(status);
@@ -193,24 +196,9 @@ Scene *App::getScene(const std::string &name) {
 }
 
 void App::createWindow() {
-  this->window = glfwCreateWindow(800, 600, "ZPG", NULL, NULL);
-  if (!this->window) {
-    glfwTerminate();
-    exit(EXIT_FAILURE);
-  }
-
-  // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-  glfwMakeContextCurrent(this->window);
-  glfwSwapInterval(1);
-
-  // start GLEW extension handler
-  glewExperimental = GL_TRUE;
-  glewInit();
+  this->window = new Window();
 
   this->printVersionInfo();
-
-  int width, height;
-  glfwGetFramebufferSize(this->window, &width, &height);
 }
 
 Scene *App::getCurrentScene() {

@@ -4,9 +4,9 @@
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
 
-Camera::Camera() {
+Camera::Camera(float fov, float zNear, float zFar)
+    : fov(fov), zNear(zNear), zFar(zFar) {
   this->recalculateTarget();
-  this->calculateProjectionMatrix(int width, int height);
 }
 
 void Camera::recalculateTarget() {
@@ -52,6 +52,7 @@ void Camera::changeYaw(float deg) {
 
   this->recalculateTarget();
 }
+
 void Camera::changePitch(float deg) {
   this->pitch += deg;
 
@@ -65,13 +66,7 @@ void Camera::changePitch(float deg) {
 
   this->recalculateTarget();
 }
-void Camera::calculateProjectionMatrix(int width, int height, float fov,
-                                       float zNear, float zFar) {
-  float ratio = width / (float)height;
-  this->projectionMatrix =
-      glm::perspective(glm::radians(fov), ratio, zNear, zFar);
-  glViewport(0, 0, width, height);
-}
+
 glm::mat4 Camera::calculateViewMatrix() const {
 
   return glm::lookAt(this->eye, this->eye + this->target, this->up);
