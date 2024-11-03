@@ -5,8 +5,8 @@
 /**
  * @brief Light scene, with some objects
  */
-class Light : public StaticScene {
+class LightBalls : public StaticScene {
 public:
-  Light(const ShaderStorage &shaderStorage) : StaticScene(shaderStorage) {};
+  LightBalls(const ShaderStorage &shaderStorage) : StaticScene(shaderStorage) {};
   void addObjects() override;
 };

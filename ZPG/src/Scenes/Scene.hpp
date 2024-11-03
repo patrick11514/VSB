@@ -5,13 +5,14 @@
 #include "../Camera.hpp"
 #include "../Object/BaseObject.hpp"
 
+class Light;
+
 /**
  * @brief Base scene class, which you can use to create scenes
  */
 class Scene {
 private:
   std::vector<BaseObject *> objects; ///< Vector of all objects in this scene
-  Camera camera;
 
 public:
   virtual ~Scene();
@@ -21,7 +22,11 @@ public:
    */
   void addObject(BaseObject *object);
 
-  Camera *getCamera(); ///< Get camera from scene
+  void addCamera(Camera *camera);
+
+  Camera *
+  getCamera(); ///< Get camera from scene TODO: add support for more cameras
+  Light *getLight(); ///< Get light from scene TODO: add support for more light
 
   void render() const; ///< Render scene called in mainLoop of application
 };

@@ -1,4 +1,5 @@
-#include "Light.hpp"
+#include "DifferentLight.hpp"
+#include "../Light/Light.hpp"
 #include "../Object/Objects.hpp"
 #include "../Transformation/Scale.hpp"
 #include "../Transformation/Translate.hpp"
@@ -7,7 +8,14 @@
 #include <glm/ext/vector_float3.hpp>
 #include <memory>
 
-void Light::addObjects() {
+void DifferentLight::addObjects() {
+  Camera *camera = new Camera();
+  camera->enable();
+  this->addObject(camera);
+
+  this->addObject(
+      new Light(glm::vec3{1.0f, 1.0f, 1.0f}, glm::vec3{0.f, 0.f, 0.f}));
+
   this->addObject(createBall(
       this->shaderStorage.getShaderProgram("green"),
       std::make_shared<Transformation>()

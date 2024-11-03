@@ -2,13 +2,16 @@
 #include "../Transformation/Scale.hpp"
 #include "../Transformation/Translate.hpp"
 #include "Objects.hpp"
-#include "Scene.hpp"
 
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/vector_float3.hpp>
 #include <memory>
 
 void Objects::addObjects() {
+  Camera *camera = new Camera();
+  camera->enable();
+  this->addObject(camera);
+
   this->addObject(createBall(
       this->shaderStorage.getShaderProgram("MatShader"),
       std::make_shared<Transformation>()

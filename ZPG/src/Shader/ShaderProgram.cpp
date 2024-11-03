@@ -1,11 +1,15 @@
 
 #include "ShaderProgram.hpp"
 #include "../Controller.hpp"
+#include "../Light/Light.hpp"
 #include "../Scenes/Scene.hpp"
 #include "Shader.hpp"
 
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include <GLFW/glfw3.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include <iostream>
 #include <stdio.h>
 
@@ -53,9 +57,34 @@ void ShaderProgram::registerToCamera(Scene *scene) {
   // Does my shader have view matrix
   if (this->checkParameter("viewMatrix")) {
     // add me as observe
-    printf("Registering\n");
-    scene->getCamera()->registerObserver(this);
-    this->update();
+    // TODO: extend support for more cameras
+    auto *camera = scene->getCamera();
+
+    if (camera == nullptr) {
+      printf("Scene without enabled camera\n");
+      return;
+    }
+
+    camera->registerObserver(this);
+    this->update(camera);
+  }
+}
+
+void ShaderProgram::registerToLight(Scene *scene) {
+  // Does my shader have light
+  if (this->checkParameter("lightPosition") &&
+      this->checkParameter("lightColor")) {
+    // add me as observe
+    // TODO: extend support for more lights
+    auto *light = scene->getLight();
+
+    if (light == nullptr) {
+      printf("Scene without light\n");
+      return;
+    }
+
+    light->registerObserver(this);
+    this->update(light);
   }
 }
 
@@ -63,34 +92,50 @@ bool ShaderProgram::operator==(const ShaderProgram &other) const {
   return this->programId == other.programId;
 }
 
-void ShaderProgram::update() {
+void ShaderProgram::update(const Observable *who) {
   this->setProgram();
 
-  auto camera = this->controller->getCamera();
+  if (dynamic_cast<const Camera *>(who) != nullptr) {
+    auto *camera = static_cast<const Camera *>(who);
 
-  this->putViewMatrix(camera->getViewMatrix());
+    this->putViewMatrix(camera->getViewMatrix());
 
-  this->putProjectionMatrix(this->controller->getProjectionMatrix());
+    this->putProjectionMatrix(this->controller->getProjectionMatrix());
 
-  if (this->checkParameter("cameraPosition")) {
-    this->putCameraPosition(camera->getPosition());
+    if (this->checkParameter("cameraPosition")) {
+      this->putCameraPosition(camera->getPosition());
+    }
+  } else if (dynamic_cast<const Light *>(who) != nullptr) {
+    // update lightning
+    auto *light = static_cast<const Light *>(who);
+
+    this->putLightPosition(light->getPosition());
+    this->putLightColor(light->getColor());
   }
 
   ShaderProgram::resetProgram();
 }
 
 void ShaderProgram::putModelMatrix(const glm::mat4 &matrix) const {
-  this->putParameter("modelMatrix", glm::value_ptr(matrix));
+  this->putParameter("modelMatrix", matrix);
 }
 
 void ShaderProgram::putViewMatrix(const glm::mat4 &matrix) const {
-  this->putParameter("viewMatrix", glm::value_ptr(matrix));
+  this->putParameter("viewMatrix", matrix);
 }
 
 void ShaderProgram::putProjectionMatrix(const glm::mat4 &matrix) const {
-  this->putParameter("projectionMatrix", glm::value_ptr(matrix));
+  this->putParameter("projectionMatrix", matrix);
 }
 
 void ShaderProgram::putCameraPosition(const glm::vec3 &vector) const {
-  this->putParameter("cameraPosition", glm::value_ptr(vector));
+  this->putParameter("cameraPosition", vector);
+}
+
+void ShaderProgram::putLightPosition(const glm::vec3 &vector) const {
+  this->putParameter("lightPosition", vector);
+}
+
+void ShaderProgram::putLightColor(const glm::vec3 &vector) const {
+  this->putParameter("lightColor", vector);
 }

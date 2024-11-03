@@ -13,6 +13,7 @@ DrawableObject::DrawableObject(std::shared_ptr<ObjectData> data,
 void DrawableObject::assignScene(Scene *scene) {
   BaseObject::assignScene(scene);
   this->shaderProgram->registerToCamera(scene);
+  this->shaderProgram->registerToLight(scene);
 }
 
 void DrawableObject::draw(float time) const {

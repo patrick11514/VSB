@@ -2,6 +2,7 @@
 
 #include <glm/ext/matrix_transform.hpp>
 
+#include "Object/BaseObject.hpp"
 #include "Patterns/Observable.hpp"
 #include "Patterns/Observer.hpp"
 #include "Window.hpp"
@@ -9,7 +10,7 @@
 /**
  * @brief Camera of our scene
  */
-class Camera : public Observable {
+class Camera : public BaseObject, public Observable {
 private:
   glm::vec3 eye{-1, 0, 0}; ///< Eye position, default 0,0,0
   glm::vec3 target;        ///< Target on which we are looking
@@ -23,6 +24,8 @@ private:
   float zFar;
 
   glm::mat4 viewMatrix;
+
+  bool enabled = false;
 
 public:
   Camera(float fov = 60.f, float zNear = 0.1f,
@@ -45,6 +48,10 @@ public:
   void notifyObservers();
 
   glm::vec3 getPosition() const; // getCurrentPosition of eye
+
+  void enable();
+  void disabled();
+  bool getStatus() const;
 
   friend class Window;
 };

@@ -2,9 +2,9 @@
 
 #include "../Camera.hpp"
 #include "../Patterns/Observer.hpp"
-#include "../Transformation/Transformation.hpp"
 #include "Shader.hpp"
 
+#include <glm/gtc/type_ptr.hpp>
 #include <stdexcept>
 
 class Controller;
@@ -28,13 +28,21 @@ private:
    * parameter
    */
   template <typename T>
-  void putParameter(const std::string &name, T *value) const {
+  void putParameter(const std::string &name, const T &value) const {
     GLint position = glGetUniformLocation(this->programId, name.c_str());
     if (position == -1) {
       throw std::runtime_error("Unable to find modelMatrix position");
     }
 
-    glUniformMatrix4fv(position, 1, GL_FALSE, value);
+    if constexpr (std::is_same<T, glm::mat4>::value) {
+
+      glUniformMatrix4fv(position, 1, GL_FALSE, glm::value_ptr(value));
+    } else if constexpr (std::is_same<T, glm::vec3>::value) {
+
+      glUniform3fv(position, 1, glm::value_ptr(value));
+    } else {
+      throw std::runtime_error("Passed invalid type to " + name);
+    }
   }
 
 public:
@@ -69,15 +77,19 @@ public:
    */
   bool checkParameter(const std::string &name) const;
 
-  void registerToCamera(Scene *scene);
+  void registerToCamera(Scene *scene); /// Change to registerToCameras
+  void registerToLight(Scene *scene);  /// Change to registerToLights
 
   // operators
   bool operator==(const ShaderProgram &other) const; ///< compare operator
 
-  void update() override; ///< Update viewMatrix from Camera
+  void
+  update(const Observable *who) override; ///< Update viewMatrix from Camera
 
   void putModelMatrix(const glm::mat4 &matrix) const;
   void putProjectionMatrix(const glm::mat4 &matrix) const;
   void putViewMatrix(const glm::mat4 &matrix) const;
   void putCameraPosition(const glm::vec3 &vector) const;
+  void putLightPosition(const glm::vec3 &vector) const;
+  void putLightColor(const glm::vec3 &vector) const;
 };

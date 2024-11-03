@@ -16,6 +16,6 @@ void Observable::removeObserver(Observer *observer) {
 
 void Observable::notifyObservers() const {
   for (auto ptr : this->observers) {
-    ptr->update();
+    ptr->update(this);
   }
 }

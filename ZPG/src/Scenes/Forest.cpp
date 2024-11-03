@@ -2,7 +2,6 @@
 #include "../Object/Objects.hpp"
 #include "../Transformation/DynamicRotation.hpp"
 #include "../Transformation/DynamicTransformation.hpp"
-#include "../Transformation/Rotation.hpp"
 #include "../Transformation/Scale.hpp"
 #include "../Transformation/Translate.hpp"
 
@@ -12,6 +11,10 @@
 #include <random>
 
 void Forest::addObjects() {
+  Camera *camera = new Camera();
+  camera->enable();
+  this->addObject(camera);
+
   // clang-format off
     Model model(std::vector<float>{
     -1.0f, 0.0f, 1.0f,    // Top Left

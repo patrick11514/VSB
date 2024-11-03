@@ -83,7 +83,10 @@ void Controller::onFrame() {
       // App::currentScene = "forest";
       this->app->switchScene("light");
       break;
-
+    case GLFW_KEY_M:
+      // App::currentScene = "forest";
+      this->app->switchScene("different_light");
+      break;
     case GLFW_KEY_W:
       this->getCamera()->forward();
       break;

@@ -1,7 +1,8 @@
 #include "App.hpp"
 #include "Controller.hpp"
+#include "Scenes/DifferentLight.hpp"
 #include "Scenes/Forest.hpp"
-#include "Scenes/Light.hpp"
+#include "Scenes/LightBalls.hpp"
 #include "Scenes/Objects.hpp"
 #include "Shader/Shader.hpp"
 #include "Shader/ShaderProgram.hpp"
@@ -67,7 +68,8 @@ void App::prepareScenes() {
 
   this->addScene("obj", new Objects(this->shaders));
   this->addScene("forest", new Forest(this->shaders));
-  this->addScene("light", new Light(this->shaders));
+  this->addScene("light", new LightBalls(this->shaders));
+  this->addScene("different_light", new DifferentLight(this->shaders));
 }
 
 void App::createShaders() {
@@ -123,6 +125,7 @@ void App::createShaders() {
         "idk", new ShaderProgram("../shaders/vertex/IdkBarvy.vert",
                                  "../shaders/fragment/ColorByCoords.frag",
                                  this->controller));
+
     this->shaders.addShaderProgram(
         "lambert", new ShaderProgram("../shaders/vertex/Lambert.vert",
                                      "../shaders/fragment/Lambert.frag",

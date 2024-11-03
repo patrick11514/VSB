@@ -13,6 +13,7 @@ class Observer {
 public:
   virtual ~Observer() = default; ///< Default virtual destructor
 
-  virtual void update() = 0; ///< This function will be called, when
-                             ///< Observable changes
+  virtual void
+  update(const Observable *who) = 0; ///< This function will be called,
+                                     ///< when Observable changes
 };
