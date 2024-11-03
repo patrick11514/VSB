@@ -18,18 +18,19 @@ private:
   float pitch = 0; ///< Pitch (-60, 90)
   float yaw = 0;   ///< Yaw (0, 360>
 
-  void recalculateTarget();   ///< Function which will recalculate target
-                              ///< position, based of pitch and yaw
-  glm::mat4 projectionMatrix; ///< Projection matrix of window
-
   float fov;
   float zNear;
   float zFar;
+
+  glm::mat4 viewMatrix;
 
 public:
   Camera(float fov = 60.f, float zNear = 0.1f,
          float zFar =
              100.f); ///< Default constructor, which will recalculateTarget
+
+  void recalculateTarget(); ///< Function which will recalculate target
+                            ///< position, based of pitch and yaw
 
   void toLeft(float rate = 0.1f);   ///< Move eye to left with specific rate
   void toRight(float rate = 0.1f);  ///< Move eye to right with specific rate
@@ -38,8 +39,12 @@ public:
   void changeYaw(float deg);        ///< Change Yaw by degs
   void changePitch(float deg);      ///< Change Pitch by degs
 
-  glm::mat4
-  calculateViewMatrix() const; ///< calculateViewMatrix from eye, traget and up
+  void calculateViewMatrix(); ///< calculateViewMatrix from eye, traget and up
+  glm::mat4 getViewMatrix() const;
+
+  void notifyObservers();
+
+  glm::vec3 getPosition() const; // getCurrentPosition of eye
 
   friend class Window;
 };

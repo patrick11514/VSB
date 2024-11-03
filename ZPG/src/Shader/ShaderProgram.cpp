@@ -66,12 +66,16 @@ bool ShaderProgram::operator==(const ShaderProgram &other) const {
 void ShaderProgram::update() {
   this->setProgram();
 
-  this->putParameter(
-      "viewMatrix",
-      glm::value_ptr(this->controller->getCamera()->calculateViewMatrix()));
+  auto camera = this->controller->getCamera();
+
+  this->putParameter("viewMatrix", glm::value_ptr(camera->getViewMatrix()));
 
   this->putParameter("projectionMatrix",
                      glm::value_ptr(this->controller->getProjectionMatrix()));
+
+  if (this->checkParameter("cameraPosition")) {
+    this->putParameter("cameraPosition", glm::value_ptr(camera->getPosition()));
+  }
 
   ShaderProgram::resetProgram();
 }

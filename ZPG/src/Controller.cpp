@@ -54,8 +54,11 @@ void Controller::onMouse([[maybe_unused]] GLFWwindow *window, double x,
   if (!this->pressedMouseButtons[GLFW_MOUSE_BUTTON_RIGHT])
     return;
 
-  this->getCamera()->changeYaw(xDiff / 4);
-  this->getCamera()->changePitch(yDiff / 4);
+  auto camera = this->getCamera();
+
+  camera->changeYaw(xDiff / 4);
+  camera->changePitch(yDiff / 4);
+  camera->recalculateTarget();
 }
 
 void Controller::onResize([[maybe_unused]] GLFWwindow *window, int width,
@@ -70,15 +73,15 @@ void Controller::onFrame() {
     switch (key) {
     case GLFW_KEY_V:
       // App::currentScene = "obj";
-      this->app->currentScene = "obj";
+      this->app->switchScene("obj");
       break;
     case GLFW_KEY_B:
       // App::currentScene = "forest";
-      this->app->currentScene = "forest";
+      this->app->switchScene("forest");
       break;
     case GLFW_KEY_N:
       // App::currentScene = "forest";
-      this->app->currentScene = "light";
+      this->app->switchScene("light");
       break;
 
     case GLFW_KEY_W:

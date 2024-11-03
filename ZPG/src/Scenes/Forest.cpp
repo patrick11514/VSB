@@ -17,7 +17,7 @@ void Forest::addObjects() {
   std::uniform_real_distribution<float> scale(0.2, 0.4);
   std::uniform_real_distribution<float> rotation(0, 360);
 
-  for (int i = 0; i < 800; ++i) {
+  for (int i = 0; i < 500; ++i) {
     float s = scale(rng);
     float xCoord = x(rng);
     float zCoord = z(rng);
@@ -39,7 +39,7 @@ void Forest::addObjects() {
     this->addObject(tree);
   }
 
-  for (int i = 0; i < 800; ++i) {
+  for (int i = 0; i < 500; ++i) {
     float s = 0.5 + scale(rng);
     float xCoord = x(rng);
     float zCoord = z(rng);

@@ -49,25 +49,29 @@ void Camera::changeYaw(float deg) {
   if (this->yaw >= 360) {
     this->yaw -= 360;
   }
-
-  this->recalculateTarget();
 }
 
 void Camera::changePitch(float deg) {
   this->pitch += deg;
 
-  if (this->pitch > 90.f) {
-    this->pitch = 90.f;
+  if (this->pitch >= 90.f) {
+    this->pitch = 89.f;
   }
 
-  if (this->pitch < -90.f) {
-    this->pitch = -90.f;
+  if (this->pitch <= -90.f) {
+    this->pitch = -89.f;
   }
-
-  this->recalculateTarget();
 }
 
-glm::mat4 Camera::calculateViewMatrix() const {
-
-  return glm::lookAt(this->eye, this->eye + this->target, this->up);
+void Camera::calculateViewMatrix() {
+  this->viewMatrix = glm::lookAt(this->eye, this->eye + this->target, this->up);
 }
+
+glm::mat4 Camera::getViewMatrix() const { return this->viewMatrix; }
+
+void Camera::notifyObservers() {
+  this->calculateViewMatrix();
+  Observable::notifyObservers();
+}
+
+glm::vec3 Camera::getPosition() const { return this->eye; }

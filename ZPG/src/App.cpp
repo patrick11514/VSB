@@ -124,9 +124,14 @@ void App::createShaders() {
                                  "../shaders/fragment/ColorByCoords.frag",
                                  this->controller));
     this->shaders.addShaderProgram(
-        "light",
-        new ShaderProgram("../shaders/vertex/Light.vert",
-                          "../shaders/fragment/Light.frag", this->controller));
+        "lambert", new ShaderProgram("../shaders/vertex/Lambert.vert",
+                                     "../shaders/fragment/Lambert.frag",
+                                     this->controller));
+
+    this->shaders.addShaderProgram(
+        "phong",
+        new ShaderProgram("../shaders/vertex/Phong.vert",
+                          "../shaders/fragment/Phong.frag", this->controller));
   } catch (const std::runtime_error &ex) {
     printf("Shader Exception: %s\n", ex.what());
     this->destroy(EXIT_FAILURE);
@@ -206,6 +211,12 @@ Scene *App::getCurrentScene() {
     throw std::runtime_error("No scene was found");
   }
   return this->getScene(this->currentScene.value());
+}
+
+void App::switchScene(const std::string &name) {
+  this->currentScene = name;
+  auto currentScene = this->getCurrentScene();
+  currentScene->getCamera()->notifyObservers();
 }
 
 void App::printVersionInfo() {

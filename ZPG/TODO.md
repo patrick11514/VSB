@@ -10,4 +10,4 @@
 - [x] don't lock cursor and don't move every time, only if mrb is pressed
 - [ ] ShaderProgram methods: updateModelMatrix(Transformations&) etc..
 - [ ] Light, camera could be something like Drawable object
-- [ ] Window as separated class
+- [x] Window as separated class

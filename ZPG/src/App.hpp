@@ -63,6 +63,8 @@ public:
   destroy(int status =
               EXIT_SUCCESS); ///< Destroy full Application and exit with status
 
+  void switchScene(const std::string &name); //< Switch scene
+
   Scene *getCurrentScene(); ///< Get current scene
   // Controller is our friend
   friend class Controller;
