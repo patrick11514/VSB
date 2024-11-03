@@ -5,12 +5,8 @@
 #include "../Scenes/Scene.hpp"
 #include "Shader.hpp"
 
-#define GLM_ENABLE_EXPERIMENTAL
-
 #include <GLFW/glfw3.h>
 #include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/string_cast.hpp>
-#include <iostream>
 #include <stdio.h>
 
 ShaderProgram::ShaderProgram(const Shader &vertexShader,
@@ -40,9 +36,13 @@ ShaderProgram::ShaderProgram(const Shader &vertexShader,
 ShaderProgram::ShaderProgram(const char *vertexShaderPath,
                              const char *fragmentShaderPath,
                              Controller *controller)
-    : ShaderProgram(Shader(vertexShaderPath, ShaderType::Vertex),
-                    Shader(fragmentShaderPath, ShaderType::Fragment),
-                    controller) {}
+//: ShaderProgram(Shader(vertexShaderPath, ShaderType::Vertex),
+//              Shader(fragmentShaderPath, ShaderType::Fragment),
+//              controller) {}
+{
+  this->controller = controller;
+  this->programId = this->loadShader(vertexShaderPath, fragmentShaderPath);
+}
 
 bool ShaderProgram::checkParameter(const std::string &name) const {
   GLint position = glGetUniformLocation(this->programId, name.c_str());

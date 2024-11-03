@@ -17,5 +17,5 @@ void main(void){
     worldPosition = modelMatrix * vec4(vp, 1.0f);
     worldNormal = normalize(mat3(transpose(inverse(modelMatrix))) * norm);
 
-    viewPos = vec3(inverse(viewMatrix) * vec4(cameraPosition, 1.0));
+    viewPos = cameraPosition;
 }

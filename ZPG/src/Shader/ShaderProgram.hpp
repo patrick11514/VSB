@@ -2,6 +2,7 @@
 
 #include "../Camera.hpp"
 #include "../Patterns/Observer.hpp"
+#include "../ShaderLoader/ShaderLoader.h"
 #include "Shader.hpp"
 
 #include <glm/gtc/type_ptr.hpp>
@@ -14,7 +15,7 @@ class Scene;
  * @brief Shader program is class, which consists of Fragment Shader and Vertex
  * Shader
  */
-class ShaderProgram : public Observer {
+class ShaderProgram : public ShaderLoader, public Observer {
 private:
   GLuint programId;       ///< If of program
   Controller *controller; ///< Pointer to controller
