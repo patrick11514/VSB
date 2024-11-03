@@ -9,7 +9,6 @@
 #include <memory>
 
 void Objects::addObjects() {
-
   this->addObject(createBall(
       this->shaderStorage.getShaderProgram("MatShader"),
       std::make_shared<Transformation>()

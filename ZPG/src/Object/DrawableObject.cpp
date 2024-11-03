@@ -10,6 +10,11 @@ DrawableObject::DrawableObject(std::shared_ptr<ObjectData> data,
     : data(data), shaderProgram(shaderProgram),
       transformations(transformations), renderFunction(renderFunction) {}
 
+void DrawableObject::assignScene(Scene *scene) {
+  BaseObject::assignScene(scene);
+  this->shaderProgram->registerToCamera(scene);
+}
+
 void DrawableObject::draw(float time) const {
   this->data->setArray();
   this->shaderProgram->setProgram();
@@ -24,5 +29,7 @@ void DrawableObject::draw(float time) const {
     matrix = tranPtr->getMatrix();
   }
 
-  this->renderFunction(matrix, this->shaderProgram);
+  this->shaderProgram->putModelMatrix(matrix);
+
+  this->renderFunction();
 }

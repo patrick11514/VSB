@@ -10,16 +10,16 @@
  */
 class Scene {
 private:
-  std::vector<BaseObject> objects; ///< Vector of all objects in this scene
+  std::vector<BaseObject *> objects; ///< Vector of all objects in this scene
   Camera camera;
 
 public:
-  virtual ~Scene() = default;
+  virtual ~Scene();
   /**
    * @brief Add object to scene
    * @param object Object which will be added to scene
    */
-  void addObject(BaseObject object);
+  void addObject(BaseObject *object);
 
   Camera *getCamera(); ///< Get camera from scene
 

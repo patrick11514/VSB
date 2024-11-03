@@ -8,6 +8,7 @@ private:
 public:
   virtual ~BaseObject() = default;
 
-  void assignScene(Scene *scene); ///< Assign scene to object automatically
-                                  ///< called inside Scene::addObject
+  virtual void
+  assignScene(Scene *scene); ///< Assign scene to object automatically
+                             ///< called inside Scene::addObject
 };

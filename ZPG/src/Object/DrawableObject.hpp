@@ -10,9 +10,7 @@
 #include "ObjectData.hpp"
 
 // Define custom types
-using RenderFunction =
-    std::function<void(const glm::mat4x4 &transformationMatrix,
-                       const ShaderProgram *shaderProgram)>;
+using RenderFunction = std::function<void()>;
 /**
  * @brief This class put ObjectData, ShaderProgram, Transformations together
  * into single object
@@ -36,6 +34,10 @@ public:
   DrawableObject(std::shared_ptr<ObjectData> data, ShaderProgram *shaderProgram,
                  std::shared_ptr<Transformation> transformations,
                  RenderFunction renderFunction);
+
+  void
+  assignScene(Scene *scene) override; ///< Assign scene to object automatically
+                                      ///< called inside Scene::addObject
 
   /**
    * @brief Draw object using the renderFunction

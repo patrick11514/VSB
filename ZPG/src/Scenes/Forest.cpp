@@ -14,23 +14,20 @@
 void Forest::addObjects() {
   // clang-format off
     Model model(std::vector<float>{
-
     -1.0f, 0.0f, 1.0f,    // Top Left
      1.0f, 0.0f, 1.0f,    // Top Right
      1.0f, 0.0f, -1.0f,   // Bottom Right
     -1.0f, 0.0f, -1.0f    // Bottom Left
   });
   // clang-format on
+
   auto tran = std::make_shared<Transformation>();
   tran->addTransformation(new Scale(glm::vec3(200.f, 1.f, 200.f)));
 
-  DrawableObject obj(
-      std::make_shared<ObjectData>(model),
-      this->shaderStorage.getShaderProgram("green"), tran,
-      [&](const glm::mat4x4 &matrix, const ShaderProgram *shaderProgram) {
-        shaderProgram->putParameter("modelMatrix", glm::value_ptr(matrix));
-        glDrawArrays(GL_QUADS, 0, 4);
-      });
+  DrawableObject *obj =
+      new DrawableObject(std::make_shared<ObjectData>(model),
+                         this->shaderStorage.getShaderProgram("green"), tran,
+                         []() { glDrawArrays(GL_QUADS, 0, 4); });
 
   this->addObject(obj);
 

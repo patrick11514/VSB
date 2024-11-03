@@ -52,8 +52,8 @@ void ShaderProgram::resetProgram() { glUseProgram(0); }
 void ShaderProgram::registerToCamera(Scene *scene) {
   // Does my shader have view matrix
   if (this->checkParameter("viewMatrix")) {
-    printf("registering %d\n", this->programId);
     // add me as observe
+    printf("Registering\n");
     scene->getCamera()->registerObserver(this);
     this->update();
   }
@@ -68,14 +68,29 @@ void ShaderProgram::update() {
 
   auto camera = this->controller->getCamera();
 
-  this->putParameter("viewMatrix", glm::value_ptr(camera->getViewMatrix()));
+  this->putViewMatrix(camera->getViewMatrix());
 
-  this->putParameter("projectionMatrix",
-                     glm::value_ptr(this->controller->getProjectionMatrix()));
+  this->putProjectionMatrix(this->controller->getProjectionMatrix());
 
   if (this->checkParameter("cameraPosition")) {
-    this->putParameter("cameraPosition", glm::value_ptr(camera->getPosition()));
+    this->putCameraPosition(camera->getPosition());
   }
 
   ShaderProgram::resetProgram();
+}
+
+void ShaderProgram::putModelMatrix(const glm::mat4 &matrix) const {
+  this->putParameter("modelMatrix", glm::value_ptr(matrix));
+}
+
+void ShaderProgram::putViewMatrix(const glm::mat4 &matrix) const {
+  this->putParameter("viewMatrix", glm::value_ptr(matrix));
+}
+
+void ShaderProgram::putProjectionMatrix(const glm::mat4 &matrix) const {
+  this->putParameter("projectionMatrix", glm::value_ptr(matrix));
+}
+
+void ShaderProgram::putCameraPosition(const glm::vec3 &vector) const {
+  this->putParameter("cameraPosition", glm::value_ptr(vector));
 }

@@ -2,6 +2,7 @@
 
 #include "../Camera.hpp"
 #include "../Patterns/Observer.hpp"
+#include "../Transformation/Transformation.hpp"
 #include "Shader.hpp"
 
 #include <stdexcept>
@@ -18,6 +19,23 @@ private:
   GLuint programId;       ///< If of program
   Controller *controller; ///< Pointer to controller
   Camera *camera;         ///< Vector to pointer to camera
+
+  /**
+   * @brief Fill parameter name with data in value
+   * @param name Name of parameter to be filled with value
+   * @param value Data which will be put into the parameter
+   * @throws std::runtime_exception, if vertex shader doesn't accept name
+   * parameter
+   */
+  template <typename T>
+  void putParameter(const std::string &name, T *value) const {
+    GLint position = glGetUniformLocation(this->programId, name.c_str());
+    if (position == -1) {
+      throw std::runtime_error("Unable to find modelMatrix position");
+    }
+
+    glUniformMatrix4fv(position, 1, GL_FALSE, value);
+  }
 
 public:
   /**
@@ -51,27 +69,15 @@ public:
    */
   bool checkParameter(const std::string &name) const;
 
-  /**
-   * @brief Fill parameter name with data in value
-   * @param name Name of parameter to be filled with value
-   * @param value Data which will be put into the parameter
-   * @throws std::runtime_exception, if vertex shader doesn't accept name
-   * parameter
-   */
-  template <typename T>
-  void putParameter(const std::string &name, T *value) const {
-    GLint position = glGetUniformLocation(this->programId, name.c_str());
-    if (position == -1) {
-      throw std::runtime_error("Unable to find modelMatrix position");
-    }
-
-    glUniformMatrix4fv(position, 1, GL_FALSE, value);
-  }
-
   void registerToCamera(Scene *scene);
 
   // operators
   bool operator==(const ShaderProgram &other) const; ///< compare operator
 
   void update() override; ///< Update viewMatrix from Camera
+
+  void putModelMatrix(const glm::mat4 &matrix) const;
+  void putProjectionMatrix(const glm::mat4 &matrix) const;
+  void putViewMatrix(const glm::mat4 &matrix) const;
+  void putCameraPosition(const glm::vec3 &vector) const;
 };
