@@ -1,15 +1,15 @@
 #include "Objects.hpp"
+#include "DrawableObject.hpp"
 #include "Model.hpp"
 #include "Models/bushes.h"
 #include "Models/gift.h"
 #include "Models/sphere.h"
 #include "Models/tree.h"
-#include "Object.hpp"
 #include "ObjectData.hpp"
 #include <glm/gtc/type_ptr.hpp>
 
-Object createBall(ShaderProgram *shaderProgram,
-                  std::shared_ptr<Transformation> transformations) {
+DrawableObject createBall(ShaderProgram *shaderProgram,
+                          std::shared_ptr<Transformation> transformations) {
   if (!dataStorage.hasObject("ball")) {
     Model model{sphere, sizeof(sphere) / sizeof(float)};
     dataStorage.add("ball", ObjectData(model, 2, []() {
@@ -21,7 +21,7 @@ Object createBall(ShaderProgram *shaderProgram,
                     }));
   }
 
-  return Object(
+  return DrawableObject(
       dataStorage.getObject("ball"), shaderProgram, transformations,
       [](const glm::mat4x4 &matrix, const ShaderProgram *shaderProgram) {
         shaderProgram->putParameter("modelMatrix", glm::value_ptr(matrix));
@@ -30,8 +30,8 @@ Object createBall(ShaderProgram *shaderProgram,
       });
 }
 
-Object createTree(ShaderProgram *shaderProgram,
-                  std::shared_ptr<Transformation> transformations) {
+DrawableObject createTree(ShaderProgram *shaderProgram,
+                          std::shared_ptr<Transformation> transformations) {
   if (!dataStorage.hasObject("tree")) {
     Model model{tree, sizeof(tree) / sizeof(float)};
     dataStorage.add("tree", ObjectData(model, 2, []() {
@@ -43,15 +43,15 @@ Object createTree(ShaderProgram *shaderProgram,
                     }));
   }
 
-  return Object(
+  return DrawableObject(
       dataStorage.getObject("tree"), shaderProgram, transformations,
       [](const glm::mat4x4 &matrix, const ShaderProgram *shaderProgram) {
         shaderProgram->putParameter("modelMatrix", glm::value_ptr(matrix));
         glDrawArrays(GL_TRIANGLES, 0, 92814);
       });
 }
-Object createBush(ShaderProgram *shaderProgram,
-                  std::shared_ptr<Transformation> transformations) {
+DrawableObject createBush(ShaderProgram *shaderProgram,
+                          std::shared_ptr<Transformation> transformations) {
   if (!dataStorage.hasObject("bush")) {
     Model model{bushes, sizeof(bushes) / sizeof(float)};
     dataStorage.add("bush", ObjectData(model, 2, []() {
@@ -63,15 +63,15 @@ Object createBush(ShaderProgram *shaderProgram,
                     }));
   }
 
-  return Object(
+  return DrawableObject(
       dataStorage.getObject("bush"), shaderProgram, transformations,
       [](const glm::mat4x4 &matrix, const ShaderProgram *shaderProgram) {
         shaderProgram->putParameter("modelMatrix", glm::value_ptr(matrix));
         glDrawArrays(GL_TRIANGLES, 0, 8730);
       });
 }
-Object createGift(ShaderProgram *shaderProgram,
-                  std::shared_ptr<Transformation> transformations) {
+DrawableObject createGift(ShaderProgram *shaderProgram,
+                          std::shared_ptr<Transformation> transformations) {
   if (!dataStorage.hasObject("gift")) {
     Model model{gift, sizeof(gift) / sizeof(float)};
     dataStorage.add("gift", ObjectData(model, 2, []() {
@@ -83,7 +83,7 @@ Object createGift(ShaderProgram *shaderProgram,
                     }));
   }
 
-  return Object(
+  return DrawableObject(
       dataStorage.getObject("gift"), shaderProgram, transformations,
       [](const glm::mat4x4 &matrix, const ShaderProgram *shaderProgram) {
         shaderProgram->putParameter("modelMatrix", glm::value_ptr(matrix));

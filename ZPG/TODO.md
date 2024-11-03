@@ -9,6 +9,6 @@
 - [ ] add support for more lights
 - [x] don't lock cursor and don't move every time, only if mrb is pressed
 - [ ] ShaderProgram methods: updateModelMatrix(Transformations&) etc..
-- [ ] Light, camera could be something like Drawable object
+- [x] Light, camera could be something like Drawable object
 - [x] Window as separated class
 - [x] Dynamic transformations

@@ -6,26 +6,24 @@
 
 #include "../Shader/ShaderProgram.hpp"
 #include "../Transformation/Transformation.hpp"
+#include "BaseObject.hpp"
 #include "ObjectData.hpp"
 
 // Define custom types
 using RenderFunction =
     std::function<void(const glm::mat4x4 &transformationMatrix,
                        const ShaderProgram *shaderProgram)>;
-class Scene;
-
 /**
  * @brief This class put ObjectData, ShaderProgram, Transformations together
  * into single object
  */
-class Object {
+class DrawableObject : public BaseObject {
 private:
   std::shared_ptr<ObjectData> data; ///< Sliced data of object
   ShaderProgram *shaderProgram;     ///< Shader program used on object
   std::shared_ptr<Transformation> transformations; ///< Object transformations
   RenderFunction
       renderFunction; ///< Function which will be called to render the object
-  Scene *myScene = nullptr; ///< Scene in which is current object presented
 public:
   /**
    * @brief Basic constructor used, when you don't want to animate object
@@ -35,12 +33,9 @@ public:
    * @param transformations Pointer to transformations used on this object
    * @param renderFunction Render function to render Object(s) from slided data
    */
-  Object(std::shared_ptr<ObjectData> data, ShaderProgram *shaderProgram,
-         std::shared_ptr<Transformation> transformations,
-         RenderFunction renderFunction);
-
-  void assignScene(Scene *scene); ///< Assign scene to object automatically
-                                  ///< called inside Scene::addObject
+  DrawableObject(std::shared_ptr<ObjectData> data, ShaderProgram *shaderProgram,
+                 std::shared_ptr<Transformation> transformations,
+                 RenderFunction renderFunction);
 
   /**
    * @brief Draw object using the renderFunction

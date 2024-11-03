@@ -24,7 +24,7 @@ void Forest::addObjects() {
   auto tran = std::make_shared<Transformation>();
   tran->addTransformation(new Scale(glm::vec3(200.f, 1.f, 200.f)));
 
-  Object obj(
+  DrawableObject obj(
       std::make_shared<ObjectData>(model),
       this->shaderStorage.getShaderProgram("green"), tran,
       [&](const glm::mat4x4 &matrix, const ShaderProgram *shaderProgram) {
