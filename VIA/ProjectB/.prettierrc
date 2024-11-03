@@ -6,5 +6,4 @@
     "printWidth": 180,
     "semi": true,
     "plugins": ["prettier-plugin-tailwindcss"]
-
 }

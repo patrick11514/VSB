@@ -1,16 +1,55 @@
 <!doctype html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title></title>
+        <link href="/assets/css/main.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+        <script src="/assets/js/main.js" defer></script>
+    </head>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title></title>
-    <link href="/assets/css/main.css" rel="stylesheet" />
-    <script src="/assets/js/main.js" defer></script>
-</head>
-
-<body>
-    <h1 class="text-red-500">Ahoj</h1>
-</body>
-
+    <body class="h-full w-full font-universal-sans text-text">
+        <section class="flex flex-row items-center justify-center gap-4 p-4 text-sm font-medium">
+            <p>0% APR available for Model 3 and Model Y.</p>
+            <a id="info-popover" class="underline hover:decoration-2" href="#">Learn More</a>
+        </section>
+        <nav class="pointer-events-none fixed z-50 flex w-full px-10 text-white">
+            <a href="/" class="w-1/4 py-6">
+                <svg class="h-3" viewBox="0 0 342 35" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        fill="currentColor"
+                        d="M0 .1a9.7 9.7 0 0 0 7 7h11l.5.1v27.6h6.8V7.3L26 7h11a9.8 9.8 0 0 0 7-7H0zm238.6 0h-6.8v34.8H263a9.7 9.7 0 0 0 6-6.8h-30.3V0zm-52.3 6.8c3.6-1 6.6-3.8 7.4-6.9l-38.1.1v20.6h31.1v7.2h-24.4a13.6 13.6 0 0 0-8.7 7h39.9v-21h-31.2v-7zm116.2 28h6.7v-14h24.6v14h6.7v-21h-38zM85.3 7h26a9.6 9.6 0 0 0 7.1-7H78.3a9.6 9.6 0 0 0 7 7m0 13.8h26a9.6 9.6 0 0 0 7.1-7H78.3a9.6 9.6 0 0 0 7 7m0 14.1h26a9.6 9.6 0 0 0 7.1-7H78.3a9.6 9.6 0 0 0 7 7M308.5 7h26a9.6 9.6 0 0 0 7-7h-40a9.6 9.6 0 0 0 7 7"
+                    ></path>
+                </svg>
+            </a>
+            <div class="nav pointer-events-auto mx-auto flex flex-row items-center justify-center gap-2 text-sm">
+                <div>Vehicles</div>
+                <div>Energy</div>
+                <div>Charging</div>
+                <div>Discover</div>
+                <div>Shop</div>
+                <div>We, Robot</div>
+            </div>
+            <div class="icons pointer-events-auto flex w-1/4 flex-row items-center justify-end gap-2 text-2xl font-bold">
+                <i class="bi bi-question-circle"></i>
+                <i class="bi bi-globe"></i>
+                <i class="bi bi-person-circle"></i>
+            </div>
+        </nav>
+        <section class="relative h-hero w-full">
+            <img
+                class="h-full w-full object-cover object-center"
+                src="https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Homepage-APR-Promo-Hero-Desktop-v2.png"
+                alt="Hero1"
+            />
+            <div class="absolute top-0 z-10 flex h-full w-full flex-col items-center text-white">
+                <h1 class="mt-28 text-6xl">0% APR Available</h1>
+                <div class="mt-8 flex flex-row items-center justify-center gap-6">
+                    <button>Order Model Y</button>
+                    <button>Order Model 3</button>
+                </div>
+            </div>
+        </section>
+    </body>
 </html>
