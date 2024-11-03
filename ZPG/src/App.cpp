@@ -132,6 +132,11 @@ void App::createShaders() {
         "phong",
         new ShaderProgram("../shaders/vertex/Phong.vert",
                           "../shaders/fragment/Phong.frag", this->controller));
+
+    this->shaders.addShaderProgram(
+        "blinnphong", new ShaderProgram("../shaders/vertex/BlinnPhong.vert",
+                                        "../shaders/fragment/BlinnPhong.frag",
+                                        this->controller));
   } catch (const std::runtime_error &ex) {
     printf("Shader Exception: %s\n", ex.what());
     this->destroy(EXIT_FAILURE);

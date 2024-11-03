@@ -5,9 +5,10 @@
 - [x] update projectionMatrix when resize
 - [x] fix up vector to face 0,1,0 instead of 0,-1,0
 - [x] when viewport changers, update it, and call camera update to sync shaders
-- [ ] add remaining light methods
+- [x] add remaining light methods
 - [ ] add support for more lights
 - [x] don't lock cursor and don't move every time, only if mrb is pressed
 - [ ] ShaderProgram methods: updateModelMatrix(Transformations&) etc..
 - [ ] Light, camera could be something like Drawable object
 - [x] Window as separated class
+- [x] Dynamic transformations

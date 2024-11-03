@@ -27,7 +27,7 @@ ObjectData::ObjectData(ObjectData &&other)
       numberOfAttrs(other.numberOfAttrs) {}
 
 void ObjectData::defaultSlice() {
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid *)0);
 }
 
 void ObjectData::setArray() const { glBindVertexArray(this->VAO); }

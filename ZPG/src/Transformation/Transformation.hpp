@@ -13,7 +13,7 @@ class Transformation
                             // want to chain Transformations and Object needs
                             // Shader Pointer of Transformation, so we could
                             // chain in Object's constructor
-private:
+protected:
   std::vector<std::shared_ptr<Transformation>>
       transformations; ///< Stored Transfrormations
 
