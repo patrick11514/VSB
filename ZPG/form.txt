@@ -1,0 +1,43 @@
+Přepínání scén za běhu (Ano/Ne) (kde a jak)
+    Ano, Controller.cpp metoda onFrame, při zmáčnutí klávesy změní aktuální scénu, tak že v Appce změní property.
+
+    a) Základní scéna (Ano/Ne)
+        Ano
+
+    b) Scéna s lesem (Ano/Ne)
+        Ano
+
+    c) Scéna se čtyřmi kuličkami (Ano/Ne)
+        Ano
+
+    d) Scéna pro demonstraci použití všech shaderů (Konstantní, Lambert, Phong a Blinn) (Ano/Ne)
+        Ano
+
+Světlo (Ano/Ne) (kde a jak máte naimplementováno, jak se updatuje změna světla)
+    Ano, src/Light/Light.cpp + .hpp změna, pokud by byla (zatím není žádná), tak se bude updatovat přes Observera, kdy Light je Observable a ShaderProgram Observer nad ním.
+
+Základní třídy (ShaderProgram, DrowableObject, Camera, Controller) (Ano/Ne) (kdo zodpovídá za vykreslování, kde jsou uloženy modely, shadery atd.)
+    Anom, objekty vykresluje scéna, tím že projde všechny BaseObjecty a pokud dějaký je DrawableObject, tak ho vykreslí, jinak nic. Čisté body (float points) modelů jsou uložené v tříde Model. Shadery v složce shaders a poté podsložky fragment/vertex. Případně pak existuje ShaderStorage, který je pod Appkou a zde jsou všechny shadery uloženy.
+
+Transformace (Composite pattern) (Ano/Ne) (Máte pro transformace základní třídy? Co a jak jste použili?)
+    Ano, mám třídu Transformation, s ní poté dědí Scale, Rotation, Transformation. Použil jsem dědičnost a polymorfiszmus, že když se jedná o DynamickouTransformaci, tak dostane čas běhu a ten může použít. Zatím je teda jen DynamicRotation. 
+
+Základy OOP
+
+    a) Encapsulation (zapouzdření) (Ano/Ne) (Kde a jak?)
+        Ano. Transformace, Camera, pro získání hodnot, gettery/settery aby se nedaly napřímo upravovat attributy. 
+
+    b) Inheritance (dědičnost) (Ano/Ne) (Kde a jak?)
+        Ano. BaseObject -> DrawableObject
+                        -> Light
+                        -> Camera
+
+            Transformation -> Scale
+                           -> Translate
+                           -> Rotation
+                           -> DynamicTransformation -> DynamicRotation 
+
+    c) Polymorphism (polymorfismus neboli mnohotvárnost) (Ano/Ne) (Kde a jak?)
+        Ano. Jak bylo zmíněno výše, tak u Transformací a Objektů (BaseObject, DrawableObject, Light, Camera...)
+Vertex a fragment shadery prosím uložte do textových souboru a použijte přiložený ShaderLoader pro jejich načítání (Ano/Ne) (Kde a jak jste použili?)
+    Ano, dědím z něho v ShaderProgramu
