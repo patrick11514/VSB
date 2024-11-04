@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: 'UniversalSans';
+    src: url('/assets/fonts/Universal-Sans-Text-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'UniversalSans';
+    src: url('/assets/fonts/Universal-Sans-Text-Medium.woff2') format('woff2');
+    font-weight: medium;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'UniversalSans';
+    src: url('/assets/fonts/Universal-Sans-Text-Bold.woff2') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+}
+
+button {
+    @apply cursor-pointer rounded-md bg-white px-20 py-3 text-sm text-text;
+}
+
+.nav div {
+    @apply cursor-pointer rounded-md p-2;
+}
+
+.icons i {
+    @apply cursor-pointer rounded-sm px-1 py-0.5 hover:backdrop-blur;
+}

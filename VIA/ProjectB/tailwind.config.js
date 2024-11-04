@@ -4,7 +4,8 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                text: "#171A20"
+                text: "#171A20",
+                blue: "#3e6ae1"
             },
             fontFamily: {
                 "universal-sans": "UniversalSans, Arial, sans-serif"
