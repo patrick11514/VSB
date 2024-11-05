@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.set {
+    @apply flex flex-row mx-auto gap-2;
+}
+
+.set label {
+    @apply text-lg font-bold;
+}
