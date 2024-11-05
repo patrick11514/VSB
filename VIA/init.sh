@@ -1,2 +1,2 @@
 #!/bin/bash
-cp -r Default $0
+cp -r Default $1
