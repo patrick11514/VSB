@@ -6,6 +6,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -234,8 +236,8 @@ public class SokoView extends View{
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        width = w / lW;
-        height = h / lH;
+        width = w;
+        height = h;
         super.onSizeChanged(w, h, oldw, oldh);
     }
 
@@ -244,13 +246,23 @@ public class SokoView extends View{
     @Override
     protected void onDraw(Canvas canvas) {
 
+        Paint tbPaint = new Paint();
+        tbPaint.setColor(Color.BLACK);
+
+        canvas.drawRect(new Rect(0,0, width, height), tbPaint);
+
+        int rectWidth = width / lW;
+        int rectHeight = height / lH;
+
+        int side = Math.min(rectWidth, rectHeight);
+
         for (int y = 0; y < lH; y++) {
             for (int x = 0; x < lW; x++) {
                 canvas.drawBitmap(bmp[level[y*lW + x]], null,
-                        new Rect(x*width,
-                                y*height,
-                                (x+1)*width,
-                                (y+1)*height), null);
+                        new Rect(x*side,
+                                y*side,
+                                (x+1)*side,
+                                (y+1)*side), null);
             }
         }
 
