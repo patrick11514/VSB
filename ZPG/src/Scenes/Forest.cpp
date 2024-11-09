@@ -1,4 +1,5 @@
 #include "Forest.hpp"
+#include "../Light/Light.hpp"
 #include "../Object/Objects.hpp"
 #include "../Transformation/DynamicRotation.hpp"
 #include "../Transformation/DynamicTransformation.hpp"
@@ -14,6 +15,8 @@ void Forest::addObjects() {
   Camera *camera = new Camera();
   camera->enable();
   this->addObject(camera);
+  this->addObject(
+      new Light(glm::vec3(1.0, 1.0, 1.0), glm::vec3(1.0, 10.0, 1.0)));
 
   // clang-format off
     Model model(std::vector<float>{
@@ -43,7 +46,16 @@ void Forest::addObjects() {
   std::uniform_real_distribution<float> rotation(0, 360);
   std::uniform_real_distribution<float> rotationFactor(-0.01, 0.01);
 
-  for (int i = 0; i < 500; ++i) {
+  auto tree = createTree(
+      this->shaderStorage.getShaderProgram("blinnphong"),
+      std::make_shared<DynamicTransformation>()
+          ->addTransformation(
+              new DynamicRotation(10.f, glm::vec3(0.f, 1.f, 0.f), 0.01))
+          ->addTransformation(new Translate(glm::vec3(2.0, 2.0, 2.0))));
+
+  this->addObject(tree);
+
+  for (int i = 0; i < 100; ++i) {
     float s = scale(rng);
     float xCoord = x(rng);
     float zCoord = z(rng);
@@ -57,7 +69,7 @@ void Forest::addObjects() {
         ->addTransformation(new Translate(glm::vec3(xCoord, 0, zCoord)));
 
     auto tree =
-        createTree(this->shaderStorage.getShaderProgram("greenByCoord"), tran);
+        createTree(this->shaderStorage.getShaderProgram("lamber t"), tran);
 
     /*tree.setAnimationFunction([](const glm::mat4x4 &tran, float time) {
       auto rotation = Rotation(time, glm::vec3(1.f, 1.f, 1.f));
@@ -67,7 +79,7 @@ void Forest::addObjects() {
     this->addObject(tree);
   }
 
-  for (int i = 0; i < 500; ++i) {
+  for (int i = 0; i < 100; ++i) {
     float s = 0.5 + scale(rng);
     float xCoord = x(rng);
     float zCoord = z(rng);
