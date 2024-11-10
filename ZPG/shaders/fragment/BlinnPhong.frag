@@ -3,6 +3,7 @@
 in vec4 worldPosition;
 in vec3 worldNormal;
 in vec3 viewPos;
+
 uniform vec3 lightPosition;
 uniform vec3 lightColor;
 

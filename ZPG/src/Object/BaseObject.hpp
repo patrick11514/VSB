@@ -1,8 +1,10 @@
 #pragma once
 
+#include "../Modifiers/BasicAttribute.hpp"
+
 class Scene;
 
-class BaseObject {
+class BaseObject : public BasicAttribute {
 private:
   Scene *myScene = nullptr; ///< Scene in which is current object presented
 public:

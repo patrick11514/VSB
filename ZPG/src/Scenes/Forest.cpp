@@ -1,8 +1,7 @@
 #include "Forest.hpp"
-#include "../Light/Light.hpp"
+#include "../Light/BallLight.hpp"
 #include "../Object/Objects.hpp"
 #include "../Transformation/DynamicRotation.hpp"
-#include "../Transformation/DynamicTransformation.hpp"
 #include "../Transformation/Scale.hpp"
 #include "../Transformation/Translate.hpp"
 
@@ -16,24 +15,34 @@ void Forest::addObjects() {
   camera->enable();
   this->addObject(camera);
   this->addObject(
-      new Light(glm::vec3(1.0, 1.0, 1.0), glm::vec3(1.0, 10.0, 1.0)));
+      new Light(glm::vec3(1.0, 1.0, 1.0),
+                std::make_shared<Transformation>()->addTransformation(
+                    new Translate(glm::vec3{4.0, 2.0, 4.0})),
+                1.0, 0.7, 1.8));
 
   // clang-format off
     Model model(std::vector<float>{
-    -1.0f, 0.0f, 1.0f,    // Top Left
-     1.0f, 0.0f, 1.0f,    // Top Right
-     1.0f, 0.0f, -1.0f,   // Bottom Right
-    -1.0f, 0.0f, -1.0f    // Bottom Left
+    -1.0f, 0.0f, 1.0f,  0.f, 1.f, 0.f,    // Top Left
+     1.0f, 0.0f, 1.0f,  0.f, 1.f, 0.f,  // Top Right
+     1.0f, 0.0f, -1.0f, 0.f, 1.f, 0.f, // Bottom Right
+    -1.0f, 0.0f, -1.0f, 0.f, 1.f, 0.f, // Bottom Left
   });
   // clang-format on
 
   auto tran = std::make_shared<Transformation>();
   tran->addTransformation(new Scale(glm::vec3(200.f, 1.f, 200.f)));
 
-  DrawableObject *obj =
-      new DrawableObject(std::make_shared<ObjectData>(model),
-                         this->shaderStorage.getShaderProgram("green"), tran,
-                         []() { glDrawArrays(GL_QUADS, 0, 4); });
+  DrawableObject *obj = new DrawableObject(
+      std::make_shared<ObjectData>(
+          model, 2,
+          []() {
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+                                  (GLvoid *)0);
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+                                  (GLvoid *)(3 * sizeof(float)));
+          }),
+      this->shaderStorage.getShaderProgram("new"), tran,
+      []() { glDrawArrays(GL_QUADS, 0, 4); });
 
   this->addObject(obj);
 
@@ -47,8 +56,8 @@ void Forest::addObjects() {
   std::uniform_real_distribution<float> rotationFactor(-0.01, 0.01);
 
   auto tree = createTree(
-      this->shaderStorage.getShaderProgram("blinnphong"),
-      std::make_shared<DynamicTransformation>()
+      this->shaderStorage.getShaderProgram("new"),
+      std::make_shared<Transformation>()
           ->addTransformation(
               new DynamicRotation(10.f, glm::vec3(0.f, 1.f, 0.f), 0.01))
           ->addTransformation(new Translate(glm::vec3(2.0, 2.0, 2.0))));
@@ -61,15 +70,14 @@ void Forest::addObjects() {
     float zCoord = z(rng);
     float rotate = rotation(rng);
 
-    auto tran = std::make_shared<DynamicTransformation>();
+    auto tran = std::make_shared<Transformation>();
     tran->addTransformation(new DynamicRotation(rotate,
                                                 glm::vec3(0.f, 1.f, 0.f),
                                                 rotationFactor(rng)))
         ->addTransformation(new Scale(glm::vec3(s)))
         ->addTransformation(new Translate(glm::vec3(xCoord, 0, zCoord)));
 
-    auto tree =
-        createTree(this->shaderStorage.getShaderProgram("lamber t"), tran);
+    auto tree = createTree(this->shaderStorage.getShaderProgram("new"), tran);
 
     /*tree.setAnimationFunction([](const glm::mat4x4 &tran, float time) {
       auto rotation = Rotation(time, glm::vec3(1.f, 1.f, 1.f));

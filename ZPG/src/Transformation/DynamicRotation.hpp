@@ -1,13 +1,13 @@
 #pragma once
 
-#include "DynamicTransformation.hpp"
+#include "Transformation.hpp"
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/vector_float3.hpp>
 
 /**
  * @brief Dynamic Rotation Transformation
  */
-class DynamicRotation : public DynamicTransformation {
+class DynamicRotation : public Transformation {
 private:
   float angle;
   glm::vec3 axes;
@@ -32,6 +32,6 @@ public:
   DynamicRotation(float angle, glm::vec3 axes, float timeFactor)
       : angle(angle), axes(axes), timeFactor(timeFactor) {};
 
-  glm::mat4 getMatrix(float elapsedTime)
-      const override; ///< Return finalMatrix multiplied by elapsed time
+  glm::mat4
+  getMatrix() const override; ///< Return finalMatrix multiplied by elapsed time
 };

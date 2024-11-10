@@ -13,8 +13,8 @@ void LightBalls::addObjects() {
   camera->enable();
   this->addObject(camera);
 
-  this->addObject(
-      new Light(glm::vec3{1.0f, 1.0f, 1.0f}, glm::vec3{0.f, 0.f, 0.f}));
+  this->addObject(new Light(glm::vec3{1.0f, 1.0f, 1.0f},
+                            std::make_shared<Transformation>(), 0.1, 0.1, 0.1));
 
   this->addObject(createBall(
       this->shaderStorage.getShaderProgram("phong"),

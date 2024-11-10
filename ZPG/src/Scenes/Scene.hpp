@@ -13,6 +13,7 @@ class Light;
 class Scene {
 private:
   std::vector<BaseObject *> objects; ///< Vector of all objects in this scene
+  int lightCount = 0;
 
 public:
   virtual ~Scene();
@@ -26,7 +27,9 @@ public:
 
   Camera *
   getCamera(); ///< Get camera from scene TODO: add support for more cameras
-  Light *getLight(); ///< Get light from scene TODO: add support for more light
+  std::vector<Light *>
+  getLights() const; ///< Get light from scene TODO: add support for more light
+  Light *getLight(int id) const;
 
   void render() const; ///< Render scene called in mainLoop of application
 };

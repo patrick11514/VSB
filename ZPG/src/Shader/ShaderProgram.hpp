@@ -1,8 +1,10 @@
 #pragma once
 
 #include "../Camera.hpp"
+#include "../Light/Light.hpp"
 #include "../Patterns/Observer.hpp"
 #include "../ShaderLoader/ShaderLoader.h"
+#include "../Transformation/Transformation.hpp"
 #include "Shader.hpp"
 
 #include <glm/gtc/type_ptr.hpp>
@@ -16,7 +18,7 @@ class Scene;
  * Shader
  */
 class ShaderProgram : public ShaderLoader, public Observer {
-private:
+public:                   //@TODO RESET
   GLuint programId;       ///< If of program
   Controller *controller; ///< Pointer to controller
   Camera *camera;         ///< Vector to pointer to camera
@@ -32,15 +34,20 @@ private:
   void putParameter(const std::string &name, const T &value) const {
     GLint position = glGetUniformLocation(this->programId, name.c_str());
     if (position == -1) {
-      throw std::runtime_error("Unable to find modelMatrix position");
+      printf("Unable to find %s position\n", name.c_str());
+      return;
     }
 
     if constexpr (std::is_same<T, glm::mat4>::value) {
-
       glUniformMatrix4fv(position, 1, GL_FALSE, glm::value_ptr(value));
     } else if constexpr (std::is_same<T, glm::vec3>::value) {
-
       glUniform3fv(position, 1, glm::value_ptr(value));
+    } else if constexpr (std::is_same<T, float>::value) {
+      glUniform1f(position, value);
+    } else if constexpr (std::is_same<T, int>::value) {
+      glUniform1i(position, value);
+    } else if constexpr (std::is_same<T, glm::vec4>::value) {
+      glUniform4fv(position, 1, glm::value_ptr(value));
     } else {
       throw std::runtime_error("Passed invalid type to " + name);
     }
@@ -87,10 +94,10 @@ public:
   void
   update(const Observable *who) override; ///< Update viewMatrix from Camera
 
-  void putModelMatrix(const glm::mat4 &matrix) const;
+  void putModelMatrix(const Transformation *transformations) const;
   void putProjectionMatrix(const glm::mat4 &matrix) const;
   void putViewMatrix(const glm::mat4 &matrix) const;
   void putCameraPosition(const glm::vec3 &vector) const;
-  void putLightPosition(const glm::vec3 &vector) const;
-  void putLightColor(const glm::vec3 &vector) const;
+  void putLightPosition(const Light *light) const;
+  void putLightProperties(const Light *light) const;
 };

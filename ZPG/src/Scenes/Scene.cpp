@@ -1,6 +1,6 @@
 #include "Scene.hpp"
 #include "../Light/Light.hpp"
-#include "../Object/DrawableObject.hpp"
+#include "../Modifiers/Drawable.hpp"
 
 #include <GLFW/glfw3.h>
 #include <glm/ext/matrix_float4x4.hpp>
@@ -14,20 +14,22 @@ Scene::~Scene() {
 void Scene::addObject(BaseObject *object) {
   object->assignScene(this);
   this->objects.push_back(object);
+
+  // assing light id
+  if (Light *light = dynamic_cast<Light *>(object)) {
+    light->assignId(this->lightCount++);
+  }
 }
 
 void Scene::render() const {
-  float time = glfwGetTime();
-
   for (const auto *object : this->objects) {
-    if (dynamic_cast<const DrawableObject *>(object) != nullptr) {
-      static_cast<const DrawableObject *>(object)->draw(time);
+    if (const Drawable *drawable = dynamic_cast<const Drawable *>(object)) {
+      drawable->draw();
     }
   }
 }
 
 Camera *Scene::getCamera() {
-  // TODO: Add support for more cameras
   for (auto *object : this->objects) {
     if (dynamic_cast<Camera *>(object) == nullptr)
       continue;
@@ -42,15 +44,28 @@ Camera *Scene::getCamera() {
   return nullptr;
 }
 
-Light *Scene::getLight() {
+std::vector<Light *> Scene::getLights() const {
   // TODO: Add support for more lights
+  std::vector<Light *> lights;
   for (auto *object : this->objects) {
     if (dynamic_cast<Light *>(object) == nullptr)
       continue;
 
-    return static_cast<Light *>(object);
+    lights.emplace_back(static_cast<Light *>(object));
   }
 
   // no light found
+  return lights;
+}
+
+Light *Scene::getLight(int id) const {
+  //@TODO
+  for (auto *object : this->objects) {
+    if (auto *light = dynamic_cast<Light *>(object)) {
+      if (light->getId() == id)
+        return light;
+    }
+  }
+
   return nullptr;
 }

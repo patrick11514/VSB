@@ -68,8 +68,8 @@ void App::prepareScenes() {
 
   this->addScene("obj", new Objects(this->shaders));
   this->addScene("forest", new Forest(this->shaders));
-  this->addScene("light", new LightBalls(this->shaders));
-  this->addScene("different_light", new DifferentLight(this->shaders));
+  // this->addScene("light", new LightBalls(this->shaders));
+  // this->addScene("different_light", new DifferentLight(this->shaders));
 }
 
 void App::createShaders() {
@@ -140,6 +140,11 @@ void App::createShaders() {
         "blinnphong", new ShaderProgram("../shaders/vertex/BlinnPhong.vert",
                                         "../shaders/fragment/BlinnPhong.frag",
                                         this->controller));
+
+    this->shaders.addShaderProgram(
+        "new", new ShaderProgram("../shaders/vertex/Base.vert",
+                                 "../shaders/fragment/BaseBlinn.frag",
+                                 this->controller));
   } catch (const std::runtime_error &ex) {
     printf("Shader Exception: %s\n", ex.what());
     this->destroy(EXIT_FAILURE);
@@ -225,6 +230,9 @@ void App::switchScene(const std::string &name) {
   this->currentScene = name;
   auto currentScene = this->getCurrentScene();
   currentScene->getCamera()->notifyObservers();
+  for (auto *light : currentScene->getLights()) {
+    light->notifyObservers();
+  }
 }
 
 void App::printVersionInfo() {

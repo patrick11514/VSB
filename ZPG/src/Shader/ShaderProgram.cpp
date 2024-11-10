@@ -1,13 +1,17 @@
 
 #include "ShaderProgram.hpp"
 #include "../Controller.hpp"
-#include "../Light/Light.hpp"
 #include "../Scenes/Scene.hpp"
 #include "Shader.hpp"
 
 #include <GLFW/glfw3.h>
+#include <format>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
 #include <stdio.h>
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/string_cast.hpp>
 
 ShaderProgram::ShaderProgram(const Shader &vertexShader,
                              const Shader &fragmentShader,
@@ -57,7 +61,6 @@ void ShaderProgram::registerToCamera(Scene *scene) {
   // Does my shader have view matrix
   if (this->checkParameter("viewMatrix")) {
     // add me as observe
-    // TODO: extend support for more cameras
     auto *camera = scene->getCamera();
 
     if (camera == nullptr) {
@@ -72,19 +75,26 @@ void ShaderProgram::registerToCamera(Scene *scene) {
 
 void ShaderProgram::registerToLight(Scene *scene) {
   // Does my shader have light
-  if (this->checkParameter("lightPosition") &&
-      this->checkParameter("lightColor")) {
+  if (this->checkParameter("lightCount")) {
     // add me as observe
     // TODO: extend support for more lights
-    auto *light = scene->getLight();
+    auto lights = scene->getLights();
 
-    if (light == nullptr) {
+    if (lights.size() == 0) {
       printf("Scene without light\n");
       return;
     }
 
-    light->registerObserver(this);
-    this->update(light);
+    printf("Lightcount - %ld\n", lights.size());
+
+    this->setProgram();
+    this->putParameter("lightCount", static_cast<int>(lights.size()));
+
+    for (auto *light : lights) {
+      light->registerObserver(this);
+
+      this->update(light);
+    }
   }
 }
 
@@ -109,15 +119,16 @@ void ShaderProgram::update(const Observable *who) {
     // update lightning
     auto *light = static_cast<const Light *>(who);
 
-    this->putLightPosition(light->getPosition());
-    this->putLightColor(light->getColor());
+    this->putLightPosition(light);
+    this->putLightProperties(light);
   }
 
   ShaderProgram::resetProgram();
 }
 
-void ShaderProgram::putModelMatrix(const glm::mat4 &matrix) const {
-  this->putParameter("modelMatrix", matrix);
+void ShaderProgram::putModelMatrix(
+    const Transformation *transformations) const {
+  this->putParameter("modelMatrix", transformations->getMatrix());
 }
 
 void ShaderProgram::putViewMatrix(const glm::mat4 &matrix) const {
@@ -132,10 +143,23 @@ void ShaderProgram::putCameraPosition(const glm::vec3 &vector) const {
   this->putParameter("cameraPosition", vector);
 }
 
-void ShaderProgram::putLightPosition(const glm::vec3 &vector) const {
-  this->putParameter("lightPosition", vector);
+void ShaderProgram::putLightPosition(const Light *light) const {
+  this->putParameter(std::format("lights[{}].lightMatrix", light->getId()),
+                     light->getTransformations()->getMatrix());
 }
 
-void ShaderProgram::putLightColor(const glm::vec3 &vector) const {
-  this->putParameter("lightColor", vector);
+void ShaderProgram::putLightProperties(const Light *light) const {
+  printf("putting light %d\n", light->getId());
+
+  std::cout << "putting color: " << glm::to_string(light->getColor())
+            << std::endl;
+
+  this->putParameter(std::format("lights[{}].color", light->getId()),
+                     light->getColor());
+  this->putParameter(std::format("lights[{}].kc", light->getId()),
+                     light->getKc());
+  this->putParameter(std::format("lights[{}].kl", light->getId()),
+                     light->getKl());
+  this->putParameter(std::format("lights[{}].kq", light->getId()),
+                     light->getKq());
 }
