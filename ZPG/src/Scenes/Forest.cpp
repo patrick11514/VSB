@@ -64,7 +64,7 @@ void Forest::addObjects() {
 
   this->addObject(tree);
 
-  for (int i = 0; i < 100; ++i) {
+  for (int i = 0; i < 1000; ++i) {
     float s = scale(rng);
     float xCoord = x(rng);
     float zCoord = z(rng);
