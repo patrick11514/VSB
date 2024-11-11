@@ -5,17 +5,12 @@ layout(location=1) in vec3 norm;
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-uniform vec3 cameraPosition;
 
-out vec4 worldPosition;
-out vec3 worldNormal;
-out vec3 viewPos;
-//uniform mat3 normalMatrix; //(M-1)T
+out vec4 positionCS;
+out vec3 normalCS;
 
 void main(void){
-    gl_Position = (projectionMatrix * viewMatrix * modelMatrix) * vec4(vp, 1.0f);
-    worldPosition = modelMatrix * vec4(vp, 1.0f);
-    worldNormal = normalize(mat3(transpose(inverse(modelMatrix))) * norm);
-
-    viewPos = cameraPosition;
+    positionCS = (viewMatrix * modelMatrix) * vec4(vp, 1.0);
+    gl_Position = projectionMatrix * positionCS;
+    normalCS = normalize(mat3(transpose(inverse(viewMatrix * modelMatrix))) * norm);
 }

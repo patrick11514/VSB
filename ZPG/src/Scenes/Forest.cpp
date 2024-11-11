@@ -18,7 +18,7 @@ void Forest::addObjects() {
       new Light(glm::vec3(1.0, 1.0, 1.0),
                 std::make_shared<Transformation>()->addTransformation(
                     new Translate(glm::vec3{4.0, 2.0, 4.0})),
-                1.0, 0.7, 1.8));
+                1.0, 0.09, 0.032));
 
   // clang-format off
     Model model(std::vector<float>{
