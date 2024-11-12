@@ -1,7 +1,11 @@
 #version 330
 #define MAX_LIGHTS 69
+//light types
+#define POINT_LIGHT 0
+#define REFLECTOR 1 
 
 struct Light {
+    int lightType;
     mat4 lightMatrix;   // Light's transformation matrix (from light space to world space)
     vec3 color;         // Light color (no alpha)
     float kc;           // Constant attenuation
