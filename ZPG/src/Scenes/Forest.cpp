@@ -41,7 +41,7 @@ void Forest::addObjects() {
             glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
                                   (GLvoid *)(3 * sizeof(float)));
           }),
-      this->shaderStorage.getShaderProgram("new"), tran,
+      this->shaderStorage.getShaderProgram("lambert"), tran,
       []() { glDrawArrays(GL_QUADS, 0, 4); });
 
   this->addObject(obj);
@@ -56,7 +56,7 @@ void Forest::addObjects() {
   std::uniform_real_distribution<float> rotationFactor(-0.01, 0.01);
 
   auto tree = createTree(
-      this->shaderStorage.getShaderProgram("new"),
+      this->shaderStorage.getShaderProgram("blinnphong"),
       std::make_shared<Transformation>()
           ->addTransformation(
               new DynamicRotation(10.f, glm::vec3(0.f, 1.f, 0.f), 0.01))
@@ -64,7 +64,7 @@ void Forest::addObjects() {
 
   this->addObject(tree);
 
-  for (int i = 0; i < 1000; ++i) {
+  for (int i = 0; i < 100; ++i) {
     float s = scale(rng);
     float xCoord = x(rng);
     float zCoord = z(rng);
@@ -77,7 +77,8 @@ void Forest::addObjects() {
         ->addTransformation(new Scale(glm::vec3(s)))
         ->addTransformation(new Translate(glm::vec3(xCoord, 0, zCoord)));
 
-    auto tree = createTree(this->shaderStorage.getShaderProgram("new"), tran);
+    auto tree =
+        createTree(this->shaderStorage.getShaderProgram("blinnphong"), tran);
 
     /*tree.setAnimationFunction([](const glm::mat4x4 &tran, float time) {
       auto rotation = Rotation(time, glm::vec3(1.f, 1.f, 1.f));
@@ -97,6 +98,6 @@ void Forest::addObjects() {
     tran->addTransformation(new Translate(glm::vec3(xCoord, 0, zCoord)));
 
     this->addObject(
-        createBush(this->shaderStorage.getShaderProgram("idk"), tran));
+        createBush(this->shaderStorage.getShaderProgram("blinnphong"), tran));
   }
 }

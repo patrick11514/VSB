@@ -9,6 +9,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 #include <stdexcept>
+#include <string>
 
 class Controller;
 class Scene;
@@ -38,6 +39,7 @@ public:                   //@TODO RESET
       return;
     }
 
+    this->setProgram();
     if constexpr (std::is_same<T, glm::mat4>::value) {
       glUniformMatrix4fv(position, 1, GL_FALSE, glm::value_ptr(value));
     } else if constexpr (std::is_same<T, glm::vec3>::value) {
@@ -51,6 +53,7 @@ public:                   //@TODO RESET
     } else {
       throw std::runtime_error("Passed invalid type to " + name);
     }
+    this->resetProgram();
   }
 
 public:
@@ -72,6 +75,11 @@ public:
    */
   ShaderProgram(const char *vertexShaderPath, const char *fragmentShaderPath,
                 Controller *controller);
+
+  ShaderProgram(const std::string &vertexShaderPath,
+                const std::string &fragmentShaderPath, Controller *controller)
+      : ShaderProgram(vertexShaderPath.c_str(), fragmentShaderPath.c_str(),
+                      controller) {};
 
   void setProgram() const; ///< Set program on gpu
 

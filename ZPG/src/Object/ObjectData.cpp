@@ -30,7 +30,7 @@ void ObjectData::defaultSlice() {
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid *)0);
 }
 
-void ObjectData::setArray() const { glBindVertexArray(this->VAO); }
+void ObjectData::bindArray() const { glBindVertexArray(this->VAO); }
 
 bool ObjectData::operator==(const ObjectData &other) const {
   return this->VAO == other.VAO;

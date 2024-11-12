@@ -87,7 +87,6 @@ void ShaderProgram::registerToLight(Scene *scene) {
 
     printf("Lightcount - %ld\n", lights.size());
 
-    this->setProgram();
     this->putParameter("lightCount", static_cast<int>(lights.size()));
 
     for (auto *light : lights) {
@@ -103,8 +102,6 @@ bool ShaderProgram::operator==(const ShaderProgram &other) const {
 }
 
 void ShaderProgram::update(const Observable *who) {
-  this->setProgram();
-
   if (dynamic_cast<const Camera *>(who) != nullptr) {
     auto *camera = static_cast<const Camera *>(who);
 
@@ -122,8 +119,6 @@ void ShaderProgram::update(const Observable *who) {
     this->putLightPosition(light);
     this->putLightProperties(light);
   }
-
-  ShaderProgram::resetProgram();
 }
 
 void ShaderProgram::putModelMatrix(

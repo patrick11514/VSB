@@ -8,6 +8,7 @@
 #include "Shader/ShaderProgram.hpp"
 
 #include <GLFW/glfw3.h>
+#include <format>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/vector_float3.hpp>
@@ -73,78 +74,31 @@ void App::prepareScenes() {
 }
 
 void App::createShaders() {
+  std::unordered_map<std::string, std::pair<std::string, std::string>>
+      shadersToLoad{
+          {"ColorsByCoord", {"ColorByCoords.vert", "ColorByCoords.frag"}},
+          {"ColorPurple", {"Purple.vert", "Purple.frag"}},
+          {"MatShader", {"Rotation.vert", "ColorByCoords.frag"}},
+          {"MatShaderStatic", {"RotationStaticColor.vert", "Purple.frag"}},
+          {"blue", {"RotationStaticColor.vert", "Blue.frag"}},
+          {"red", {"RotationStaticColor.vert", "Red.frag"}},
+          {"green", {"RotationStaticColor.vert", "Green.frag"}},
+          {"darkGreen", {"RotationStaticColor.vert", "GreenDark.frag"}},
+          {"greenByCoord", {"GreenByCoords.vert", "GreenByCoords.frag"}},
+          {"lambert", {"Base.vert", "BaseLambert.frag"}},
+          {"phong", {"Phong.vert", "Phong.frag"}},
+          {"blinnphong", {"Base.vert", "BaseBlinn.frag"}},
+      };
+
   try {
-    this->shaders.addShaderProgram(
-        "ColorByCoords",
-        new ShaderProgram("../shaders/vertex/ColorByCoords.vert",
-                          "../shaders/fragment/ColorByCoords.frag",
-                          this->controller));
-
-    this->shaders.addShaderProgram(
-        "ColorPurple",
-        new ShaderProgram("../shaders/vertex/Purple.vert",
-                          "../shaders/fragment/Purple.frag", this->controller));
-
-    this->shaders.addShaderProgram(
-        "MatShader", new ShaderProgram("../shaders/vertex/Rotation.vert",
-                                       "../shaders/fragment/ColorByCoords.frag",
-                                       this->controller));
-
-    this->shaders.addShaderProgram(
-        "MatShaderStatic",
-        new ShaderProgram("../shaders/vertex/RotationStaticColor.vert",
-                          "../shaders/fragment/Purple.frag", this->controller));
-
-    this->shaders.addShaderProgram(
-        "blue",
-        new ShaderProgram("../shaders/vertex/RotationStaticColor.vert",
-                          "../shaders/fragment/Blue.frag", this->controller));
-    this->shaders.addShaderProgram(
-        "red",
-        new ShaderProgram("../shaders/vertex/RotationStaticColor.vert",
-                          "../shaders/fragment/Red.frag", this->controller));
-
-    this->shaders.addShaderProgram(
-        "green",
-        new ShaderProgram("../shaders/vertex/RotationStaticColor.vert",
-                          "../shaders/fragment/Green.frag", this->controller));
-    this->shaders.addShaderProgram(
-        "darkGreen",
-        new ShaderProgram("../shaders/vertex/RotationStaticColor.vert",
-                          "../shaders/fragment/GreenDark.frag",
-                          this->controller));
-
-    this->shaders.addShaderProgram(
-        "greenByCoord",
-        new ShaderProgram("../shaders/vertex/GreenByCoords.vert",
-                          "../shaders/fragment/GreenByCoords.frag",
-
-                          this->controller));
-
-    this->shaders.addShaderProgram(
-        "idk", new ShaderProgram("../shaders/vertex/IdkBarvy.vert",
-                                 "../shaders/fragment/ColorByCoords.frag",
-                                 this->controller));
-
-    this->shaders.addShaderProgram(
-        "lambert", new ShaderProgram("../shaders/vertex/Lambert.vert",
-                                     "../shaders/fragment/Lambert.frag",
-                                     this->controller));
-
-    this->shaders.addShaderProgram(
-        "phong",
-        new ShaderProgram("../shaders/vertex/Phong.vert",
-                          "../shaders/fragment/Phong.frag", this->controller));
-
-    this->shaders.addShaderProgram(
-        "blinnphong", new ShaderProgram("../shaders/vertex/BlinnPhong.vert",
-                                        "../shaders/fragment/BlinnPhong.frag",
-                                        this->controller));
-
-    this->shaders.addShaderProgram(
-        "new", new ShaderProgram("../shaders/vertex/Base.vert",
-                                 "../shaders/fragment/BaseBlinn.frag",
-                                 this->controller));
+    for (auto &pair : shadersToLoad) {
+      this->shaders.addShaderProgram(
+          pair.first,
+          new ShaderProgram(
+              std::format("../shaders/vertex/{}", pair.second.first),
+              std::format("../shaders/fragment/{}", pair.second.second),
+              this->controller));
+    }
   } catch (const std::runtime_error &ex) {
     printf("Shader Exception: %s\n", ex.what());
     this->destroy(EXIT_FAILURE);

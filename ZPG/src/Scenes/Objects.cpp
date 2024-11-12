@@ -19,7 +19,7 @@ void Objects::addObjects() {
           ->addTransformation(new Translate(glm::vec3(1.f, 0.f, 0.f)))));
 
   this->addObject(
-      createBush(this->shaderStorage.getShaderProgram("idk"),
+      createBush(this->shaderStorage.getShaderProgram("blinnphong"),
                  std::make_shared<Transformation>()->addTransformation(
                      new Translate(glm::vec3(-0.5f, 0.5f, 0.f)))));
 
@@ -28,6 +28,6 @@ void Objects::addObjects() {
                  std::make_shared<Transformation>()->addTransformation(
                      new Scale(glm::vec3(.1f)))));
 
-  this->addObject(createGift(this->shaderStorage.getShaderProgram("idk"),
+  this->addObject(createGift(this->shaderStorage.getShaderProgram("blinnphong"),
                              std::make_shared<Transformation>()));
 }

@@ -38,7 +38,7 @@ public:
   static void defaultSlice(); ///< Default slice function, which will slice the
                               ///< array by 3 floats (x,y,z)
 
-  void setArray() const; ///< Binds the array on GPU
+  void bindArray() const; ///< Binds the array on GPU
 
   // operators
   bool operator==(const ObjectData &other) const; ///< compare operator
