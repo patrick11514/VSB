@@ -1,5 +1,8 @@
 #include "Forest.hpp"
-#include "../Light/BallLight.hpp"
+#include "../Light/DirectionalLight.hpp"
+#include "../Light/Flashlight.hpp"
+#include "../Light/PointLight.hpp"
+#include "../Light/ReflectorLight.hpp"
 #include "../Object/Objects.hpp"
 #include "../Transformation/DynamicRotation.hpp"
 #include "../Transformation/Scale.hpp"
@@ -15,10 +18,19 @@ void Forest::addObjects() {
   camera->enable();
   this->addObject(camera);
   this->addObject(
-      new Light(glm::vec3(1.0, 1.0, 1.0),
-                std::make_shared<Transformation>()->addTransformation(
-                    new Translate(glm::vec3{4.0, 2.0, 4.0})),
-                1.0, 0.09, 0.032));
+      new PointLight(glm::vec3(1.0, 1.0, 1.0),
+                     std::make_shared<Transformation>()->addTransformation(
+                         new Translate(glm::vec3{4.0, 2.0, 4.0})),
+                     1.0, 0.09, 0.032));
+  this->addObject(
+      new DirectionalLight(glm::vec3(1.0, 0.0, 0.0), glm::vec3{1.0, 0.0, 0.0}));
+
+  this->addObject(new ReflectorLight(
+      glm::vec3(0.0, 1.0, 0.0), glm::vec3{0.0, -1.0, 0.0}, 30.f,
+      std::make_shared<Transformation>()->addTransformation(
+          new Translate(glm::vec3{20.0, 5.0, 0.0}))));
+
+  this->addObject(new Flashlight(glm::vec3{0.0, 0.0, 1.0}, this->getCamera()));
 
   // clang-format off
     Model model(std::vector<float>{

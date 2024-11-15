@@ -51,7 +51,8 @@ public:                   //@TODO RESET
     } else if constexpr (std::is_same<T, glm::vec4>::value) {
       glUniform4fv(position, 1, glm::value_ptr(value));
     } else {
-      throw std::runtime_error("Passed invalid type to " + name);
+      throw std::runtime_error("Passed invalid type to " + name +
+                               " type: " + typeid(value).name());
     }
     this->resetProgram();
   }

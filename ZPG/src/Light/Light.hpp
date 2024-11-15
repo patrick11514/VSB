@@ -6,18 +6,17 @@
 
 #include <glm/ext/vector_float3.hpp>
 
+enum LightType { POINT, DIRECTIONAL, REFLECTOR };
 class Light : public BaseObject, public Observable, public Transformable {
 private:
+  LightType type;
   glm::vec3 color;
-  float kc; // contant attenuation
-  float kl; // linear attenuation
-  float kq; // quadratic attenuation
   int id;
 
 public:
-  Light(glm::vec3 color, const std::shared_ptr<Transformation> &transformations,
-        float kc, float kl, float kq)
-      : Transformable(transformations), color(color), kc(kc), kl(kl), kq(kq) {};
+  Light(glm::vec3 color, std::shared_ptr<Transformation> transformations,
+        LightType type)
+      : Transformable(transformations), type(type), color(color) {};
 
   virtual ~Light() = default;
 
@@ -25,7 +24,5 @@ public:
 
   int getId() const;
   glm::vec3 getColor() const;
-  float getKc() const;
-  float getKl() const;
-  float getKq() const;
+  LightType getType() const;
 };

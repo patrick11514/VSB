@@ -76,6 +76,8 @@ void Camera::notifyObservers() {
 
 glm::vec3 Camera::getPosition() const { return this->eye; }
 
+glm::vec3 Camera::getTarget() const { return this->target; }
+
 void Camera::enable() { this->enabled = true; }
 
 void Camera::disabled() { this->enabled = false; }

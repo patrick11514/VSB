@@ -48,6 +48,7 @@ public:
   void notifyObservers();
 
   glm::vec3 getPosition() const; // getCurrentPosition of eye
+  glm::vec3 getTarget() const;
 
   void enable();
   void disabled();

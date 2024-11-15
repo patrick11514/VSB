@@ -3,16 +3,16 @@
 #include "../Modifiers/Drawable.hpp"
 #include "../Object/Models/sphere.h"
 #include "../Object/ObjectData.hpp"
-#include "Light.hpp"
+#include "PointLight.hpp"
 
 #include <glm/ext/vector_float3.hpp>
 
-class BallLight : public Light, public Drawable {
+class BallLight : public PointLight, public Drawable {
 public:
   BallLight(glm::vec3 color,
             const std::shared_ptr<Transformation> &transformations, float kc,
             float kl, float kq, ShaderProgram *shaderProgram)
-      : Light(color, transformations, kc, kl, kq),
+      : PointLight(color, transformations, kc, kl, kq),
         Drawable(std::make_shared<ObjectData>(
                      Model{sphere, sizeof(sphere) / sizeof(float)}, 2,
                      []() {

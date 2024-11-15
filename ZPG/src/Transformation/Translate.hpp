@@ -5,7 +5,7 @@
  * @brief Basic Translate Transformation
  */
 class Translate : public Transformation {
-private:
+protected:
   glm::mat4 finalMatrix;
 
 public:

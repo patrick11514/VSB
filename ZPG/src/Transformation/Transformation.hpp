@@ -27,10 +27,11 @@ public:
    */
   std::shared_ptr<Transformation> addTransformation(Transformation *tran);
 
-  virtual glm::mat4 getMatrix()
-      const; ///< Calculate Transformation Matrix from all given
-             ///< transformations TODO: implement for dynamic transformations,
-             ///< so transformation, can say it will be dynamic, then it will
-             ///< get the Elapsed animation time and it can perform some
-             ///< calculations before returning final matrice in getMatrix()
+  virtual glm::mat4
+  getMatrix() const; ///< Calculate Transformation Matrix from all given
+                     ///< transformations TODO: implement for dynamic
+                     ///< transformations, so transformation, can say it will be
+                     ///< dynamic, then it will get the Elapsed animation time
+                     ///< and it can perform some calculations before returning
+                     ///< final matrice in getMatrix()
 };

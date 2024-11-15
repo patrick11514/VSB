@@ -1,5 +1,5 @@
 #include "DifferentLight.hpp"
-#include "../Light/Light.hpp"
+#include "../Light/PointLight.hpp"
 #include "../Object/Objects.hpp"
 #include "../Transformation/Scale.hpp"
 #include "../Transformation/Translate.hpp"
@@ -13,8 +13,9 @@ void DifferentLight::addObjects() {
   camera->enable();
   this->addObject(camera);
 
-  this->addObject(new Light(glm::vec3{1.0f, 1.0f, 1.0f},
-                            std::make_shared<Transformation>(), 0.1, 0.1, 0.1));
+  this->addObject(new PointLight(glm::vec3{1.0f, 1.0f, 1.0f},
+                                 std::make_shared<Transformation>(), 0.1, 0.1,
+                                 0.1));
 
   this->addObject(createBall(
       this->shaderStorage.getShaderProgram("green"),

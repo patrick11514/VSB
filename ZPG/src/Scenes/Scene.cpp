@@ -1,5 +1,4 @@
 #include "Scene.hpp"
-#include "../Light/Light.hpp"
 #include "../Modifiers/Drawable.hpp"
 
 #include <GLFW/glfw3.h>

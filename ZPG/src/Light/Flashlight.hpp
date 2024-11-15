@@ -1,0 +1,34 @@
+#pragma once
+
+#include "../Camera.hpp"
+#include "../Patterns/Observable.hpp"
+#include "../Transformation/UpdatableTranslate.hpp"
+#include "ReflectorLight.hpp"
+
+#include <glm/ext/vector_float3.hpp>
+#include <memory>
+
+namespace {
+class FlashlightTransformation {
+protected:
+  UpdatableTranslate *translate;
+  std::shared_ptr<Transformation> transformation =
+      std::make_shared<Transformation>();
+};
+}; // namespace
+
+class Flashlight : public FlashlightTransformation,
+                   public ReflectorLight,
+                   public Observer {
+private:
+public:
+  Flashlight(glm::vec3 color, Camera *camera)
+      : ReflectorLight(color, glm::vec3{1.0}, 15.f, this->transformation) {
+    this->translate = new UpdatableTranslate(camera->getPosition());
+    this->transformation->addTransformation(this->translate);
+
+    camera->registerObserver(this);
+  }
+
+  void update(const Observable *who) override;
+};

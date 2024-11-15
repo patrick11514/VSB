@@ -1,17 +1,16 @@
 
 #include "ShaderProgram.hpp"
 #include "../Controller.hpp"
+#include "../Light/DirectionalLight.hpp"
+#include "../Light/PointLight.hpp"
+#include "../Light/ReflectorLight.hpp"
 #include "../Scenes/Scene.hpp"
 #include "Shader.hpp"
 
 #include <GLFW/glfw3.h>
 #include <format>
 #include <glm/gtc/type_ptr.hpp>
-#include <iostream>
 #include <stdio.h>
-
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/string_cast.hpp>
 
 ShaderProgram::ShaderProgram(const Shader &vertexShader,
                              const Shader &fragmentShader,
@@ -85,8 +84,6 @@ void ShaderProgram::registerToLight(Scene *scene) {
       return;
     }
 
-    printf("Lightcount - %ld\n", lights.size());
-
     this->putParameter("lightCount", static_cast<int>(lights.size()));
 
     for (auto *light : lights) {
@@ -144,17 +141,32 @@ void ShaderProgram::putLightPosition(const Light *light) const {
 }
 
 void ShaderProgram::putLightProperties(const Light *light) const {
-  printf("putting light %d\n", light->getId());
-
-  std::cout << "putting color: " << glm::to_string(light->getColor())
-            << std::endl;
-
+  this->putParameter(std::format("lights[{}].type", light->getId()),
+                     static_cast<int>(light->getType()));
   this->putParameter(std::format("lights[{}].color", light->getId()),
                      light->getColor());
-  this->putParameter(std::format("lights[{}].kc", light->getId()),
-                     light->getKc());
-  this->putParameter(std::format("lights[{}].kl", light->getId()),
-                     light->getKl());
-  this->putParameter(std::format("lights[{}].kq", light->getId()),
-                     light->getKq());
+
+  if (const auto *directionalLight =
+          dynamic_cast<const DirectionalLight *>(light)) {
+    this->putParameter(std::format("lights[{}].direction", light->getId()),
+                       directionalLight->getDirection());
+
+  } else if (const auto *reflectorLight =
+                 dynamic_cast<const ReflectorLight *>(light)) {
+    this->putParameter(std::format("lights[{}].direction", light->getId()),
+                       reflectorLight->getDirection());
+
+    this->putParameter(std::format("lights[{}].angle", light->getId()),
+                       reflectorLight->getAngle());
+
+  } else if (const auto *pointLight = dynamic_cast<const PointLight *>(light)) {
+    this->putParameter(std::format("lights[{}].kc", light->getId()),
+                       pointLight->getKc());
+    this->putParameter(std::format("lights[{}].kl", light->getId()),
+                       pointLight->getKl());
+    this->putParameter(std::format("lights[{}].kq", light->getId()),
+                       pointLight->getKq());
+  } else {
+    printf("OTHER\n");
+  }
 }
