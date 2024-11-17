@@ -4,4 +4,4 @@
 Rotation::Rotation(float angle, glm::vec3 axes)
     : finalMatrix(glm::rotate(glm::mat4{1}, angle, axes)) {}
 
-glm::mat4 Rotation::getMatrix() const { return this->finalMatrix; }
+glm::mat4 Rotation::getMatrix() { return this->finalMatrix; }

@@ -69,8 +69,8 @@ void App::prepareScenes() {
 
   this->addScene("obj", new Objects(this->shaders));
   this->addScene("forest", new Forest(this->shaders));
-  // this->addScene("light", new LightBalls(this->shaders));
-  // this->addScene("different_light", new DifferentLight(this->shaders));
+  this->addScene("light", new LightBalls(this->shaders));
+  this->addScene("different_light", new DifferentLight(this->shaders));
 }
 
 void App::createShaders() {

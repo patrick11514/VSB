@@ -28,5 +28,5 @@ public:
   virtual ~Drawable() = default;
 
   virtual void update() const;
-  virtual void draw() const;
+  virtual void draw();
 };

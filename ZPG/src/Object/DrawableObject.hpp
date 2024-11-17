@@ -41,5 +41,5 @@ public:
    * @brief Draw object using the renderFunction
    * @param time Elapsed time of animation
    */
-  void draw() const override;
+  void draw() override;
 };

@@ -27,5 +27,5 @@ public:
             shaderProgram, []() { glDrawArrays(GL_TRIANGLES, 0, 2880); },
             material) {};
 
-  void draw() const override;
+  void draw() override;
 };

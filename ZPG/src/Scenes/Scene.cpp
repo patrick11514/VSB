@@ -1,6 +1,5 @@
 #include "Scene.hpp"
 #include "../Modifiers/Drawable.hpp"
-#include "../Object/DrawableObject.hpp"
 
 #include <GLFW/glfw3.h>
 #include <glm/ext/matrix_float4x4.hpp>
@@ -21,9 +20,13 @@ void Scene::addObject(BaseObject *object) {
   }
 }
 
-void Scene::render() const {
-  for (const auto *object : this->objects) {
-    if (const Drawable *drawable = dynamic_cast<const Drawable *>(object)) {
+void Scene::registerProgram(ShaderProgram *program) {
+  this->usedPrograms.emplace(program);
+}
+
+void Scene::render() {
+  for (auto *object : this->objects) {
+    if (Drawable *drawable = dynamic_cast<Drawable *>(object)) {
       drawable->draw();
     }
   }
@@ -72,7 +75,14 @@ Light *Scene::getLight(int id) const {
 
 void Scene::activate() {
   this->getCamera()->notifyObservers();
-  for (auto *light : this->getLights()) {
+
+  auto lights = this->getLights();
+
+  for (auto *light : lights) {
     light->notifyObservers();
+  }
+
+  for (auto *shader : this->usedPrograms) {
+    shader->putLightCount(static_cast<int>(lights.size()));
   }
 }

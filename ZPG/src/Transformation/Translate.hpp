@@ -15,5 +15,5 @@ public:
    */
   Translate(const glm::vec3 &translate);
 
-  glm::mat4 getMatrix() const; ///< Return finalMatrix
+  glm::mat4 getMatrix(); ///< Return finalMatrix
 };

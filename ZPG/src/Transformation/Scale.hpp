@@ -14,5 +14,5 @@ public:
    */
   Scale(const glm::vec3 &scale);
 
-  glm::mat4 getMatrix() const; ///< Return finalMatrix
+  glm::mat4 getMatrix(); ///< Return finalMatrix
 };

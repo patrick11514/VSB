@@ -4,4 +4,4 @@ void Drawable::update() const {
   this->shaderProgram->putMaterial(this->material.get());
 }
 
-void Drawable::draw() const { this->update(); }
+void Drawable::draw() { this->update(); }

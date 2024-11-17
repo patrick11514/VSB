@@ -14,7 +14,7 @@ public:
 
   virtual ~Transformable() = default;
 
-  const Transformation *getTransformations() const {
+  Transformation *getTransformations() const {
     return this->transformations.get();
   };
 };

@@ -1,6 +1,8 @@
 #include "BallLight.hpp"
 
-void BallLight::draw() const {
+void BallLight::draw() {
+  this->notifyObservers();
+
   Drawable::draw();
   this->data->bindArray();
   this->shaderProgram->putModelMatrix(this->getTransformations());

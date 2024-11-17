@@ -1,9 +1,11 @@
 #pragma once
 
+#include <unordered_set>
 #include <vector>
 
 #include "../Camera.hpp"
 #include "../Object/BaseObject.hpp"
+#include "../Shader/ShaderProgram.hpp"
 
 class Light;
 
@@ -14,6 +16,8 @@ class Scene {
 private:
   std::vector<BaseObject *> objects; ///< Vector of all objects in this scene
   int lightCount = 0;
+  std::unordered_set<ShaderProgram *>
+      usedPrograms; ///< Set of used shader programs
 
 public:
   virtual ~Scene();
@@ -32,5 +36,7 @@ public:
   Light *getLight(int id) const;
   void activate(); ///< Put all things to shaders ready for render
 
-  void render() const; ///< Render scene called in mainLoop of application
+  void registerProgram(ShaderProgram *program);
+
+  void render(); ///< Render scene called in mainLoop of application
 };

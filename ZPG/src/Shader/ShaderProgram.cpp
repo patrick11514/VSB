@@ -83,7 +83,7 @@ void ShaderProgram::registerToLight(Scene *scene) {
       return;
     }
 
-    this->putParameter("lightCount", static_cast<int>(lights.size()));
+    this->putLightCount(static_cast<int>(lights.size()));
 
     for (auto *light : lights) {
       light->registerObserver(this);
@@ -98,9 +98,9 @@ bool ShaderProgram::operator==(const ShaderProgram &other) const {
   return this->programId == other.programId;
 }
 
-void ShaderProgram::update(const Observable *who) {
-  if (dynamic_cast<const Camera *>(who) != nullptr) {
-    auto *camera = static_cast<const Camera *>(who);
+void ShaderProgram::update(Observable *who) {
+  if (dynamic_cast<Camera *>(who) != nullptr) {
+    auto *camera = static_cast<Camera *>(who);
 
     this->putViewMatrix(camera->getViewMatrix());
 
@@ -109,17 +109,16 @@ void ShaderProgram::update(const Observable *who) {
     if (this->checkParameter("cameraPosition")) {
       this->putCameraPosition(camera->getPosition());
     }
-  } else if (dynamic_cast<const Light *>(who) != nullptr) {
+  } else if (dynamic_cast<Light *>(who) != nullptr) {
     // update lightning
-    auto *light = static_cast<const Light *>(who);
+    auto *light = static_cast<Light *>(who);
 
     this->putLightPosition(light);
     // this->putLightProperties(light);
   }
 }
 
-void ShaderProgram::putModelMatrix(
-    const Transformation *transformations) const {
+void ShaderProgram::putModelMatrix(Transformation *transformations) const {
   this->putParameter("modelMatrix", transformations->getMatrix());
 }
 
@@ -135,7 +134,7 @@ void ShaderProgram::putCameraPosition(const glm::vec3 &vector) const {
   this->putParameter("cameraPosition", vector);
 }
 
-void ShaderProgram::putLightPosition(const Light *light) const {
+void ShaderProgram::putLightPosition(Light *light) const {
   this->putParameter(std::format("lights[{}].lightMatrix", light->getId()),
                      light->getTransformations()->getMatrix());
 
@@ -172,4 +171,8 @@ void ShaderProgram::putMaterial(const Material *material) const {
   this->putParameter("material.rs", material->getRs());
   this->putParameter("material.rd", material->getRd());
   this->putParameter("material.shininess", material->getShininess());
+}
+
+void ShaderProgram::putLightCount(int count) const {
+  this->putParameter("lightCount", static_cast<int>(count));
 }

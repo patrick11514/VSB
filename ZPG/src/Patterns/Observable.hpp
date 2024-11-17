@@ -15,5 +15,5 @@ public:
 
   void registerObserver(Observer *); ///< Register new Observer
   void removeObserver(Observer *);   ///< Remove Observer
-  void notifyObservers() const;      ///< Notify observers
+  void notifyObservers();            ///< Notify observers
 };

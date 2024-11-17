@@ -101,14 +101,14 @@ public:
   // operators
   bool operator==(const ShaderProgram &other) const; ///< compare operator
 
-  void
-  update(const Observable *who) override; ///< Update viewMatrix from Camera
+  void update(Observable *who) override; ///< Update viewMatrix from Camera
 
-  void putModelMatrix(const Transformation *transformations) const;
+  void putModelMatrix(Transformation *transformations) const;
   void putProjectionMatrix(const glm::mat4 &matrix) const;
   void putViewMatrix(const glm::mat4 &matrix) const;
   void putCameraPosition(const glm::vec3 &vector) const;
-  void putLightPosition(const Light *light) const;
+  void putLightPosition(Light *light) const;
   void putLightProperties(const Light *light) const;
   void putMaterial(const Material *material) const;
+  void putLightCount(int count) const;
 };

@@ -33,5 +33,5 @@ public:
       : angle(angle), axes(axes), timeFactor(timeFactor) {};
 
   glm::mat4
-  getMatrix() const override; ///< Return finalMatrix multiplied by elapsed time
+  getMatrix() override; ///< Return finalMatrix multiplied by elapsed time
 };

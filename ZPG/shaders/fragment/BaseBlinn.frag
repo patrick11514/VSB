@@ -57,10 +57,10 @@ void main () {
         vec3 halfwayDir = normalize(lightDir);
 
         float spec = pow(max(dot(viewDir, halfwayDir), 0.0), material.shininess);
-        vec4 specular = spec * vec4(light.color, 1.0);
+        vec4 specular = spec * vec4(light.color, 1.0) * vec4(material.rs, 1.0);
 
         float diff = max(dot(normalCS, lightDir), 0.0);
-        vec4 diffuse = diff * vec4(light.color, 1.0);
+        vec4 diffuse = diff * vec4(light.color, 1.0) * vec4(material.rd, 1.0);
              
         float attenuation = 1;
 
@@ -89,6 +89,6 @@ void main () {
         totalDiffuse += diffuse * attenuation;
     }
 
-    fragColor = vec4(material.ra, 1.0) + (totalDiffuse * vec4(material.rd, 1.0)) + (totalSpecular * vec4(material.rs, 1.0));
+    fragColor = vec4(material.ra, 1.0) + totalDiffuse + totalSpecular;
 
 }

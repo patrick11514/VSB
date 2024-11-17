@@ -31,5 +31,5 @@ public:
     camera->registerObserver(this);
   }
 
-  void update(const Observable *who) override;
+  void update(Observable *who) override;
 };

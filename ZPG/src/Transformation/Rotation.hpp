@@ -20,5 +20,5 @@ public:
    */
   Rotation(float angle, glm::vec3 axes);
 
-  glm::mat4 getMatrix() const; ///< Return finalMatrix
+  glm::mat4 getMatrix(); ///< Return finalMatrix
 };

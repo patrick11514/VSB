@@ -4,4 +4,4 @@
 Scale::Scale(const glm::vec3 &scale)
     : finalMatrix(glm::scale(glm::mat4x4{1}, scale)) {}
 
-glm::mat4 Scale::getMatrix() const { return this->finalMatrix; }
+glm::mat4 Scale::getMatrix() { return this->finalMatrix; }

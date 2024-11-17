@@ -10,6 +10,7 @@
 #include "../Object/Material/TreeMaterial.hpp"
 #include "../Object/Objects.hpp"
 #include "../Transformation/DynamicRotation.hpp"
+#include "../Transformation/RandomTranslate.hpp"
 #include "../Transformation/Scale.hpp"
 #include "../Transformation/Translate.hpp"
 
@@ -20,8 +21,6 @@
 #include <random>
 
 void Forest::addObjects() {
-  printf("Forest scene\n");
-
   Camera *camera = new Camera();
   camera->enable();
   this->addObject(camera);
@@ -43,6 +42,28 @@ void Forest::addObjects() {
 
   this->addObject(new Flashlight(glm::vec3{0.0, 0.0, 1.0}, this->getCamera(),
                                  1.0, 0.03, 0.00005));
+
+  std::random_device dev;
+  std::mt19937 rng(dev());
+
+  std::uniform_real_distribution<float> x(-50, 50);
+  std::uniform_real_distribution<float> z(-50, 50);
+  std::uniform_real_distribution<float> scale(0.2, 0.4);
+  std::uniform_real_distribution<float> rotation(0, 360);
+  std::uniform_real_distribution<float> rotationFactor(-0.01, 0.01);
+
+  for (int i = 0; i < 10; ++i) {
+    float xCoord = x(rng) * 20;
+    float zCoord = z(rng) * 20;
+    auto tran = std::make_shared<Transformation>()
+                    ->addTransformation(
+                        new RandomTranslate(glm::vec3(xCoord, 20, zCoord)))
+                    ->addTransformation(new Scale(glm::vec3{0.1}));
+    this->addObject(new BallLight(glm::vec3(0.5, 0.5, 0.5), tran, 1.0, 0.05,
+                                  0.00001,
+                                  this->shaderStorage.getShaderProgram("phong"),
+                                  std::make_shared<SolidWhiteMaterial>()));
+  }
 
   // clang-format off
     Model model(std::vector<float>{
@@ -70,15 +91,6 @@ void Forest::addObjects() {
       std::make_shared<GrassMaterial>());
 
   this->addObject(obj);
-
-  std::random_device dev;
-  std::mt19937 rng(dev());
-
-  std::uniform_real_distribution<float> x(-50, 50);
-  std::uniform_real_distribution<float> z(-50, 50);
-  std::uniform_real_distribution<float> scale(0.2, 0.4);
-  std::uniform_real_distribution<float> rotation(0, 360);
-  std::uniform_real_distribution<float> rotationFactor(-0.01, 0.01);
 
   auto treeMaterial = std::make_shared<TreeMaterial>();
   auto bushMaterial = std::make_shared<BushMaterial>();
@@ -130,6 +142,4 @@ void Forest::addObjects() {
         createBush(this->shaderStorage.getShaderProgram("blinnphong"), tran,
                    bushMaterial));
   }
-
-  printf("end of forest\n");
 }

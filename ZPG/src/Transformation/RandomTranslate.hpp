@@ -13,14 +13,19 @@ private:
   std::uniform_real_distribution<float> y;
   std::uniform_real_distribution<float> z;
 
+  float xCurr;
+  float yCurr;
+  float zCurr;
+  float lastUpdate;
+
 public:
   /**
    * @brief Create Transformation matrix for Tramsalate
    * @param translate Translate by vector
    */
-  RandomTranslate()
-      : Translate(glm::vec3{1.0}), rng(std::random_device()()), x(0.01, 0.02),
-        y(0.01, 0.02), z(0.01, 0.02) {};
+  RandomTranslate(glm::vec3 startTranslation)
+      : Translate(startTranslation), rng(std::random_device()()),
+        x(-0.001, 0.001), y(-0.0005, 0.001), z(-0.001, 0.001) {};
 
   glm::mat4 getMatrix(); ///< Return finalMatrix
 };
