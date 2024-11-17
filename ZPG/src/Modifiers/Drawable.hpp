@@ -3,6 +3,7 @@
 #include <functional>
 #include <memory>
 
+#include "../Object/Material.hpp"
 #include "../Object/ObjectData.hpp"
 #include "../Shader/ShaderProgram.hpp"
 #include "BasicAttribute.hpp"
@@ -17,12 +18,13 @@ protected:
       [[maybe_unused]]; ///< Shader program used on object
   RenderFunction
       renderFunction; ///< Function which will be called to render the object
+  std::shared_ptr<Material> material;
 
 public:
   Drawable(std::shared_ptr<ObjectData> data, ShaderProgram *shaderProgram,
-           RenderFunction renderFunction)
+           RenderFunction renderFunction, std::shared_ptr<Material> material)
       : data(data), shaderProgram(shaderProgram),
-        renderFunction(renderFunction) {};
+        renderFunction(renderFunction), material(material) {};
   virtual ~Drawable() = default;
 
   virtual void draw() const = 0;

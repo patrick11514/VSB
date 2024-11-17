@@ -28,13 +28,16 @@ public:
    */
   DrawableObject(std::shared_ptr<ObjectData> data, ShaderProgram *shaderProgram,
                  std::shared_ptr<Transformation> transformations,
-                 RenderFunction renderFunction)
+                 RenderFunction renderFunction,
+                 std::shared_ptr<Material> material)
       : Transformable(transformations),
-        Drawable(data, shaderProgram, renderFunction) {};
+        Drawable(data, shaderProgram, renderFunction, material) {};
 
   void
   assignScene(Scene *scene) override; ///< Assign scene to object automatically
                                       ///< called inside Scene::addObject
+
+  void update();
 
   /**
    * @brief Draw object using the renderFunction

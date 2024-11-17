@@ -2,7 +2,6 @@
 #include "ShaderProgram.hpp"
 #include "../Controller.hpp"
 #include "../Light/DirectionalLight.hpp"
-#include "../Light/PointLight.hpp"
 #include "../Light/ReflectorLight.hpp"
 #include "../Scenes/Scene.hpp"
 #include "Shader.hpp"
@@ -89,6 +88,7 @@ void ShaderProgram::registerToLight(Scene *scene) {
     for (auto *light : lights) {
       light->registerObserver(this);
 
+      this->putLightProperties(light); // only once
       this->update(light);
     }
   }
@@ -114,7 +114,7 @@ void ShaderProgram::update(const Observable *who) {
     auto *light = static_cast<const Light *>(who);
 
     this->putLightPosition(light);
-    this->putLightProperties(light);
+    // this->putLightProperties(light);
   }
 }
 
@@ -138,19 +138,11 @@ void ShaderProgram::putCameraPosition(const glm::vec3 &vector) const {
 void ShaderProgram::putLightPosition(const Light *light) const {
   this->putParameter(std::format("lights[{}].lightMatrix", light->getId()),
                      light->getTransformations()->getMatrix());
-}
-
-void ShaderProgram::putLightProperties(const Light *light) const {
-  this->putParameter(std::format("lights[{}].type", light->getId()),
-                     static_cast<int>(light->getType()));
-  this->putParameter(std::format("lights[{}].color", light->getId()),
-                     light->getColor());
 
   if (const auto *directionalLight =
           dynamic_cast<const DirectionalLight *>(light)) {
     this->putParameter(std::format("lights[{}].direction", light->getId()),
                        directionalLight->getDirection());
-
   } else if (const auto *reflectorLight =
                  dynamic_cast<const ReflectorLight *>(light)) {
     this->putParameter(std::format("lights[{}].direction", light->getId()),
@@ -158,15 +150,25 @@ void ShaderProgram::putLightProperties(const Light *light) const {
 
     this->putParameter(std::format("lights[{}].angle", light->getId()),
                        reflectorLight->getAngle());
-
-  } else if (const auto *pointLight = dynamic_cast<const PointLight *>(light)) {
-    this->putParameter(std::format("lights[{}].kc", light->getId()),
-                       pointLight->getKc());
-    this->putParameter(std::format("lights[{}].kl", light->getId()),
-                       pointLight->getKl());
-    this->putParameter(std::format("lights[{}].kq", light->getId()),
-                       pointLight->getKq());
   } else {
-    printf("OTHER\n");
   }
+}
+
+void ShaderProgram::putLightProperties(const Light *light) const {
+  this->putParameter(std::format("lights[{}].type", light->getId()),
+                     static_cast<int>(light->getType()));
+  this->putParameter(std::format("lights[{}].color", light->getId()),
+                     light->getColor());
+  this->putParameter(std::format("lights[{}].kc", light->getId()),
+                     light->getKc());
+  this->putParameter(std::format("lights[{}].kl", light->getId()),
+                     light->getKl());
+  this->putParameter(std::format("lights[{}].kq", light->getId()),
+                     light->getKq());
+}
+
+void ShaderProgram::putMaterial(const Material *material) const {
+  this->putParameter("material.ra", material->getRa());
+  this->putParameter("material.rs", material->getRs());
+  this->putParameter("material.rd", material->getRd());
 }

@@ -12,22 +12,28 @@ void Objects::addObjects() {
   camera->enable();
   this->addObject(camera);
 
+  auto material = std::make_shared<Material>(glm::vec3{0.0}, glm::vec3{0.0},
+                                             glm::vec3{0.0});
+
   this->addObject(createBall(
       this->shaderStorage.getShaderProgram("MatShader"),
       std::make_shared<Transformation>()
           ->addTransformation(new Scale(glm::vec3(0.2f)))
-          ->addTransformation(new Translate(glm::vec3(1.f, 0.f, 0.f)))));
+          ->addTransformation(new Translate(glm::vec3(1.f, 0.f, 0.f))),
+      material));
 
   this->addObject(
       createBush(this->shaderStorage.getShaderProgram("blinnphong"),
                  std::make_shared<Transformation>()->addTransformation(
-                     new Translate(glm::vec3(-0.5f, 0.5f, 0.f)))));
+                     new Translate(glm::vec3(-0.5f, 0.5f, 0.f))),
+                 material));
 
   this->addObject(
       createTree(this->shaderStorage.getShaderProgram("MatShaderStatic"),
                  std::make_shared<Transformation>()->addTransformation(
-                     new Scale(glm::vec3(.1f)))));
+                     new Scale(glm::vec3(.1f))),
+                 material));
 
   this->addObject(createGift(this->shaderStorage.getShaderProgram("blinnphong"),
-                             std::make_shared<Transformation>()));
+                             std::make_shared<Transformation>(), material));
 }

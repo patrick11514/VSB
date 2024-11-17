@@ -1,5 +1,6 @@
 #include "Scene.hpp"
 #include "../Modifiers/Drawable.hpp"
+#include "../Object/DrawableObject.hpp"
 
 #include <GLFW/glfw3.h>
 #include <glm/ext/matrix_float4x4.hpp>
@@ -67,4 +68,16 @@ Light *Scene::getLight(int id) const {
   }
 
   return nullptr;
+}
+
+void Scene::activate() {
+  this->getCamera()->notifyObservers();
+  for (auto *light : this->getLights()) {
+    light->notifyObservers();
+  }
+  for (auto *obj : this->objects) {
+    if (auto *drawable = dynamic_cast<DrawableObject *>(obj)) {
+      drawable->update();
+    }
+  }
 }

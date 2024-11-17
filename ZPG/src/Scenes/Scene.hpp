@@ -30,6 +30,7 @@ public:
   std::vector<Light *>
   getLights() const; ///< Get light from scene TODO: add support for more light
   Light *getLight(int id) const;
+  void activate(); ///< Put all things to shaders ready for render
 
   void render() const; ///< Render scene called in mainLoop of application
 };

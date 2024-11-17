@@ -12,7 +12,8 @@ static ObjectDataStorage dataStorage; ///< Global ObjectData storage
  * @return Ball Object
  */
 DrawableObject *createBall(ShaderProgram *shaderProgram,
-                           std::shared_ptr<Transformation> transformations);
+                           std::shared_ptr<Transformation> transformations,
+                           std::shared_ptr<Material> material);
 /**
  * @brief Create Tree from data located at /Object/Models/tree.h
  * @param shaderProgram ShaderProgram used to draw Tree
@@ -20,7 +21,8 @@ DrawableObject *createBall(ShaderProgram *shaderProgram,
  * @return Tree Object
  */
 DrawableObject *createTree(ShaderProgram *shaderProgram,
-                           std::shared_ptr<Transformation> transformations);
+                           std::shared_ptr<Transformation> transformations,
+                           std::shared_ptr<Material> material);
 /**
  * @brief Create Bush from data located at /Object/Models/bushes.h
  * @param shaderProgram ShaderProgram used to draw Bush
@@ -28,7 +30,8 @@ DrawableObject *createTree(ShaderProgram *shaderProgram,
  * @return Bush Object
  */
 DrawableObject *createBush(ShaderProgram *shaderProgram,
-                           std::shared_ptr<Transformation> transformations);
+                           std::shared_ptr<Transformation> transformations,
+                           std::shared_ptr<Material> material);
 /**
  * @brief Create Gift from data located at /Object/Models/gift.h
  * @param shaderProgram ShaderProgram used to draw Gift
@@ -36,4 +39,5 @@ DrawableObject *createBush(ShaderProgram *shaderProgram,
  * @return Ball Gift
  */
 DrawableObject *createGift(ShaderProgram *shaderProgram,
-                           std::shared_ptr<Transformation> transformations);
+                           std::shared_ptr<Transformation> transformations,
+                           std::shared_ptr<Material> material);

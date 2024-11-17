@@ -2,6 +2,7 @@
 
 #include "../Camera.hpp"
 #include "../Light/Light.hpp"
+#include "../Object/Material.hpp"
 #include "../Patterns/Observer.hpp"
 #include "../ShaderLoader/ShaderLoader.h"
 #include "../Transformation/Transformation.hpp"
@@ -109,4 +110,5 @@ public:
   void putCameraPosition(const glm::vec3 &vector) const;
   void putLightPosition(const Light *light) const;
   void putLightProperties(const Light *light) const;
+  void putMaterial(const Material *material) const;
 };

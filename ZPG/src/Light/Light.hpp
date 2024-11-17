@@ -12,11 +12,14 @@ private:
   LightType type;
   glm::vec3 color;
   int id;
-
+  float kc; // contant attenuation
+  float kl; // linear attenuation
+  float kq; // quadratic attenuation
 public:
   Light(glm::vec3 color, std::shared_ptr<Transformation> transformations,
-        LightType type)
-      : Transformable(transformations), type(type), color(color) {};
+        float kc, float kl, float kq, LightType type)
+      : Transformable(transformations), type(type), color(color), kc(kc),
+        kl(kl), kq(kq) {};
 
   virtual ~Light() = default;
 
@@ -25,4 +28,7 @@ public:
   int getId() const;
   glm::vec3 getColor() const;
   LightType getType() const;
+  float getKc() const;
+  float getKl() const;
+  float getKq() const;
 };

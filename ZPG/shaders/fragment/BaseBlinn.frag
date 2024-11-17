@@ -19,12 +19,19 @@ struct Light {
     float angle;        // for reflector
 };
 
+struct Material {
+    vec3 ra;
+    vec3 rd;
+    vec3 rs;
+};
+
 in vec4 positionCS;
 in vec3 normalCS;
 
 uniform int lightCount;
 uniform Light lights[MAX_LIGHTS];
 uniform mat4 viewMatrix;
+uniform Material material;
 
 out vec4 fragColor;
 
@@ -32,11 +39,6 @@ void main () {
     vec4 totalDiffuse = vec4(0.0);
     vec4 totalSpecular = vec4(0.0);
     vec3 viewDir = normalize(-(positionCS.xyz / positionCS.w));
-
-    vec4 objectColor = vec4( 0.385, 0.647, 0.812, 1.0);
-    vec4 ambient = vec4 (0.1 ,0.1 ,0.1 ,1.0);
-
-    vec4 totalColor = vec4(0.0);
 
     for (int i = 0; i < lightCount; i++) {
         Light light = lights[i];
@@ -59,31 +61,33 @@ void main () {
         float diff = max(dot(normalCS, lightDir), 0.0);
         vec4 diffuse = diff * vec4(light.color, 1.0);
              
-        float attenuation;
+         float attenuation;
 
         if (light.type == DIRECTIONAL) {
             attenuation = 1;
-        } else if (light.type == REFLECTOR) {
-            vec4 cameraLightDir = viewMatrix * vec4(light.direction, 0.0);
-            float spot = dot(normalize(cameraLightDir.xyz), -lightDir);
-            
-            float alpha = cos(radians(light.angle));
+        } else {
+            if (light.type == REFLECTOR) {
+                vec4 cameraLightDir = viewMatrix * vec4(light.direction, 0.0);
+                float spot = dot(normalize(cameraLightDir.xyz), -lightDir);
+                
+                float alpha = cos(radians(light.angle));
 
-            if (spot < alpha) {
-                diffuse = vec4(0.0);
-                specular = vec4(0.0);
+                if (spot < alpha) {
+                    diffuse = vec4(0.0);
+                    specular = vec4(0.0);
+                }
+
+                attenuation = (spot - alpha) / (1 - alpha);
             }
 
-            attenuation = (spot - alpha) / (1 - alpha);
-        } else {
             float distance = length(lightPositionCS - (positionCS.xyz / positionCS.w));  // Compute the distance from light to fragment
-            attenuation = clamp(1 / (light.kc + light.kl * distance + light.kq * distance * distance), 0.0, 1.0);
+            attenuation = attenuation * clamp(1 / (light.kc + light.kl * distance + light.kq * distance * distance), 0.0, 1.0);
         }
 
         totalSpecular += specular * attenuation;
         totalDiffuse += diffuse * attenuation;
     }
 
-    fragColor = ambient + (totalDiffuse * objectColor) + totalSpecular;
+    fragColor = vec4(material.ra, 1.0) + (totalDiffuse * vec4(material.rd, 1.0)) + (totalSpecular * vec4(material.rs, 1.0));
 
 }

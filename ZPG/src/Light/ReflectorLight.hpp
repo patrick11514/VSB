@@ -12,8 +12,9 @@ protected:
 
 public:
   ReflectorLight(glm::vec3 color, glm::vec3 direction, float angle,
-                 std::shared_ptr<Transformation> transformation)
-      : Light(color, transformation, LightType::REFLECTOR),
+                 std::shared_ptr<Transformation> transformation, float kc,
+                 float kl, float kq)
+      : Light(color, transformation, kc, kl, kq, LightType::REFLECTOR),
         direction(direction), angle(angle) {};
 
   glm::vec3 getDirection() const;

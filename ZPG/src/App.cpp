@@ -187,6 +187,7 @@ void App::switchScene(const std::string &name) {
   for (auto *light : currentScene->getLights()) {
     light->notifyObservers();
   }
+  currentScene->activate();
 }
 
 void App::printVersionInfo() {

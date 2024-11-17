@@ -6,6 +6,11 @@ void DrawableObject::assignScene(Scene *scene) {
   BaseObject::assignScene(scene);
   this->shaderProgram->registerToCamera(scene);
   this->shaderProgram->registerToLight(scene);
+  this->update();
+}
+
+void DrawableObject::update() {
+  this->shaderProgram->putMaterial(this->material.get());
 }
 
 void DrawableObject::draw() const {
