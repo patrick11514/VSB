@@ -2,7 +2,7 @@
 
 #include "../Camera.hpp"
 #include "../Light/Light.hpp"
-#include "../Object/Material.hpp"
+#include "../Object/Material/Material.hpp"
 #include "../Patterns/Observer.hpp"
 #include "../ShaderLoader/ShaderLoader.h"
 #include "../Transformation/Transformation.hpp"

@@ -1,8 +1,13 @@
 #include "Forest.hpp"
+#include "../Light/BallLight.hpp"
 #include "../Light/DirectionalLight.hpp"
 #include "../Light/Flashlight.hpp"
 #include "../Light/PointLight.hpp"
 #include "../Light/ReflectorLight.hpp"
+#include "../Object/Material/BushMaterial.hpp"
+#include "../Object/Material/GrassMaterial.hpp"
+#include "../Object/Material/SolidWhiteMaterial.hpp"
+#include "../Object/Material/TreeMaterial.hpp"
 #include "../Object/Objects.hpp"
 #include "../Transformation/DynamicRotation.hpp"
 #include "../Transformation/Scale.hpp"
@@ -20,11 +25,13 @@ void Forest::addObjects() {
   Camera *camera = new Camera();
   camera->enable();
   this->addObject(camera);
-  this->addObject(
-      new PointLight(glm::vec3(1.0, 1.0, 1.0),
-                     std::make_shared<Transformation>()->addTransformation(
-                         new Translate(glm::vec3{4.0, 2.0, 4.0})),
-                     1.0, 0.09, 0.032));
+  this->addObject(new BallLight(
+      glm::vec3(1.0, 1.0, 1.0),
+      std::make_shared<Transformation>()
+          ->addTransformation(new Translate(glm::vec3{4.0, 2.0, 4.0}))
+          ->addTransformation(new Scale(glm::vec3{0.2})),
+      1.0, 0.09, 0.032, this->shaderStorage.getShaderProgram("phong"),
+      std::make_shared<SolidWhiteMaterial>()));
   this->addObject(new DirectionalLight(
       glm::vec3(1.0, 0.0, 0.0), glm::vec3{1.0, 0.0, 0.0}, 0.0, 0.0, 0.0));
 
@@ -58,10 +65,9 @@ void Forest::addObjects() {
             glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
                                   (GLvoid *)(3 * sizeof(float)));
           }),
-      this->shaderStorage.getShaderProgram("lambert"), tran,
+      this->shaderStorage.getShaderProgram("phong"), tran,
       []() { glDrawArrays(GL_QUADS, 0, 4); },
-      std::make_shared<Material>(glm::vec3{0.0, 0.1, 0.0},
-                                 glm::vec3{1.0, 1.0, 1.0}, glm::vec3{0.0}));
+      std::make_shared<GrassMaterial>());
 
   this->addObject(obj);
 
@@ -74,8 +80,8 @@ void Forest::addObjects() {
   std::uniform_real_distribution<float> rotation(0, 360);
   std::uniform_real_distribution<float> rotationFactor(-0.01, 0.01);
 
-  auto treeMaterial = std::make_shared<Material>(
-      glm::vec3{0.1, 0.1, 0.1}, glm::vec3{0, 0, 0}, glm::vec3{0, 0, 0});
+  auto treeMaterial = std::make_shared<TreeMaterial>();
+  auto bushMaterial = std::make_shared<BushMaterial>();
 
   auto tree = createTree(
       this->shaderStorage.getShaderProgram("blinnphong"),
@@ -122,7 +128,7 @@ void Forest::addObjects() {
 
     this->addObject(
         createBush(this->shaderStorage.getShaderProgram("blinnphong"), tran,
-                   treeMaterial));
+                   bushMaterial));
   }
 
   printf("end of forest\n");

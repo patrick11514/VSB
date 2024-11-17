@@ -23,6 +23,7 @@ struct Material {
     vec3 ra;
     vec3 rd;
     vec3 rs;
+    float shininess;
 };
 
 in vec4 positionCS;
@@ -37,6 +38,8 @@ out vec4 fragColor;
 
 void main () {
     vec4 totalDiffuse = vec4(0.0);
+    vec4 totalSpecular = vec4(0.0);
+    vec3 viewDir = normalize(-(positionCS.xyz / positionCS.w));
 
     for (int i = 0; i < lightCount; ++i) {
         Light light = lights[i];
@@ -51,7 +54,12 @@ void main () {
             lightDir = normalize(lightPositionCS - (positionCS.xyz / positionCS.w));
         }
 
-        float diff = max(dot(lightDir, normalize(normalCS)), 0.0);
+        vec3 reflectDir = reflect(-lightDir, normalCS);
+
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+        vec4 specular = spec * vec4(light.color, 1.0);
+
+        float diff = max(dot(normalCS, lightDir), 0.0);
         vec4 diffuse = diff * vec4(light.color, 1.0);
       
         float attenuation = 1;
@@ -67,6 +75,7 @@ void main () {
 
                 if (spot < alpha) {
                     diffuse = vec4(0.0);
+                    specular = vec4(0.0);
                 }
 
                 attenuation = (spot - alpha) / (1 - alpha);
@@ -76,8 +85,9 @@ void main () {
             attenuation = attenuation * clamp(1 / (light.kc + light.kl * distance + light.kq * distance * distance), 0.0, 1.0);
         }
 
+        totalSpecular += specular * attenuation;
         totalDiffuse += diffuse * attenuation;
     }
 
-    fragColor = vec4(material.ra, 1.0) + totalDiffuse * vec4(material.rd, 1.0);
+    fragColor = vec4(material.ra, 1.0) + totalDiffuse * vec4(material.rd, 1.0) + totalSpecular * vec4(material.rs, 1.0);
 }

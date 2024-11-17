@@ -171,4 +171,5 @@ void ShaderProgram::putMaterial(const Material *material) const {
   this->putParameter("material.ra", material->getRa());
   this->putParameter("material.rs", material->getRs());
   this->putParameter("material.rd", material->getRd());
+  this->putParameter("material.shininess", material->getShininess());
 }

@@ -1,5 +1,6 @@
 #include "LightBalls.hpp"
 #include "../Light/PointLight.hpp"
+#include "../Object/Material/BluePhongMaterial.hpp"
 #include "../Object/Objects.hpp"
 #include "../Transformation/Scale.hpp"
 #include "../Transformation/Translate.hpp"
@@ -17,8 +18,7 @@ void LightBalls::addObjects() {
                                  std::make_shared<Transformation>(), 0.1, 0.1,
                                  0.1));
 
-  auto material = std::make_shared<Material>(glm::vec3{0.0}, glm::vec3{0.0},
-                                             glm::vec3{0.0});
+  auto material = std::make_shared<BluePhongMaterial>();
 
   this->addObject(createBall(
       this->shaderStorage.getShaderProgram("phong"),

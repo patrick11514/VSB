@@ -37,8 +37,6 @@ public:
   assignScene(Scene *scene) override; ///< Assign scene to object automatically
                                       ///< called inside Scene::addObject
 
-  void update();
-
   /**
    * @brief Draw object using the renderFunction
    * @param time Elapsed time of animation

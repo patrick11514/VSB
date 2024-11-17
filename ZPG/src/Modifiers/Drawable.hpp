@@ -3,7 +3,7 @@
 #include <functional>
 #include <memory>
 
-#include "../Object/Material.hpp"
+#include "../Object/Material/Material.hpp"
 #include "../Object/ObjectData.hpp"
 #include "../Shader/ShaderProgram.hpp"
 #include "BasicAttribute.hpp"
@@ -27,5 +27,6 @@ public:
         renderFunction(renderFunction), material(material) {};
   virtual ~Drawable() = default;
 
-  virtual void draw() const = 0;
+  virtual void update() const;
+  virtual void draw() const;
 };

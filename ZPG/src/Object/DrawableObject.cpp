@@ -9,11 +9,8 @@ void DrawableObject::assignScene(Scene *scene) {
   this->update();
 }
 
-void DrawableObject::update() {
-  this->shaderProgram->putMaterial(this->material.get());
-}
-
 void DrawableObject::draw() const {
+  Drawable::draw();
   this->data->bindArray();
 
   this->shaderProgram->putModelMatrix(this->getTransformations());

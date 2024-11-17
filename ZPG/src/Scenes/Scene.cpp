@@ -75,9 +75,4 @@ void Scene::activate() {
   for (auto *light : this->getLights()) {
     light->notifyObservers();
   }
-  for (auto *obj : this->objects) {
-    if (auto *drawable = dynamic_cast<DrawableObject *>(obj)) {
-      drawable->update();
-    }
-  }
 }

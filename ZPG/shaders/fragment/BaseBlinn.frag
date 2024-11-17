@@ -23,6 +23,7 @@ struct Material {
     vec3 ra;
     vec3 rd;
     vec3 rs;
+    float shininess;
 };
 
 in vec4 positionCS;
@@ -40,7 +41,7 @@ void main () {
     vec4 totalSpecular = vec4(0.0);
     vec3 viewDir = normalize(-(positionCS.xyz / positionCS.w));
 
-    for (int i = 0; i < lightCount; i++) {
+    for (int i = 0; i < lightCount; ++i) {
         Light light = lights[i];
         vec4 lightPositionCS4 = (viewMatrix * light.lightMatrix) * vec4(0.0, 0.0, 0.0, 1.0);
         vec3 lightPositionCS = lightPositionCS4.xyz / lightPositionCS4.w;
@@ -55,13 +56,13 @@ void main () {
 
         vec3 halfwayDir = normalize(lightDir);
 
-        float spec = pow(max(dot(viewDir, halfwayDir), 0.0), 32.0);
+        float spec = pow(max(dot(viewDir, halfwayDir), 0.0), material.shininess);
         vec4 specular = spec * vec4(light.color, 1.0);
 
         float diff = max(dot(normalCS, lightDir), 0.0);
         vec4 diffuse = diff * vec4(light.color, 1.0);
              
-         float attenuation;
+        float attenuation = 1;
 
         if (light.type == DIRECTIONAL) {
             attenuation = 1;

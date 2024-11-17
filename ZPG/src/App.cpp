@@ -76,17 +76,7 @@ void App::prepareScenes() {
 void App::createShaders() {
   std::unordered_map<std::string, std::pair<std::string, std::string>>
       shadersToLoad{
-          {"ColorsByCoord", {"ColorByCoords.vert", "ColorByCoords.frag"}},
-          {"ColorPurple", {"Purple.vert", "Purple.frag"}},
-          {"MatShader", {"Rotation.vert", "ColorByCoords.frag"}},
-          {"MatShaderStatic", {"RotationStaticColor.vert", "Purple.frag"}},
-          {"blue", {"RotationStaticColor.vert", "Blue.frag"}},
-          {"red", {"RotationStaticColor.vert", "Red.frag"}},
-          {"green", {"RotationStaticColor.vert", "Green.frag"}},
-          {"darkGreen", {"RotationStaticColor.vert", "GreenDark.frag"}},
-          {"greenByCoord", {"GreenByCoords.vert", "GreenByCoords.frag"}},
-          {"lambert", {"Base.vert", "BaseLambert.frag"}},
-          {"phong", {"Phong.vert", "Phong.frag"}},
+          {"phong", {"Base.vert", "BasePhong.frag"}},
           {"blinnphong", {"Base.vert", "BaseBlinn.frag"}},
       };
 

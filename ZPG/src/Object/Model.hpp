@@ -10,7 +10,7 @@ using std::size_t;
  */
 class Model {
 private:
-  float *points;
+  float *points = nullptr;
   size_t size;
 
 public:

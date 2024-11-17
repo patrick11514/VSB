@@ -1,4 +1,8 @@
 #include "../Object/Objects.hpp"
+#include "../Object/Material/SolidBlueMaterial.hpp"
+#include "../Object/Material/SolidGreenMaterial.hpp"
+#include "../Object/Material/SolidPurpleMaterial.hpp"
+#include "../Object/Material/SolidRedMaterial.hpp"
 #include "../Transformation/Scale.hpp"
 #include "../Transformation/Translate.hpp"
 #include "Objects.hpp"
@@ -12,28 +16,26 @@ void Objects::addObjects() {
   camera->enable();
   this->addObject(camera);
 
-  auto material = std::make_shared<Material>(glm::vec3{0.0}, glm::vec3{0.0},
-                                             glm::vec3{0.0});
-
   this->addObject(createBall(
-      this->shaderStorage.getShaderProgram("MatShader"),
+      this->shaderStorage.getShaderProgram("phong"),
       std::make_shared<Transformation>()
           ->addTransformation(new Scale(glm::vec3(0.2f)))
           ->addTransformation(new Translate(glm::vec3(1.f, 0.f, 0.f))),
-      material));
+      std::make_shared<SolidBlueMaterial>()));
 
   this->addObject(
-      createBush(this->shaderStorage.getShaderProgram("blinnphong"),
+      createBush(this->shaderStorage.getShaderProgram("phong"),
                  std::make_shared<Transformation>()->addTransformation(
                      new Translate(glm::vec3(-0.5f, 0.5f, 0.f))),
-                 material));
+                 std::make_shared<SolidRedMaterial>()));
 
   this->addObject(
-      createTree(this->shaderStorage.getShaderProgram("MatShaderStatic"),
+      createTree(this->shaderStorage.getShaderProgram("phong"),
                  std::make_shared<Transformation>()->addTransformation(
                      new Scale(glm::vec3(.1f))),
-                 material));
+                 std::make_shared<SolidPurpleMaterial>()));
 
-  this->addObject(createGift(this->shaderStorage.getShaderProgram("blinnphong"),
-                             std::make_shared<Transformation>(), material));
+  this->addObject(createGift(this->shaderStorage.getShaderProgram("phong"),
+                             std::make_shared<Transformation>(),
+                             std::make_shared<SolidGreenMaterial>()));
 }

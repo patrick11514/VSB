@@ -1,5 +1,8 @@
 #include "DifferentLight.hpp"
 #include "../Light/PointLight.hpp"
+#include "../Object/Material/BlueLambertMaterial.hpp"
+#include "../Object/Material/BluePhongMaterial.hpp"
+#include "../Object/Material/SolidGreenMaterial.hpp"
 #include "../Object/Objects.hpp"
 #include "../Transformation/Scale.hpp"
 #include "../Transformation/Translate.hpp"
@@ -17,34 +20,31 @@ void DifferentLight::addObjects() {
                                  std::make_shared<Transformation>(), 0.1, 0.1,
                                  0.1));
 
-  auto material = std::make_shared<Material>(glm::vec3{0.0}, glm::vec3{0.0},
-                                             glm::vec3{0.0});
-
   this->addObject(createBall(
-      this->shaderStorage.getShaderProgram("green"),
+      this->shaderStorage.getShaderProgram("phong"),
       std::make_shared<Transformation>()
           ->addTransformation(new Translate(glm::vec3(0.f, 0.f, 2.f)))
           ->addTransformation(new Scale({.1f, .1f, .1f})),
-      material));
+      std::make_shared<SolidGreenMaterial>()));
 
   this->addObject(createBall(
-      this->shaderStorage.getShaderProgram("lambert"),
+      this->shaderStorage.getShaderProgram("phong"),
       std::make_shared<Transformation>()
           ->addTransformation(new Translate(glm::vec3(0.f, 0.f, -2.f)))
           ->addTransformation(new Scale({.1f, .1f, .1f})),
-      material));
+      std::make_shared<BlueLambertMaterial>()));
 
   this->addObject(createBall(
       this->shaderStorage.getShaderProgram("phong"),
       std::make_shared<Transformation>()
           ->addTransformation(new Translate(glm::vec3(0.f, 2.f, 0.f)))
           ->addTransformation(new Scale({.1f, .1f, .1f})),
-      material));
+      std::make_shared<BluePhongMaterial>()));
 
   this->addObject(createBall(
       this->shaderStorage.getShaderProgram("blinnphong"),
       std::make_shared<Transformation>()
           ->addTransformation(new Translate(glm::vec3(0.f, -2.f, 0.f)))
           ->addTransformation(new Scale({.1f, .1f, .1f})),
-      material));
+      std::make_shared<BluePhongMaterial>()));
 }
