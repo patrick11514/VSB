@@ -84,5 +84,8 @@ void Scene::activate() {
 
   for (auto *shader : this->usedPrograms) {
     shader->putLightCount(static_cast<int>(lights.size()));
+    for (auto *light : lights) {
+      shader->putLightProperties(light);
+    }
   }
 }

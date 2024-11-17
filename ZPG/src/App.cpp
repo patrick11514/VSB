@@ -1,5 +1,6 @@
 #include "App.hpp"
 #include "Controller.hpp"
+#include "Scenes/DarkForest.hpp"
 #include "Scenes/DifferentLight.hpp"
 #include "Scenes/Forest.hpp"
 #include "Scenes/LightBalls.hpp"
@@ -71,6 +72,7 @@ void App::prepareScenes() {
   this->addScene("forest", new Forest(this->shaders));
   this->addScene("light", new LightBalls(this->shaders));
   this->addScene("different_light", new DifferentLight(this->shaders));
+  this->addScene("dark_forest", new DarkForest(this->shaders));
 }
 
 void App::createShaders() {
@@ -98,9 +100,11 @@ void App::createShaders() {
 void App::createModels() {
   for (auto &pair : this->scenes) {
     // if scene is StaticScene, run addObjects on them
+    printf("Scene: %s\n", pair.first.c_str());
     if (dynamic_cast<StaticScene *>(pair.second) != nullptr) {
       static_cast<StaticScene *>(pair.second)->addObjects();
     }
+    printf("End of scene %s\n", pair.first.c_str());
   }
 }
 

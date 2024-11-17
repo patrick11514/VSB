@@ -23,7 +23,7 @@ class Flashlight : public FlashlightTransformation,
 private:
 public:
   Flashlight(glm::vec3 color, Camera *camera, float kc, float kl, float kq)
-      : ReflectorLight(color, glm::vec3{1.0}, 15.f, this->transformation, kc,
+      : ReflectorLight(color, glm::vec3{1.0}, 20.f, this->transformation, kc,
                        kl, kq) {
     this->translate = new UpdatableTranslate(camera->getPosition());
     this->transformation->addTransformation(this->translate);
