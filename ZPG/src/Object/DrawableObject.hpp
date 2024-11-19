@@ -4,7 +4,6 @@
 #include <memory>
 
 #include "../Modifiers/Drawable.hpp"
-#include "../Modifiers/Transformable.hpp"
 #include "../Shader/ShaderProgram.hpp"
 #include "../Transformation/Transformation.hpp"
 #include "BaseObject.hpp"
@@ -14,9 +13,9 @@
  * @brief This class put ObjectData, ShaderProgram, Transformations together
  * into single object
  */
-class DrawableObject : public BaseObject,
-                       public Transformable,
-                       public Drawable {
+class DrawableObject : public BaseObject, public Drawable {
+private:
+  std::shared_ptr<Transformation> transformations; ///< Object transformations
 public:
   /**
    * @brief Basic constructor used, when you don't want to animate object
@@ -30,12 +29,16 @@ public:
                  std::shared_ptr<Transformation> transformations,
                  RenderFunction renderFunction,
                  std::shared_ptr<Material> material)
-      : Transformable(transformations),
-        Drawable(data, shaderProgram, renderFunction, material) {};
+      : Drawable(data, shaderProgram, renderFunction, material),
+        transformations(transformations) {};
 
   void
   assignScene(Scene *scene) override; ///< Assign scene to object automatically
                                       ///< called inside Scene::addObject
+
+  Transformation *getTransformations() const {
+    return this->transformations.get();
+  };
 
   /**
    * @brief Draw object using the renderFunction
