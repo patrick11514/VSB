@@ -7,21 +7,19 @@
     <title>Electric Cars, Solar & Clean Energy | Tesla</title>
     <link href="/assets/css/main.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="preload" as="fetch" href="/assets/svgs/Logo.svg" />
+    <link rel="preload" as="fetch" href="/assets/svgs/Cybertruck.svg" />
     <script src="/assets/js/main.js" defer></script>
 </head>
 
 <body class="h-full w-full font-universal-sans text-text">
-    <section class="flex sticky top-0 bg-white z-50 flex-row items-center justify-center gap-4 p-4 text-sm font-medium">
+    <!--<section class="sticky top-0 z-50 flex flex-row items-center justify-center gap-4 bg-white p-4 text-sm font-medium">
         <p>0% APR available for Model 3 and Model Y.</p>
         <a id="info-popover" class="underline hover:decoration-2" href="#">Learn More</a>
-    </section>
+</section>!-->
     <nav class="pointer-events-none fixed z-50 flex w-full px-10 text-white">
         <a href="/" class="w-1/4 py-6">
-            <svg class="h-3" viewBox="0 0 342 35" xmlns="http://www.w3.org/2000/svg">
-                <path fill="currentColor"
-                    d="M0 .1a9.7 9.7 0 0 0 7 7h11l.5.1v27.6h6.8V7.3L26 7h11a9.8 9.8 0 0 0 7-7H0zm238.6 0h-6.8v34.8H263a9.7 9.7 0 0 0 6-6.8h-30.3V0zm-52.3 6.8c3.6-1 6.6-3.8 7.4-6.9l-38.1.1v20.6h31.1v7.2h-24.4a13.6 13.6 0 0 0-8.7 7h39.9v-21h-31.2v-7zm116.2 28h6.7v-14h24.6v14h6.7v-21h-38zM85.3 7h26a9.6 9.6 0 0 0 7.1-7H78.3a9.6 9.6 0 0 0 7 7m0 13.8h26a9.6 9.6 0 0 0 7.1-7H78.3a9.6 9.6 0 0 0 7 7m0 14.1h26a9.6 9.6 0 0 0 7.1-7H78.3a9.6 9.6 0 0 0 7 7M308.5 7h26a9.6 9.6 0 0 0 7-7h-40a9.6 9.6 0 0 0 7 7">
-                </path>
-            </svg>
+            <svg class="h-3" load="Logo.svg"></svg>
         </a>
         <div class="nav pointer-events-auto mx-auto flex flex-row items-center justify-center gap-2 text-sm">
             <div>Vehicles</div>
@@ -37,10 +35,8 @@
             <i class="bi bi-person-circle"></i>
         </div>
     </nav>
-    <section class="relative h-hero w-full">
-        <img class="h-full w-full object-cover object-center"
-            src="https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Homepage-APR-Promo-Hero-Desktop-v2.png"
-            alt="Hero1" />
+    <section class="relative h-screen w-full">
+        <img class="h-full w-full object-cover object-center" src="/assets/images/Hero1.png" alt="Hero1" />
         <div class="absolute top-0 z-10 flex h-full w-full flex-col items-center text-white">
             <h1 class="mt-28 text-6xl">0% APR Available</h1>
             <div class="mt-8 flex flex-row items-center justify-center gap-6">
@@ -50,57 +46,59 @@
         </div>
     </section>
     <section class="relative h-screen w-full">
-        <img class="h-full w-full object-cover object-center"
-            src="https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Homepage-Model-Y-Desktop-US-v2.png"
-            alt="Hero2" />
+        <img class="h-full w-full object-cover object-center" src="/assets/images/Hero2.png" alt="Hero2" />
         <div class="absolute top-0 z-10 flex h-full w-full flex-col items-center text-white">
             <h1 class="mt-28 text-6xl">Model Y</h1>
-            <h2 class="text-4xl border-b-2 border-b-white w-max">0% APR Available</h2>
-            <h3 class="text-lg">Lease Starting at $349/mo</h3>
-            <div class="mt-auto mb-12 flex flex-row items-center justify-center gap-6">
+            <h2 class="w-max border-b-2 border-b-white text-4xl">0% APR Available</h2>
+            <h3 class="text-lg">Lease Starting at $299/mo<sup class="top-[-7px] text-[0.5rem]">1</sup></h3>
+            <div class="mb-12 mt-auto flex flex-row items-center justify-center gap-6">
                 <button class="bg-blue text-white">Order Now</button>
                 <button>Demo Drive</button>
             </div>
         </div>
     </section>
     <section class="relative h-screen w-full">
-        <img class="h-full w-full object-cover object-center"
-            src="https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Homepage-Model-3-Desktop-US.png"
-            alt="Hero3" />
+        <img class="h-full w-full object-cover object-center" src="/assets/images/Hero3.png" alt="Hero3" />
         <div class="absolute top-0 z-10 flex h-full w-full flex-col items-center text-white">
             <h1 class="mt-28 text-6xl">Model 3</h1>
-            <h2 class="text-4xl border-b-2 border-b-white w-max">0% APR Available</h2>
-            <h3 class="text-lg">Lease Starting at $299/mo</h3>
-            <div class="mt-auto mb-12 flex flex-row items-center justify-center gap-6">
+            <h2 class="w-max border-b-2 border-b-white text-4xl">0% APR Available</h2>
+            <h3 class="text-lg">Lease Starting at $299/mo<sup class="top-[-7px] text-[0.5rem]">2</sup></h3>
+            <div class="mb-12 mt-auto flex flex-row items-center justify-center gap-6">
                 <button class="bg-blue text-white">Order Now</button>
                 <button>Demo Drive</button>
             </div>
         </div>
     </section>
     <section class="relative h-screen w-full scroll-smooth">
-        <img class="h-full w-full object-cover object-center"
-            src="https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Homepage-Model-X-Desktop-US.png"
-            alt="Hero3" />
+        <img class="h-full w-full object-cover object-center" src="/assets/images/Hero4.png" alt="Hero4" />
         <div class="absolute top-0 z-10 flex h-full w-full flex-col items-center text-white">
             <h1 class="mt-28 text-6xl">Model X</h1>
-            <h2 class="text-4xl w-max">From $65,990</h2>
+            <h2 class="w-max text-4xl">From $65,990<sup class="top-[-7px] text-[0.5rem]">3</sup></h2>
             <a href="#" class="text-lg underline">After Federal Tax Credit $7,500</a>
             <a href="#" class="text-lg underline">and Est. Gas Saving $6,500</a>
-            <div class="mt-auto mb-12 flex flex-row items-center justify-center gap-6">
+            <div class="mb-12 mt-auto flex flex-row items-center justify-center gap-6">
                 <button class="bg-blue text-white">Order Now</button>
                 <button>Demo Drive</button>
             </div>
         </div>
     </section>
     <section class="relative h-screen w-full scroll-smooth">
-        <img class="h-full w-full object-cover object-center"
-            src="https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Homepage-Model-S-Desktop-US.png"
-            alt="Hero4" />
+        <img class="h-full w-full object-cover object-center" src="/assets/images/Hero5.png" alt="Hero5" />
         <div class="absolute top-0 z-10 flex h-full w-full flex-col items-center text-white">
             <h1 class="mt-28 text-6xl">Model S</h1>
-            <h2 class="text-4xl w-max">From $68,490</h2>
+            <h2 class="w-max text-4xl">From $68,490<sup class="top-[-7px] text-[0.5rem]">4</sup></h2>
             <a href="#" class="text-lg underline">After Est. Gas Savings $6,500</a>
-            <div class="mt-auto mb-12 flex flex-row items-center justify-center gap-6">
+            <div class="mb-12 mt-auto flex flex-row items-center justify-center gap-6">
+                <button class="bg-blue text-white">Order Now</button>
+                <button>Demo Drive</button>
+            </div>
+        </div>
+    </section>
+    <section class="relative h-screen w-full scroll-smooth">
+        <img class="h-full w-full object-cover object-center" src="/assets/images/Hero6.png" alt="Hero6" />
+        <div class="absolute top-0 z-10 flex h-full w-full flex-col items-center text-white">
+            <svg class="mt-28 h-28" load="Cybertruck.svg"></svg>
+            <div class="mb-12 mt-auto flex flex-row items-center justify-center gap-6">
                 <button class="bg-blue text-white">Order Now</button>
                 <button>Demo Drive</button>
             </div>
