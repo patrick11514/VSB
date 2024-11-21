@@ -141,8 +141,9 @@ public class SokoView extends View implements ViewEventHandler{
         Triple<Integer, Integer, Boolean> player = level.getPlayer();
         this.playerX = player.getFirst();
         this.playerY = player.getSecond();
-        this.underPlayer = player.getThird() ? Block.X : Block.Floor;
-
+        if (player.getThird()) {
+            this.underPlayer = Block.X;
+        }
         invalidate();
     }
 
@@ -298,6 +299,12 @@ public class SokoView extends View implements ViewEventHandler{
 
     @Override
     public void onUpdate() {
+        Triple<Integer, Integer, Boolean> player = level.getPlayer();
+        this.playerX = player.getFirst();
+        this.playerY = player.getSecond();
+        if (player.getThird()) {
+            this.underPlayer = Block.X;
+        }
         this.invalidate();
     }
 }

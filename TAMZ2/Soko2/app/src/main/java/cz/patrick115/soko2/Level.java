@@ -128,7 +128,13 @@ public class Level {
     private String serialize() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < this.width * this.height; ++i) {
-            sb.append(this.currentState[i]);
+            int state = this.currentState[i];
+            if (state == Block.Player.ordinal() && (this.level[i] == Block.X.ordinal() || this.level[i] == Block.PlayerOnX.ordinal())) {
+                Log.i("IDK", "YAY");
+                state = Block.PlayerOnX.ordinal();
+            }
+
+            sb.append(state);
         }
         return sb.toString();
     }
