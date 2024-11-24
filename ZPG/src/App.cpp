@@ -17,7 +17,7 @@
 #include <optional>
 #include <stdexcept>
 
-App::App() { this->controller = new Controller(this); }
+App::App() { this->controller = Controller::getInstance(this); }
 
 App::~App() {
   delete this->controller;
@@ -143,7 +143,8 @@ void App::run() {
       auto skybox = scene->getSkybox();
       if (skybox) {
         skybox->draw();
-        glClear(GL_DEPTH_BUFFER_BIT);
+        if (!this->controller->getSkyBoxStatic())
+          glClear(GL_DEPTH_BUFFER_BIT);
       }
 
       scene->render();

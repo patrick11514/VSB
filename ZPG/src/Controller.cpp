@@ -5,6 +5,16 @@
 #include <cstdio>
 #include <glm/ext/matrix_clip_space.hpp>
 
+Controller *Controller::instance = nullptr;
+
+Controller *Controller::getInstance(App *app) {
+  if (Controller::instance == nullptr) {
+    Controller::instance = new Controller(app);
+  }
+
+  return Controller::instance;
+}
+
 Controller::Controller(App *app) : app(app) {}
 
 void Controller::onKeyPress(GLFWwindow *window, int key, int scancode,
@@ -103,6 +113,12 @@ void Controller::onFrame() {
     case GLFW_KEY_D:
       this->getCamera()->toRight();
       break;
+    case GLFW_KEY_H:
+      this->staticSkyBox = true;
+      break;
+    case GLFW_KEY_J:
+      this->staticSkyBox = false;
+      break;
     }
   }
 }
@@ -114,3 +130,5 @@ glm::mat4 Controller::getProjectionMatrix() const {
 Camera *Controller::getCamera() {
   return this->app->getCurrentScene()->getCamera();
 }
+
+bool Controller::getSkyBoxStatic() const { return this->staticSkyBox; }

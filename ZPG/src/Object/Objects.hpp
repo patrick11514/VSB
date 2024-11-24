@@ -51,3 +51,14 @@ DrawableObject *createGift(ShaderProgram *shaderProgram,
 DrawableObject *createPlane(ShaderProgram *shaderProgram,
                             std::shared_ptr<Transformation> transformations,
                             std::shared_ptr<Material> material);
+
+/**
+ * @brief Create Plane from data located at /Object/Models/plane.h
+ * @param shaderProgram ShaderProgram used to draw Gift
+ * @param transformations Transformation which will be applied on Object
+ * @return Plane Object
+ */
+DrawableObject *
+createPlaneNormal(ShaderProgram *shaderProgram,
+                  std::shared_ptr<Transformation> transformations,
+                  std::shared_ptr<Material> material);

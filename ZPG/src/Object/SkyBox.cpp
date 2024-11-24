@@ -1,19 +1,23 @@
 #include "SkyBox.hpp"
+#include "../Controller.hpp"
 #include "BaseObject.hpp"
 #include "Models/skycube.h"
 #include "Texture/BaseTexture.hpp"
+
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/matrix.hpp>
 
 SkyBox::SkyBox(std::array<std::string, 6> faces, ShaderProgram *shaderProgram)
-    : BaseTexture(faces, GL_TEXTURE_CUBE_MAP), shaderProgram(shaderProgram) {
+    : BaseTexture(faces, GL_TEXTURE_2D), shaderProgram(shaderProgram) {
   this->data = std::make_shared<ObjectData>(
       Model{skycube, sizeof(skycube) / sizeof(float)});
 }
 
 void SkyBox::update(Observable *who) {
   if (const auto *camera = dynamic_cast<Camera *>(who)) {
-    this->modelMatrix = glm::translate(glm::mat4{1.f}, camera->getPosition());
+    Controller *controller = Controller::getInstance(nullptr);
+    if (!controller->getSkyBoxStatic())
+      this->modelMatrix = glm::translate(glm::mat4{1.f}, camera->getPosition());
   }
 }
 

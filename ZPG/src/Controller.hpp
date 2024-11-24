@@ -19,8 +19,15 @@ private:
 
   double prevX = 0; ///< previous x position of mouse
   double prevY = 0; ///< previsout y position of mouse
-public:
+
+  static Controller *instance;
+
   Controller(App *app); ///< Default constructor which get app pointer
+
+  bool staticSkyBox = false;
+
+public:
+  static Controller *getInstance(App *app);
 
   /**
    * @brief On key press
@@ -59,4 +66,5 @@ public:
 
   glm::mat4 getProjectionMatrix() const; ///< Get projection matrix from APP
   Camera *getCamera();                   ///< Get camera from Current scene
+  bool getSkyBoxStatic() const;
 };

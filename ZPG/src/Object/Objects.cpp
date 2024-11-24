@@ -104,3 +104,25 @@ DrawableObject *createPlane(ShaderProgram *shaderProgram,
       dataStorage.getObject("plane"), shaderProgram, transformations,
       []() { glDrawArrays(GL_QUADS, 0, 4); }, material);
 }
+
+DrawableObject *
+createPlaneNormal(ShaderProgram *shaderProgram,
+                  std::shared_ptr<Transformation> transformations,
+                  std::shared_ptr<Material> material) {
+  if (!dataStorage.hasObject("normal_plane")) {
+    Model model{planeNormal, sizeof(planeNormal) / sizeof(float)};
+    dataStorage.add(
+        "normal_plane", ObjectData(model, 3, []() {
+          glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                                (GLvoid *)0);
+          glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                                (GLvoid *)(3 * sizeof(float)));
+          glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                                (GLvoid *)(6 * sizeof(float)));
+        }));
+  }
+
+  return new DrawableObject(
+      dataStorage.getObject("normal_plane"), shaderProgram, transformations,
+      []() { glDrawArrays(GL_QUADS, 0, 4); }, material);
+}

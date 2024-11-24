@@ -79,6 +79,12 @@ void Forest::addObjects() {
                       new Scale(glm::vec3(200.f, 1.f, 200.f))),
                   this->textureStorage.getTexture("grass")));
 
+  this->addObject(
+      createPlaneNormal(phong,
+                        std::make_shared<Transformation>()->addTransformation(
+                            new Translate(glm::vec3(5.f, 5.f, 5.f))),
+                        this->textureStorage.getTexture("planks")));
+
   auto treeMaterial = std::make_shared<TreeMaterial>();
   auto bushMaterial = std::make_shared<BushMaterial>();
 

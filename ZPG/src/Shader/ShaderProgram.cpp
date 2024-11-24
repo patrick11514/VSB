@@ -183,6 +183,7 @@ void ShaderProgram::putMaterial(const Material *material) const {
     this->putParameter("material.type",
                        static_cast<int>(ShaderDefines::TEXTURE));
     this->putParameter("material.textureUnit", texture->getUnit());
+    printf("Putting unit: %d\n", texture->getUnit());
   } else {
     this->putParameter("material.type",
                        static_cast<int>(ShaderDefines::MATERIAL));
@@ -194,5 +195,6 @@ void ShaderProgram::putLightCount(int count) const {
 }
 
 void ShaderProgram::putTextureUnit(GLuint textureId) const {
+  printf("Putting textureUnit: %d\n", textureId);
   this->putParameter("textureUnit", textureId);
 }
