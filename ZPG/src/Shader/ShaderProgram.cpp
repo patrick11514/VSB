@@ -11,6 +11,9 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <stdio.h>
 
+// Constants used inside shader programs
+enum ShaderDefines { MATERIAL = 10, TEXTURE = 11 };
+
 ShaderProgram::ShaderProgram(const Shader &vertexShader,
                              const Shader &fragmentShader,
                              Controller *controller)
@@ -171,6 +174,15 @@ void ShaderProgram::putMaterial(const Material *material) const {
   this->putParameter("material.rs", material->getRs());
   this->putParameter("material.rd", material->getRd());
   this->putParameter("material.shininess", material->getShininess());
+
+  if (const Texture *texture = dynamic_cast<const Texture *>(material)) {
+    this->putParameter("material.type",
+                       static_cast<int>(ShaderDefines::TEXTURE));
+    this->putParameter("material.textureUnit", texture->getUnit());
+  } else {
+    this->putParameter("material.type",
+                       static_cast<int>(ShaderDefines::MATERIAL));
+  }
 }
 
 void ShaderProgram::putLightCount(int count) const {

@@ -8,7 +8,6 @@
 #include "../Transformation/Transformation.hpp"
 #include "BaseObject.hpp"
 #include "ObjectData.hpp"
-#include "Texture/Texture.hpp"
 
 /**
  * @brief This class put ObjectData, ShaderProgram, Transformations together
@@ -31,21 +30,6 @@ public:
                  RenderFunction renderFunction,
                  std::shared_ptr<Material> material)
       : Drawable(data, shaderProgram, renderFunction, material),
-        transformations(transformations) {};
-
-  /**
-   * @brief Basic constructor used, when you don't want to animate object
-   * @param data Sliced data of Object
-   * @param shaderProgram Pointer to shader program, which will be used to
-   * render this object
-   * @param transformations Pointer to transformations used on this object
-   * @param renderFunction Render function to render Object(s) from slided data
-   */
-  DrawableObject(std::shared_ptr<ObjectData> data, ShaderProgram *shaderProgram,
-                 std::shared_ptr<Transformation> transformations,
-                 RenderFunction renderFunction,
-                 std::shared_ptr<Texture> texture)
-      : Drawable(data, shaderProgram, renderFunction, texture),
         transformations(transformations) {};
 
   void

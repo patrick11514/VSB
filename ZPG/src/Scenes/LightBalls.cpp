@@ -10,6 +10,8 @@
 #include <memory>
 
 void LightBalls::addObjects() {
+  auto *phong = this->shaderStorage.getShaderProgram("phong").get();
+
   Camera *camera = new Camera();
   camera->enable();
   this->addObject(camera);
@@ -21,28 +23,28 @@ void LightBalls::addObjects() {
   auto material = std::make_shared<BluePhongMaterial>();
 
   this->addObject(createBall(
-      this->shaderStorage.getShaderProgram("phong"),
+      phong,
       std::make_shared<Transformation>()
           ->addTransformation(new Translate(glm::vec3(0.f, 0.f, 2.f)))
           ->addTransformation(new Scale({.1f, .1f, .1f})),
       material));
 
   this->addObject(createBall(
-      this->shaderStorage.getShaderProgram("phong"),
+      phong,
       std::make_shared<Transformation>()
           ->addTransformation(new Translate(glm::vec3(0.f, 0.f, -2.f)))
           ->addTransformation(new Scale({.1f, .1f, .1f})),
       material));
 
   this->addObject(createBall(
-      this->shaderStorage.getShaderProgram("phong"),
+      phong,
       std::make_shared<Transformation>()
           ->addTransformation(new Translate(glm::vec3(0.f, 2.f, 0.f)))
           ->addTransformation(new Scale({.1f, .1f, .1f})),
       material));
 
   this->addObject(createBall(
-      this->shaderStorage.getShaderProgram("phong"),
+      phong,
       std::make_shared<Transformation>()
           ->addTransformation(new Translate(glm::vec3(0.f, -2.f, 0.f)))
           ->addTransformation(new Scale({.1f, .1f, .1f})),

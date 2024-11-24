@@ -2,14 +2,8 @@
 
 #include <stdexcept>
 
-ShaderStorage::~ShaderStorage() {
-  for (auto &item : this->shaders) {
-    delete item.second;
-  }
-}
-
 void ShaderStorage::addShaderProgram(const std::string &name,
-                                     ShaderProgram *shader) {
+                                     std::shared_ptr<ShaderProgram> shader) {
   this->shaders.emplace(name, shader);
   printf("Shader %s is %d\n", name.c_str(), shader->programId);
 }
@@ -23,7 +17,8 @@ void ShaderStorage::removeShader(const std::string &name) {
   this->shaders.erase(it);
 }
 
-ShaderProgram *ShaderStorage::getShaderProgram(const std::string &name) const {
+std::shared_ptr<ShaderProgram>
+ShaderStorage::getShaderProgram(const std::string &name) const {
   auto it = this->shaders.find(name);
 
   if (it == this->shaders.end()) {

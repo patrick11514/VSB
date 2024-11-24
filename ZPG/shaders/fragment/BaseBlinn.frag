@@ -5,6 +5,9 @@
 #define DIRECTIONAL 1
 #define REFLECTOR 2
 
+#define MATERIAL 10
+#define TEXTURE 11
+
 struct Light {
     int type;
     vec3 color;         // Light color (no alpha)
@@ -20,14 +23,20 @@ struct Light {
 };
 
 struct Material {
+    int type;
+
     vec3 ra;
     vec3 rd;
     vec3 rs;
     float shininess;
+
+    sampler2D textureUnit;
 };
 
+in vec2 uv_out;
 in vec4 positionCS;
 in vec3 normalCS;
+
 
 uniform int lightCount;
 uniform Light lights[MAX_LIGHTS];
@@ -40,6 +49,14 @@ void main () {
     vec4 totalDiffuse = vec4(0.0);
     vec4 totalSpecular = vec4(0.0);
     vec3 viewDir = normalize(-(positionCS.xyz / positionCS.w));
+
+    vec4 text = vec4(1.0);
+
+    if (material.type == TEXTURE) {
+        text = texture(material.textureUnit, uv_out);
+    }
+
+    vec4 ambientColor = vec4(material.ra, 1.0) * text;
 
     for (int i = 0; i < lightCount; ++i) {
         Light light = lights[i];
@@ -60,7 +77,7 @@ void main () {
         vec4 specular = spec * vec4(light.color, 1.0) * vec4(material.rs, 1.0);
 
         float diff = max(dot(normalCS, lightDir), 0.0);
-        vec4 diffuse = diff * vec4(light.color, 1.0) * vec4(material.rd, 1.0);
+        vec4 diffuse = diff * vec4(light.color, 1.0) * vec4(material.rd, 1.0) * text;
              
         float attenuation = 1;
 
@@ -89,6 +106,6 @@ void main () {
         totalDiffuse += diffuse * attenuation;
     }
 
-    fragColor = vec4(material.ra, 1.0) + totalDiffuse + totalSpecular;
+    fragColor = ambientColor + totalDiffuse + totalSpecular;
 
 }

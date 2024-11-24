@@ -10,6 +10,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "Object/Texture/TextureStorage.hpp"
 #include "Scenes/Scene.hpp"
 #include "Shader/ShaderStorage.hpp"
 #include "Window.hpp"
@@ -25,7 +26,8 @@ private:
   Controller *controller; ///< Controller, which controlls keys/mouse...
   Window *window;         ///< Window object, that manages window
 
-  ShaderStorage shaders; ///< Storage of all shaders
+  ShaderStorage shaders;   ///< Storage of all shaders
+  TextureStorage textures; ///< Storage of all textures
   std::unordered_map<std::string, Scene *>
       scenes;                              ///< Key-Value storage of all scenes
   std::optional<std::string> currentScene; ///< Current Scene

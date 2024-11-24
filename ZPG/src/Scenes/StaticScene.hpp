@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Object/Texture/TextureStorage.hpp"
 #include "../Shader/ShaderStorage.hpp"
 #include "Scene.hpp"
 
@@ -9,10 +10,12 @@
 class StaticScene : public Scene {
 protected:
   const ShaderStorage &shaderStorage;
+  const TextureStorage &textureStorage;
 
 public:
-  StaticScene(const ShaderStorage &shaderStorage)
-      : shaderStorage(shaderStorage) {
+  StaticScene(const ShaderStorage &shaderStorage,
+              const TextureStorage &textureStorage)
+      : shaderStorage(shaderStorage), textureStorage(textureStorage) {
         }; ///< Constructor which takes static reference shaderStorage and
            ///< stores it inside self
   virtual ~StaticScene() = default; ///< Virtual destructor

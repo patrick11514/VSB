@@ -7,6 +7,8 @@
  */
 class Objects : public StaticScene {
 public:
-  Objects(const ShaderStorage &shaderStorage) : StaticScene(shaderStorage) {};
+  Objects(const ShaderStorage &shaderStorage,
+          const TextureStorage &textureStorage)
+      : StaticScene(shaderStorage, textureStorage) {};
   void addObjects() override;
 };

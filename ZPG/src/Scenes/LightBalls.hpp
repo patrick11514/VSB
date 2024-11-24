@@ -7,6 +7,8 @@
  */
 class LightBalls : public StaticScene {
 public:
-  LightBalls(const ShaderStorage &shaderStorage) : StaticScene(shaderStorage) {};
+  LightBalls(const ShaderStorage &shaderStorage,
+             const TextureStorage &textureStorage)
+      : StaticScene(shaderStorage, textureStorage) {};
   void addObjects() override;
 };

@@ -7,7 +7,8 @@
  */
 class DarkForest : public StaticScene {
 public:
-  DarkForest(const ShaderStorage &shaderStorage)
-      : StaticScene(shaderStorage) {};
+  DarkForest(const ShaderStorage &shaderStorage,
+             const TextureStorage &textureStorage)
+      : StaticScene(shaderStorage, textureStorage) {};
   void addObjects() override;
 };

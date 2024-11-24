@@ -1,5 +1,6 @@
 #include "App.hpp"
 #include "Controller.hpp"
+#include "Object/Texture/Texture.hpp"
 #include "Scenes/DarkForest.hpp"
 #include "Scenes/DifferentLight.hpp"
 #include "Scenes/Forest.hpp"
@@ -66,13 +67,32 @@ void App::initialize() {
 }
 
 void App::prepareScenes() {
+  // load textures
+  Material textureMaterial(glm::vec3{0.2, 0.2, 0.2}, glm::vec3{1.0, 1.0, 1.0},
+                           glm::vec3{0.0, 0.0, 0.0}, 32.0);
+
+  this->textures.addTexture(
+      "planks",
+      std::make_shared<Texture>(textureMaterial, "../textures/wooden_fence.png",
+                                GL_TEXTURE_2D));
+  this->textures.addTexture(
+      "grass", std::make_shared<Texture>(
+                   textureMaterial, "../textures/grass.png", GL_TEXTURE_2D));
+  this->textures.addTexture(
+      "dark_grass", std::make_shared<Texture>(
+                        glm::vec3{0.0, 0.0, 0.0}, glm::vec3{1.0, 1.0, 1.0},
+                        glm::vec3{0.0, 0.0, 0.0}, 32.0, "../textures/grass.png",
+                        GL_TEXTURE_2D));
+
+  // prepare scenes
   this->currentScene = "obj";
 
-  this->addScene("obj", new Objects(this->shaders));
-  this->addScene("forest", new Forest(this->shaders));
-  this->addScene("light", new LightBalls(this->shaders));
-  this->addScene("different_light", new DifferentLight(this->shaders));
-  this->addScene("dark_forest", new DarkForest(this->shaders));
+  this->addScene("obj", new Objects(this->shaders, this->textures));
+  this->addScene("forest", new Forest(this->shaders, this->textures));
+  this->addScene("light", new LightBalls(this->shaders, this->textures));
+  this->addScene("different_light",
+                 new DifferentLight(this->shaders, this->textures));
+  this->addScene("dark_forest", new DarkForest(this->shaders, this->textures));
 }
 
 void App::createShaders() {
@@ -86,7 +106,7 @@ void App::createShaders() {
     for (auto &pair : shadersToLoad) {
       this->shaders.addShaderProgram(
           pair.first,
-          new ShaderProgram(
+          std::make_shared<ShaderProgram>(
               std::format("../shaders/vertex/{}", pair.second.first),
               std::format("../shaders/fragment/{}", pair.second.second),
               this->controller));

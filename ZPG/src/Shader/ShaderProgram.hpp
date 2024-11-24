@@ -47,7 +47,8 @@ public:                   //@TODO RESET
       glUniform3fv(position, 1, glm::value_ptr(value));
     } else if constexpr (std::is_same<T, float>::value) {
       glUniform1f(position, value);
-    } else if constexpr (std::is_same<T, int>::value) {
+    } else if constexpr (std::is_same<T, int>::value ||
+                         std::is_same<T, GLuint>::value) {
       glUniform1i(position, value);
     } else if constexpr (std::is_same<T, glm::vec4>::value) {
       glUniform4fv(position, 1, glm::value_ptr(value));
