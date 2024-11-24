@@ -8,6 +8,7 @@
 #include "../Object/Material/SolidWhiteMaterial.hpp"
 #include "../Object/Material/TreeMaterial.hpp"
 #include "../Object/Objects.hpp"
+#include "../Object/SkyBox.hpp"
 #include "../Transformation/DynamicRotation.hpp"
 #include "../Transformation/RandomTranslate.hpp"
 #include "../Transformation/Scale.hpp"
@@ -44,6 +45,13 @@ void Forest::addObjects() {
   this->addObject(new Flashlight(glm::vec3{0.0, 0.0, 1.0}, this->getCamera(),
                                  1.0, 0.03, 0.00005));
 
+  this->addObject(new SkyBox(
+      std::array<std::string, 6>{"../textures/posx.jpg", "../textures/negx.jpg",
+                                 "../textures/posy.jpg", "../textures/negy.jpg",
+                                 "../textures/posz.jpg",
+                                 "../textures/negz.jpg"},
+      this->shaderStorage.getShaderProgram("skybox").get()));
+
   std::random_device dev;
   std::mt19937 rng(dev());
 
@@ -65,33 +73,11 @@ void Forest::addObjects() {
                                   std::make_shared<SolidWhiteMaterial>()));
   }
 
-  // clang-format off
-  Model model(std::vector<float>{
-    -1.0f, 0.0f, 1.0f,    0.f, 1.f, 0.f, 0.f  , 200.f,     // Top Left
-     1.0f, 0.0f, 1.0f,    0.f, 1.f, 0.f, 200.f, 200.f,    // Top Right
-     1.0f, 0.0f, -1.0f,   0.f, 1.f, 0.f, 200.f, 0.f,    // Bottom Right
-    -1.0f, 0.0f, -1.0f,   0.f, 1.f, 0.f, 0.f  , 0.f,    // Bottom Left
-  });
-  // clang-format on
-
-  auto tran = std::make_shared<Transformation>();
-  tran->addTransformation(new Scale(glm::vec3(200.f, 1.f, 200.f)));
-
-  DrawableObject *obj = new DrawableObject(
-      std::make_shared<ObjectData>(
-          model, 3,
-          []() {
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                                  (GLvoid *)0);
-            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                                  (GLvoid *)(3 * sizeof(float)));
-            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                                  (GLvoid *)(6 * sizeof(float)));
-          }),
-      phong, tran, []() { glDrawArrays(GL_QUADS, 0, 4); },
-      this->textureStorage.getTexture("grass"));
-
-  this->addObject(obj);
+  this->addObject(
+      createPlane(phong,
+                  std::make_shared<Transformation>()->addTransformation(
+                      new Scale(glm::vec3(200.f, 1.f, 200.f))),
+                  this->textureStorage.getTexture("grass")));
 
   auto treeMaterial = std::make_shared<TreeMaterial>();
   auto bushMaterial = std::make_shared<BushMaterial>();

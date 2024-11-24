@@ -97,10 +97,9 @@ void App::prepareScenes() {
 
 void App::createShaders() {
   std::unordered_map<std::string, std::pair<std::string, std::string>>
-      shadersToLoad{
-          {"phong", {"Base.vert", "BasePhong.frag"}},
-          {"blinnphong", {"Base.vert", "BaseBlinn.frag"}},
-      };
+      shadersToLoad{{"phong", {"Base.vert", "BasePhong.frag"}},
+                    {"blinnphong", {"Base.vert", "BaseBlinn.frag"}},
+                    {"skybox", {"SkyBox.vert", "SkyBox.frag"}}};
 
   try {
     for (auto &pair : shadersToLoad) {
@@ -130,6 +129,7 @@ void App::createModels() {
 
 void App::run() {
   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
   double prevTime;
   int frames;
@@ -139,7 +139,14 @@ void App::run() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if (this->currentScene.has_value()) {
-      this->getScene(this->currentScene.value())->render();
+      auto scene = this->getScene(this->currentScene.value());
+      auto skybox = scene->getSkybox();
+      if (skybox) {
+        skybox->draw();
+        glClear(GL_DEPTH_BUFFER_BIT);
+      }
+
+      scene->render();
     }
 
     ShaderProgram::resetProgram();

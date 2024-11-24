@@ -36,8 +36,18 @@ DrawableObject *createBush(ShaderProgram *shaderProgram,
  * @brief Create Gift from data located at /Object/Models/gift.h
  * @param shaderProgram ShaderProgram used to draw Gift
  * @param transformations Transformation which will be applied on Object
- * @return Ball Gift
+ * @return Gift Object
  */
 DrawableObject *createGift(ShaderProgram *shaderProgram,
                            std::shared_ptr<Transformation> transformations,
                            std::shared_ptr<Material> material);
+
+/**
+ * @brief Create Plane from data located at /Object/Models/plane.h
+ * @param shaderProgram ShaderProgram used to draw Gift
+ * @param transformations Transformation which will be applied on Object
+ * @return Plane Object
+ */
+DrawableObject *createPlane(ShaderProgram *shaderProgram,
+                            std::shared_ptr<Transformation> transformations,
+                            std::shared_ptr<Material> material);

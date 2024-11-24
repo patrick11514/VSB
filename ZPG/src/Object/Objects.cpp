@@ -3,6 +3,8 @@
 #include "Model.hpp"
 #include "Models/bushes.h"
 #include "Models/gift.h"
+#include "Models/plane.h"
+#include "Models/skycube.h"
 #include "Models/sphere.h"
 #include "Models/tree.h"
 #include "ObjectData.hpp"
@@ -80,4 +82,25 @@ DrawableObject *createGift(ShaderProgram *shaderProgram,
   return new DrawableObject(
       dataStorage.getObject("gift"), shaderProgram, transformations,
       []() { glDrawArrays(GL_TRIANGLES, 0, 66624); }, material);
+}
+
+DrawableObject *createPlane(ShaderProgram *shaderProgram,
+                            std::shared_ptr<Transformation> transformations,
+                            std::shared_ptr<Material> material) {
+  if (!dataStorage.hasObject("plane")) {
+    Model model{plane, sizeof(plane) / sizeof(float)};
+    dataStorage.add(
+        "plane", ObjectData(model, 3, []() {
+          glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                                (GLvoid *)0);
+          glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                                (GLvoid *)(3 * sizeof(float)));
+          glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                                (GLvoid *)(6 * sizeof(float)));
+        }));
+  }
+
+  return new DrawableObject(
+      dataStorage.getObject("plane"), shaderProgram, transformations,
+      []() { glDrawArrays(GL_QUADS, 0, 4); }, material);
 }

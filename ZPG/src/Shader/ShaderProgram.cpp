@@ -125,6 +125,10 @@ void ShaderProgram::putModelMatrix(Transformation *transformations) const {
   this->putParameter("modelMatrix", transformations->getMatrix());
 }
 
+void ShaderProgram::putRawModelMatrix(const glm::mat4 &matrix) const {
+  this->putParameter("modelMatrix", matrix);
+}
+
 void ShaderProgram::putViewMatrix(const glm::mat4 &matrix) const {
   this->putParameter("viewMatrix", matrix);
 }
@@ -187,4 +191,8 @@ void ShaderProgram::putMaterial(const Material *material) const {
 
 void ShaderProgram::putLightCount(int count) const {
   this->putParameter("lightCount", static_cast<int>(count));
+}
+
+void ShaderProgram::putTextureUnit(GLuint textureId) const {
+  this->putParameter("textureUnit", textureId);
 }

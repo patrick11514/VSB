@@ -105,6 +105,7 @@ public:
   void update(Observable *who) override; ///< Update viewMatrix from Camera
 
   void putModelMatrix(Transformation *transformations) const;
+  void putRawModelMatrix(const glm::mat4 &matrix) const;
   void putProjectionMatrix(const glm::mat4 &matrix) const;
   void putViewMatrix(const glm::mat4 &matrix) const;
   void putCameraPosition(const glm::vec3 &vector) const;
@@ -112,4 +113,5 @@ public:
   void putLightProperties(const Light *light) const;
   void putMaterial(const Material *material) const;
   void putLightCount(int count) const;
+  void putTextureUnit(GLuint textureId) const;
 };

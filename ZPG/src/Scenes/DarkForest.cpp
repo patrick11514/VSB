@@ -49,33 +49,11 @@ void DarkForest::addObjects() {
                                   std::make_shared<SolidWhiteMaterial>()));
   }
 
-  // clang-format off
-  Model model(std::vector<float>{
-    -1.0f, 0.0f, 1.0f,    0.f, 1.f, 0.f, 0.f  , 200.f,     // Top Left
-     1.0f, 0.0f, 1.0f,    0.f, 1.f, 0.f, 200.f, 200.f,    // Top Right
-     1.0f, 0.0f, -1.0f,   0.f, 1.f, 0.f, 200.f, 0.f,    // Bottom Right
-    -1.0f, 0.0f, -1.0f,   0.f, 1.f, 0.f, 0.f  , 0.f,    // Bottom Left
-  });
-  // clang-format on
-
-  auto tran = std::make_shared<Transformation>();
-  tran->addTransformation(new Scale(glm::vec3(200.f, 1.f, 200.f)));
-
-  DrawableObject *obj = new DrawableObject(
-      std::make_shared<ObjectData>(
-          model, 3,
-          []() {
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                                  (GLvoid *)0);
-            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                                  (GLvoid *)(3 * sizeof(float)));
-            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                                  (GLvoid *)(6 * sizeof(float)));
-          }),
-      phong, tran, []() { glDrawArrays(GL_QUADS, 0, 4); },
-      this->textureStorage.getTexture("dark_grass"));
-
-  this->addObject(obj);
+  this->addObject(
+      createPlane(phong,
+                  std::make_shared<Transformation>()->addTransformation(
+                      new Scale(glm::vec3(200.f, 1.f, 200.f))),
+                  this->textureStorage.getTexture("dark_grass")));
 
   auto treeMaterial = std::make_shared<DarkTreeMaterial>();
   auto bushMaterial = std::make_shared<DarkBushMaterial>();

@@ -5,6 +5,7 @@
 
 #include "../Camera.hpp"
 #include "../Object/BaseObject.hpp"
+#include "../Object/SkyBox.hpp"
 #include "../Shader/ShaderProgram.hpp"
 
 class Light;
@@ -29,11 +30,16 @@ public:
 
   void addCamera(Camera *camera);
 
-  Camera *
-  getCamera(); ///< Get camera from scene TODO: add support for more cameras
-  std::vector<Light *>
-  getLights() const; ///< Get light from scene TODO: add support for more light
+  Camera *getCamera(); ///< Get camera from scene
+
+  std::vector<Camera *> getCameras();
+
+  std::vector<Light *> getLights() const; ///< Get light from scene
+
+  SkyBox *getSkybox() const; ///< Get skybox from scene
+
   Light *getLight(int id) const;
+
   void activate(); ///< Put all things to shaders ready for render
 
   void registerProgram(ShaderProgram *program);

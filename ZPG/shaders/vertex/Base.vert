@@ -11,7 +11,7 @@ out vec4 positionCS;
 out vec3 normalCS;
 out vec2 uv_out;
 
-void main(void){
+void main () {
     positionCS = (viewMatrix * modelMatrix) * vec4(vp, 1.0);
     gl_Position = projectionMatrix * positionCS;
     normalCS = normalize(mat3(transpose(inverse(viewMatrix * modelMatrix))) * norm);

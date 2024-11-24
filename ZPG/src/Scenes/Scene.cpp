@@ -18,6 +18,20 @@ void Scene::addObject(BaseObject *object) {
   if (Light *light = dynamic_cast<Light *>(object)) {
     light->assignId(this->lightCount++);
   }
+
+  if (SkyBox *skybox = dynamic_cast<SkyBox *>(object)) {
+    auto cameras = this->getCameras();
+    for (auto &camera : cameras) {
+      camera->registerObserver(skybox);
+    }
+  }
+
+  if (Camera *camera = dynamic_cast<Camera *>(object)) {
+    auto *skybox = this->getSkybox();
+    if (skybox != nullptr) {
+      camera->registerObserver(skybox);
+    }
+  }
 }
 
 void Scene::registerProgram(ShaderProgram *program) {
@@ -27,7 +41,9 @@ void Scene::registerProgram(ShaderProgram *program) {
 void Scene::render() {
   for (auto *object : this->objects) {
     if (Drawable *drawable = dynamic_cast<Drawable *>(object)) {
-      drawable->draw();
+      if (dynamic_cast<SkyBox *>(object) == nullptr) {
+        drawable->draw();
+      }
     }
   }
 }
@@ -47,8 +63,20 @@ Camera *Scene::getCamera() {
   return nullptr;
 }
 
+std::vector<Camera *> Scene::getCameras() {
+  std::vector<Camera *> cameras;
+  for (auto *object : this->objects) {
+    if (dynamic_cast<Camera *>(object) == nullptr)
+      continue;
+
+    cameras.emplace_back(static_cast<Camera *>(object));
+  }
+
+  // no light found
+  return cameras;
+}
+
 std::vector<Light *> Scene::getLights() const {
-  // TODO: Add support for more lights
   std::vector<Light *> lights;
   for (auto *object : this->objects) {
     if (dynamic_cast<Light *>(object) == nullptr)
@@ -70,6 +98,18 @@ Light *Scene::getLight(int id) const {
     }
   }
 
+  return nullptr;
+}
+
+SkyBox *Scene::getSkybox() const {
+  for (auto *object : this->objects) {
+    if (dynamic_cast<SkyBox *>(object) == nullptr)
+      continue;
+
+    return static_cast<SkyBox *>(object);
+  }
+
+  // no camera found
   return nullptr;
 }
 
