@@ -27,6 +27,14 @@ button {
     @apply cursor-pointer rounded-md bg-white px-20 py-3 text-sm text-text;
 }
 
+button.cyber {
+    @apply bg-cyber-bg backdrop-blur-md opacity-90 text-cyber uppercase text-cyber-text rounded-none border-[1px] border-gray-800 hover:bg-opacity-80 transition-all duration-200 font-bold active:border-white active:bg-opacity-20 active:text-white;
+
+    &:first-child {
+        @apply border-none mt-auto h-[90%] before:w-full before:border-t-[3px] before:border-gray-400 active:before:border-white before:absolute before:left-0 before:-top-1.5 before:block;
+    } 
+}
+
 .nav div {
     @apply cursor-pointer rounded-md p-2;
 }
