@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Electric Cars, Solar & Clean Energy | Tesla</title>
     <link href="/assets/css/main.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="preload" as="fetch" href="/assets/svgs/Logo.svg" />
     <link rel="preload" as="fetch" href="/assets/svgs/Cybertruck.svg" />
     <script src="/assets/js/main.js" defer></script>
     <link rel="icon" type="image/ico" href="/assets/images/favicon.ico">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 </head>
 
 <body class="h-full w-full font-universal-sans text-text">
@@ -18,7 +18,7 @@
         <p>Take delivery by December 31 to receive 3 months of FSD (Supervised) and Supercharging.</p>
         <a id="info-popover" class="underline hover:decoration-2" href="#">Learn More</a>
     </section>
-    <nav class="pointer-events-none fixed z-50 flex w-full px-10 text-white">
+    <nav class="pointer-events-none fixed z-40 flex w-full px-10 text-white transition-all duration-500">
         <a href="/" class="w-1/4 py-6">
             <svg class="h-3" load="Logo.svg"></svg>
         </a>
@@ -36,6 +36,7 @@
             <i class="bi bi-person-circle"></i>
         </div>
     </nav>
+    <!-- Main image !-->
     <section class="relative h-screen w-full">
         <img class="h-full w-full object-cover object-center" src="/assets/images/Hero1.png" alt="Hero1" />
         <div class="absolute top-0 z-10 flex h-full w-full flex-col items-center text-white">
@@ -46,6 +47,7 @@
             </div>
         </div>
     </section>
+    <!-- Heroes !-->
     <section class="relative h-screen w-full">
         <img class="h-full w-full object-cover object-center" src="/assets/images/Hero2.png" alt="Hero2" />
         <div class="absolute top-0 z-10 flex h-full w-full flex-col items-center text-white">
@@ -147,6 +149,62 @@
             </div>
         </div>
     </section>
+    <!-- footer !-->
+    <section class="relative h-screen w-full scroll-smooth">
+        <video class="h-full w-full object-cover object-center" src="/assets/video/wearetesla.mp4" autoplay muted
+            loop></video>
+        <div class="absolute top-0 z-10 flex h-full w-full flex-col items-center text-white">
+            <div class="flex flex-col mt-auto lg:my-auto pt-56 mr-auto p-4 items-start justify-center gap-6">
+                <span class="text-4xl mx-auto font-medium">We Are Tesla</span>
+                <button>Join Tesla</button>
+            </div>
+        </div>
+    </section>
+    <article
+        class="flex flex-col mx-auto gap-4 text-[0.75rem] text-[#5C5E62] text-center items-center justify-center w-[75%] font-thin pt-24 p-8">
+        <div>
+            <sup>1</sup> Monthly lease payment excludes taxes and fees, is based on $44,990 Model Y Long Range
+            Rear-Wheel Drive purchase price and is subject to change at any time. Requires $2,999 down with 36 months
+            and 10,000 miles. Subject to credit approval and available in select U.S. states. <a href="#">Terms
+                apply</a>
+        </div>
+        <div>
+            <sup>2</sup> Monthly lease payment excludes taxes and fees, is based on $42,490 Model 3 Long Range
+            Rear-Wheel Drive purchase price and is subject to change at any time. Requires $2,999 down with 36 months
+            and 10,000 miles. Subject to credit approval and available in select U.S. states. <a href="#">Terms
+                apply</a>
+        </div>
+        <div>
+            <sup>3</sup> Price before estimated savings is $81,630, including Destination and Order Fees, but excluding
+            taxes and other fees. Subject to change. Vehicle shown has upgrades that will increase the price. Estimated
+            savings includes $6,500 in <a href="#">gas savings</a> estimated over five years, the $7,500 Federal Tax
+            Credit and state incentives, available to eligible buyers and subject to MSRP caps. Not all vehicles,
+            customers or finance options will be eligible. <a href="#">Terms
+                apply</a>
+        </div>
+        <div>
+            <sup>4</sup> Price before estimated savings is $76,630, including Destination and Order Fees, but excluding
+            taxes and other fees. Subject to change. Vehicle shown has upgrades that will increase the price. Estimated
+            savings includes $6,500 in <a href="#">gas savings</a> estimated over five years and state incentives,
+            available to eligible buyers and subject to MSRP caps. Not all vehicles, customers or finance options will
+            be eligible. <a href="#">Terms
+                apply</a>
+        </div>
+    </article>
+    <footer class="py-16 w-full flex justify-center items-center gap-4 text-[0.8rem] text-[#5C5E62]">
+        <span>Tesla &copy; 2024</span>
+        <a href="#">Privacy & Legal</a>
+        <a href="#">Vehicle Recalls</a>
+        <a href="#">Contact</a>
+        <a href="#">News</a>
+        <a href="#">Get Updates</a>
+        <a href="#">Locations</a>
+    </footer>
+    <button id="schedule-drive"
+        class="fixed bottom-0 h-auto z-10 w-full p-3 shadow-footer flex justify-center items-center text-lg gap-2 translate-y-full transition-all duration-500">
+        <svg load="Steeringwheel.svg" class="w-6 text-[#3E6AE1]"></svg>
+        Schedule a Drive Today
+    </button>
 </body>
 
 </html>

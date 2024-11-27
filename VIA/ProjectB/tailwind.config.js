@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: ["./src/**/*.{html,js,css}"],
+    content: ["./src/**/*.{html,ts,js,css}"],
     theme: {
         extend: {
             colors: {
@@ -19,6 +19,9 @@ module.exports = {
                 cyber: ["0.7rem", {
                     "letterSpacing": "0.125rem"
                 }]
+            },
+            boxShadow: {
+                footer: "0 -8px 8px 0 rgba(0,0,0,.1)"
             }
         },
     },
