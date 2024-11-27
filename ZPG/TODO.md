@@ -6,12 +6,12 @@
 - [x] fix up vector to face 0,1,0 instead of 0,-1,0
 - [x] when viewport changers, update it, and call camera update to sync shaders
 - [x] add remaining light methods
-- [ ] add support for more lights
+- [x] add support for more lights
   - [x] Light will be between base object in scene
   - [x] Method for getting all lights (temporarily first, until we add support for more)
 - [x] don't lock cursor and don't move every time, only if mrb is pressed
 - [x] ShaderProgram methods: updateModelMatrix(Transformations&) etc..
-- [ ] Light, camera could be something like Drawable object
+- [x] Light, camera could be something like Drawable object
   - [x] Create BaseObject
   - [x] Rename object to DrawableObject
   - [ ] Camera should inherit from BaseObject
@@ -22,3 +22,5 @@
   - [x] Light should inherit from BaseObject
 - [x] Window as separated class
 - [x] Dynamic transformations
+- [ ] Add support for textures
+- [ ] Inherit from ObjectData to implement drawElements instead
