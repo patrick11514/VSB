@@ -29,6 +29,7 @@ android {
 }
 
 dependencies {
+    implementation libs.mpandroidchart
     implementation libs.gson
     implementation libs.volley
     implementation libs.appcompat

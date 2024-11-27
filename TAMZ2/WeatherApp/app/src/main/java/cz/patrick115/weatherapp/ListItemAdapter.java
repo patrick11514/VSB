@@ -32,10 +32,10 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ListItem item = itemList.get(position);
         holder.date.setText(item.date);
-        holder.desc.setText(item.desc);
-        holder.temp.setText(item.temp + "°C");
-        holder.wind.setText(item.wind + "m/s");
-        holder.clouds.setText(item.clouds + "%");
+        holder.desc.setText("Popis:\n" + item.desc);
+        holder.temp.setText("Teplota:\n" + item.temp + "°C");
+        holder.wind.setText("Vítr:\n" + item.wind + "m/s");
+        holder.clouds.setText("Oblačnost:\n" + item.clouds + "%");
         setWeatherIcon(item.icon, holder.icon);
     }
 
