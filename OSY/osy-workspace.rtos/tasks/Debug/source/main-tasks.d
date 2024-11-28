@@ -11,6 +11,8 @@ source/main-tasks.o source/main-tasks.d: ../source/main-tasks.cpp \
  /home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/include/queue.h \
  /home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/include/task.h \
  /home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/include/timers.h \
+ /home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/include/semphr.h \
+ /home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/include/queue.h \
  /home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/board/board.h \
  /home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/board/clock_config.h \
  /home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/drivers/fsl_common.h \
@@ -47,6 +49,8 @@ source/main-tasks.o source/main-tasks.d: ../source/main-tasks.cpp \
 /home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/include/queue.h:
 /home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/include/task.h:
 /home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/include/timers.h:
+/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/include/semphr.h:
+/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/include/queue.h:
 /home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/board/board.h:
 /home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/board/clock_config.h:
 /home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/drivers/fsl_common.h:

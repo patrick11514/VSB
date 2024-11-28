@@ -51,6 +51,7 @@
 #include "task.h"
 #include "queue.h"
 #include "timers.h"
+#include "semphr.h"
 
 // System includes.
 #include <stdio.h>
@@ -76,6 +77,7 @@
 #define LED_PTB_NUM		9
 
 bool suspendSemaphore = false;
+SemaphoreHandle_t snakeSemaphore;
 
 // pair of GPIO port and LED pin.
 struct LED_Data
@@ -135,15 +137,18 @@ void task_snake_left( void *t_arg )
 	{
 		vTaskSuspend( 0 );
 
+		xSemaphoreTake(snakeSemaphore, portMAX_DELAY);
 		for ( int inx = 0; inx < LED_PTC_NUM; inx++ )
 		{
-	    	// switch LED on
-	        GPIO_PinWrite( g_led_ptc[ inx ].m_led_gpio, g_led_ptc[ inx ].m_led_pin, 1 );
-	        vTaskDelay( 200 );
-	        // switch LED off
-	        GPIO_PinWrite( g_led_ptc[ inx ].m_led_gpio, g_led_ptc[ inx ].m_led_pin, 0 );
+			// switch LED on
+			GPIO_PinWrite( g_led_ptc[ inx ].m_led_gpio, g_led_ptc[ inx ].m_led_pin, 1 );
+			vTaskDelay( 200 );
+			// switch LED off
+			GPIO_PinWrite( g_led_ptc[ inx ].m_led_gpio, g_led_ptc[ inx ].m_led_pin, 0 );
 		}
+		xSemaphoreGive(snakeSemaphore);
 	}
+
 }
 
 // This task is snake animation from right side on red LEDs
@@ -153,14 +158,17 @@ void task_snake_right( void *t_arg )
 	{
 		vTaskSuspend( 0 );
 
+		xSemaphoreTake(snakeSemaphore, portMAX_DELAY);
 		for ( int inx = LED_PTC_NUM - 1; inx >= 0; inx-- )
 		{
-	    	// switch LED on
-	        GPIO_PinWrite( g_led_ptc[ inx ].m_led_gpio, g_led_ptc[ inx ].m_led_pin, 1 );
-	        vTaskDelay( 200 );
-	        // switch LED off
-	        GPIO_PinWrite( g_led_ptc[ inx ].m_led_gpio, g_led_ptc[ inx ].m_led_pin, 0 );
+			// switch LED on
+			GPIO_PinWrite( g_led_ptc[ inx ].m_led_gpio, g_led_ptc[ inx ].m_led_pin, 1 );
+			vTaskDelay( 200 );
+			// switch LED off
+			GPIO_PinWrite( g_led_ptc[ inx ].m_led_gpio, g_led_ptc[ inx ].m_led_pin, 0 );
 		}
+		xSemaphoreGive(snakeSemaphore);
+
 	}
 }
 
@@ -218,6 +226,9 @@ int main(void) {
     PRINTF( "FreeRTOS task demo program.\r\n" );
     PRINTF( "Switches PTC9 and PTC10 will stop and run PTAx LEDs blinking.\r\n" );
     PRINTF( "Switches PTC11 and PTC12 will start snake on red LEDS from the left and right side.\r\n");
+
+    snakeSemaphore = xSemaphoreCreateBinary();
+    xSemaphoreGive(snakeSemaphore);
 
     // Create tasks
     if ( xTaskCreate(
