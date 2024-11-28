@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="UpdateCodeDialog">
+		<item key="DIALOG_WIDTH" value="589"/>
+		<item key="DIALOG_HEIGHT" value="475"/>
+		<item key="DIALOG_FONT_NAME" value="1|Noto Sans|10.0|0|GTK|1|"/>
+	</section>
+	<section name="UpdateCodeDialog_DIFF_MODE">
+		<item key="DIALOG_WIDTH" value="1872"/>
+		<item key="DIALOG_HEIGHT" value="1046"/>
+		<item key="DIALOG_FONT_NAME" value="1|Noto Sans|10.0|0|GTK|1|"/>
+		<list key="SPLITTER_LEFT_LAYOUT">
+			<item value="40"/>
+			<item value="100"/>
+			<item value="0"/>
+		</list>
+	</section>
+</section>

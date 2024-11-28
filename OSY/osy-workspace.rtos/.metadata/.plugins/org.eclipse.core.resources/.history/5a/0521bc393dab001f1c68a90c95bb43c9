@@ -1,0 +1,16 @@
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.c:147:14:FreeRTOS_dnsclear	8	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.c:165:23:vCastPointerTo_DNSMessage_t	16	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.c:175:23:vCastConstPtrTo_DNSMessage_t	16	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.c:198:23:vCastPointerTo_DNSTail_t	16	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.c:208:23:vCastPointerTo_DNSAnswerRecord_t	16	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.c:246:18:FreeRTOS_dnslookup	24	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.c:462:18:FreeRTOS_gethostbyname	16	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.c:512:25:prvPrepareLookup	48	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.c:628:21:prvGetHostByName	96	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.c:804:20:prvCreateDNSMessage	56	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.c:907:24:prvReadNameField	40	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.c:1022:20:prvSkipNameField	32	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.c:1101:14:ulDNSHandlePacket	24	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.c:1168:22:prvParseDNSReply	136	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.c:1739:21:prvCreateDNSSocket	24	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.c:1855:27:prvProcessDNSCache	56	static

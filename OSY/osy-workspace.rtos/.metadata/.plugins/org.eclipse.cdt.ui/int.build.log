@@ -1,0 +1,19 @@
+19:44:40 **** Clean-only build of configuration Debug for project int ****
+make -r -j4 clean 
+rm -rf ./utilities/fsl_debug_console.d ./utilities/fsl_debug_console.o ./utilities/fsl_str.d ./utilities/fsl_str.o
+rm -rf ./startup/startup_mk64f12.d ./startup/startup_mk64f12.o
+rm -rf ./source/cpp_config.d ./source/cpp_config.o ./source/gpio_interrupts.d ./source/gpio_interrupts.o ./source/main-tasks.d ./source/main-tasks.o ./source/semihost_hardfault.d ./source/semihost_hardfault.o
+rm -rf ./freertos/freertos_kernel/portable/MemMang/heap_4.d ./freertos/freertos_kernel/portable/MemMang/heap_4.o
+rm -rf ./freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.d ./freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.o
+rm -rf ./freertos/freertos_kernel/croutine.d ./freertos/freertos_kernel/croutine.o ./freertos/freertos_kernel/event_groups.d ./freertos/freertos_kernel/event_groups.o ./freertos/freertos_kernel/list.d ./freertos/freertos_kernel/list.o ./freertos/freertos_kernel/queue.d ./freertos/freertos_kernel/queue.o ./freertos/freertos_kernel/stream_buffer.d ./freertos/freertos_kernel/stream_buffer.o ./freertos/freertos_kernel/tasks.d ./freertos/freertos_kernel/tasks.o ./freertos/freertos_kernel/timers.d ./freertos/freertos_kernel/timers.o
+rm -rf ./drivers/fsl_adc16.d ./drivers/fsl_adc16.o ./drivers/fsl_clock.d ./drivers/fsl_clock.o ./drivers/fsl_common.d ./drivers/fsl_common.o ./drivers/fsl_common_arm.d ./drivers/fsl_common_arm.o ./drivers/fsl_ftm.d ./drivers/fsl_ftm.o ./drivers/fsl_gpio.d ./drivers/fsl_gpio.o ./drivers/fsl_i2c.d ./drivers/fsl_i2c.o ./drivers/fsl_pit.d ./drivers/fsl_pit.o ./drivers/fsl_smc.d ./drivers/fsl_smc.o ./drivers/fsl_uart.d ./drivers/fsl_uart.o
+rm -rf ./device/system_MK64F12.d ./device/system_MK64F12.o
+rm -rf ./component/uart/fsl_adapter_uart.d ./component/uart/fsl_adapter_uart.o
+rm -rf ./component/serial_manager/fsl_component_serial_manager.d ./component/serial_manager/fsl_component_serial_manager.o ./component/serial_manager/fsl_component_serial_port_uart.d ./component/serial_manager/fsl_component_serial_port_uart.o
+rm -rf ./component/lists/fsl_component_generic_list.d ./component/lists/fsl_component_generic_list.o
+rm -rf ./board/board.d ./board/board.o ./board/clock_config.d ./board/clock_config.o ./board/peripherals.d ./board/peripherals.o ./board/pin_mux.d ./board/pin_mux.o
+rm -rf int.axf
+ 
+
+19:44:40 Build Finished. 0 errors, 0 warnings. (took 171ms)
+

@@ -1,0 +1,85 @@
+freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface.o \
+ freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface.d: \
+ ../freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface.c \
+ /poli/home/workspace.tcpip/tcpip/drivers/fsl_enet.h \
+ /poli/home/workspace.tcpip/tcpip/drivers/fsl_common.h \
+ /poli/home/workspace.tcpip/tcpip/device/fsl_device_registers.h \
+ /poli/home/workspace.tcpip/tcpip/device/MK64F12.h \
+ /poli/home/workspace.tcpip/tcpip/CMSIS/core_cm4.h \
+ /poli/home/workspace.tcpip/tcpip/CMSIS/cmsis_version.h \
+ /poli/home/workspace.tcpip/tcpip/CMSIS/cmsis_compiler.h \
+ /poli/home/workspace.tcpip/tcpip/CMSIS/cmsis_gcc.h \
+ /poli/home/workspace.tcpip/tcpip/device/system_MK64F12.h \
+ /poli/home/workspace.tcpip/tcpip/device/MK64F12_features.h \
+ /poli/home/workspace.tcpip/tcpip/drivers/fsl_common_arm.h \
+ /poli/home/workspace.tcpip/tcpip/drivers/fsl_clock.h \
+ /poli/home/workspace.tcpip/tcpip/board/fsl_phy.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/FreeRTOS.h \
+ /poli/home/workspace.tcpip/tcpip/source/FreeRTOSConfig.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/projdefs.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/portable.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/deprecated_definitions.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/portable/GCC/ARM_CM4F/portmacro.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/mpu_wrappers.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/task.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/list.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/queue.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/task.h \
+ /poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include/FreeRTOS_IP.h \
+ /poli/home/workspace.tcpip/tcpip/source/FreeRTOSIPConfig.h \
+ /poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include/FreeRTOSIPConfigDefaults.h \
+ /poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include/FreeRTOS_errno_TCP.h \
+ /poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include/IPTraceMacroDefaults.h \
+ /poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/portable/Compiler/GCC/pack_struct_start.h \
+ /poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/portable/Compiler/GCC/pack_struct_end.h \
+ /poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include/FreeRTOS_IP_Private.h \
+ /poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include/FreeRTOS_Sockets.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/event_groups.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/timers.h \
+ /poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include/FreeRTOS_Stream_Buffer.h \
+ /poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include/FreeRTOS_TCP_WIN.h \
+ /poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include/FreeRTOS_TCP_IP.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/semphr.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/queue.h \
+ /poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include/NetworkBufferManagement.h
+/poli/home/workspace.tcpip/tcpip/drivers/fsl_enet.h:
+/poli/home/workspace.tcpip/tcpip/drivers/fsl_common.h:
+/poli/home/workspace.tcpip/tcpip/device/fsl_device_registers.h:
+/poli/home/workspace.tcpip/tcpip/device/MK64F12.h:
+/poli/home/workspace.tcpip/tcpip/CMSIS/core_cm4.h:
+/poli/home/workspace.tcpip/tcpip/CMSIS/cmsis_version.h:
+/poli/home/workspace.tcpip/tcpip/CMSIS/cmsis_compiler.h:
+/poli/home/workspace.tcpip/tcpip/CMSIS/cmsis_gcc.h:
+/poli/home/workspace.tcpip/tcpip/device/system_MK64F12.h:
+/poli/home/workspace.tcpip/tcpip/device/MK64F12_features.h:
+/poli/home/workspace.tcpip/tcpip/drivers/fsl_common_arm.h:
+/poli/home/workspace.tcpip/tcpip/drivers/fsl_clock.h:
+/poli/home/workspace.tcpip/tcpip/board/fsl_phy.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/FreeRTOS.h:
+/poli/home/workspace.tcpip/tcpip/source/FreeRTOSConfig.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/projdefs.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/portable.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/deprecated_definitions.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/portable/GCC/ARM_CM4F/portmacro.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/mpu_wrappers.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/task.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/list.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/queue.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/task.h:
+/poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include/FreeRTOS_IP.h:
+/poli/home/workspace.tcpip/tcpip/source/FreeRTOSIPConfig.h:
+/poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include/FreeRTOSIPConfigDefaults.h:
+/poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include/FreeRTOS_errno_TCP.h:
+/poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include/IPTraceMacroDefaults.h:
+/poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/portable/Compiler/GCC/pack_struct_start.h:
+/poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/portable/Compiler/GCC/pack_struct_end.h:
+/poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include/FreeRTOS_IP_Private.h:
+/poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include/FreeRTOS_Sockets.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/event_groups.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/timers.h:
+/poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include/FreeRTOS_Stream_Buffer.h:
+/poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include/FreeRTOS_TCP_WIN.h:
+/poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include/FreeRTOS_TCP_IP.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/semphr.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/queue.h:
+/poli/home/workspace.tcpip/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include/NetworkBufferManagement.h:

@@ -1,0 +1,7 @@
+#List of "project<build_config><tool>=state" or "project=state" entries associated to "-ffreestanding"-related markers that are ignored in current workspace.
+#Mon Nov 25 15:11:56 CET 2024
+demo-pwm=ignoreUIWarning
+sem-int=ignoreUIWarning
+demo-sem-int=ignoreUIWarning
+tcpip=ignoreUIWarning
+tasks=ignoreUIWarning

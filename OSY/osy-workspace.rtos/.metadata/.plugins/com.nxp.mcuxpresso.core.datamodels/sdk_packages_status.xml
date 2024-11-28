@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdk-packages>
+<package hash="1668543882820" path="/poli/home/vyuka/osy/workspace.rtos/tasks/part-support" schema="manifest-schema/sdk_manifest_v3.10.xsd"/>
+<package hash="1732794112128" path="/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/demo-sem-int/part-support" schema="manifest-schema/sdk_manifest_v3.14.xsd"/>
+<package hash="1701805993162" path="/poli/home/vyuka/osy/git/osy-workspace.rtos/tcpip/part-support" schema="manifest-schema/sdk_manifest_v3.10.xsd"/>
+<package hash="1732794113356" path="/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/part-support" schema="manifest-schema/sdk_manifest_v3.14.xsd"/>
+<package hash="1664813482000" path="/usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.core.datamodels.resources_11.6.1.202207200623/override" schema="manifest-schema/sdk_manifest_v3.3.xsd"/>
+<package hash="1668543882820" path="/poli/home/vyuka/osy/git/workspace.rtos/tasks/part-support" schema="manifest-schema/sdk_manifest_v3.10.xsd"/>
+<package hash="1668350655907" path="/poli/home/mcuxpresso/02/SDKPackages/SDK_2_11_0_FRDM-K64F.zip" schema="manifest-schema/sdk_manifest_v3.10.xsd"/>
+<package hash="1668543882820" path="/poli/home/vyuka/osy/git/osy-workspace.rtos/sem-int/part-support" schema="manifest-schema/sdk_manifest_v3.10.xsd"/>
+<package hash="1732794112884" path="/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/part-support" schema="manifest-schema/sdk_manifest_v3.14.xsd"/>
+<package hash="1668543882820" path="/poli/home/vyuka/osy/git/osy-workspace.rtos/int/part-support" schema="manifest-schema/sdk_manifest_v3.10.xsd"/>
+<package hash="1668543882820" path="/poli/home/vyuka/osy/git/osy-workspace.rtos/demo-sem-int/part-support" schema="manifest-schema/sdk_manifest_v3.10.xsd"/>
+<package hash="1732794111748" path="/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/demo-pwm/part-support" schema="manifest-schema/sdk_manifest_v3.14.xsd"/>
+<package hash="1727343158000" path="/usr/local/mcuxpressoide-24.9.25/ide/plugins/com.nxp.mcuxpresso.core.datamodels.resources_24.9.0.202407110857/fragments" schema="manifest-schema/sdk_manifest_v3.3.xsd"/>
+<package hash="1727343157000" path="/usr/local/mcuxpressoide-24.9.25/ide/plugins/com.nxp.mcuxpresso.core.datamodels.resources_24.9.0.202407110857/override" schema="manifest-schema/sdk_manifest_v3.3.xsd"/>
+<package hash="1732794112500" path="/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/sem-int/part-support" schema="manifest-schema/sdk_manifest_v3.14.xsd"/>
+<package hash="1668543882820" path="/poli/home/vyuka/osy/git/osy-workspace.rtos/demo-pwm/part-support" schema="manifest-schema/sdk_manifest_v3.10.xsd"/>
+<package hash="1664813482000" path="/usr/local/mcuxpressoide-11.6.1_8255/ide/plugins/com.nxp.mcuxpresso.core.datamodels.resources_11.6.1.202207200623/fragments" schema="manifest-schema/sdk_manifest_v3.3.xsd"/>
+<package hash="1668543882820" path="/poli/home/vyuka/osy/git/osy-workspace.rtos/tasks/part-support" schema="manifest-schema/sdk_manifest_v3.10.xsd"/>
+</sdk-packages>

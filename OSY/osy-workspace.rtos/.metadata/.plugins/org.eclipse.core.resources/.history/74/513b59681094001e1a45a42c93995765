@@ -1,0 +1,6 @@
+/poli/home/vyuka/osy/git/osy-workspace.rtos/tcpip/CMSIS/core_cm4.h:1809:22:__NVIC_SetPriority	16	static
+/poli/home/vyuka/osy/git/osy-workspace.rtos/tcpip/drivers/fsl_enet.h:944:20:ENET_ActiveRead	16	static
+../freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface.c:51:12:xNetworkInterfaceInitialise	96	static
+../freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface.c:118:12:xNetworkInterfaceOutput	24	static
+../freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface.c:158:13:vRecvTask	40	static
+../freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface.c:247:13:ethernet_callback	32	static

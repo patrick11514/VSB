@@ -1,0 +1,17 @@
+freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface_rand.o \
+ freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface_rand.d: \
+ ../freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface_rand.c \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/FreeRTOS.h \
+ /poli/home/workspace.tcpip/tcpip/source/FreeRTOSConfig.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/projdefs.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/portable.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/deprecated_definitions.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/portable/GCC/ARM_CM4F/portmacro.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/mpu_wrappers.h
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/FreeRTOS.h:
+/poli/home/workspace.tcpip/tcpip/source/FreeRTOSConfig.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/projdefs.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/portable.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/deprecated_definitions.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/portable/GCC/ARM_CM4F/portmacro.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/mpu_wrappers.h:

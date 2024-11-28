@@ -1,0 +1,21 @@
+freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.o \
+ freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.d: \
+ ../freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.c \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/FreeRTOS.h \
+ /poli/home/workspace.tcpip/tcpip/source/FreeRTOSConfig.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/projdefs.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/portable.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/deprecated_definitions.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/portable/GCC/ARM_CM4F/portmacro.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/mpu_wrappers.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/task.h \
+ /poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/list.h
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/FreeRTOS.h:
+/poli/home/workspace.tcpip/tcpip/source/FreeRTOSConfig.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/projdefs.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/portable.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/deprecated_definitions.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/portable/GCC/ARM_CM4F/portmacro.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/mpu_wrappers.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/task.h:
+/poli/home/workspace.tcpip/tcpip/freertos/freertos_kernel/include/list.h:

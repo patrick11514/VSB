@@ -1,0 +1,14 @@
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.c:57:23:vCastPointerTo_DHCPMessage_IPv4_t	16	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.c:65:23:vCastConstPtrTo_DHCPMessage_IPv4_t	16	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.c:151:16:xIsDHCPSocket	24	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.c:176:14:vDHCPSetPreferredIPAddress	24	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.c:190:18:eGetDHCPState	4	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.c:201:10:vDHCPProcess	24	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.c:607:17:prvCloseDHCPSocket	8	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.c:622:18:prvCreateDHCPSocket	32	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.c:663:17:prvInitialiseDHCP	8	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.c:698:23:prvIsValidDHCPResponse	24	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.c:729:24:prvProcessDHCPReplies	80	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.c:997:22:prvCreatePartDHCPMessage	40	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.c:1095:23:prvSendDHCPRequest	48	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.c:1162:23:prvSendDHCPDiscover	48	static

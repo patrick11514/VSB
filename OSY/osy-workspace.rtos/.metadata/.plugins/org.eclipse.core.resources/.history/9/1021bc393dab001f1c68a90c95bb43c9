@@ -1,0 +1,9 @@
+/tmp/osy-workspace.rtos/tcpip/drivers/fsl_gpio.h:162:20:void GPIO_PinWrite(GPIO_Type*, uint32_t, uint8_t)	24	static
+/tmp/osy-workspace.rtos/tcpip/drivers/fsl_sysmpu.h:267:20:void SYSMPU_Enable(SYSMPU_Type*, bool)	16	static
+../source/main-tcpip.cpp:115:12:BaseType_t xApplicationGetRandomNumber(uint32_t*)	16	static
+../source/main-tcpip.cpp:119:6:void vApplicationStackOverflowHook(tskTaskControlBlock**, signed char*)	16	static
+../source/main-tcpip.cpp:126:6:void task_led_pta_blink(void*)	24	static
+../source/main-tcpip.cpp:145:6:void task_socket_srv(void*)	352	static
+../source/main-tcpip.cpp:245:6:void task_socket_cli(void*)	32	static
+../source/main-tcpip.cpp:279:6:void vApplicationIPNetworkEventHook(eIPCallbackEvent_t)	24	static
+../source/main-tcpip.cpp:316:5:int main()	40	static

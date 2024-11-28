@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:manifest xmlns:ns2="http://nxp.com/ksdk/2.0/ksdk_manifest_v3.0.xsd" format_version="3.9" api_version="2.0.0" configuration="4721c873aa55f9d1cc7a77885abe0f7c" id="SDK_2.x_FRDM-K64F" name="FRDM-K64F" brief="This is SDK version 2.11.0 manifest file. It describes the content of the FRDM-K64F and additional settings for tools that support SDK version 2.11.0">
+    <defines>
+        <define name="CPU_$|package|" value=""/>
+        <define name="CPU_$|package|_$|core|" value=""/>
+    </defines>
+    <externalDefinitions>
+        <definition extID="twrk64f120m"/>
+    </externalDefinitions>
+    <ksdk id="MCUXpresso2110" name="MCUXpresso2110" version="2.11.0" revision="541 2022-01-14"/>
+    <compilers>
+        <compiler type="gcc" id="compiler_gcc" name="gcc"/>
+    </compilers>
+    <toolchainSettings>
+        <toolchainSetting id="com.nxp.mcuxpresso" name="mcuxpresso" full_name="MCUXpresso IDE" version="11.5.0" toolchain="mcuxpresso" compiler="compiler_gcc">
+            <option id="gnu.cpp.compiler.option.optimization.flags" type="string" user_name="">
+                <value>-fno-common</value>
+            </option>
+            <option id="gnu.c.compiler.option.optimization.flags" type="string" user_name="">
+                <value>-fno-common</value>
+            </option>
+            <option id="gnu.cpp.link.option.nostdlibs" type="boolean" user_name="">
+                <value>true</value>
+            </option>
+            <option id="com.crt.advproject.link.cpp.flashconfigenable" type="boolean" user_name="">
+                <value>true</value>
+            </option>
+            <option id="com.crt.advproject.link.flashconfigenable" type="boolean" user_name="">
+                <value>true</value>
+            </option>
+            <option id="gnu.c.link.option.nostdlibs" type="boolean" user_name="">
+                <value>true</value>
+            </option>
+        </toolchainSetting>
+    </toolchainSettings>
+    <toolchains>
+        <toolchain type="mcuxpresso" vendor="NXP Semiconductors" vendor_url="http://www.nxp.com" id="mcuxpresso" name="MCUXpresso_IDE" full_name="MCUXpresso IDE" version="11.5.0" compiler="compiler_gcc">
+            <debug>
+                <debug_configuration probe="LinkServer" id="com.crt.advproject.config.exe.release" name="Release Configuration">
+                    <scripts>
+                        <script type="init" silent="false" emulators="${gdb.stub} -mi -info-emu">
+                            <script>
+set remotetimeout 60000
+##target_extended_remote##
+set mem inaccessible-by-default ${mem.access}
+mon ondisconnect ${ondisconnect}
+set arm force-mode thumb
+${load}</script>
+                        </script>
+                        <script type="run" silent="false" emulators="${gdb.stub} -mi -info-emu">
+                            <script>${run}</script>
+                        </script>
+                    </scripts>
+                    <params>
+                        <params value="false" id="vector.catch.release.mcuxpresso" name="vector.catch"/>
+                        <params value="Disable" id="internal.cache.release.mcuxpresso" name="internal.cache"/>
+                    </params>
+                </debug_configuration>
+                <debug_configuration probe="LinkServer" id="com.crt.advproject.config.exe.debug" name="Debug Configuration">
+                    <scripts>
+                        <script type="init" silent="false" emulators="${gdb.stub} -mi -info-emu">
+                            <script>
+set remotetimeout 60000
+##target_extended_remote##
+set mem inaccessible-by-default ${mem.access}
+mon ondisconnect ${ondisconnect}
+set arm force-mode thumb
+${load}</script>
+                        </script>
+                        <script type="run" silent="false" emulators="${gdb.stub} -mi -info-emu">
+                            <script>${run}</script>
+                        </script>
+                    </scripts>
+                    <params>
+                        <params value="false" id="vector.catch.debug.mcuxpresso" name="vector.catch"/>
+                        <params value="Disable" id="internal.cache.debug.mcuxpresso" name="internal.cache"/>
+                    </params>
+                </debug_configuration>
+                <debug_configuration probe="Segger" id="com.nxp.mcuxpresso.core.debug.support.segger.debug" name="Debug Configuration"/>
+                <debug_configuration probe="Segger" id="com.nxp.mcuxpresso.core.debug.support.segger.release" name="Release Configuration"/>
+            </debug>
+        </toolchain>
+    </toolchains>
+    <boards>
+        <board package="MK64FN1M0VLL12" id="frdmk64f" name="FRDM-K64F" href="https://www.nxp.com/pip/FRDM-K64F" version="1.0.0">
+            <description>Freedom Development Platform for Kinetis K64, K63, and K24 MCUs</description>
+            <image path="boards/frdmk64f" type="image">
+                <files mask="frdmk64f.png"/>
+            </image>
+        </board>
+    </boards>
+    <devices>
+        <device family="K6x" platform="Kinetis" id="MK64FN1M0xxx12" name="MK64F12" full_name="MK64FN1M0xxx12" version="1.0.0">
+            <description>Kinetis K64-120 MHz, 256KB SRAM Microcontrollers (MCUs) based on ARM Cortex-M4 Core</description>
+            <metadataSet>
+                <metadata key="USB_KHCI_COUNT" value="1"/>
+                <metadata key="vendor" value="NXP"/>
+            </metadataSet>
+            <core fpu="true" type="cm4" id="core0_MK64FN1M0xxx12" name="core0"/>
+            <memory>
+                <memoryBlock addr="00000000" size="00100000" type="Flash" access="RO" id="PROGRAM_FLASH_MK64FN1M0xxx12" name="PROGRAM_FLASH"/>
+                <memoryBlock addr="20000000" size="00030000" type="RAM" access="RW" id="SRAM_UPPER_MK64FN1M0xxx12" name="SRAM_UPPER"/>
+                <memoryBlock addr="1FFF0000" size="00010000" type="RAM" access="RW" id="SRAM_LOWER_MK64FN1M0xxx12" name="SRAM_LOWER"/>
+                <memoryBlock addr="14000000" size="00001000" type="RAM" access="RW" id="FLEX_RAM_MK64FN1M0xxx12" name="FLEX_RAM"/>
+            </memory>
+            <total_memory flash_size_kb="1024" ram_size_kb="4"/>
+            <package id="MK64FN1M0VDC12" name="MK64FN1M0VDC12"/>
+            <package id="MK64FN1M0VLL12" name="MK64FN1M0VLL12"/>
+            <package id="MK64FN1M0VLQ12" name="MK64FN1M0VLQ12"/>
+            <package id="MK64FN1M0VMD12" name="MK64FN1M0VMD12"/>
+            <package id="MK64FN1M0CAJ12" name="MK64FN1M0CAJ12"/>
+            <evaluation_boards>
+                <evaluation_board name="frdmk64f"/>
+            </evaluation_boards>
+            <debug_configurations>
+                <debug_configuration id_refs="com.crt.advproject.config.exe.debug com.crt.advproject.config.exe.release">
+                    <params>
+                        <params value="SWD*,JTAG" id="internal.wiretype.release.MK64FN1M0xxx12" name="internal.wiretype"/>
+                        <params value="true" id="internal.has_swo.release.MK64FN1M0xxx12" name="internal.has_swo"/>
+                        <params value="kinetisconnect.scp" id="internal.connect.script.debug.mcuxpresso.MK64FN1M0xxx12" name="internal.connect.script"/>
+                    </params>
+                    <drivers>
+                        <driver id_refs="PROGRAM_FLASH_MK64FN1M0xxx12">
+                            <driverBinary path="devices/MK64F12/mcuxpresso" type="binary">
+<files mask="FTFE_4K.cfx"/>
+                            </driverBinary>
+                        </driver>
+                    </drivers>
+                </debug_configuration>
+            </debug_configurations>
+            <linkerSettings nature="c_nature">
+                <linker property="start_symbol" value="ResetISR"/>
+                <linker property="text_align" value="8"/>
+                <linker property="data_align" value="8"/>
+                <linker property="bss_align" value="8"/>
+                <linker property="flash_security_address" value="0x400"/>
+                <linker property="mtb_supported" value="false"/>
+            </linkerSettings>
+            <linkerSettings nature="cpp_nature">
+                <linker property="start_symbol" value="ResetISR"/>
+                <linker property="text_align" value="8"/>
+                <linker property="data_align" value="8"/>
+                <linker property="bss_align" value="8"/>
+                <linker property="flash_security_address" value="0x400"/>
+                <linker property="mtb_supported" value="false"/>
+            </linkerSettings>
+        </device>
+    </devices>
+    <components>
+        <component user_visible="true" type="debugger" devices="MK64FN1M0xxx12" package_base_path="devices/MK64F12" project_base_path="MK64F12" id="device.MK64F12_debugger.MK64F12" name="MK64F12_debugger" full_name="Device MK64F12_debugger" brief="Device MK64F12_debugger" version="1.0.0">
+            <source relative_path="./" type="xml">
+                <files mask="MK64F12.xml"/>
+            </source>
+        </component>
+    </components>
+</ns2:manifest>

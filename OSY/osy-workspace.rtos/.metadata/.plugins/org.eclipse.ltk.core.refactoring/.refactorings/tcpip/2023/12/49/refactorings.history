@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;tcpip/source/TCPEchoServer.h&apos; to &apos;TCPEchoServer.noh&apos;" description="Rename resource &apos;TCPEchoServer.h&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="source/TCPEchoServer.h" name="TCPEchoServer.noh" stamp="1701958469493" updateReferences="false"/>&#x0A;<refactoring comment="Rename resource &apos;tcpip/source/TCPEchoServer.c&apos; to &apos;TCPEchoServer.noc&apos;" description="Rename resource &apos;TCPEchoServer.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="source/TCPEchoServer.c" name="TCPEchoServer.noc" stamp="1701958482330" updateReferences="false"/>
+</session>

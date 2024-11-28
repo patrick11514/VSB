@@ -1,0 +1,10 @@
+/tmp/osy-workspace.rtos/tcpip/drivers/fsl_clock.h:668:20:CLOCK_EnableClock	24	static
+/tmp/osy-workspace.rtos/tcpip/drivers/fsl_enet.h:774:24:ENET_ReadSMIData	16	static
+/tmp/osy-workspace.rtos/tcpip/drivers/fsl_enet.h:1062:24:ENET_GetInterruptStatus	16	static
+/tmp/osy-workspace.rtos/tcpip/drivers/fsl_enet.h:1081:20:ENET_ClearInterruptStatus	16	static
+../board/fsl_phy.c:42:10:PHY_Init	56	static
+../board/fsl_phy.c:129:10:PHY_Write	40	static
+../board/fsl_phy.c:160:10:PHY_Read	32	static
+../board/fsl_phy.c:196:10:PHY_EnableLoopback	32	static
+../board/fsl_phy.c:252:10:PHY_GetLinkStatus	32	static
+../board/fsl_phy.c:277:10:PHY_GetLinkSpeedDuplex	40	static

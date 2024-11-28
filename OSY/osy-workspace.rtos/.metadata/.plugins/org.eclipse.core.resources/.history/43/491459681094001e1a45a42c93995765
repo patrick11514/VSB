@@ -1,0 +1,12 @@
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Stream_Buffer.c:54:8:uxStreamBufferSpace	32	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Stream_Buffer.c:77:8:uxStreamBufferDistance	32	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Stream_Buffer.c:100:8:uxStreamBufferGetSpace	24	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Stream_Buffer.c:115:8:uxStreamBufferFrontSpace	24	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Stream_Buffer.c:131:8:uxStreamBufferGetSize	24	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Stream_Buffer.c:146:8:uxStreamBufferMidSpace	24	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Stream_Buffer.c:159:6:vStreamBufferClear	16	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Stream_Buffer.c:175:6:vStreamBufferMoveMid	32	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Stream_Buffer.c:208:12:xStreamBufferLessThenEqual	32	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Stream_Buffer.c:236:8:uxStreamBufferGetPtr	24	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Stream_Buffer.c:260:8:uxStreamBufferAdd	40	static
+../freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Stream_Buffer.c:355:8:uxStreamBufferGet	40	static

@@ -1,0 +1,6 @@
+/tmp/osy-workspace.rtos/sem-int/CMSIS/core_cm4.h:1679:22:void __NVIC_EnableIRQ(IRQn_Type)	16	static
+/tmp/osy-workspace.rtos/sem-int/CMSIS/core_cm4.h:1809:22:void __NVIC_SetPriority(IRQn_Type, uint32_t)	16	static
+/tmp/osy-workspace.rtos/sem-int/drivers/fsl_common_arm.h:499:24:status_t EnableIRQ(IRQn_Type)	24	static
+/tmp/osy-workspace.rtos/sem-int/drivers/fsl_port.h:443:20:void PORT_SetPinInterruptConfig(PORT_Type*, uint32_t, port_interrupt_t)	24	static
+../source/gpio_interrupts.cpp:34:6:void PORTC_IRQHandler()	16	static
+../source/gpio_interrupts.cpp:79:6:void InitGPIOInterrupts()	8	static

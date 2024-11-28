@@ -1,0 +1,13 @@
+/poli/home/vyuka/osy/git/osy-workspace.rtos/tcpip/drivers/fsl_clock.h:700:20:CLOCK_SetSdhc0Clock	16	static
+/poli/home/vyuka/osy/git/osy-workspace.rtos/tcpip/drivers/fsl_clock.h:710:20:CLOCK_SetEnetTime0Clock	16	static
+/poli/home/vyuka/osy/git/osy-workspace.rtos/tcpip/drivers/fsl_clock.h:720:20:CLOCK_SetRmii0Clock	16	static
+/poli/home/vyuka/osy/git/osy-workspace.rtos/tcpip/drivers/fsl_clock.h:730:20:CLOCK_SetTraceClock	16	static
+/poli/home/vyuka/osy/git/osy-workspace.rtos/tcpip/drivers/fsl_clock.h:750:20:CLOCK_SetClkOutClock	16	static
+/poli/home/vyuka/osy/git/osy-workspace.rtos/tcpip/drivers/fsl_clock.h:889:20:CLOCK_SetSimSafeDivs	4	static
+/poli/home/vyuka/osy/git/osy-workspace.rtos/tcpip/drivers/fsl_clock.h:1229:20:CLOCK_SetXtal0Freq	16	static
+/poli/home/vyuka/osy/git/osy-workspace.rtos/tcpip/drivers/fsl_smc.h:256:20:SMC_SetPowerModeProtection	16	static
+/poli/home/vyuka/osy/git/osy-workspace.rtos/tcpip/drivers/fsl_smc.h:275:33:SMC_GetPowerModeState	16	static
+../board/clock_config.c:79:13:CLOCK_CONFIG_SetFllExtRefDiv	16	static
+../board/clock_config.c:87:6:BOARD_InitBootClocks	8	static
+../board/clock_config.c:194:6:BOARD_BootClockRUN	8	static
+../board/clock_config.c:304:6:BOARD_BootClockVLPR	8	static

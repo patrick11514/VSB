@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;demo-pwm/source/cpp_config.cpp&apos; to &apos;cpp_config.nocpp&apos;" description="Rename resource &apos;cpp_config.cpp&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="source/cpp_config.cpp" name="cpp_config.nocpp" stamp="1732544126278" updateReferences="false"/>
+</session>

@@ -1,0 +1,7 @@
+/tmp/osy-workspace.rtos/tasks/drivers/fsl_gpio.h:162:20:void GPIO_PinWrite(GPIO_Type*, uint32_t, uint8_t)	24	static
+/tmp/osy-workspace.rtos/tasks/drivers/fsl_gpio.h:244:24:uint32_t GPIO_PinRead(GPIO_Type*, uint32_t)	16	static
+../source/main-tasks.cpp:106:6:void task_led_pta_blink(void*)	24	static
+../source/main-tasks.cpp:124:6:void task_snake_left(void*)	24	static
+../source/main-tasks.cpp:142:6:void task_snake_right(void*)	24	static
+../source/main-tasks.cpp:160:6:void task_switches(void*)	32	static
+../source/main-tasks.cpp:202:5:int main()	16	static

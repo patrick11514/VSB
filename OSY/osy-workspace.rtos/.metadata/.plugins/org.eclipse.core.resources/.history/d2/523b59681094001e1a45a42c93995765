@@ -1,0 +1,2 @@
+../freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface_rand.c:10:13:uxRand	8	static
+../freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface_rand.c:13:10:ulApplicationGetNextSequenceNumber	24	static

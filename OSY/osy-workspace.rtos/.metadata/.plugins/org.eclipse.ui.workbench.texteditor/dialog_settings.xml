@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.GotoLineAction$GotoLineDialog_dialogBounds">
+		<item key="DIALOG_X_ORIGIN" value="654"/>
+		<item key="DIALOG_Y_ORIGIN" value="365"/>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item key="selection" value="rand"/>
+		<item key="wrap" value="true"/>
+		<item key="casesensitive" value="false"/>
+		<item key="wholeword" value="false"/>
+		<item key="incremental" value="false"/>
+		<item key="isRegEx" value="false"/>
+		<list key="findhistory">
+			<item value="rand"/>
+			<item value="rand("/>
+			<item value="g_rgb_perc"/>
+			<item value="TASK_NAME_RGB_SET"/>
+			<item value="xSemaphoreTake"/>
+			<item value="g_sem_right_switch"/>
+			<item value="g_l_sem"/>
+			<item value="PRINTF"/>
+			<item value="trace`"/>
+			<item value="trace"/>
+		</list>
+		<list key="replacehistory">
+			<item value="g_rgb_pwm_perc"/>
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item key="DIALOG_X_ORIGIN" value="982"/>
+		<item key="DIALOG_Y_ORIGIN" value="229"/>
+		<item key="DIALOG_WIDTH" value="346"/>
+		<item key="DIALOG_HEIGHT" value="395"/>
+		<item key="DIALOG_FONT_NAME" value="1|Noto Sans|10.0|0|GTK|1|"/>
+	</section>
+</section>

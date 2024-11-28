@@ -1,0 +1,4 @@
+/tmp/osy-workspace.rtos/sem-int/drivers/fsl_gpio.h:162:20:void GPIO_PinWrite(GPIO_Type*, uint32_t, uint8_t)	24	static
+../source/main-sem-int.cpp:108:6:void task_left_switch(void*)	16	static
+../source/main-sem-int.cpp:120:6:void task_show_red_led(void*)	24	static
+../source/main-sem-int.cpp:148:5:int main()	16	static

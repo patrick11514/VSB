@@ -1,0 +1,11 @@
+20:03:35 **** Incremental Build of configuration Debug for project MK64F12_Project ****
+make -r -j4 all 
+make[1]: Nothing to be done for 'main-build'.
+Performing post-build steps
+arm-none-eabi-size "MK64F12_Project.axf"; # arm-none-eabi-objcopy -v -O binary "MK64F12_Project.axf" "MK64F12_Project.bin" ; # checksum -p MK64FN1M0xxx12 -d "MK64F12_Project.bin";
+   text	   data	    bss	    dec	    hex	filename
+  24504	    176	  19120	  43800	   ab18	MK64F12_Project.axf
+ 
+
+20:03:35 Build Finished. 0 errors, 0 warnings. (took 192ms)
+

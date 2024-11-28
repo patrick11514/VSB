@@ -1,0 +1,16 @@
+/poli/home/vyuka/osy/git/osy-workspace.rtos/tcpip/drivers/fsl_clock.h:668:20:CLOCK_EnableClock	24	static
+/poli/home/vyuka/osy/git/osy-workspace.rtos/tcpip/drivers/fsl_port.h:271:20:PORT_SetPinConfig	32	static
+/poli/home/vyuka/osy/git/osy-workspace.rtos/tcpip/drivers/fsl_port.h:374:20:PORT_SetPinMux	24	static
+/poli/home/vyuka/osy/git/osy-workspace.rtos/tcpip/drivers/fsl_port.h:443:20:PORT_SetPinInterruptConfig	24	static
+../board/pin_mux.c:132:6:BOARD_InitBootPins	8	static
+../board/pin_mux.c:157:6:BOARD_InitPins	4	static
+../board/pin_mux.c:182:6:BOARD_InitButtonsPins	24	static
+../board/pin_mux.c:266:6:BOARD_InitLEDsPins	32	static
+../board/pin_mux.c:366:6:BOARD_InitDEBUG_UARTPins	16	static
+../board/pin_mux.c:433:6:BOARD_InitOSCPins	8	static
+../board/pin_mux.c:466:6:BOARD_InitACCELPins	32	static
+../board/pin_mux.c:592:6:BOARD_InitENETPins	48	static
+../board/pin_mux.c:807:6:BOARD_InitSDHCPins	40	static
+../board/pin_mux.c:957:6:BOARD_InitUSBPins	4	static
+../board/pin_mux.c:1000:6:KIT_LED	88	static
+../board/pin_mux.c:1222:6:KIT_SW	24	static

@@ -1,0 +1,2 @@
+eclipse.preferences.version=1
+macros/workspace=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\n<macros>\n    <stringMacro name\="project.flashdriver.dir" type\="VALUE_PATH_DIR" value\=""/>\n    <stringMacro name\="SDK_LPC_RESOURCES" type\="VALUE_PATH_DIR" value\="/usr/local/mcuxpressoide-24.9.25/ide/plugins/com.nxp.mcuxpresso.core.datamodels.resources_24.9.0.202407110857/override"/>\n</macros>\n
