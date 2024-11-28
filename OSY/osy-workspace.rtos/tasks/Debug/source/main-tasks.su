@@ -4,4 +4,4 @@
 ../source/main-tasks.cpp:134:6:void task_snake_left(void*)	24	static
 ../source/main-tasks.cpp:155:6:void task_snake_right(void*)	24	static
 ../source/main-tasks.cpp:176:6:void task_switches(void*)	32	static
-../source/main-tasks.cpp:218:5:int main()	16	static
+../source/main-tasks.cpp:229:5:int main()	16	static

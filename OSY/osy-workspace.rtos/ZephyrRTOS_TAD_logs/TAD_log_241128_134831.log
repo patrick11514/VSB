@@ -1,0 +1,11 @@
+"Task Aware Debugger for GDB" version 24.9.0 (202407110857)
+Copyright 2016-2023 NXP
+==================================
+13:47:32.15 INFO: [ZephyrRTOS] .config file could not be read [/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/Debug/.config (No such file or directory)]
+13:47:32.15 INFO: [TadModel] DSF session ID 21 has started.
+13:47:33.948 INFO: [TadState] TAD state changed: DEBUG_STARTED -> DEBUG_INIT_0 (SUSPENDED, USER_REQUEST)
+13:47:34.537 INFO: [TadState] TAD state changed: DEBUG_INIT_0 -> DEBUG_INIT_1 (RESUMED, USER_REQUEST)
+13:47:34.562 INFO: [TadState] TAD state changed: DEBUG_INIT_1 -> DEBUG_SUSPENDED (SUSPENDED, BREAKPOINT)
+13:47:36.505 INFO: [TadState] TAD state changed: DEBUG_SUSPENDED -> DEBUG_RESUMED (RESUMED, USER_REQUEST)
+13:48:30.201 INFO: [TadState] TAD state changed: DEBUG_RESUMED -> READY (SUSPENDED, SIGNAL)
+13:48:31.204 INFO: [TadModel] DSF session ID 21 has ended.

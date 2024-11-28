@@ -185,16 +185,27 @@ void task_switches( void *t_arg )
 		// test PTC9 switch
 		if ( GPIO_PinRead( SW_PTC9_GPIO, SW_PTC9_PIN ) == 0 )
 		{
-			if ( l_handle_led_pta )
-				suspendSemaphore = true;
+			if ( l_handle_led_pta ) {
+				eTaskState state = eTaskGetState(l_handle_led_pta);
+				if (state == eTaskState::eSuspended) {
+					PRINTF("SUSPENDED\r\n");
+					vTaskResume(l_handle_led_pta);
+				} else {
+					PRINTF("OTHER\r\n");
+					suspendSemaphore = true;
+				}
+
+				vTaskDelay(100);
+			}
+
 		}
 
 		// test PTC10 switch
-		if ( GPIO_PinRead( SW_PTC10_GPIO, SW_PTC10_PIN ) == 0 )
+		/*if ( GPIO_PinRead( SW_PTC10_GPIO, SW_PTC10_PIN ) == 0 )
 		{
 			if ( l_handle_led_pta )
 				vTaskResume( l_handle_led_pta );
-		}
+		}*/
 
 		// test PTC11 switch
 		if ( GPIO_PinRead( SW_PTC11_GPIO, SW_PTC11_PIN ) == 0 )

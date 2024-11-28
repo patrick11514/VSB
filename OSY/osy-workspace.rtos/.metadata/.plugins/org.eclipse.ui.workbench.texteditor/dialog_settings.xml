@@ -5,13 +5,16 @@
 		<item key="DIALOG_Y_ORIGIN" value="365"/>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
-		<item key="selection" value="rand"/>
+		<item key="selection" value="DYNAMIC"/>
 		<item key="wrap" value="true"/>
 		<item key="casesensitive" value="false"/>
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
+			<item value="Dynamic"/>
+			<item value="Semaphore"/>
+			<item value="S"/>
 			<item value="rand"/>
 			<item value="rand("/>
 			<item value="g_rgb_perc"/>
@@ -28,10 +31,10 @@
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item key="DIALOG_X_ORIGIN" value="982"/>
-		<item key="DIALOG_Y_ORIGIN" value="229"/>
-		<item key="DIALOG_WIDTH" value="346"/>
-		<item key="DIALOG_HEIGHT" value="395"/>
-		<item key="DIALOG_FONT_NAME" value="1|Noto Sans|10.0|0|GTK|1|"/>
+		<item key="DIALOG_X_ORIGIN" value="20"/>
+		<item key="DIALOG_Y_ORIGIN" value="20"/>
+		<item key="DIALOG_WIDTH" value="357"/>
+		<item key="DIALOG_HEIGHT" value="415"/>
+		<item key="DIALOG_FONT_NAME" value="1|Ubuntu Sans|11.0|0|GTK|1|"/>
 	</section>
 </section>
