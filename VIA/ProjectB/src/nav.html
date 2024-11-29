@@ -1,0 +1,107 @@
+<nav class="fixed z-40 flex w-full flex-col text-white transition-all duration-500" style="transform: translateY(0%)">
+    <div class="z-40 flex h-full w-full px-10 transition-all duration-500">
+        <a href="/" class="w-1/4 py-6">
+            <svg class="h-3" load="Logo.svg"></svg>
+        </a>
+        <div id="divlist" class="nav mx-auto flex flex-row items-center justify-center gap-2 text-sm">
+            <div data-nav="vehicles">Vehicles</div>
+            <div data-nav="energy">Energy</div>
+            <div data-nav="charging">Charging</div>
+            <div data-nav="discover">Discover</div>
+            <div data-nav="shop">Shop</div>
+            <div data-nav="close">We, Robot</div>
+        </div>
+        <div class="icons flex w-1/4 flex-row items-center justify-end gap-2 text-2xl font-bold">
+            <i class="bi bi-question-circle"></i>
+            <i class="bi bi-globe"></i>
+            <i class="bi bi-person-circle"></i>
+        </div>
+    </div>
+    <div id="navContent" class="invisible fixed z-20 w-full -translate-y-8 p-8 text-text transition-all duration-500">
+        <div id="vehicles" class="px-20 opacity-0">
+            <div
+                data-dynamic
+                data-offset="0.08"
+                data-attr="--animation-offset"
+                class="flex max-w-[calc(15rem_*_4_+_2rem)] flex-[2] flex-wrap items-center gap-8 border-r-[1px] border-r-gray-300 px-4"
+            >
+                <div class="w-52">
+                    <img src="/assets/images/NavS.png" />
+                    <h2 class="text-center text-lg">Model S</h2>
+                    <div class="flex w-full items-center justify-center gap-4">
+                        <a href="#">Learn</a>
+                        <a href="#">Order</a>
+                    </div>
+                </div>
+                <div class="w-52">
+                    <img src="/assets/images/Nav3.png" />
+                    <h2 class="text-center text-lg">Model 3</h2>
+                    <div class="flex w-full items-center justify-center gap-4">
+                        <a href="#">Learn</a>
+                        <a href="#">Order</a>
+                    </div>
+                </div>
+                <div class="w-52">
+                    <img src="/assets/images/NavX.png" />
+                    <h2 class="text-center text-lg">Model X</h2>
+                    <div class="flex w-full items-center justify-center gap-4">
+                        <a href="#">Learn</a>
+                        <a href="#">Order</a>
+                    </div>
+                </div>
+                <div class="w-52">
+                    <img src="/assets/images/NavY.png" />
+                    <h2 class="text-center text-lg">Model Y</h2>
+                    <div class="flex w-full items-center justify-center gap-4">
+                        <a href="#">Learn</a>
+                        <a href="#">Order</a>
+                    </div>
+                </div>
+                <div class="w-52">
+                    <img src="/assets/images/NavCyber.png" />
+                    <h2 class="text-center text-lg">Cybertruck</h2>
+                    <div class="flex w-full items-center justify-center gap-4">
+                        <a href="#">Learn</a>
+                        <a href="#">Order</a>
+                    </div>
+                </div>
+                <div class="w-52">
+                    <img src="/assets/images/NavChoose.png" />
+                    <h2 class="text-center text-lg">Help Me Choose</h2>
+                    <div class="flex w-full items-center justify-center gap-4">
+                        <a href="#">Get Started</a>
+                    </div>
+                </div>
+            </div>
+            <div class="ml-12 flex flex-col gap-2 p-8">
+                <a href="">Inventory</a>
+                <a href="">Used Cars</a>
+                <a href="">Demo Drive</a>
+                <a href="">Trade-in</a>
+                <a href="">Compare</a>
+                <a href="">Help Me Charge</a>
+                <a href="">Fleet</a>
+                <a href="">Semi</a>
+                <a href="">Roadster</a>
+                <a href="">Federal Tax Credit</a>
+            </div>
+        </div>
+        <div id="energy" class="opacity-0">
+            <div>Energy</div>
+            <div>other</div>
+        </div>
+        <div id="charging" class="opacity-0">
+            <div>Charging</div>
+            <div>other</div>
+        </div>
+        <div id="discover" class="opacity-0">
+            <div>Discover</div>
+            <div>other</div>
+        </div>
+        <div id="shop" class="opacity-0">
+            <div>Shop</div>
+            <div>other</div>
+        </div>
+    </div>
+    <div id="backdrop" class="invisible fixed top-0 z-10 h-screen w-full transition-all duration-500"></div>
+</nav>

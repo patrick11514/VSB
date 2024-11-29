@@ -28,21 +28,63 @@ button {
 }
 
 button.cyber {
-    @apply bg-cyber-bg backdrop-blur-md opacity-90 text-cyber uppercase text-cyber-text rounded-none border-[1px] border-gray-800 hover:bg-opacity-80 transition-all duration-200 font-bold active:border-white active:bg-opacity-20 active:text-white;
+    @apply rounded-none border-[1px] border-gray-800 bg-cyber-bg text-cyber font-bold uppercase text-cyber-text opacity-90 backdrop-blur-md transition-all duration-200 hover:bg-opacity-80 active:border-white active:bg-opacity-20 active:text-white;
 
     &:first-child {
-        @apply border-none mt-auto h-[90%] before:w-full before:border-t-[3px] before:border-gray-400 active:before:border-white before:absolute before:left-0 before:-top-1.5 before:block;
-    } 
+        @apply mt-auto h-[90%] border-none before:absolute before:-top-1.5 before:left-0 before:block before:w-full before:border-t-[3px] before:border-gray-400 active:before:border-white;
+    }
 }
 
 .nav div {
     @apply cursor-pointer rounded-md p-2;
+    &:hover,
+    &.hover {
+        @apply bg-black-tansparent backdrop-blur;
+    }
 }
 
 .icons i {
-    @apply cursor-pointer rounded-sm px-1 py-0.5 hover:backdrop-blur;
+    @apply cursor-pointer rounded-sm px-1 transition-all duration-300 hover:bg-black-tansparent hover:backdrop-blur;
 }
 
 article a {
-    @apply underline font-bold;
+    @apply font-bold underline;
+}
+
+#navContent:not(.invisible) > div > div:first-child > div {
+    @apply translate-y-0;
+    opacity: 100;
+}
+
+#navContent > div > div:first-child > div {
+    --bezier: cubic-bezier(0.5, 0, 0, 0.75);
+
+    opacity: 0;
+    transition:
+        transform 0.5s,
+        opacity 0.5s var(--bezier),
+        -webkit-transform 0.5s var(--bezier);
+    transition-delay: var(--animation-offset);
+
+    @apply -translate-y-3;
+}
+
+#navContent {
+    padding-top: calc(60px + 2rem);
+
+    & > div {
+        transition: opacity 0.3s;
+        @apply absolute flex w-full items-center justify-center;
+
+        a {
+            @apply w-max text-sm shadow-list-empty transition-all duration-500 hover:shadow-list;
+        }
+
+        & > div:first-child a {
+            @apply text-[rgb(70,80,99)] hover:text-text;
+        }
+        & > div:last-child a {
+            @apply hover:text-[rgb(70,80,99)];
+        }
+    }
 }
