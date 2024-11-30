@@ -1,9 +1,10 @@
-<nav class="fixed z-40 flex w-full flex-col text-white transition-all duration-500" style="transform: translateY(0%)">
+<script src="/assets/js/nav.js"></script>
+<nav root class="fixed z-40 flex w-full flex-col text-white transition-all duration-500" style="transform: translateY(0%)">
     <div class="z-40 flex h-full w-full px-10 transition-all duration-500">
         <a href="/" class="w-1/4 py-6">
             <svg class="h-3" load="Logo.svg"></svg>
         </a>
-        <div id="divlist" class="nav mx-auto flex flex-row items-center justify-center gap-2 text-sm">
+        <div id="divlist" class="nav mx-auto hidden flex-row items-center justify-center gap-2 text-sm lg:flex">
             <div data-nav="vehicles">Vehicles</div>
             <div data-nav="energy">Energy</div>
             <div data-nav="charging">Charging</div>
@@ -11,11 +12,12 @@
             <div data-nav="shop">Shop</div>
             <div data-nav="close">We, Robot</div>
         </div>
-        <div class="icons flex w-1/4 flex-row items-center justify-end gap-2 text-2xl font-bold">
+        <div class="icons hidden w-1/4 flex-row items-center justify-end gap-2 text-2xl font-bold lg:flex">
             <i class="bi bi-question-circle"></i>
             <i class="bi bi-globe"></i>
             <i class="bi bi-person-circle"></i>
         </div>
+        <button class="my-auto ml-auto block bg-black bg-opacity-5 px-4 py-2 text-white lg:hidden">Menu</button>
     </div>
     <div id="navContent" class="invisible fixed z-20 w-full -translate-y-8 p-8 text-text transition-all duration-500">
         <div id="vehicles" class="px-20 opacity-0">

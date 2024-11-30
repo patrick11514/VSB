@@ -24,7 +24,7 @@
 }
 
 button {
-    @apply cursor-pointer rounded-md bg-white px-20 py-3 text-sm text-text;
+    @apply w-full cursor-pointer rounded-md bg-white px-8 py-3 text-sm text-text sm:w-auto sm:px-16 lg:px-20;
 }
 
 button.cyber {

@@ -2,9 +2,15 @@
     "compilerOptions": {
         "allowJs": true,
         "target": "ES2023",
-        "lib": ["ES2023", "DOM"],
+        "lib": [
+            "ES2023",
+            "DOM"
+        ],
         "module": "CommonJS",
         "strict": true
     },
-    "include": ["./src/**/*"]
+    "include": [
+        "./src/**/*",
+        "src/assets/js/global.d.ts"
+    ]
 }
