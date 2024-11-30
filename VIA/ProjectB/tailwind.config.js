@@ -8,7 +8,8 @@ module.exports = {
                 blue: "#3e6ae1",
                 "cyber-text": "#a2a3a5",
                 "cyber-bg": "#111",
-                "black-tansparent": "rgba(0,0,0,0.05)"
+                "black-tansparent": "rgba(0,0,0,0.05)",
+                "text-gray": "rgb(92, 94, 98)"
             },
             fontFamily: {
                 "universal-sans": "UniversalSans, Arial, sans-serif"

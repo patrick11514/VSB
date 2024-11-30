@@ -139,6 +139,16 @@ const main = async () => {
     let currentNav: NavItems | undefined;
     let currentNavElement: HTMLElement | undefined;
 
+    const setNavContentHeight = (element: HTMLElement) => {
+        if (!navContent) return;
+        navContent.style.removeProperty('--nav-height');
+        const computed = getComputedStyle(navContent);
+        const elComputed = getComputedStyle(element);
+
+        const sum = parseInt(computed.paddingTop) + parseInt(computed.paddingBottom) + parseInt(elComputed.height);
+        navContent.style.height = `${sum}px`;
+    };
+
     const handleNavOpen = () => {
         if (!nav || !menuItems || !navContent || !navBackdrop) return;
 
@@ -149,12 +159,7 @@ const main = async () => {
                     element.classList.remove('opacity-0');
                     element.classList.add('opacity-100');
 
-                    navContent.style.removeProperty('--nav-height');
-                    const computed = getComputedStyle(navContent);
-                    const elComputed = getComputedStyle(element);
-
-                    const sum = parseInt(computed.paddingTop) + parseInt(computed.paddingBottom) + parseInt(elComputed.height);
-                    navContent.style.height = `${sum}px`;
+                    setNavContentHeight(element);
                 } else {
                     element.classList.add('opacity-0');
                     element.classList.remove('opacity-100');
@@ -197,6 +202,16 @@ const main = async () => {
             }
         }
     };
+
+    window.addEventListener('resize', () => {
+        if (!nav) return;
+        if (!currentNav) return;
+
+        const element = nav.querySelector(`div#navContent > div#${currentNav}`);
+        if (!element) return;
+
+        setNavContentHeight(element as HTMLElement);
+    });
 
     nav?.addEventListener('mouseover', (ev) => {
         const target = ev.target as HTMLElement | null;

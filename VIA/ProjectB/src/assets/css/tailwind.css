@@ -74,7 +74,8 @@ article a {
 
     & > div {
         transition: opacity 0.3s;
-        @apply absolute flex w-full items-center justify-center;
+        transition-delay: 0.2s;
+        @apply absolute flex w-full justify-center;
 
         a {
             @apply w-max text-sm shadow-list-empty transition-all duration-500 hover:shadow-list;
