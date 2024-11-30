@@ -27,6 +27,11 @@ module.exports = {
                 list: "0 calc(3px) 0 -1px currentcolor",
                 "list-empty": "rgba(0, 0, 0, 0) 0px 0px 0px 0px"
             },
+            fontSize: {
+                "ssm": ["0.75rem", {
+                    lineHeight: "1rem"
+                }]
+            }
         },
     },
     plugins: [],

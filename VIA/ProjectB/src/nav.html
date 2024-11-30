@@ -1,5 +1,6 @@
 <script src="/assets/js/nav.js"></script>
-<nav root class="fixed z-40 flex w-full flex-col text-white transition-all duration-500" style="transform: translateY(0%)">
+<nav root class="fixed z-40 flex w-full flex-col text-white transition-all duration-500 lg:text-white"
+    style="transform: translateY(0%)">
     <div class="z-40 flex h-full w-full px-10 transition-all duration-500">
         <a href="/" class="w-1/4 py-6">
             <svg class="h-3" load="Logo.svg"></svg>
@@ -17,11 +18,21 @@
             <i class="bi bi-globe"></i>
             <i class="bi bi-person-circle"></i>
         </div>
-        <button class="my-auto ml-auto block bg-black bg-opacity-5 px-4 py-2 text-white lg:hidden">Menu</button>
+        <button id="mobileButton"
+            class="my-auto ml-auto block w-max bg-black bg-opacity-5 px-4 py-2 text-white transition-all duration-200 hover:bg-opacity-10 lg:hidden">
+            Menu
+        </button>
     </div>
-    <div id="navContent" class="invisible fixed z-20 w-full -translate-y-8 p-8 text-text transition-all duration-500">
+    <!-- 
+
+    DESKTOP
+
+    !-->
+    <div id="navContent"
+        class="invisible fixed z-20 hidden w-full -translate-y-8 p-8 text-text transition-all duration-500 lg:block">
         <div id="vehicles" class="px-20 opacity-0">
-            <div data-dynamic data-offset="0.08" data-attr="--animation-offset" class="flex max-w-[calc(15rem_*_4_+_2rem)] flex-wrap gap-8 border-r-[1px] border-r-gray-300 px-4">
+            <div data-dynamic data-offset="0.08" data-attr="--animation-offset"
+                class="flex max-w-[calc(15rem_*_4_+_2rem)] flex-wrap gap-8 border-r-[1px] border-r-gray-300 px-4">
                 <div class="w-52">
                     <img src="/assets/images/NavS.png" />
                     <h2 class="text-center text-lg">Model S</h2>
@@ -84,7 +95,8 @@
             </div>
         </div>
         <div id="energy" class="opacity-0">
-            <div data-dynamic data-offset="0.08" data-attr="--animation-offset" class="flex max-w-[calc(15rem_*_4_+_2rem)] flex-wrap gap-8 border-r-[1px] border-r-gray-300 px-4">
+            <div data-dynamic data-offset="0.08" data-attr="--animation-offset"
+                class="flex max-w-[calc(15rem_*_4_+_2rem)] flex-wrap gap-8 border-r-[1px] border-r-gray-300 px-4">
                 <div class="w-52">
                     <img src="/assets/images/NavPanels.png" />
                     <h2 class="text-center text-lg">Solar Panels</h2>
@@ -128,12 +140,8 @@
             </div>
         </div>
         <div id="charging" class="opacity-0">
-            <div
-                data-dynamic
-                data-offset="0.08"
-                data-attr="--animation-offset"
-                class="flex w-max max-w-[calc(15rem_*_4_+_2rem)] flex-wrap gap-8 border-r-[1px] border-r-gray-300 px-4"
-            >
+            <div data-dynamic data-offset="0.08" data-attr="--animation-offset"
+                class="flex w-max max-w-[calc(15rem_*_4_+_2rem)] flex-wrap gap-8 border-r-[1px] border-r-gray-300 px-4">
                 <div class="w-52">
                     <img src="/assets/images/NavMenuCharging.png" />
                     <h2 class="text-center text-lg">Charging</h2>
@@ -196,7 +204,8 @@
             </div>
         </div>
         <div id="shop" class="opacity-0">
-            <div data-dynamic data-offset="0.08" data-attr="--animation-offset" class="flex w-max max-w-[calc(15rem_*_4_+_2rem)] flex-wrap gap-8 px-4">
+            <div data-dynamic data-offset="0.08" data-attr="--animation-offset"
+                class="flex w-max max-w-[calc(15rem_*_4_+_2rem)] flex-wrap gap-8 px-4">
                 <div class="w-52">
                     <img src="/assets/images/NavShopCharging.png" />
                     <h2 class="text-center text-lg">Charging</h2>
@@ -216,5 +225,36 @@
             </div>
         </div>
     </div>
-    <div id="backdrop" class="invisible fixed top-0 z-10 h-screen w-full transition-all duration-500"></div>
+    <div id="backdrop" class="invisible fixed top-0 z-10 hidden h-screen w-full transition-all duration-500 lg:block">
+    </div>
+    <!--
+
+    MOBILE
+
+    !-->
+    <div id="mobileNav"
+        class="invisible fixed -top-[52px] left-0 z-[100] flex h-screen w-screen flex-col gap-5 bg-white p-4 text-text lg:hidden">
+        <button id="closeMobileNav" class="ml-auto w-max px-1 py-0.5 text-xl"><i class="bi bi-x-lg"></i></button>
+        <div class="flex justify-between">Vehicles <i class="bi bi-chevron-right sm:hidden"></i></div>
+        <div class="flex justify-between">Energy <i class="bi bi-chevron-right sm:hidden"></i></div>
+        <div class="flex justify-between">Charging <i class="bi bi-chevron-right sm:hidden"></i></div>
+        <div class="flex justify-between">Discover <i class="bi bi-chevron-right sm:hidden"></i></div>
+        <a href="">Shop </a>
+        <a href="">We, Robot</a>
+        <a href="">Support</a>
+        <div class="flex justify-between">
+            <div class="flex gap-4">
+                <i class="bi bi-globe text-xl"></i>
+                <div class="flex flex-col">
+                    United States
+                    <span class="text-sm text-text-gray">English</span>
+                </div>
+            </div>
+            <i class="bi bi-chevron-right my-auto sm:hidden"></i>
+        </div>
+        <div class="flex gap-4">
+            <i class="bi bi-person-circle text-xl"></i>
+            Account
+        </div>
+    </div>
 </nav>

@@ -40,21 +40,30 @@ document.addEventListener('included', () => {
     const nav = document.querySelector('nav');
     const menuItems = nav?.querySelector('div');
     const navContent = nav?.querySelector<HTMLDivElement>('div#navContent');
+    const mobileButton = nav?.querySelector<HTMLButtonElement>('button#mobileButton');
 
     window.navLastScroll = null;
     let percentage = 0;
 
     const checkNav = () => {
-        if (!nav || !menuItems || !navContent) return;
+        if (!nav || !menuItems || !navContent || !mobileButton) return;
 
         const scroll = window.scrollY;
 
         if (scroll > 0) {
             menuItems.classList.add('bg-white', 'text-black');
             menuItems.classList.remove('text-white', 'bg-transparent');
+
+            //mobile button
+            mobileButton.classList.add('text-black');
+            mobileButton.classList.remove('text-white');
         } else {
             menuItems.classList.remove('bg-white', 'text-black');
             menuItems.classList.add('text-white', 'bg-trasparent');
+
+            //mobile button
+            mobileButton.classList.remove('text-black');
+            mobileButton.classList.add('text-white');
         }
 
         const lastScroll = window.navLastScroll;

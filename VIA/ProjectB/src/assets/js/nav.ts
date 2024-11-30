@@ -52,6 +52,9 @@ document.addEventListener('included', () => {
             //show backdrop
             navBackdrop.classList.add('backdrop-blur');
             navBackdrop.classList.remove('invisible');
+
+            //disable scroll
+            document.querySelector('html')!.style.overflow = 'hidden';
         } else {
             if ((window.navLastScroll ?? 0) <= 0) {
                 //remove bg white
@@ -73,6 +76,8 @@ document.addEventListener('included', () => {
                 opened.classList.add('opacity-0');
                 opened.classList.remove('opacity-100');
             }
+
+            document.querySelector('html')!.style.overflow = 'auto';
         }
     };
 
@@ -154,4 +159,29 @@ document.addEventListener('included', () => {
             begin += offset;
         }
     });
+
+    //MOBILE NAV SECTION
+    const mobileButton = nav?.querySelector('button#mobileButton');
+    const navNav = nav?.querySelector('div#mobileNav');
+
+    let navOpened = false;
+
+    mobileButton?.addEventListener('click', () => {
+        if (!navNav) return;
+
+        if (navOpened) {
+            navNav.classList.add('invisible');
+        } else {
+            navNav.classList.remove('invisible');
+        }
+
+        navOpened = !navOpened;
+    });
+
+    nav?.querySelector('#closeMobileNav')?.addEventListener('click', () => {
+        navNav?.classList.add('invisible');
+        navOpened = false;
+    });
 });
+
+console.log('loaded');

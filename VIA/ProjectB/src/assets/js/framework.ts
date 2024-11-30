@@ -22,7 +22,17 @@ const loadHTML = async (el: HTMLElement) => {
     //append script elements after child was put
     if (scripts.length > 0) {
         for (let i = 0; i < scripts.length; ++i) {
-            document.head.appendChild(scripts.item(i));
+            const newScript = document.createElement('script');
+            newScript.defer = true;
+            const script = scripts.item(i);
+
+            if (script.src) {
+                newScript.src = script.src;
+            } else {
+                newScript.textContent = script.text;
+            }
+
+            document.head.appendChild(newScript);
         }
     }
 };
@@ -60,6 +70,7 @@ const loadIncludes = async () => {
     await Promise.all(svgs);
 
     document.dispatchEvent(INCLUDE_EVENT);
+    console.log('fired');
 };
 
 loadIncludes();
