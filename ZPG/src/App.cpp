@@ -89,6 +89,10 @@ void App::prepareScenes() {
   this->textures.addTexture(
       "kafka", std::make_shared<Texture>(
                    textureMaterial, "../textures/kafka.png", GL_TEXTURE_2D));
+  this->textures.addTexture(
+      "zoombie", std::make_shared<Texture>(
+                     textureMaterial, "../textures/zombie.png", GL_TEXTURE_2D));
+
   // prepare scenes
   this->currentScene = "obj";
 

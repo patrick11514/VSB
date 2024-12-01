@@ -1,4 +1,5 @@
 #include "DarkForest.hpp"
+#include "../Factories/ObjectFactory.hpp"
 #include "../Light/BallLight.hpp"
 #include "../Light/Flashlight.hpp"
 #include "../Object/Material/DarkBushMaterial.hpp"
@@ -54,6 +55,32 @@ void DarkForest::addObjects() {
                   std::make_shared<Transformation>()->addTransformation(
                       new Scale(glm::vec3(200.f, 1.f, 200.f))),
                   this->textureStorage.getTexture("dark_grass")));
+
+  this->addObject(
+      ObjectFactory::objObject()
+          ->loadModel("../objects/zombie.obj")
+          ->slice(4,
+                  []() {
+                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+                                          11 * sizeof(float), (GLvoid *)0);
+                    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
+                                          11 * sizeof(float),
+                                          (GLvoid *)(3 * sizeof(float)));
+                    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE,
+                                          11 * sizeof(float),
+                                          (GLvoid *)(6 * sizeof(float)));
+                    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE,
+                                          11 * sizeof(float),
+                                          (GLvoid *)(8 * sizeof(float)));
+                    return 11;
+                  })
+          ->finish(this->shaderStorage.getShaderProgram("phong").get(),
+                   std::make_shared<Transformation>()
+                       ->addTransformation(
+                           new DynamicRotation(100.f, glm::vec3{0.f, 1.f, 0.f}))
+                       ->addTransformation(
+                           new Translate(glm::vec3{10.f, 0.f, 10.f})),
+                   this->textureStorage.getTexture("zoombie")));
 
   auto treeMaterial = std::make_shared<DarkTreeMaterial>();
   auto bushMaterial = std::make_shared<DarkBushMaterial>();
