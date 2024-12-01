@@ -83,7 +83,12 @@ void App::prepareScenes() {
                         glm::vec3{0.0, 0.0, 0.0}, glm::vec3{1.0, 1.0, 1.0},
                         glm::vec3{0.0, 0.0, 0.0}, 32.0, "../textures/grass.png",
                         GL_TEXTURE_2D));
-
+  this->textures.addTexture(
+      "house", std::make_shared<Texture>(
+                   textureMaterial, "../textures/house.png", GL_TEXTURE_2D));
+  this->textures.addTexture(
+      "kafka", std::make_shared<Texture>(
+                   textureMaterial, "../textures/kafka.png", GL_TEXTURE_2D));
   // prepare scenes
   this->currentScene = "obj";
 

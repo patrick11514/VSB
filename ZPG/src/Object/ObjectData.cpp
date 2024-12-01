@@ -1,8 +1,9 @@
 #include "ObjectData.hpp"
 
 ObjectData::ObjectData(Model model, size_t numberOfAttrs,
-                       std::function<void()> sliceAttrs)
-    : model(model), sliceAttrs(sliceAttrs), numberOfAttrs(numberOfAttrs) {
+                       std::function<int()> sliceAttrs)
+    : sliceAttrs(sliceAttrs), numberOfAttrs(numberOfAttrs), model(model) {
+  glBindVertexArray(VAO);
   glGenBuffers(1, &this->VBO); // generate the VBO
   glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
   this->model.putDataToBuffer();
@@ -16,22 +17,27 @@ ObjectData::ObjectData(Model model, size_t numberOfAttrs,
   }
 
   glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-  this->sliceAttrs();
+  this->perRow = this->sliceAttrs();
 }
 
 ObjectData::ObjectData(const ObjectData &other)
     : ObjectData(other.model, other.numberOfAttrs, other.sliceAttrs) {}
 
 ObjectData::ObjectData(ObjectData &&other)
-    : VBO(other.VBO), VAO(other.VAO), model(std::move(other.model)),
-      numberOfAttrs(other.numberOfAttrs) {}
+    : numberOfAttrs(other.numberOfAttrs), VAO(other.VAO), VBO(other.VBO),
+      model(std::move(other.model)) {}
 
-void ObjectData::defaultSlice() {
+int ObjectData::defaultSlice() {
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid *)0);
+  return 3;
 }
 
 void ObjectData::bindArray() const { glBindVertexArray(this->VAO); }
 
 bool ObjectData::operator==(const ObjectData &other) const {
   return this->VAO == other.VAO;
+}
+
+void ObjectData::drawArrays() const {
+  glDrawArrays(GL_TRIANGLES, 0, this->model.getPointCount() / this->perRow);
 }

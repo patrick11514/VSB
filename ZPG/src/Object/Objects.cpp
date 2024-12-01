@@ -21,12 +21,12 @@ DrawableObject *createBall(ShaderProgram *shaderProgram,
                       glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
                                             6 * sizeof(float),
                                             (GLvoid *)(3 * sizeof(float)));
+                      return 6;
                     }));
   }
 
-  return new DrawableObject(
-      dataStorage.getObject("ball"), shaderProgram, transformations,
-      []() { glDrawArrays(GL_TRIANGLES, 0, 2880); }, material);
+  return new DrawableObject(dataStorage.getObject("ball"), shaderProgram,
+                            transformations, material);
 }
 
 DrawableObject *createTree(ShaderProgram *shaderProgram,
@@ -40,12 +40,13 @@ DrawableObject *createTree(ShaderProgram *shaderProgram,
                       glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
                                             6 * sizeof(float),
                                             (GLvoid *)(3 * sizeof(float)));
+
+                      return 6;
                     }));
   }
 
-  return new DrawableObject(
-      dataStorage.getObject("tree"), shaderProgram, transformations,
-      []() { glDrawArrays(GL_TRIANGLES, 0, 92814); }, material);
+  return new DrawableObject(dataStorage.getObject("tree"), shaderProgram,
+                            transformations, material);
 }
 DrawableObject *createBush(ShaderProgram *shaderProgram,
                            std::shared_ptr<Transformation> transformations,
@@ -58,12 +59,13 @@ DrawableObject *createBush(ShaderProgram *shaderProgram,
                       glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
                                             6 * sizeof(float),
                                             (GLvoid *)(3 * sizeof(float)));
+
+                      return 6;
                     }));
   }
 
-  return new DrawableObject(
-      dataStorage.getObject("bush"), shaderProgram, transformations,
-      []() { glDrawArrays(GL_TRIANGLES, 0, 8730); }, material);
+  return new DrawableObject(dataStorage.getObject("bush"), shaderProgram,
+                            transformations, material);
 }
 DrawableObject *createGift(ShaderProgram *shaderProgram,
                            std::shared_ptr<Transformation> transformations,
@@ -76,12 +78,13 @@ DrawableObject *createGift(ShaderProgram *shaderProgram,
                       glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
                                             6 * sizeof(float),
                                             (GLvoid *)(3 * sizeof(float)));
+
+                      return 6;
                     }));
   }
 
-  return new DrawableObject(
-      dataStorage.getObject("gift"), shaderProgram, transformations,
-      []() { glDrawArrays(GL_TRIANGLES, 0, 66624); }, material);
+  return new DrawableObject(dataStorage.getObject("gift"), shaderProgram,
+                            transformations, material);
 }
 
 DrawableObject *createPlane(ShaderProgram *shaderProgram,
@@ -97,18 +100,21 @@ DrawableObject *createPlane(ShaderProgram *shaderProgram,
                                 (GLvoid *)(3 * sizeof(float)));
           glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
                                 (GLvoid *)(6 * sizeof(float)));
+
+          return 8;
         }));
   }
 
-  return new DrawableObject(
-      dataStorage.getObject("plane"), shaderProgram, transformations,
-      []() { glDrawArrays(GL_QUADS, 0, 4); }, material);
+  return new DrawableObject(dataStorage.getObject("plane"), shaderProgram,
+                            transformations, material,
+                            []() { glDrawArrays(GL_QUADS, 0, 4); });
 }
 
 DrawableObject *
 createPlaneNormal(ShaderProgram *shaderProgram,
                   std::shared_ptr<Transformation> transformations,
                   std::shared_ptr<Material> material) {
+  printf("HERE\n");
   if (!dataStorage.hasObject("normal_plane")) {
     Model model{planeNormal, sizeof(planeNormal) / sizeof(float)};
     dataStorage.add(
@@ -119,10 +125,13 @@ createPlaneNormal(ShaderProgram *shaderProgram,
                                 (GLvoid *)(3 * sizeof(float)));
           glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
                                 (GLvoid *)(6 * sizeof(float)));
+
+          return 8;
         }));
   }
 
-  return new DrawableObject(
-      dataStorage.getObject("normal_plane"), shaderProgram, transformations,
-      []() { glDrawArrays(GL_QUADS, 0, 4); }, material);
+  printf("HERE\n");
+  return new DrawableObject(dataStorage.getObject("normal_plane"),
+                            shaderProgram, transformations, material,
+                            []() { glDrawArrays(GL_QUADS, 0, 4); });
 }

@@ -23,7 +23,8 @@ protected:
 
 public:
   Drawable(std::shared_ptr<ObjectData> data, ShaderProgram *shaderProgram,
-           RenderFunction renderFunction, std::shared_ptr<Material> material)
+           std::shared_ptr<Material> material,
+           RenderFunction renderFunction = nullptr)
       : data(data), shaderProgram(shaderProgram),
         renderFunction(renderFunction), material(material) {};
 

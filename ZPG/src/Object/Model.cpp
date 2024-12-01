@@ -34,6 +34,8 @@ Model::Model(Model &&other) {
 Model::~Model() { delete[] this->points; }
 
 void Model::putDataToBuffer() const {
-  glBufferData(GL_ARRAY_BUFFER, this->size * sizeof(float), this->points,
-               GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, this->getPointCount() * sizeof(float),
+               this->points, GL_STATIC_DRAW);
 }
+
+int Model::getPointCount() const { return this->size; }

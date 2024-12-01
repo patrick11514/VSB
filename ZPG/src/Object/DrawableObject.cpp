@@ -12,12 +12,17 @@ void DrawableObject::assignScene(Scene *scene) {
 }
 
 void DrawableObject::draw() {
-  Drawable::draw();
-  this->data->bindArray();
-
   this->shaderProgram->putModelMatrix(this->getTransformations());
+  Drawable::update();
 
+  this->data->bindArray();
   this->shaderProgram->setProgram();
-  this->renderFunction();
+
+  if (this->renderFunction != nullptr) {
+    this->renderFunction();
+  } else {
+    Drawable::draw();
+  }
+
   ShaderProgram::resetProgram();
 }

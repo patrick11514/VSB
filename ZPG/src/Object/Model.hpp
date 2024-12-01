@@ -23,4 +23,6 @@ public:
   ~Model();                  ///< destructor
 
   void putDataToBuffer() const; ///< put data to gpu
+
+  int getPointCount() const;
 };

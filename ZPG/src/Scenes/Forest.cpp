@@ -1,4 +1,5 @@
 #include "Forest.hpp"
+#include "../Factories/ObjectFactory.hpp"
 #include "../Light/BallLight.hpp"
 #include "../Light/DirectionalLight.hpp"
 #include "../Light/Flashlight.hpp"
@@ -51,6 +52,75 @@ void Forest::addObjects() {
                                  "../textures/posz.jpg",
                                  "../textures/negz.jpg"},
       this->shaderStorage.getShaderProgram("skybox").get()));
+
+  this->addObject(
+      ObjectFactory::objObject()
+          ->loadModel("../objects/house.obj")
+          ->slice(4,
+                  []() {
+                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+                                          11 * sizeof(float), (GLvoid *)0);
+                    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
+                                          11 * sizeof(float),
+                                          (GLvoid *)(3 * sizeof(float)));
+                    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE,
+                                          11 * sizeof(float),
+                                          (GLvoid *)(6 * sizeof(float)));
+                    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE,
+                                          11 * sizeof(float),
+                                          (GLvoid *)(8 * sizeof(float)));
+                    return 11;
+                  })
+          ->finish(this->shaderStorage.getShaderProgram("phong").get(),
+                   std::make_shared<Transformation>()->addTransformation(
+                       new Translate(glm::vec3{10.f, 0.f, 10.f})),
+                   this->textureStorage.getTexture("house")));
+
+  this->addObject(
+      ObjectFactory::objObject()
+          ->loadModel("../objects/login.obj")
+          ->slice(4,
+                  []() {
+                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+                                          11 * sizeof(float), (GLvoid *)0);
+                    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
+                                          11 * sizeof(float),
+                                          (GLvoid *)(3 * sizeof(float)));
+                    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE,
+                                          11 * sizeof(float),
+                                          (GLvoid *)(6 * sizeof(float)));
+                    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE,
+                                          11 * sizeof(float),
+                                          (GLvoid *)(8 * sizeof(float)));
+                    return 11;
+                  })
+          ->finish(this->shaderStorage.getShaderProgram("phong").get(),
+                   std::make_shared<Transformation>()->addTransformation(
+                       new Translate(glm::vec3{-10.f, 0.f, 10.f})),
+                   this->textureStorage.getTexture("planks")));
+
+  this->addObject(
+      ObjectFactory::objObject()
+          ->loadModel("../objects/Kafka.obj")
+          ->slice(4,
+                  []() {
+                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+                                          11 * sizeof(float), (GLvoid *)0);
+                    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
+                                          11 * sizeof(float),
+                                          (GLvoid *)(3 * sizeof(float)));
+                    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE,
+                                          11 * sizeof(float),
+                                          (GLvoid *)(6 * sizeof(float)));
+                    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE,
+                                          11 * sizeof(float),
+                                          (GLvoid *)(8 * sizeof(float)));
+                    return 11;
+                  })
+          ->finish(this->shaderStorage.getShaderProgram("phong").get(),
+                   std::make_shared<Transformation>()->addTransformation(
+                       new Translate(glm::vec3{-10.f, 0.f, -10.f})),
+                   this->textureStorage.getTexture("kafka")));
 
   std::random_device dev;
   std::mt19937 rng(dev());

@@ -27,9 +27,9 @@ public:
    */
   DrawableObject(std::shared_ptr<ObjectData> data, ShaderProgram *shaderProgram,
                  std::shared_ptr<Transformation> transformations,
-                 RenderFunction renderFunction,
-                 std::shared_ptr<Material> material)
-      : Drawable(data, shaderProgram, renderFunction, material),
+                 std::shared_ptr<Material> material,
+                 RenderFunction renderFunction = nullptr)
+      : Drawable(data, shaderProgram, material, renderFunction),
         transformations(transformations) {};
 
   void
