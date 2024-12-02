@@ -7,11 +7,76 @@
     <title>Lol Stats</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="/assets/css/main.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/assets/js/env.js"></script>
+    <script src="/assets/js/utils.js"></script>
+    <script src="/assets/js/RiotApi.js"></script>
     <script src="/assets/js/main.js" defer></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 </head>
 
-<body class="h-full w-full"></body>
+<body class="flex h-full w-full flex-col items-center justify-center gap-2 bg-background p-4 font-roboto text-text">
+    <h1 class="text-5xl font-bold text-primary">League of Legends Stats</h1>
+    <div id="search" class="flex gap-2 rounded-md border-2 border-white p-2">
+        <input id="username" type="text" required placeholder="username" />
+        <h3 class="text-xl">#</h3>
+        <input id="tag" type="text" required placeholder="tag" />
+        <select id="region"></select>
+    </div>
+    <button id="search"
+        class="transition-color rounded-md border-[1px] border-white bg-secondary px-4 py-1 text-xl font-bold duration-200 hover:bg-accent active:translate-y-2 disabled:grayscale">
+        Search
+    </button>
+
+    <section id="profile" class="invisible mr-auto flex gap-2 pt-4">
+        <div id="icon" class="relative flex w-max">
+            <img class="aspect-square w-28 rounded-md border-2 border-white"
+                src="https://static.bigbrain.gg/assets/lol/riot_static/14.23.1/img/profileicon/5735.png" />
+            <div class="absolute -top-4 flex w-full">
+                <span class="mx-auto rounded-md border-[1px] border-primary bg-secondary px-1 text-center">128</span>
+            </div>
+        </div>
+
+        <div class="flex flex-col justify-center">
+            <h1 id="username" class="text-2xl font-bold">
+                patrick115 <span class="text-xl text-gray-500">#Czech</span>
+            </h1>
+            <h1 id="title" class="text-center text-lg font-bold">Super človíček</h1>
+            <section id="challenges" class="flex w-full items-center justify-center gap-2">
+                <img src="/assets/ddragon/img/challenges-images/101000-IRON.png" />
+                <img src="/assets/ddragon/img/challenges-images/101000-IRON.png" />
+                <img src="/assets/ddragon/img/challenges-images/101000-IRON.png" />
+            </section>
+        </div>
+    </section>
+
+    <section id="content" class="invisible flex w-full gap-4">
+        <section class="flex min-w-max flex-1 flex-col gap-4">
+            <div class="w-full rounded-lg border-2 border-accent bg-secondary p-2">
+                <h1 class="w-full text-nowrap text-xl font-bold text-primary">
+                    Solo/Duo
+                </h1>
+                <div class="flex gap-2">
+                    <img class="w-20" src="/assets/images/Emerald.png" />
+                    <div class="flex flex-col justify-center">
+                        <h2 class="text-xl font-bold">Emerald III</h2>
+                        <h4 class="text-lg">28 LP</h4>
+                    </div>
+                    <div class="ml-auto flex flex-col justify-center text-right">
+                        <h4 class="text-lg">2W 4L</h4>
+                        <h4 class="text-lg">28% Win Rate</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="rounded-lg border-2 border-accent bg-secondary p-2">
+                Rank1
+            </div>
+        </section>
+
+        <section id="content" class="flex-[3] rounded-lg border-2 border-accent bg-secondary p-2">
+            Content
+        </section>
+    </section>
+</body>
 
 </html>
