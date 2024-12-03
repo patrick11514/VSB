@@ -46,7 +46,7 @@ type RiotResponse<$Data> =
 const getData = async <$Return>(
     route: string,
     regionOrRouting: Region | Routing
-): Promise<$Return | undefined> => {
+): Promise<RiotResponse<$Return> | undefined> => {
     try {
         const response = await fetch(ROOT.replace('%REGION%', regionOrRouting) + route, {
             headers: {
@@ -72,47 +72,68 @@ const AssetMap = {
     profileImage: `${DDRAGON_VERSION}/img/profileicon`
 } as const satisfies Record<string, string>;
 
-type ChallengeLevel = "IRON" | "BRONZE" | "SILVER" | "GOLD" | "PLATINUM" | "MASTER" | "GRANDMASTER" | "CHALLENGER"
-type ChallengeCategory = "COLLECTION" | "EXPERTISE" | "IMAGINATION" | "TEAMWORK" | "VETERANCY"
+type Tier =
+    | 'IRON'
+    | 'BRONZE'
+    | 'SILVER'
+    | 'GOLD'
+    | 'PLATINUM'
+    | 'MASTER'
+    | 'GRANDMASTER'
+    | 'CHALLENGER';
+type ChallengeCategory =
+    | 'COLLECTION'
+    | 'EXPERTISE'
+    | 'IMAGINATION'
+    | 'TEAMWORK'
+    | 'VETERANCY';
 
 type BaseChallenge = {
-    level: ChallengeLevel,
-    percentile: number,
-
-}
+    level: Tier;
+    percentile: number;
+};
 
 type ChallengesPlayerData = {
     totalPoints: {
-        level: ChallengeLevel | "EMERALD",
-        current: number,
-        max: number,
-        percentile: number
-    },
-    categoryPoints: Record<ChallengeCategory, BaseChallenge & {
+        level: Tier | 'EMERALD';
         current: number;
         max: number;
-    }>,
+        percentile: number;
+    };
+    categoryPoints: Record<
+        ChallengeCategory,
+        BaseChallenge & {
+            current: number;
+            max: number;
+        }
+    >;
     challenges: (BaseChallenge & {
         achievedTime: number;
         value: number;
         challengeId: number;
         playersInLevel?: number;
         position?: number;
-    })[],
+    })[];
     preferences: {
-        title: string,
-        challengeIds: number[],
-    }
-}
+        title: string;
+        challengeIds: number[];
+    };
+};
 
 type ChallengeConfig = {
-    id: number,
-    localizedNames: Record<string, {
-        description: string;
-        name: string;
-        shortDescription: string;
-    }>
-}[]
+    id: number;
+    localizedNames: Record<
+        string,
+        {
+            description: string;
+            name: string;
+            shortDescription: string;
+        }
+    >;
+}[];
+
+type Rank = 'I' | 'II' | 'III' | 'IV';
+type RankedQueue = 'RANKED_SOLO_5x5' | 'RANKED_FLEX_SR';
 
 class RiotAPI {
     private static getRoutingByRegion(region: Region): Routing {
@@ -156,25 +177,58 @@ class RiotAPI {
     }
 
     static async getChallenges(puuid: string, region: Region) {
-        const playerData = await getData<ChallengesPlayerData>(`/lol/challenges/v1/player-data/${puuid}`, region);
+        const playerData = await getData<ChallengesPlayerData>(
+            `/lol/challenges/v1/player-data/${puuid}`,
+            region
+        );
 
-        if (!playerData) return playerData;
+        if (!playerData || 'status' in playerData) return playerData;
 
-        const config = await getData<ChallengeConfig>(`/lol/challenges/v1/challenges/config`, region);
+        const config = await getData<ChallengeConfig>(
+            `/lol/challenges/v1/challenges/config`,
+            region
+        );
 
-        if (!config) return config;
+        if (!config || 'status' in config) return config;
 
         const preferences = playerData.preferences;
 
-        const title = preferences.title ? preferences.title.substring(0, preferences.title.length - 2) : undefined;
+        const title = preferences.title
+            ? preferences.title.substring(0, preferences.title.length - 2)
+            : undefined;
 
         return {
-            title: title ? config.find(item => item.id.toString() == title)?.localizedNames["en_US"].name : undefined,
-            challenges: preferences.challengeIds.map(challengeId => {
-                const challenge = playerData.challenges.find(challenge => challenge.challengeId == challengeId)
-                if (!challenge) return undefined;
-                return `${challengeId}-${challenge.level}`
-            }).filter(c => c) as string[]
-        }
+            title: title
+                ? config.find((item) => item.id.toString() == title)?.localizedNames[
+                    'en_US'
+                ].name
+                : undefined,
+            challenges: preferences.challengeIds
+                .map((challengeId) => {
+                    const challenge = playerData.challenges.find(
+                        (challenge) => challenge.challengeId == challengeId
+                    );
+                    if (!challenge) return undefined;
+                    return `${challengeId}-${challenge.level}`;
+                })
+                .filter((c) => c) as string[]
+        };
+    }
+
+    static async getRankedData(summonerId: string, region: Region) {
+        return await getData<
+            {
+                queueType: RankedQueue;
+                freshBlood: boolean;
+                hotStreak: boolean;
+                leagueId: string;
+                leaguePoints: number;
+                losses: number;
+                wins: number;
+                rank: Rank;
+                tier: Tier;
+                veteran: boolean;
+            }[]
+        >(`/lol/league/v4/entries/by-summoner/${summonerId}`, region);
     }
 }

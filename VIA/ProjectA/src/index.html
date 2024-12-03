@@ -28,6 +28,9 @@
         Search
     </button>
 
+    <h2 id="lastUpdate" class="invisible mr-auto pt-2 text-center font-bold text-gray-500">
+        Last Update: 22:30:40 1.10.2024
+    </h2>
     <section id="profile" class="invisible mr-auto flex gap-2 pt-4">
         <div id="icon" class="relative flex w-max">
             <img class="aspect-square w-28 rounded-md border-2 border-white"
@@ -38,7 +41,7 @@
         </div>
 
         <div class="flex flex-col justify-center">
-            <h1 id="username" class="text-2xl font-bold">
+            <h1 id="username" class="text-center text-2xl font-bold">
                 patrick115 <span class="text-xl text-gray-500">#Czech</span>
             </h1>
             <h1 id="title" class="text-center text-lg font-bold">Super človíček</h1>
@@ -51,12 +54,12 @@
     </section>
 
     <section id="content" class="invisible flex w-full gap-4">
-        <section class="flex min-w-max flex-1 flex-col gap-4">
-            <div class="w-full rounded-lg border-2 border-accent bg-secondary p-2">
+        <section class="flex max-w-max flex-1 flex-col gap-4">
+            <div class="w-full rounded-lg border-2 border-accent bg-secondary p-4">
                 <h1 class="w-full text-nowrap text-xl font-bold text-primary">
                     Solo/Duo
                 </h1>
-                <div class="flex gap-2">
+                <div id="solo-rank" class="flex gap-2">
                     <img class="w-20" src="/assets/images/Emerald.png" />
                     <div class="flex flex-col justify-center">
                         <h2 class="text-xl font-bold">Emerald III</h2>
@@ -68,8 +71,21 @@
                     </div>
                 </div>
             </div>
-            <div class="rounded-lg border-2 border-accent bg-secondary p-2">
-                Rank1
+            <div class="w-full rounded-lg border-2 border-accent bg-secondary p-4">
+                <h1 class="w-full text-nowrap text-xl font-bold text-primary">
+                    Flex 5v5
+                </h1>
+                <div id="flex-rank" class="flex gap-2">
+                    <img class="w-20" src="/assets/images/Unranked.png" />
+                    <div class="flex flex-col justify-center">
+                        <h2 class="text-xl font-bold">Unranked</h2>
+                        <h4 class="text-lg">N/A LP</h4>
+                    </div>
+                    <div class="ml-auto flex flex-col justify-center text-right">
+                        <h4 class="text-lg">0W 0L</h4>
+                        <h4 class="text-lg">N/A% Win Rate</h4>
+                    </div>
+                </div>
             </div>
         </section>
 
