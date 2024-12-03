@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "../Camera.hpp"
+#include "../Modifiers/Drawable.hpp"
 #include "../Object/BaseObject.hpp"
 #include "../Object/SkyBox.hpp"
 #include "../Shader/ShaderProgram.hpp"
@@ -27,6 +28,7 @@ public:
    * @param object Object which will be added to scene
    */
   void addObject(BaseObject *object);
+  void removeObject(BaseObject *object);
 
   void addCamera(Camera *camera);
 
@@ -45,4 +47,6 @@ public:
   void registerProgram(ShaderProgram *program);
 
   void render(); ///< Render scene called in mainLoop of application
+
+  Drawable *getObject(int id);
 };

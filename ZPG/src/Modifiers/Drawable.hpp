@@ -12,6 +12,9 @@
 using RenderFunction = std::function<void()>;
 
 class Drawable : public BasicAttribute {
+private:
+  static int lastId;
+
 protected:
   std::shared_ptr<ObjectData> data; ///< Sliced data of object
   ShaderProgram *shaderProgram
@@ -21,6 +24,8 @@ protected:
 
   std::shared_ptr<Material> material;
 
+  int id = -1;
+
 public:
   Drawable(std::shared_ptr<ObjectData> data, ShaderProgram *shaderProgram,
            std::shared_ptr<Material> material,
@@ -29,6 +34,9 @@ public:
         renderFunction(renderFunction), material(material) {};
 
   virtual ~Drawable() = default;
+
+  void assignId();
+  int getId() const;
 
   virtual void update() const;
   virtual void draw();

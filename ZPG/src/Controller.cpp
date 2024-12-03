@@ -1,5 +1,9 @@
 #include "Controller.hpp"
 #include "App.hpp"
+#include "Modifiers/Drawable.hpp"
+#include "Object/BaseObject.hpp"
+#include "Object/Texture/Texture.hpp"
+#include "Window.hpp"
 
 #include <GLFW/glfw3.h>
 #include <cstdio>
@@ -47,6 +51,28 @@ void Controller::onMouseButton([[maybe_unused]] GLFWwindow *window, int key,
   switch (action) {
   case GLFW_PRESS:
     this->pressedMouseButtons[key] = true;
+
+    if (key == GLFW_MOUSE_BUTTON_1) {
+      // get
+      GLuint x = this->cursor.x;
+      GLuint y = this->app->window->getResolution().y - this->cursor.y;
+
+      GLfloat depth;
+      glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+      GLuint id;
+      glReadPixels(x, y, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &id);
+
+      auto *scene = this->app->getCurrentScene();
+
+      if (id > 0) {
+        Drawable *object = scene->getObject(id);
+        if (object != nullptr)
+          printf("Removing %d\n", object->getId());
+        scene->removeObject(dynamic_cast<BaseObject *>(object));
+      }
+
+      printf("Depth: %f, Id: %d\n", depth, id);
+    }
     break;
   case GLFW_RELEASE:
     this->pressedMouseButtons[key] = false;
@@ -56,10 +82,10 @@ void Controller::onMouseButton([[maybe_unused]] GLFWwindow *window, int key,
 
 void Controller::onMouse([[maybe_unused]] GLFWwindow *window, double x,
                          double y) {
-  double xDiff = x - this->prevX;
-  this->prevX = x;
-  double yDiff = this->prevY - y;
-  this->prevY = y;
+  double xDiff = x - this->cursor.x;
+  this->cursor.x = x;
+  double yDiff = this->cursor.y - y;
+  this->cursor.y = y;
 
   if (!this->pressedMouseButtons[GLFW_MOUSE_BUTTON_RIGHT])
     return;
@@ -79,7 +105,7 @@ void Controller::onResize([[maybe_unused]] GLFWwindow *window, int width,
 }
 
 void Controller::onFrame() {
-  for (const int key : this->pressedKeys) {
+  for (const int &key : this->pressedKeys) {
     switch (key) {
     case GLFW_KEY_V:
       // App::currentScene = "obj";

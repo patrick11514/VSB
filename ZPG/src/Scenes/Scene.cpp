@@ -1,7 +1,7 @@
 #include "Scene.hpp"
-#include "../Modifiers/Drawable.hpp"
 
 #include <GLFW/glfw3.h>
+#include <algorithm>
 #include <glm/ext/matrix_float4x4.hpp>
 
 Scene::~Scene() {
@@ -32,6 +32,11 @@ void Scene::addObject(BaseObject *object) {
       camera->registerObserver(skybox);
     }
   }
+}
+
+void Scene::removeObject(BaseObject *object) {
+  this->objects.erase(
+      std::find(this->objects.begin(), this->objects.end(), object));
 }
 
 void Scene::registerProgram(ShaderProgram *program) {
@@ -128,4 +133,16 @@ void Scene::activate() {
       shader->putLightProperties(light);
     }
   }
+}
+
+Drawable *Scene::getObject(int id) {
+  for (auto *obj : this->objects) {
+    if (auto *drawable = dynamic_cast<Drawable *>(obj)) {
+      if (drawable->getId() == id) {
+        return drawable;
+      }
+    }
+  }
+
+  return nullptr;
 }

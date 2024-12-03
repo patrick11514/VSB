@@ -3,6 +3,11 @@
 #include "App.hpp"
 #include <GLFW/glfw3.h>
 
+struct Cursor {
+  int x;
+  int y;
+};
+
 /**
  * @brief Main Controller, which handles keyboard, mouse etc...
  */
@@ -25,6 +30,8 @@ private:
   Controller(App *app); ///< Default constructor which get app pointer
 
   bool staticSkyBox = false;
+
+  Cursor cursor;
 
 public:
   static Controller *getInstance(App *app);

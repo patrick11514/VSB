@@ -40,3 +40,7 @@ void Window::calculateProjectionMatrix(float fov, float zNear, float zFar) {
 GLFWwindow *Window::getWindow() const { return this->window; }
 
 glm::mat4 Window::getProjectionMatrix() const { return this->projectionMatrix; }
+
+glm::vec2 Window::getResolution() const {
+  return glm::vec2{this->width, this->height};
+}

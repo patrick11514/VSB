@@ -139,13 +139,15 @@ void App::createModels() {
 void App::run() {
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+  glEnable(GL_STENCIL_TEST);
+  glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
   double prevTime;
   int frames;
 
   while (!glfwWindowShouldClose(this->window->getWindow())) {
-    // clear color and depth buffer
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // clear color and depth buffer and stencil buffer
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     if (this->currentScene.has_value()) {
       auto scene = this->getScene(this->currentScene.value());

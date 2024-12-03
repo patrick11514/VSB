@@ -183,6 +183,8 @@ void Forest::addObjects() {
 
     auto tree = createTree(blinnPhong, tran, treeMaterial);
 
+    tree->assignId();
+
     /*tree.setAnimationFunction([](const glm::mat4x4 &tran, float time) {
       auto rotation = Rotation(time, glm::vec3(1.f, 1.f, 1.f));
       return tran * rotation.getMatrix();

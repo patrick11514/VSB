@@ -27,4 +27,5 @@ public:
 
   glm::mat4 getProjectionMatrix() const;
   GLFWwindow *getWindow() const;
+  glm::vec2 getResolution() const;
 };
