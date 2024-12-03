@@ -68,9 +68,51 @@ type Entries<T> = {
 }[keyof T][];
 
 const AssetMap = {
-    challenges: 'img/challeges/images',
+    challenges: 'img/challenges-images',
     profileImage: `${DDRAGON_VERSION}/img/profileicon`
 } as const satisfies Record<string, string>;
+
+type ChallengeLevel = "IRON" | "BRONZE" | "SILVER" | "GOLD" | "PLATINUM" | "MASTER" | "GRANDMASTER" | "CHALLENGER"
+type ChallengeCategory = "COLLECTION" | "EXPERTISE" | "IMAGINATION" | "TEAMWORK" | "VETERANCY"
+
+type BaseChallenge = {
+    level: ChallengeLevel,
+    percentile: number,
+
+}
+
+type ChallengesPlayerData = {
+    totalPoints: {
+        level: ChallengeLevel | "EMERALD",
+        current: number,
+        max: number,
+        percentile: number
+    },
+    categoryPoints: Record<ChallengeCategory, BaseChallenge & {
+        current: number;
+        max: number;
+    }>,
+    challenges: (BaseChallenge & {
+        achievedTime: number;
+        value: number;
+        challengeId: number;
+        playersInLevel?: number;
+        position?: number;
+    })[],
+    preferences: {
+        title: string,
+        challengeIds: number[],
+    }
+}
+
+type ChallengeConfig = {
+    id: number,
+    localizedNames: Record<string, {
+        description: string;
+        name: string;
+        shortDescription: string;
+    }>
+}[]
 
 class RiotAPI {
     private static getRoutingByRegion(region: Region): Routing {
@@ -111,5 +153,28 @@ class RiotAPI {
         }>(`/lol/summoner/v4/summoners/by-puuid/${puuid}`, region);
 
         return data;
+    }
+
+    static async getChallenges(puuid: string, region: Region) {
+        const playerData = await getData<ChallengesPlayerData>(`/lol/challenges/v1/player-data/${puuid}`, region);
+
+        if (!playerData) return playerData;
+
+        const config = await getData<ChallengeConfig>(`/lol/challenges/v1/challenges/config`, region);
+
+        if (!config) return config;
+
+        const preferences = playerData.preferences;
+
+        const title = preferences.title ? preferences.title.substring(0, preferences.title.length - 2) : undefined;
+
+        return {
+            title: title ? config.find(item => item.id.toString() == title)?.localizedNames["en_US"].name : undefined,
+            challenges: preferences.challengeIds.map(challengeId => {
+                const challenge = playerData.challenges.find(challenge => challenge.challengeId == challengeId)
+                if (!challenge) return undefined;
+                return `${challengeId}-${challenge.level}`
+            }).filter(c => c) as string[]
+        }
     }
 }

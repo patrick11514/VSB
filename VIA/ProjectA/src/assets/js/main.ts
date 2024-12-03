@@ -1,7 +1,7 @@
 const search = document.querySelector('#search')!;
-const username = search?.querySelector<HTMLInputElement>('#username')!;
-const tag = search?.querySelector<HTMLInputElement>('#tag')!;
-const region = search?.querySelector<HTMLSelectElement>('#region')!;
+const username = search.querySelector<HTMLInputElement>('#username')!;
+const tag = search.querySelector<HTMLInputElement>('#tag')!;
+const region = search.querySelector<HTMLSelectElement>('#region')!;
 
 //fill options
 if (region) {
@@ -21,11 +21,13 @@ type UserData = {
     pfp: number;
     username: string;
     tag: string;
+    title?: string;
+    challenges: string[]
 };
 
 let userData: UserData | null = null;
 
-button.addEventListener('click', async () => {
+const lookup = async () => {
     let err = false;
 
     userData = null;
@@ -111,17 +113,52 @@ button.addEventListener('click', async () => {
         return;
     }
 
+    const challenges = await RiotAPI.getChallenges(mainData.puuid, reg);
+    if (!challenges) {
+        button.disabled = false;
+
+        SwalAlert({
+            icon: 'error',
+            title: 'Unable to contact RiotAPI, please try again later.'
+        });
+        return;
+    }
+
+    if ('status' in challenges) {
+        button.disabled = false;
+
+        SwalAlert({
+            icon: 'error',
+            title: 'Unable to find your account.'
+        });
+
+        search.classList.add('border-red-500');
+        search.classList.remove('border-white');
+        return;
+    }
+
     userData = {
         username: mainData.gameName,
         tag: mainData.tagLine,
         level: profileData.summonerLevel,
-        pfp: profileData.profileIconId
+        pfp: profileData.profileIconId,
+        title: challenges.title,
+        challenges: challenges.challenges
     };
+
 
     render();
 
     button.disabled = false;
-});
+}
+
+button.addEventListener('click', lookup);
+username.addEventListener("keydown", (ev) => {
+    if (ev.key == "Enter") lookup();
+})
+tag.addEventListener("keydown", (ev) => {
+    if (ev.key == "Enter") lookup();
+})
 
 const profile = document.querySelector('section#profile')!;
 const icon = profile.querySelector('#icon')!;
@@ -144,6 +181,18 @@ const render = () => {
     userTag.children[0].textContent = '#' + userData.tag; //update the span with tag
     icon.querySelector('span')!.textContent = userData.level.toString();
 
+    //update title
+    profile.querySelector("#title")!.textContent = userData.title ?? "";
+    const challenges = profile.querySelector("#challenges")!;
+    for (const child of Array.from(challenges.children)) child.remove();
+
+    for (const challenge of userData.challenges) {
+        const img = document.createElement("img");
+        img.src = RiotAPI.getAsset("challenges", challenge);
+        challenges.appendChild(img);
+    }
+
     profile.classList.remove('invisible');
     content.classList.remove('invisible');
 };
+

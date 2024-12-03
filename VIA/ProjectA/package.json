@@ -5,8 +5,7 @@
         "watchTS": "tsc -w",
         "buildTS": "tsc",
         "serve": "cd src && python -m http.server 5173",
-        "proxy": "cd src && node proxy.js",
-        "all": "npm run watch; npm run serve"
+        "proxy": "cd src && node proxy.js"
     },
     "devDependencies": {
         "@types/express": "^5.0.0",
