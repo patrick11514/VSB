@@ -231,4 +231,15 @@ class RiotAPI {
             }[]
         >(`/lol/league/v4/entries/by-summoner/${summonerId}`, region);
     }
+
+    static async getMatches(puuid: string, region: Region, start = 0, count = 20) {
+        const routing = this.getRoutingByRegion(region);
+
+        const ids = await getData<string[]>(`/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${count}`, routing)
+
+        if (!ids || "status" in ids) return ids;
+
+        const promises = ids.map(id => getData(`/lol/match/v5/matches/${id}`, routing))
+        return await Promise.all(promises);
+    }
 }

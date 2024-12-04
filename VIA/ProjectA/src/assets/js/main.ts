@@ -134,6 +134,8 @@ const lookup = async () => {
         }
     }
 
+    console.log(await RiotAPI.getMatches(profileData.puuid, reg));
+
     userData = {
         username: mainData.gameName,
         tag: mainData.tagLine,
