@@ -28,15 +28,16 @@ type UserData = {
     ranks: Record<
         RankedQueue,
         | {
-            lp: number;
-            rank: Rank;
-            tier: Tier;
-            wins: number;
-            loses: number;
-            wr: number;
-        }
+              lp: number;
+              rank: Rank;
+              tier: Tier;
+              wins: number;
+              loses: number;
+              wr: number;
+          }
         | undefined
     >;
+    matches: Match[];
 };
 
 let userData: UserData | null = null;
@@ -134,7 +135,9 @@ const lookup = async () => {
         }
     }
 
-    console.log(await RiotAPI.getMatches(profileData.puuid, reg));
+    const matches = await RiotAPI.getMatches(profileData.puuid, reg);
+    if (!checkResponse(matches)) return;
+    const filtered = matches.filter((match) => checkResponse(match));
 
     userData = {
         username: mainData.gameName,
@@ -144,7 +147,8 @@ const lookup = async () => {
         title: challenges.title,
         item: challenges.challenges,
         lastUpdate: parseInt(profileData.revisionDate),
-        ranks
+        ranks,
+        matches: filtered
     };
 
     render();

@@ -1,3 +1,3 @@
 const env = {
-    API_KEY: 'RGAPI-04e8e1f1-c5bf-43db-9d7a-6a2a1c8e821f'
+    API_KEY: 'RGAPI-650132ea-e8b9-499b-aff8-cfd70bdf4586'
 } as const;

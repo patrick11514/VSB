@@ -25,6 +25,27 @@ const REGIONS = [
     'VN2'
 ] as const;
 
+const QUEUES = {
+    0: 'Custom',
+    400: 'Draft Pick',
+    430: 'Blind Pick',
+    420: 'Solo/Duo',
+    440: 'Flex',
+    450: 'ARAM',
+    700: 'Clash',
+    720: 'ARAM Clash',
+    830: 'Co-op vs AI',
+    840: 'Co-op vs AI',
+    850: 'Co-op vs AI',
+    900: 'URF',
+    1020: 'One for All',
+    1300: 'Snow ARAM',
+    1400: 'Nexus Blitz',
+    1700: 'Arény (Cherry)'
+} as const;
+
+const COOP_TITLES = ['Intro', 'Beginner', 'Intermediate'] as const;
+
 type Region = (typeof REGIONS)[number];
 
 const MAPPINGS = {
@@ -36,11 +57,11 @@ const MAPPINGS = {
 
 type RiotResponse<$Data> =
     | {
-        status: {
-            status_code: number;
-            message: string;
-        };
-    }
+          status: {
+              status_code: number;
+              message: string;
+          };
+      }
     | $Data;
 
 const getData = async <$Return>(
@@ -48,15 +69,30 @@ const getData = async <$Return>(
     regionOrRouting: Region | Routing
 ): Promise<RiotResponse<$Return> | undefined> => {
     try {
-        const response = await fetch(ROOT.replace('%REGION%', regionOrRouting) + route, {
-            headers: {
-                'X-Riot-Token': env.API_KEY
+        const RETRY_STATUSES = [429, 503];
+
+        while (true) {
+            const response = await fetch(
+                ROOT.replace('%REGION%', regionOrRouting) + route,
+                {
+                    headers: {
+                        'X-Riot-Token': env.API_KEY
+                    }
+                }
+            );
+
+            const json = await response.json();
+
+            if ('status' in json && 'status_code' in json.status) {
+                if (RETRY_STATUSES.includes(json.status.status_code)) {
+                    //sleep end retry
+                    await sleep(1 * 1000);
+                    continue;
+                }
             }
-        });
 
-        const json = await response.json();
-
-        return json;
+            return json;
+        }
     } catch (err) {
         console.error(err);
         return undefined;
@@ -135,6 +171,72 @@ type ChallengeConfig = {
 type Rank = 'I' | 'II' | 'III' | 'IV';
 type RankedQueue = 'RANKED_SOLO_5x5' | 'RANKED_FLEX_SR';
 
+type GameMode = 'CLASSIC';
+
+type Participant = {
+    championId: number;
+    championName: string;
+    assists: number;
+    deaths: number;
+    kills: number;
+    item0: number;
+    item1: number;
+    item2: number;
+    item3: number;
+    item4: number;
+    item5: number;
+    item6: number;
+    riotIdGameName: string;
+    riotIdTagline: string;
+    summoner1Id: number;
+    summoner2Id: number;
+    summonerName: string;
+    teamId: number;
+    win: boolean;
+    goldEarned: number;
+    totalDamageDealt: number;
+    largestMultiKill: number;
+    champLevel: number;
+    totalMinionsKilled: number;
+    visionScore: number;
+    perks: {
+        statPerks: {
+            deffense: number;
+            flex: number;
+            offense: number;
+        };
+        styles: {
+            description: string;
+            style: number;
+            selections: {
+                perk: number;
+            }[];
+        }[];
+    };
+};
+
+type MatchInfo = {
+    gameCreation: number;
+    gameDuration: number;
+    gameEndTimestamp: number;
+    gameId: number;
+    gameMode: GameMode;
+    teams: {
+        bans: {
+            championId: number;
+            pickTurn: number;
+        }[];
+        teamId: 100 | 200;
+        win: boolean;
+    };
+    participants: Participant[];
+};
+
+type Match = {
+    info: MatchInfo;
+    metadata: {}; //
+};
+
 class RiotAPI {
     private static getRoutingByRegion(region: Region): Routing {
         for (const [routing, regions] of Object.entries(MAPPINGS) as Entries<
@@ -200,8 +302,8 @@ class RiotAPI {
         return {
             title: title
                 ? config.find((item) => item.id.toString() == title)?.localizedNames[
-                    'en_US'
-                ].name
+                      'en_US'
+                  ].name
                 : undefined,
             challenges: preferences.challengeIds
                 .map((challengeId) => {
@@ -235,11 +337,16 @@ class RiotAPI {
     static async getMatches(puuid: string, region: Region, start = 0, count = 20) {
         const routing = this.getRoutingByRegion(region);
 
-        const ids = await getData<string[]>(`/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${count}`, routing)
+        const ids = await getData<string[]>(
+            `/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${count}`,
+            routing
+        );
 
-        if (!ids || "status" in ids) return ids;
+        if (!ids || 'status' in ids) return ids;
 
-        const promises = ids.map(id => getData(`/lol/match/v5/matches/${id}`, routing))
+        const promises = ids.map((id) =>
+            getData<Match>(`/lol/match/v5/matches/${id}`, routing)
+        );
         return await Promise.all(promises);
     }
 }

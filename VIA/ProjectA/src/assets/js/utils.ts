@@ -28,3 +28,7 @@ const firstUpper = (str: string) => {
         .map((ch, i) => (i == 0 ? ch.toUpperCase() : ch.toLowerCase()))
         .join('');
 };
+
+const sleep = (ms: number) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+};
