@@ -1,7 +1,9 @@
 /home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/drivers/fsl_gpio.h:162:20:void GPIO_PinWrite(GPIO_Type*, uint32_t, uint8_t)	24	static
 /home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/drivers/fsl_gpio.h:244:24:uint32_t GPIO_PinRead(GPIO_Type*, uint32_t)	16	static
-../source/main-tasks.cpp:110:6:void task_led_pta_blink(void*)	24	static
-../source/main-tasks.cpp:134:6:void task_snake_left(void*)	24	static
-../source/main-tasks.cpp:155:6:void task_snake_right(void*)	24	static
-../source/main-tasks.cpp:176:6:void task_switches(void*)	32	static
-../source/main-tasks.cpp:229:5:int main()	16	static
+../source/main-tasks.cpp:134:6:void RGB_GPIO_PinWrite(RGBLED_Data, int, int, int)	8	static
+../source/main-tasks.cpp:148:6:void task_led_pta_brightness(void*)	64	static
+../source/main-tasks.cpp:233:6:void task_snake_left(void*)	32	static
+../source/main-tasks.cpp:268:6:void task_snake_right(void*)	32	static
+../source/main-tasks.cpp:301:6:void task_toggle_led(void*)	16	static
+../source/main-tasks.cpp:315:6:void task_switches(void*)	32	static
+../source/main-tasks.cpp:450:5:int main()	24	static
