@@ -1,258 +1,194 @@
-13:02:36 **** Incremental Build of configuration Debug for project tasks ****
+14:01:12 **** Incremental Build of configuration Debug for project tcpip ****
 make -r -j12 all 
-Building file: ../source/main-tasks.cpp
+Building file: ../source/main-tcpip.cpp
 Invoking: MCU C++ Compiler
-arm-none-eabi-c++ -DCPU_MK64FN1M0VLL12 -DCPU_MK64FN1M0VLL12_cm4 -DSDK_OS_BAREMETAL -DSERIAL_PORT_TYPE_UART=1 -DSDK_DEBUGCONSOLE=1 -DSDK_OS_FREE_RTOS -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -D__NEWLIB__ -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/board" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/source" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/portable/GCC/ARM_CM4F" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/drivers" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/device" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/CMSIS" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/utilities" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/serial_manager" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/uart" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/lists" -O0 -fno-common -g3 -gdwarf-4 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../source/"= -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -fstack-usage -specs=nano.specs -MMD -MP -MF"source/main-tasks.d" -MT"source/main-tasks.o" -MT"source/main-tasks.d" -o "source/main-tasks.o" "../source/main-tasks.cpp"
-../source/main-tasks.cpp: In function 'void task_switches(void*)':
-../source/main-tasks.cpp:303:22: warning: unused variable 'l_handle_led_pta' [-Wunused-variable]
-  303 |         TaskHandle_t l_handle_led_pta = xTaskGetHandle( TASK_NAME_LED_PTA );
-      |                      ^~~~~~~~~~~~~~~~
-../source/main-tasks.cpp:304:22: warning: unused variable 'l_handle_led_snake_l' [-Wunused-variable]
-  304 |         TaskHandle_t l_handle_led_snake_l = xTaskGetHandle( TASK_NAME_LED_SNAKE_L );
-      |                      ^~~~~~~~~~~~~~~~~~~~
-../source/main-tasks.cpp:305:22: warning: unused variable 'l_handle_led_snake_r' [-Wunused-variable]
-  305 |         TaskHandle_t l_handle_led_snake_r = xTaskGetHandle( TASK_NAME_LED_SNAKE_R );
-      |                      ^~~~~~~~~~~~~~~~~~~~
-Finished building: ../source/main-tasks.cpp
+arm-none-eabi-c++ -DCPU_MK64FN1M0VLL12 -DCPU_MK64FN1M0VLL12_cm4 -DSDK_OS_BAREMETAL -DSERIAL_PORT_TYPE_UART=1 -DSDK_DEBUGCONSOLE=1 -DSDK_OS_FREE_RTOS -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -D__NEWLIB__ -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/board" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/source" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos/freertos_kernel/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos/freertos_kernel/portable/GCC/ARM_CM4F" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos-plus/FreeRTOS-Plus-TCP/portable/Compiler/GCC" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/drivers" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/device" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/CMSIS" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/utilities" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/serial_manager" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/uart" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/lists" -O0 -fno-common -g3 -gdwarf-4 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../source/"= -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -fstack-usage -specs=nano.specs -MMD -MP -MF"source/main-tcpip.d" -MT"source/main-tcpip.o" -MT"source/main-tcpip.d" -o "source/main-tcpip.o" "../source/main-tcpip.cpp"
+../source/main-tcpip.cpp: In function 'void vApplicationIPNetworkEventHook(eIPCallbackEvent_t)':
+../source/main-tcpip.cpp:373:34: warning: variable 's_server_addr' set but not used [-Wunused-but-set-variable]
+  373 |         static freertos_sockaddr s_server_addr;
+      |                                  ^~~~~~~~~~~~~
+Finished building: ../source/main-tcpip.cpp
  
-Building target: tasks.axf
+Building target: tcpip.axf
 Invoking: MCU C++ Linker
-arm-none-eabi-c++ -nostdlib -Xlinker -Map="tasks.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T tasks_Debug.ld -o "tasks.axf" ./utilities/fsl_debug_console.o ./utilities/fsl_str.o  ./startup/startup_mk64f12.o  ./source/main-tasks.o ./source/semihost_hardfault.o  ./freertos/freertos_kernel/portable/MemMang/heap_4.o  ./freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.o  ./freertos/freertos_kernel/croutine.o ./freertos/freertos_kernel/event_groups.o ./freertos/freertos_kernel/list.o ./freertos/freertos_kernel/queue.o ./freertos/freertos_kernel/stream_buffer.o ./freertos/freertos_kernel/tasks.o ./freertos/freertos_kernel/timers.o  ./drivers/fsl_adc16.o ./drivers/fsl_clock.o ./drivers/fsl_common.o ./drivers/fsl_common_arm.o ./drivers/fsl_ftm.o ./drivers/fsl_gpio.o ./drivers/fsl_i2c.o ./drivers/fsl_pit.o ./drivers/fsl_smc.o ./drivers/fsl_uart.o  ./device/system_MK64F12.o  ./component/uart/fsl_adapter_uart.o  ./component/serial_manager/fsl_component_serial_manager.o ./component/serial_manager/fsl_component_serial_port_uart.o  ./component/lists/fsl_component_generic_list.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o   
+arm-none-eabi-c++ -nostdlib -Xlinker -Map="tcpip.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T tcpip_Debug.ld -o "tcpip.axf" ./utilities/fsl_debug_console.o ./utilities/fsl_str.o  ./startup/startup_mk64f12.o  ./source/main-tcpip.o ./source/semihost_hardfault.o  ./freertos/freertos_kernel/portable/MemMang/heap_4.o  ./freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.o  ./freertos/freertos_kernel/croutine.o ./freertos/freertos_kernel/event_groups.o ./freertos/freertos_kernel/list.o ./freertos/freertos_kernel/queue.o ./freertos/freertos_kernel/stream_buffer.o ./freertos/freertos_kernel/tasks.o ./freertos/freertos_kernel/timers.o  ./freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface.o ./freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface_rand.o  ./freertos-plus/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_2.o  ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_ARP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_IP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Stream_Buffer.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_TCP_IP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_TCP_WIN.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_UDP_IP.o  ./drivers/fsl_adc16.o ./drivers/fsl_clock.o ./drivers/fsl_common.o ./drivers/fsl_common_arm.o ./drivers/fsl_enet.o ./drivers/fsl_ftm.o ./drivers/fsl_gpio.o ./drivers/fsl_i2c.o ./drivers/fsl_pit.o ./drivers/fsl_smc.o ./drivers/fsl_sysmpu.o ./drivers/fsl_uart.o  ./device/system_MK64F12.o  ./component/uart/fsl_adapter_uart.o  ./component/serial_manager/fsl_component_serial_manager.o ./component/serial_manager/fsl_component_serial_port_uart.o  ./component/lists/fsl_component_generic_list.o  ./board/board.o ./board/clock_config.o ./board/fsl_phy.o ./board/peripherals.o ./board/pin_mux.o   
 Memory region         Used Size  Region Size  %age Used
-   PROGRAM_FLASH:       27072 B         1 MB      2.58%
-      SRAM_UPPER:       19600 B       192 KB      9.97%
+   PROGRAM_FLASH:       76288 B         1 MB      7.28%
+      SRAM_UPPER:       65184 B       192 KB     33.15%
       SRAM_LOWER:          0 GB        64 KB      0.00%
         FLEX_RAM:          0 GB         4 KB      0.00%
-Finished building target: tasks.axf
+Finished building target: tcpip.axf
  
 Performing post-build steps
-arm-none-eabi-size "tasks.axf"; # arm-none-eabi-objcopy -v -O binary "tasks.axf" "tasks.bin" ; # checksum -p MK64FN1M0xxx12 -d "tasks.bin";
+arm-none-eabi-size "tcpip.axf"; # arm-none-eabi-objcopy -v -O binary "tcpip.axf" "tcpip.bin" ; # checksum -p MK64FN1M0xxx12 -d "tcpip.bin";
    text	   data	    bss	    dec	    hex	filename
-  26680	    392	  19208	  46280	   b4c8	tasks.axf
+  75920	    368	  64816	 141104	  22730	tcpip.axf
  
-13:02:38 **** Incremental Build of configuration Debug for project tasks ****
+14:03:28 **** Incremental Build of configuration Debug for project tcpip ****
 make -r -j12 all 
-make[1]: Nothing to be done for 'main-build'.
-Performing post-build steps
-arm-none-eabi-size "tasks.axf"; # arm-none-eabi-objcopy -v -O binary "tasks.axf" "tasks.bin" ; # checksum -p MK64FN1M0xxx12 -d "tasks.bin";
-   text	   data	    bss	    dec	    hex	filename
-  26680	    392	  19208	  46280	   b4c8	tasks.axf
- 
-13:03:11 **** Incremental Build of configuration Debug for project tasks ****
-make -r -j12 all 
-Building file: ../source/main-tasks.cpp
+Building file: ../source/main-tcpip.cpp
 Invoking: MCU C++ Compiler
-arm-none-eabi-c++ -DCPU_MK64FN1M0VLL12 -DCPU_MK64FN1M0VLL12_cm4 -DSDK_OS_BAREMETAL -DSERIAL_PORT_TYPE_UART=1 -DSDK_DEBUGCONSOLE=1 -DSDK_OS_FREE_RTOS -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -D__NEWLIB__ -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/board" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/source" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/portable/GCC/ARM_CM4F" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/drivers" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/device" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/CMSIS" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/utilities" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/serial_manager" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/uart" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/lists" -O0 -fno-common -g3 -gdwarf-4 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../source/"= -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -fstack-usage -specs=nano.specs -MMD -MP -MF"source/main-tasks.d" -MT"source/main-tasks.o" -MT"source/main-tasks.d" -o "source/main-tasks.o" "../source/main-tasks.cpp"
-../source/main-tasks.cpp: In function 'void task_switches(void*)':
-../source/main-tasks.cpp:304:22: warning: unused variable 'l_handle_led_pta' [-Wunused-variable]
-  304 |         TaskHandle_t l_handle_led_pta = xTaskGetHandle( TASK_NAME_LED_PTA );
-      |                      ^~~~~~~~~~~~~~~~
-../source/main-tasks.cpp:305:22: warning: unused variable 'l_handle_led_snake_l' [-Wunused-variable]
-  305 |         TaskHandle_t l_handle_led_snake_l = xTaskGetHandle( TASK_NAME_LED_SNAKE_L );
-      |                      ^~~~~~~~~~~~~~~~~~~~
-../source/main-tasks.cpp:306:22: warning: unused variable 'l_handle_led_snake_r' [-Wunused-variable]
-  306 |         TaskHandle_t l_handle_led_snake_r = xTaskGetHandle( TASK_NAME_LED_SNAKE_R );
-      |                      ^~~~~~~~~~~~~~~~~~~~
-Finished building: ../source/main-tasks.cpp
+arm-none-eabi-c++ -DCPU_MK64FN1M0VLL12 -DCPU_MK64FN1M0VLL12_cm4 -DSDK_OS_BAREMETAL -DSERIAL_PORT_TYPE_UART=1 -DSDK_DEBUGCONSOLE=1 -DSDK_OS_FREE_RTOS -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -D__NEWLIB__ -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/board" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/source" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos/freertos_kernel/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos/freertos_kernel/portable/GCC/ARM_CM4F" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos-plus/FreeRTOS-Plus-TCP/portable/Compiler/GCC" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/drivers" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/device" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/CMSIS" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/utilities" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/serial_manager" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/uart" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/lists" -O0 -fno-common -g3 -gdwarf-4 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../source/"= -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -fstack-usage -specs=nano.specs -MMD -MP -MF"source/main-tcpip.d" -MT"source/main-tcpip.o" -MT"source/main-tcpip.d" -o "source/main-tcpip.o" "../source/main-tcpip.cpp"
+../source/main-tcpip.cpp: In function 'void task_socket_srv(void*)':
+../source/main-tcpip.cpp:303:94: error: 'err' was not declared in this scope
+  303 |                                         FreeRTOS_send( l_sock_client, ( void * ) msg, strlen(err), 0 );
+      |                                                                                              ^~~
+make[1]: *** [source/subdir.mk:27: source/main-tcpip.o] Error 1
+make: *** [makefile:73: all] Error 2
+"make -r -j12 all" terminated with exit code 2. Build might be incomplete.
+14:03:34 **** Incremental Build of configuration Debug for project tcpip ****
+make -r -j12 all 
+Building file: ../source/main-tcpip.cpp
+Invoking: MCU C++ Compiler
+arm-none-eabi-c++ -DCPU_MK64FN1M0VLL12 -DCPU_MK64FN1M0VLL12_cm4 -DSDK_OS_BAREMETAL -DSERIAL_PORT_TYPE_UART=1 -DSDK_DEBUGCONSOLE=1 -DSDK_OS_FREE_RTOS -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -D__NEWLIB__ -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/board" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/source" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos/freertos_kernel/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos/freertos_kernel/portable/GCC/ARM_CM4F" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos-plus/FreeRTOS-Plus-TCP/portable/Compiler/GCC" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/drivers" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/device" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/CMSIS" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/utilities" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/serial_manager" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/uart" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/lists" -O0 -fno-common -g3 -gdwarf-4 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../source/"= -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -fstack-usage -specs=nano.specs -MMD -MP -MF"source/main-tcpip.d" -MT"source/main-tcpip.o" -MT"source/main-tcpip.d" -o "source/main-tcpip.o" "../source/main-tcpip.cpp"
+../source/main-tcpip.cpp: In function 'void vApplicationIPNetworkEventHook(eIPCallbackEvent_t)':
+../source/main-tcpip.cpp:377:34: warning: variable 's_server_addr' set but not used [-Wunused-but-set-variable]
+  377 |         static freertos_sockaddr s_server_addr;
+      |                                  ^~~~~~~~~~~~~
+Finished building: ../source/main-tcpip.cpp
  
-Building target: tasks.axf
+Building target: tcpip.axf
 Invoking: MCU C++ Linker
-arm-none-eabi-c++ -nostdlib -Xlinker -Map="tasks.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T tasks_Debug.ld -o "tasks.axf" ./utilities/fsl_debug_console.o ./utilities/fsl_str.o  ./startup/startup_mk64f12.o  ./source/main-tasks.o ./source/semihost_hardfault.o  ./freertos/freertos_kernel/portable/MemMang/heap_4.o  ./freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.o  ./freertos/freertos_kernel/croutine.o ./freertos/freertos_kernel/event_groups.o ./freertos/freertos_kernel/list.o ./freertos/freertos_kernel/queue.o ./freertos/freertos_kernel/stream_buffer.o ./freertos/freertos_kernel/tasks.o ./freertos/freertos_kernel/timers.o  ./drivers/fsl_adc16.o ./drivers/fsl_clock.o ./drivers/fsl_common.o ./drivers/fsl_common_arm.o ./drivers/fsl_ftm.o ./drivers/fsl_gpio.o ./drivers/fsl_i2c.o ./drivers/fsl_pit.o ./drivers/fsl_smc.o ./drivers/fsl_uart.o  ./device/system_MK64F12.o  ./component/uart/fsl_adapter_uart.o  ./component/serial_manager/fsl_component_serial_manager.o ./component/serial_manager/fsl_component_serial_port_uart.o  ./component/lists/fsl_component_generic_list.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o   
+arm-none-eabi-c++ -nostdlib -Xlinker -Map="tcpip.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T tcpip_Debug.ld -o "tcpip.axf" ./utilities/fsl_debug_console.o ./utilities/fsl_str.o  ./startup/startup_mk64f12.o  ./source/main-tcpip.o ./source/semihost_hardfault.o  ./freertos/freertos_kernel/portable/MemMang/heap_4.o  ./freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.o  ./freertos/freertos_kernel/croutine.o ./freertos/freertos_kernel/event_groups.o ./freertos/freertos_kernel/list.o ./freertos/freertos_kernel/queue.o ./freertos/freertos_kernel/stream_buffer.o ./freertos/freertos_kernel/tasks.o ./freertos/freertos_kernel/timers.o  ./freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface.o ./freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface_rand.o  ./freertos-plus/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_2.o  ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_ARP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_IP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Stream_Buffer.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_TCP_IP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_TCP_WIN.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_UDP_IP.o  ./drivers/fsl_adc16.o ./drivers/fsl_clock.o ./drivers/fsl_common.o ./drivers/fsl_common_arm.o ./drivers/fsl_enet.o ./drivers/fsl_ftm.o ./drivers/fsl_gpio.o ./drivers/fsl_i2c.o ./drivers/fsl_pit.o ./drivers/fsl_smc.o ./drivers/fsl_sysmpu.o ./drivers/fsl_uart.o  ./device/system_MK64F12.o  ./component/uart/fsl_adapter_uart.o  ./component/serial_manager/fsl_component_serial_manager.o ./component/serial_manager/fsl_component_serial_port_uart.o  ./component/lists/fsl_component_generic_list.o  ./board/board.o ./board/clock_config.o ./board/fsl_phy.o ./board/peripherals.o ./board/pin_mux.o   
 Memory region         Used Size  Region Size  %age Used
-   PROGRAM_FLASH:       27080 B         1 MB      2.58%
-      SRAM_UPPER:       19600 B       192 KB      9.97%
+   PROGRAM_FLASH:       76392 B         1 MB      7.29%
+      SRAM_UPPER:       65440 B       192 KB     33.28%
       SRAM_LOWER:          0 GB        64 KB      0.00%
         FLEX_RAM:          0 GB         4 KB      0.00%
-Finished building target: tasks.axf
+Finished building target: tcpip.axf
  
 Performing post-build steps
-arm-none-eabi-size "tasks.axf"; # arm-none-eabi-objcopy -v -O binary "tasks.axf" "tasks.bin" ; # checksum -p MK64FN1M0xxx12 -d "tasks.bin";
+arm-none-eabi-size "tcpip.axf"; # arm-none-eabi-objcopy -v -O binary "tcpip.axf" "tcpip.bin" ; # checksum -p MK64FN1M0xxx12 -d "tcpip.bin";
    text	   data	    bss	    dec	    hex	filename
-  26688	    392	  19208	  46288	   b4d0	tasks.axf
+  76024	    368	  65072	 141464	  22898	tcpip.axf
  
-13:04:33 **** Incremental Build of configuration Debug for project tasks ****
+14:04:33 **** Incremental Build of configuration Debug for project tcpip ****
 make -r -j12 all 
-Building file: ../source/main-tasks.cpp
+Building file: ../source/main-tcpip.cpp
 Invoking: MCU C++ Compiler
-arm-none-eabi-c++ -DCPU_MK64FN1M0VLL12 -DCPU_MK64FN1M0VLL12_cm4 -DSDK_OS_BAREMETAL -DSERIAL_PORT_TYPE_UART=1 -DSDK_DEBUGCONSOLE=1 -DSDK_OS_FREE_RTOS -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -D__NEWLIB__ -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/board" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/source" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/portable/GCC/ARM_CM4F" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/drivers" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/device" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/CMSIS" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/utilities" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/serial_manager" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/uart" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/lists" -O0 -fno-common -g3 -gdwarf-4 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../source/"= -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -fstack-usage -specs=nano.specs -MMD -MP -MF"source/main-tasks.d" -MT"source/main-tasks.o" -MT"source/main-tasks.d" -o "source/main-tasks.o" "../source/main-tasks.cpp"
-../source/main-tasks.cpp: In function 'void task_switches(void*)':
-../source/main-tasks.cpp:305:22: warning: unused variable 'l_handle_led_snake_l' [-Wunused-variable]
-  305 |         TaskHandle_t l_handle_led_snake_l = xTaskGetHandle( TASK_NAME_LED_SNAKE_L );
-      |                      ^~~~~~~~~~~~~~~~~~~~
-../source/main-tasks.cpp:306:22: warning: unused variable 'l_handle_led_snake_r' [-Wunused-variable]
-  306 |         TaskHandle_t l_handle_led_snake_r = xTaskGetHandle( TASK_NAME_LED_SNAKE_R );
-      |                      ^~~~~~~~~~~~~~~~~~~~
-Finished building: ../source/main-tasks.cpp
+arm-none-eabi-c++ -DCPU_MK64FN1M0VLL12 -DCPU_MK64FN1M0VLL12_cm4 -DSDK_OS_BAREMETAL -DSERIAL_PORT_TYPE_UART=1 -DSDK_DEBUGCONSOLE=1 -DSDK_OS_FREE_RTOS -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -D__NEWLIB__ -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/board" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/source" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos/freertos_kernel/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos/freertos_kernel/portable/GCC/ARM_CM4F" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos-plus/FreeRTOS-Plus-TCP/portable/Compiler/GCC" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/drivers" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/device" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/CMSIS" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/utilities" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/serial_manager" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/uart" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/lists" -O0 -fno-common -g3 -gdwarf-4 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../source/"= -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -fstack-usage -specs=nano.specs -MMD -MP -MF"source/main-tcpip.d" -MT"source/main-tcpip.o" -MT"source/main-tcpip.d" -o "source/main-tcpip.o" "../source/main-tcpip.cpp"
+../source/main-tcpip.cpp: In function 'void vApplicationIPNetworkEventHook(eIPCallbackEvent_t)':
+../source/main-tcpip.cpp:378:34: warning: variable 's_server_addr' set but not used [-Wunused-but-set-variable]
+  378 |         static freertos_sockaddr s_server_addr;
+      |                                  ^~~~~~~~~~~~~
+Finished building: ../source/main-tcpip.cpp
  
-Building target: tasks.axf
+Building target: tcpip.axf
 Invoking: MCU C++ Linker
-arm-none-eabi-c++ -nostdlib -Xlinker -Map="tasks.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T tasks_Debug.ld -o "tasks.axf" ./utilities/fsl_debug_console.o ./utilities/fsl_str.o  ./startup/startup_mk64f12.o  ./source/main-tasks.o ./source/semihost_hardfault.o  ./freertos/freertos_kernel/portable/MemMang/heap_4.o  ./freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.o  ./freertos/freertos_kernel/croutine.o ./freertos/freertos_kernel/event_groups.o ./freertos/freertos_kernel/list.o ./freertos/freertos_kernel/queue.o ./freertos/freertos_kernel/stream_buffer.o ./freertos/freertos_kernel/tasks.o ./freertos/freertos_kernel/timers.o  ./drivers/fsl_adc16.o ./drivers/fsl_clock.o ./drivers/fsl_common.o ./drivers/fsl_common_arm.o ./drivers/fsl_ftm.o ./drivers/fsl_gpio.o ./drivers/fsl_i2c.o ./drivers/fsl_pit.o ./drivers/fsl_smc.o ./drivers/fsl_uart.o  ./device/system_MK64F12.o  ./component/uart/fsl_adapter_uart.o  ./component/serial_manager/fsl_component_serial_manager.o ./component/serial_manager/fsl_component_serial_port_uart.o  ./component/lists/fsl_component_generic_list.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o   
+arm-none-eabi-c++ -nostdlib -Xlinker -Map="tcpip.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T tcpip_Debug.ld -o "tcpip.axf" ./utilities/fsl_debug_console.o ./utilities/fsl_str.o  ./startup/startup_mk64f12.o  ./source/main-tcpip.o ./source/semihost_hardfault.o  ./freertos/freertos_kernel/portable/MemMang/heap_4.o  ./freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.o  ./freertos/freertos_kernel/croutine.o ./freertos/freertos_kernel/event_groups.o ./freertos/freertos_kernel/list.o ./freertos/freertos_kernel/queue.o ./freertos/freertos_kernel/stream_buffer.o ./freertos/freertos_kernel/tasks.o ./freertos/freertos_kernel/timers.o  ./freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface.o ./freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface_rand.o  ./freertos-plus/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_2.o  ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_ARP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_IP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Stream_Buffer.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_TCP_IP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_TCP_WIN.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_UDP_IP.o  ./drivers/fsl_adc16.o ./drivers/fsl_clock.o ./drivers/fsl_common.o ./drivers/fsl_common_arm.o ./drivers/fsl_enet.o ./drivers/fsl_ftm.o ./drivers/fsl_gpio.o ./drivers/fsl_i2c.o ./drivers/fsl_pit.o ./drivers/fsl_smc.o ./drivers/fsl_sysmpu.o ./drivers/fsl_uart.o  ./device/system_MK64F12.o  ./component/uart/fsl_adapter_uart.o  ./component/serial_manager/fsl_component_serial_manager.o ./component/serial_manager/fsl_component_serial_port_uart.o  ./component/lists/fsl_component_generic_list.o  ./board/board.o ./board/clock_config.o ./board/fsl_phy.o ./board/peripherals.o ./board/pin_mux.o   
 Memory region         Used Size  Region Size  %age Used
-   PROGRAM_FLASH:       27344 B         1 MB      2.61%
-      SRAM_UPPER:       19600 B       192 KB      9.97%
+   PROGRAM_FLASH:       76392 B         1 MB      7.29%
+      SRAM_UPPER:       65440 B       192 KB     33.28%
       SRAM_LOWER:          0 GB        64 KB      0.00%
         FLEX_RAM:          0 GB         4 KB      0.00%
-Finished building target: tasks.axf
+Finished building target: tcpip.axf
  
 Performing post-build steps
-arm-none-eabi-size "tasks.axf"; # arm-none-eabi-objcopy -v -O binary "tasks.axf" "tasks.bin" ; # checksum -p MK64FN1M0xxx12 -d "tasks.bin";
+arm-none-eabi-size "tcpip.axf"; # arm-none-eabi-objcopy -v -O binary "tcpip.axf" "tcpip.bin" ; # checksum -p MK64FN1M0xxx12 -d "tcpip.bin";
    text	   data	    bss	    dec	    hex	filename
-  26952	    392	  19208	  46552	   b5d8	tasks.axf
+  76024	    368	  65072	 141464	  22898	tcpip.axf
  
-13:06:21 **** Incremental Build of configuration Debug for project tasks ****
+14:05:12 **** Incremental Build of configuration Debug for project tcpip ****
 make -r -j12 all 
-Building file: ../source/main-tasks.cpp
+Building file: ../source/main-tcpip.cpp
 Invoking: MCU C++ Compiler
-arm-none-eabi-c++ -DCPU_MK64FN1M0VLL12 -DCPU_MK64FN1M0VLL12_cm4 -DSDK_OS_BAREMETAL -DSERIAL_PORT_TYPE_UART=1 -DSDK_DEBUGCONSOLE=1 -DSDK_OS_FREE_RTOS -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -D__NEWLIB__ -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/board" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/source" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/portable/GCC/ARM_CM4F" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/drivers" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/device" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/CMSIS" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/utilities" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/serial_manager" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/uart" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/lists" -O0 -fno-common -g3 -gdwarf-4 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../source/"= -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -fstack-usage -specs=nano.specs -MMD -MP -MF"source/main-tasks.d" -MT"source/main-tasks.o" -MT"source/main-tasks.d" -o "source/main-tasks.o" "../source/main-tasks.cpp"
-../source/main-tasks.cpp: In function 'void task_switches(void*)':
-../source/main-tasks.cpp:305:22: warning: unused variable 'l_handle_led_snake_l' [-Wunused-variable]
-  305 |         TaskHandle_t l_handle_led_snake_l = xTaskGetHandle( TASK_NAME_LED_SNAKE_L );
-      |                      ^~~~~~~~~~~~~~~~~~~~
-../source/main-tasks.cpp:306:22: warning: unused variable 'l_handle_led_snake_r' [-Wunused-variable]
-  306 |         TaskHandle_t l_handle_led_snake_r = xTaskGetHandle( TASK_NAME_LED_SNAKE_R );
-      |                      ^~~~~~~~~~~~~~~~~~~~
-Finished building: ../source/main-tasks.cpp
+arm-none-eabi-c++ -DCPU_MK64FN1M0VLL12 -DCPU_MK64FN1M0VLL12_cm4 -DSDK_OS_BAREMETAL -DSERIAL_PORT_TYPE_UART=1 -DSDK_DEBUGCONSOLE=1 -DSDK_OS_FREE_RTOS -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -D__NEWLIB__ -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/board" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/source" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos/freertos_kernel/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos/freertos_kernel/portable/GCC/ARM_CM4F" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos-plus/FreeRTOS-Plus-TCP/portable/Compiler/GCC" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/drivers" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/device" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/CMSIS" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/utilities" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/serial_manager" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/uart" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/lists" -O0 -fno-common -g3 -gdwarf-4 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../source/"= -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -fstack-usage -specs=nano.specs -MMD -MP -MF"source/main-tcpip.d" -MT"source/main-tcpip.o" -MT"source/main-tcpip.d" -o "source/main-tcpip.o" "../source/main-tcpip.cpp"
+../source/main-tcpip.cpp: In function 'void vApplicationIPNetworkEventHook(eIPCallbackEvent_t)':
+../source/main-tcpip.cpp:378:34: warning: variable 's_server_addr' set but not used [-Wunused-but-set-variable]
+  378 |         static freertos_sockaddr s_server_addr;
+      |                                  ^~~~~~~~~~~~~
+Finished building: ../source/main-tcpip.cpp
  
-Building target: tasks.axf
+Building target: tcpip.axf
 Invoking: MCU C++ Linker
-arm-none-eabi-c++ -nostdlib -Xlinker -Map="tasks.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T tasks_Debug.ld -o "tasks.axf" ./utilities/fsl_debug_console.o ./utilities/fsl_str.o  ./startup/startup_mk64f12.o  ./source/main-tasks.o ./source/semihost_hardfault.o  ./freertos/freertos_kernel/portable/MemMang/heap_4.o  ./freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.o  ./freertos/freertos_kernel/croutine.o ./freertos/freertos_kernel/event_groups.o ./freertos/freertos_kernel/list.o ./freertos/freertos_kernel/queue.o ./freertos/freertos_kernel/stream_buffer.o ./freertos/freertos_kernel/tasks.o ./freertos/freertos_kernel/timers.o  ./drivers/fsl_adc16.o ./drivers/fsl_clock.o ./drivers/fsl_common.o ./drivers/fsl_common_arm.o ./drivers/fsl_ftm.o ./drivers/fsl_gpio.o ./drivers/fsl_i2c.o ./drivers/fsl_pit.o ./drivers/fsl_smc.o ./drivers/fsl_uart.o  ./device/system_MK64F12.o  ./component/uart/fsl_adapter_uart.o  ./component/serial_manager/fsl_component_serial_manager.o ./component/serial_manager/fsl_component_serial_port_uart.o  ./component/lists/fsl_component_generic_list.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o   
+arm-none-eabi-c++ -nostdlib -Xlinker -Map="tcpip.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T tcpip_Debug.ld -o "tcpip.axf" ./utilities/fsl_debug_console.o ./utilities/fsl_str.o  ./startup/startup_mk64f12.o  ./source/main-tcpip.o ./source/semihost_hardfault.o  ./freertos/freertos_kernel/portable/MemMang/heap_4.o  ./freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.o  ./freertos/freertos_kernel/croutine.o ./freertos/freertos_kernel/event_groups.o ./freertos/freertos_kernel/list.o ./freertos/freertos_kernel/queue.o ./freertos/freertos_kernel/stream_buffer.o ./freertos/freertos_kernel/tasks.o ./freertos/freertos_kernel/timers.o  ./freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface.o ./freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface_rand.o  ./freertos-plus/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_2.o  ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_ARP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_IP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Stream_Buffer.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_TCP_IP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_TCP_WIN.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_UDP_IP.o  ./drivers/fsl_adc16.o ./drivers/fsl_clock.o ./drivers/fsl_common.o ./drivers/fsl_common_arm.o ./drivers/fsl_enet.o ./drivers/fsl_ftm.o ./drivers/fsl_gpio.o ./drivers/fsl_i2c.o ./drivers/fsl_pit.o ./drivers/fsl_smc.o ./drivers/fsl_sysmpu.o ./drivers/fsl_uart.o  ./device/system_MK64F12.o  ./component/uart/fsl_adapter_uart.o  ./component/serial_manager/fsl_component_serial_manager.o ./component/serial_manager/fsl_component_serial_port_uart.o  ./component/lists/fsl_component_generic_list.o  ./board/board.o ./board/clock_config.o ./board/fsl_phy.o ./board/peripherals.o ./board/pin_mux.o   
 Memory region         Used Size  Region Size  %age Used
-   PROGRAM_FLASH:       27344 B         1 MB      2.61%
-      SRAM_UPPER:       19600 B       192 KB      9.97%
+   PROGRAM_FLASH:       76664 B         1 MB      7.31%
+      SRAM_UPPER:       65504 B       192 KB     33.32%
       SRAM_LOWER:          0 GB        64 KB      0.00%
         FLEX_RAM:          0 GB         4 KB      0.00%
-Finished building target: tasks.axf
+Finished building target: tcpip.axf
  
 Performing post-build steps
-arm-none-eabi-size "tasks.axf"; # arm-none-eabi-objcopy -v -O binary "tasks.axf" "tasks.bin" ; # checksum -p MK64FN1M0xxx12 -d "tasks.bin";
+arm-none-eabi-size "tcpip.axf"; # arm-none-eabi-objcopy -v -O binary "tcpip.axf" "tcpip.bin" ; # checksum -p MK64FN1M0xxx12 -d "tcpip.bin";
    text	   data	    bss	    dec	    hex	filename
-  26952	    392	  19208	  46552	   b5d8	tasks.axf
+  76232	    432	  65072	 141736	  229a8	tcpip.axf
  
-13:14:18 **** Incremental Build of configuration Debug for project tasks ****
+14:05:58 **** Incremental Build of configuration Debug for project tcpip ****
 make -r -j12 all 
-Building file: ../source/main-tasks.cpp
+Building file: ../source/main-tcpip.cpp
 Invoking: MCU C++ Compiler
-arm-none-eabi-c++ -DCPU_MK64FN1M0VLL12 -DCPU_MK64FN1M0VLL12_cm4 -DSDK_OS_BAREMETAL -DSERIAL_PORT_TYPE_UART=1 -DSDK_DEBUGCONSOLE=1 -DSDK_OS_FREE_RTOS -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -D__NEWLIB__ -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/board" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/source" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/portable/GCC/ARM_CM4F" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/drivers" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/device" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/CMSIS" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/utilities" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/serial_manager" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/uart" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/lists" -O0 -fno-common -g3 -gdwarf-4 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../source/"= -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -fstack-usage -specs=nano.specs -MMD -MP -MF"source/main-tasks.d" -MT"source/main-tasks.o" -MT"source/main-tasks.d" -o "source/main-tasks.o" "../source/main-tasks.cpp"
-../source/main-tasks.cpp: In function 'void task_switches(void*)':
-../source/main-tasks.cpp:319:22: warning: unused variable 'l_handle_led_snake_l' [-Wunused-variable]
-  319 |         TaskHandle_t l_handle_led_snake_l = xTaskGetHandle( TASK_NAME_LED_SNAKE_L );
-      |                      ^~~~~~~~~~~~~~~~~~~~
-../source/main-tasks.cpp:320:22: warning: unused variable 'l_handle_led_snake_r' [-Wunused-variable]
-  320 |         TaskHandle_t l_handle_led_snake_r = xTaskGetHandle( TASK_NAME_LED_SNAKE_R );
-      |                      ^~~~~~~~~~~~~~~~~~~~
-../source/main-tasks.cpp:321:22: warning: unused variable 'l_handle_toggle' [-Wunused-variable]
-  321 |         TaskHandle_t l_handle_toggle = xTaskGetHandle( TASK_NAME_TOGGLE );
-      |                      ^~~~~~~~~~~~~~~
-Finished building: ../source/main-tasks.cpp
+arm-none-eabi-c++ -DCPU_MK64FN1M0VLL12 -DCPU_MK64FN1M0VLL12_cm4 -DSDK_OS_BAREMETAL -DSERIAL_PORT_TYPE_UART=1 -DSDK_DEBUGCONSOLE=1 -DSDK_OS_FREE_RTOS -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -D__NEWLIB__ -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/board" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/source" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos/freertos_kernel/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos/freertos_kernel/portable/GCC/ARM_CM4F" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos-plus/FreeRTOS-Plus-TCP/portable/Compiler/GCC" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/drivers" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/device" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/CMSIS" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/utilities" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/serial_manager" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/uart" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/lists" -O0 -fno-common -g3 -gdwarf-4 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../source/"= -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -fstack-usage -specs=nano.specs -MMD -MP -MF"source/main-tcpip.d" -MT"source/main-tcpip.o" -MT"source/main-tcpip.d" -o "source/main-tcpip.o" "../source/main-tcpip.cpp"
+../source/main-tcpip.cpp: In function 'void vApplicationIPNetworkEventHook(eIPCallbackEvent_t)':
+../source/main-tcpip.cpp:378:34: warning: variable 's_server_addr' set but not used [-Wunused-but-set-variable]
+  378 |         static freertos_sockaddr s_server_addr;
+      |                                  ^~~~~~~~~~~~~
+Finished building: ../source/main-tcpip.cpp
  
-Building target: tasks.axf
+Building target: tcpip.axf
 Invoking: MCU C++ Linker
-arm-none-eabi-c++ -nostdlib -Xlinker -Map="tasks.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T tasks_Debug.ld -o "tasks.axf" ./utilities/fsl_debug_console.o ./utilities/fsl_str.o  ./startup/startup_mk64f12.o  ./source/main-tasks.o ./source/semihost_hardfault.o  ./freertos/freertos_kernel/portable/MemMang/heap_4.o  ./freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.o  ./freertos/freertos_kernel/croutine.o ./freertos/freertos_kernel/event_groups.o ./freertos/freertos_kernel/list.o ./freertos/freertos_kernel/queue.o ./freertos/freertos_kernel/stream_buffer.o ./freertos/freertos_kernel/tasks.o ./freertos/freertos_kernel/timers.o  ./drivers/fsl_adc16.o ./drivers/fsl_clock.o ./drivers/fsl_common.o ./drivers/fsl_common_arm.o ./drivers/fsl_ftm.o ./drivers/fsl_gpio.o ./drivers/fsl_i2c.o ./drivers/fsl_pit.o ./drivers/fsl_smc.o ./drivers/fsl_uart.o  ./device/system_MK64F12.o  ./component/uart/fsl_adapter_uart.o  ./component/serial_manager/fsl_component_serial_manager.o ./component/serial_manager/fsl_component_serial_port_uart.o  ./component/lists/fsl_component_generic_list.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o   
+arm-none-eabi-c++ -nostdlib -Xlinker -Map="tcpip.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T tcpip_Debug.ld -o "tcpip.axf" ./utilities/fsl_debug_console.o ./utilities/fsl_str.o  ./startup/startup_mk64f12.o  ./source/main-tcpip.o ./source/semihost_hardfault.o  ./freertos/freertos_kernel/portable/MemMang/heap_4.o  ./freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.o  ./freertos/freertos_kernel/croutine.o ./freertos/freertos_kernel/event_groups.o ./freertos/freertos_kernel/list.o ./freertos/freertos_kernel/queue.o ./freertos/freertos_kernel/stream_buffer.o ./freertos/freertos_kernel/tasks.o ./freertos/freertos_kernel/timers.o  ./freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface.o ./freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface_rand.o  ./freertos-plus/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_2.o  ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_ARP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_IP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Stream_Buffer.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_TCP_IP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_TCP_WIN.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_UDP_IP.o  ./drivers/fsl_adc16.o ./drivers/fsl_clock.o ./drivers/fsl_common.o ./drivers/fsl_common_arm.o ./drivers/fsl_enet.o ./drivers/fsl_ftm.o ./drivers/fsl_gpio.o ./drivers/fsl_i2c.o ./drivers/fsl_pit.o ./drivers/fsl_smc.o ./drivers/fsl_sysmpu.o ./drivers/fsl_uart.o  ./device/system_MK64F12.o  ./component/uart/fsl_adapter_uart.o  ./component/serial_manager/fsl_component_serial_manager.o ./component/serial_manager/fsl_component_serial_port_uart.o  ./component/lists/fsl_component_generic_list.o  ./board/board.o ./board/clock_config.o ./board/fsl_phy.o ./board/peripherals.o ./board/pin_mux.o   
 Memory region         Used Size  Region Size  %age Used
-   PROGRAM_FLASH:       27496 B         1 MB      2.62%
-      SRAM_UPPER:       19616 B       192 KB      9.98%
+   PROGRAM_FLASH:       76664 B         1 MB      7.31%
+      SRAM_UPPER:       65504 B       192 KB     33.32%
       SRAM_LOWER:          0 GB        64 KB      0.00%
         FLEX_RAM:          0 GB         4 KB      0.00%
-Finished building target: tasks.axf
+Finished building target: tcpip.axf
  
 Performing post-build steps
-arm-none-eabi-size "tasks.axf"; # arm-none-eabi-objcopy -v -O binary "tasks.axf" "tasks.bin" ; # checksum -p MK64FN1M0xxx12 -d "tasks.bin";
+arm-none-eabi-size "tcpip.axf"; # arm-none-eabi-objcopy -v -O binary "tcpip.axf" "tcpip.bin" ; # checksum -p MK64FN1M0xxx12 -d "tcpip.bin";
    text	   data	    bss	    dec	    hex	filename
-  27088	    408	  19208	  46704	   b670	tasks.axf
+  76232	    432	  65072	 141736	  229a8	tcpip.axf
  
-13:18:33 **** Incremental Build of configuration Debug for project tasks ****
+14:06:42 **** Incremental Build of configuration Debug for project tcpip ****
 make -r -j12 all 
-Building file: ../source/main-tasks.cpp
+Building file: ../source/main-tcpip.cpp
 Invoking: MCU C++ Compiler
-arm-none-eabi-c++ -DCPU_MK64FN1M0VLL12 -DCPU_MK64FN1M0VLL12_cm4 -DSDK_OS_BAREMETAL -DSERIAL_PORT_TYPE_UART=1 -DSDK_DEBUGCONSOLE=1 -DSDK_OS_FREE_RTOS -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -D__NEWLIB__ -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/board" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/source" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/portable/GCC/ARM_CM4F" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/drivers" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/device" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/CMSIS" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/utilities" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/serial_manager" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/uart" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/lists" -O0 -fno-common -g3 -gdwarf-4 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../source/"= -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -fstack-usage -specs=nano.specs -MMD -MP -MF"source/main-tasks.d" -MT"source/main-tasks.o" -MT"source/main-tasks.d" -o "source/main-tasks.o" "../source/main-tasks.cpp"
-../source/main-tasks.cpp: In function 'void task_switches(void*)':
-../source/main-tasks.cpp:318:22: warning: unused variable 'l_handle_led_pta' [-Wunused-variable]
-  318 |         TaskHandle_t l_handle_led_pta = xTaskGetHandle( TASK_NAME_LED_PTA );
-      |                      ^~~~~~~~~~~~~~~~
-../source/main-tasks.cpp:319:22: warning: unused variable 'l_handle_led_snake_l' [-Wunused-variable]
-  319 |         TaskHandle_t l_handle_led_snake_l = xTaskGetHandle( TASK_NAME_LED_SNAKE_L );
-      |                      ^~~~~~~~~~~~~~~~~~~~
-../source/main-tasks.cpp:320:22: warning: unused variable 'l_handle_led_snake_r' [-Wunused-variable]
-  320 |         TaskHandle_t l_handle_led_snake_r = xTaskGetHandle( TASK_NAME_LED_SNAKE_R );
-      |                      ^~~~~~~~~~~~~~~~~~~~
-Finished building: ../source/main-tasks.cpp
+arm-none-eabi-c++ -DCPU_MK64FN1M0VLL12 -DCPU_MK64FN1M0VLL12_cm4 -DSDK_OS_BAREMETAL -DSERIAL_PORT_TYPE_UART=1 -DSDK_DEBUGCONSOLE=1 -DSDK_OS_FREE_RTOS -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -D__NEWLIB__ -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/board" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/source" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos/freertos_kernel/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos/freertos_kernel/portable/GCC/ARM_CM4F" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos-plus/FreeRTOS-Plus-TCP/portable/Compiler/GCC" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/drivers" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/device" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/CMSIS" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/utilities" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/serial_manager" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/uart" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/lists" -O0 -fno-common -g3 -gdwarf-4 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../source/"= -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -fstack-usage -specs=nano.specs -MMD -MP -MF"source/main-tcpip.d" -MT"source/main-tcpip.o" -MT"source/main-tcpip.d" -o "source/main-tcpip.o" "../source/main-tcpip.cpp"
+../source/main-tcpip.cpp: In function 'void vApplicationIPNetworkEventHook(eIPCallbackEvent_t)':
+../source/main-tcpip.cpp:378:34: warning: variable 's_server_addr' set but not used [-Wunused-but-set-variable]
+  378 |         static freertos_sockaddr s_server_addr;
+      |                                  ^~~~~~~~~~~~~
+Finished building: ../source/main-tcpip.cpp
  
-Building target: tasks.axf
+Building target: tcpip.axf
 Invoking: MCU C++ Linker
-arm-none-eabi-c++ -nostdlib -Xlinker -Map="tasks.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T tasks_Debug.ld -o "tasks.axf" ./utilities/fsl_debug_console.o ./utilities/fsl_str.o  ./startup/startup_mk64f12.o  ./source/main-tasks.o ./source/semihost_hardfault.o  ./freertos/freertos_kernel/portable/MemMang/heap_4.o  ./freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.o  ./freertos/freertos_kernel/croutine.o ./freertos/freertos_kernel/event_groups.o ./freertos/freertos_kernel/list.o ./freertos/freertos_kernel/queue.o ./freertos/freertos_kernel/stream_buffer.o ./freertos/freertos_kernel/tasks.o ./freertos/freertos_kernel/timers.o  ./drivers/fsl_adc16.o ./drivers/fsl_clock.o ./drivers/fsl_common.o ./drivers/fsl_common_arm.o ./drivers/fsl_ftm.o ./drivers/fsl_gpio.o ./drivers/fsl_i2c.o ./drivers/fsl_pit.o ./drivers/fsl_smc.o ./drivers/fsl_uart.o  ./device/system_MK64F12.o  ./component/uart/fsl_adapter_uart.o  ./component/serial_manager/fsl_component_serial_manager.o ./component/serial_manager/fsl_component_serial_port_uart.o  ./component/lists/fsl_component_generic_list.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o   
+arm-none-eabi-c++ -nostdlib -Xlinker -Map="tcpip.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T tcpip_Debug.ld -o "tcpip.axf" ./utilities/fsl_debug_console.o ./utilities/fsl_str.o  ./startup/startup_mk64f12.o  ./source/main-tcpip.o ./source/semihost_hardfault.o  ./freertos/freertos_kernel/portable/MemMang/heap_4.o  ./freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.o  ./freertos/freertos_kernel/croutine.o ./freertos/freertos_kernel/event_groups.o ./freertos/freertos_kernel/list.o ./freertos/freertos_kernel/queue.o ./freertos/freertos_kernel/stream_buffer.o ./freertos/freertos_kernel/tasks.o ./freertos/freertos_kernel/timers.o  ./freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface.o ./freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface_rand.o  ./freertos-plus/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_2.o  ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_ARP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_IP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Stream_Buffer.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_TCP_IP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_TCP_WIN.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_UDP_IP.o  ./drivers/fsl_adc16.o ./drivers/fsl_clock.o ./drivers/fsl_common.o ./drivers/fsl_common_arm.o ./drivers/fsl_enet.o ./drivers/fsl_ftm.o ./drivers/fsl_gpio.o ./drivers/fsl_i2c.o ./drivers/fsl_pit.o ./drivers/fsl_smc.o ./drivers/fsl_sysmpu.o ./drivers/fsl_uart.o  ./device/system_MK64F12.o  ./component/uart/fsl_adapter_uart.o  ./component/serial_manager/fsl_component_serial_manager.o ./component/serial_manager/fsl_component_serial_port_uart.o  ./component/lists/fsl_component_generic_list.o  ./board/board.o ./board/clock_config.o ./board/fsl_phy.o ./board/peripherals.o ./board/pin_mux.o   
 Memory region         Used Size  Region Size  %age Used
-   PROGRAM_FLASH:       27352 B         1 MB      2.61%
-      SRAM_UPPER:       19616 B       192 KB      9.98%
+   PROGRAM_FLASH:       76672 B         1 MB      7.31%
+      SRAM_UPPER:       65504 B       192 KB     33.32%
       SRAM_LOWER:          0 GB        64 KB      0.00%
         FLEX_RAM:          0 GB         4 KB      0.00%
-Finished building target: tasks.axf
+Finished building target: tcpip.axf
  
 Performing post-build steps
-arm-none-eabi-size "tasks.axf"; # arm-none-eabi-objcopy -v -O binary "tasks.axf" "tasks.bin" ; # checksum -p MK64FN1M0xxx12 -d "tasks.bin";
+arm-none-eabi-size "tcpip.axf"; # arm-none-eabi-objcopy -v -O binary "tcpip.axf" "tcpip.bin" ; # checksum -p MK64FN1M0xxx12 -d "tcpip.bin";
    text	   data	    bss	    dec	    hex	filename
-  26944	    408	  19208	  46560	   b5e0	tasks.axf
+  76240	    432	  65072	 141744	  229b0	tcpip.axf
  
-13:20:00 **** Incremental Build of configuration Debug for project tasks ****
+14:07:55 **** Incremental Build of configuration Debug for project tcpip ****
 make -r -j12 all 
-Building file: ../source/main-tasks.cpp
+Building file: ../source/main-tcpip.cpp
 Invoking: MCU C++ Compiler
-arm-none-eabi-c++ -DCPU_MK64FN1M0VLL12 -DCPU_MK64FN1M0VLL12_cm4 -DSDK_OS_BAREMETAL -DSERIAL_PORT_TYPE_UART=1 -DSDK_DEBUGCONSOLE=1 -DSDK_OS_FREE_RTOS -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -D__NEWLIB__ -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/board" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/source" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/portable/GCC/ARM_CM4F" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/drivers" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/device" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/CMSIS" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/utilities" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/serial_manager" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/uart" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/lists" -O0 -fno-common -g3 -gdwarf-4 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../source/"= -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -fstack-usage -specs=nano.specs -MMD -MP -MF"source/main-tasks.d" -MT"source/main-tasks.o" -MT"source/main-tasks.d" -o "source/main-tasks.o" "../source/main-tasks.cpp"
-../source/main-tasks.cpp: In function 'void task_switches(void*)':
-../source/main-tasks.cpp:318:22: warning: unused variable 'l_handle_led_pta' [-Wunused-variable]
-  318 |         TaskHandle_t l_handle_led_pta = xTaskGetHandle( TASK_NAME_LED_PTA );
-      |                      ^~~~~~~~~~~~~~~~
-../source/main-tasks.cpp:319:22: warning: unused variable 'l_handle_led_snake_l' [-Wunused-variable]
-  319 |         TaskHandle_t l_handle_led_snake_l = xTaskGetHandle( TASK_NAME_LED_SNAKE_L );
-      |                      ^~~~~~~~~~~~~~~~~~~~
-../source/main-tasks.cpp:320:22: warning: unused variable 'l_handle_led_snake_r' [-Wunused-variable]
-  320 |         TaskHandle_t l_handle_led_snake_r = xTaskGetHandle( TASK_NAME_LED_SNAKE_R );
-      |                      ^~~~~~~~~~~~~~~~~~~~
-Finished building: ../source/main-tasks.cpp
+arm-none-eabi-c++ -DCPU_MK64FN1M0VLL12 -DCPU_MK64FN1M0VLL12_cm4 -DSDK_OS_BAREMETAL -DSERIAL_PORT_TYPE_UART=1 -DSDK_DEBUGCONSOLE=1 -DSDK_OS_FREE_RTOS -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -D__NEWLIB__ -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/board" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/source" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos/freertos_kernel/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos/freertos_kernel/portable/GCC/ARM_CM4F" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos-plus/FreeRTOS-Plus-TCP/portable/Compiler/GCC" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/drivers" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/device" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/CMSIS" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/utilities" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/serial_manager" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/uart" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/lists" -O0 -fno-common -g3 -gdwarf-4 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../source/"= -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -fstack-usage -specs=nano.specs -MMD -MP -MF"source/main-tcpip.d" -MT"source/main-tcpip.o" -MT"source/main-tcpip.d" -o "source/main-tcpip.o" "../source/main-tcpip.cpp"
+../source/main-tcpip.cpp: In function 'void vApplicationIPNetworkEventHook(eIPCallbackEvent_t)':
+../source/main-tcpip.cpp:379:34: warning: variable 's_server_addr' set but not used [-Wunused-but-set-variable]
+  379 |         static freertos_sockaddr s_server_addr;
+      |                                  ^~~~~~~~~~~~~
+Finished building: ../source/main-tcpip.cpp
  
-Building target: tasks.axf
+Building target: tcpip.axf
 Invoking: MCU C++ Linker
-arm-none-eabi-c++ -nostdlib -Xlinker -Map="tasks.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T tasks_Debug.ld -o "tasks.axf" ./utilities/fsl_debug_console.o ./utilities/fsl_str.o  ./startup/startup_mk64f12.o  ./source/main-tasks.o ./source/semihost_hardfault.o  ./freertos/freertos_kernel/portable/MemMang/heap_4.o  ./freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.o  ./freertos/freertos_kernel/croutine.o ./freertos/freertos_kernel/event_groups.o ./freertos/freertos_kernel/list.o ./freertos/freertos_kernel/queue.o ./freertos/freertos_kernel/stream_buffer.o ./freertos/freertos_kernel/tasks.o ./freertos/freertos_kernel/timers.o  ./drivers/fsl_adc16.o ./drivers/fsl_clock.o ./drivers/fsl_common.o ./drivers/fsl_common_arm.o ./drivers/fsl_ftm.o ./drivers/fsl_gpio.o ./drivers/fsl_i2c.o ./drivers/fsl_pit.o ./drivers/fsl_smc.o ./drivers/fsl_uart.o  ./device/system_MK64F12.o  ./component/uart/fsl_adapter_uart.o  ./component/serial_manager/fsl_component_serial_manager.o ./component/serial_manager/fsl_component_serial_port_uart.o  ./component/lists/fsl_component_generic_list.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o   
+arm-none-eabi-c++ -nostdlib -Xlinker -Map="tcpip.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T tcpip_Debug.ld -o "tcpip.axf" ./utilities/fsl_debug_console.o ./utilities/fsl_str.o  ./startup/startup_mk64f12.o  ./source/main-tcpip.o ./source/semihost_hardfault.o  ./freertos/freertos_kernel/portable/MemMang/heap_4.o  ./freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.o  ./freertos/freertos_kernel/croutine.o ./freertos/freertos_kernel/event_groups.o ./freertos/freertos_kernel/list.o ./freertos/freertos_kernel/queue.o ./freertos/freertos_kernel/stream_buffer.o ./freertos/freertos_kernel/tasks.o ./freertos/freertos_kernel/timers.o  ./freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface.o ./freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface_rand.o  ./freertos-plus/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_2.o  ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_ARP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_IP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Stream_Buffer.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_TCP_IP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_TCP_WIN.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_UDP_IP.o  ./drivers/fsl_adc16.o ./drivers/fsl_clock.o ./drivers/fsl_common.o ./drivers/fsl_common_arm.o ./drivers/fsl_enet.o ./drivers/fsl_ftm.o ./drivers/fsl_gpio.o ./drivers/fsl_i2c.o ./drivers/fsl_pit.o ./drivers/fsl_smc.o ./drivers/fsl_sysmpu.o ./drivers/fsl_uart.o  ./device/system_MK64F12.o  ./component/uart/fsl_adapter_uart.o  ./component/serial_manager/fsl_component_serial_manager.o ./component/serial_manager/fsl_component_serial_port_uart.o  ./component/lists/fsl_component_generic_list.o  ./board/board.o ./board/clock_config.o ./board/fsl_phy.o ./board/peripherals.o ./board/pin_mux.o   
 Memory region         Used Size  Region Size  %age Used
-   PROGRAM_FLASH:       27392 B         1 MB      2.61%
-      SRAM_UPPER:       19616 B       192 KB      9.98%
+   PROGRAM_FLASH:       76688 B         1 MB      7.31%
+      SRAM_UPPER:       65504 B       192 KB     33.32%
       SRAM_LOWER:          0 GB        64 KB      0.00%
         FLEX_RAM:          0 GB         4 KB      0.00%
-Finished building target: tasks.axf
+Finished building target: tcpip.axf
  
 Performing post-build steps
-arm-none-eabi-size "tasks.axf"; # arm-none-eabi-objcopy -v -O binary "tasks.axf" "tasks.bin" ; # checksum -p MK64FN1M0xxx12 -d "tasks.bin";
+arm-none-eabi-size "tcpip.axf"; # arm-none-eabi-objcopy -v -O binary "tcpip.axf" "tcpip.bin" ; # checksum -p MK64FN1M0xxx12 -d "tcpip.bin";
    text	   data	    bss	    dec	    hex	filename
-  26984	    408	  19208	  46600	   b608	tasks.axf
- 
-13:20:28 **** Incremental Build of configuration Debug for project tasks ****
-make -r -j12 all 
-Building file: ../source/main-tasks.cpp
-Invoking: MCU C++ Compiler
-arm-none-eabi-c++ -DCPU_MK64FN1M0VLL12 -DCPU_MK64FN1M0VLL12_cm4 -DSDK_OS_BAREMETAL -DSERIAL_PORT_TYPE_UART=1 -DSDK_DEBUGCONSOLE=1 -DSDK_OS_FREE_RTOS -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -D__NEWLIB__ -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/board" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/source" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/freertos/freertos_kernel/portable/GCC/ARM_CM4F" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/drivers" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/device" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/CMSIS" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/utilities" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/serial_manager" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/uart" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/component/lists" -O0 -fno-common -g3 -gdwarf-4 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../source/"= -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -fstack-usage -specs=nano.specs -MMD -MP -MF"source/main-tasks.d" -MT"source/main-tasks.o" -MT"source/main-tasks.d" -o "source/main-tasks.o" "../source/main-tasks.cpp"
-../source/main-tasks.cpp: In function 'void task_switches(void*)':
-../source/main-tasks.cpp:318:22: warning: unused variable 'l_handle_led_pta' [-Wunused-variable]
-  318 |         TaskHandle_t l_handle_led_pta = xTaskGetHandle( TASK_NAME_LED_PTA );
-      |                      ^~~~~~~~~~~~~~~~
-../source/main-tasks.cpp:319:22: warning: unused variable 'l_handle_led_snake_l' [-Wunused-variable]
-  319 |         TaskHandle_t l_handle_led_snake_l = xTaskGetHandle( TASK_NAME_LED_SNAKE_L );
-      |                      ^~~~~~~~~~~~~~~~~~~~
-../source/main-tasks.cpp:320:22: warning: unused variable 'l_handle_led_snake_r' [-Wunused-variable]
-  320 |         TaskHandle_t l_handle_led_snake_r = xTaskGetHandle( TASK_NAME_LED_SNAKE_R );
-      |                      ^~~~~~~~~~~~~~~~~~~~
-Finished building: ../source/main-tasks.cpp
- 
-Building target: tasks.axf
-Invoking: MCU C++ Linker
-arm-none-eabi-c++ -nostdlib -Xlinker -Map="tasks.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T tasks_Debug.ld -o "tasks.axf" ./utilities/fsl_debug_console.o ./utilities/fsl_str.o  ./startup/startup_mk64f12.o  ./source/main-tasks.o ./source/semihost_hardfault.o  ./freertos/freertos_kernel/portable/MemMang/heap_4.o  ./freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.o  ./freertos/freertos_kernel/croutine.o ./freertos/freertos_kernel/event_groups.o ./freertos/freertos_kernel/list.o ./freertos/freertos_kernel/queue.o ./freertos/freertos_kernel/stream_buffer.o ./freertos/freertos_kernel/tasks.o ./freertos/freertos_kernel/timers.o  ./drivers/fsl_adc16.o ./drivers/fsl_clock.o ./drivers/fsl_common.o ./drivers/fsl_common_arm.o ./drivers/fsl_ftm.o ./drivers/fsl_gpio.o ./drivers/fsl_i2c.o ./drivers/fsl_pit.o ./drivers/fsl_smc.o ./drivers/fsl_uart.o  ./device/system_MK64F12.o  ./component/uart/fsl_adapter_uart.o  ./component/serial_manager/fsl_component_serial_manager.o ./component/serial_manager/fsl_component_serial_port_uart.o  ./component/lists/fsl_component_generic_list.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o   
-Memory region         Used Size  Region Size  %age Used
-   PROGRAM_FLASH:       27400 B         1 MB      2.61%
-      SRAM_UPPER:       19616 B       192 KB      9.98%
-      SRAM_LOWER:          0 GB        64 KB      0.00%
-        FLEX_RAM:          0 GB         4 KB      0.00%
-Finished building target: tasks.axf
- 
-Performing post-build steps
-arm-none-eabi-size "tasks.axf"; # arm-none-eabi-objcopy -v -O binary "tasks.axf" "tasks.bin" ; # checksum -p MK64FN1M0xxx12 -d "tasks.bin";
-   text	   data	    bss	    dec	    hex	filename
-  26992	    408	  19208	  46608	   b610	tasks.axf
+  76256	    432	  65072	 141760	  229c0	tcpip.axf
  

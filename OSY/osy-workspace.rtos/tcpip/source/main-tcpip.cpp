@@ -71,6 +71,9 @@
 #define TASK_NAME_LED_PTA		"led_pta"
 #define TASK_NAME_SOCKET_SRV	"socket_srv"
 #define TASK_NAME_SOCKET_CLI	"socket_cli"
+#define TASK_NAME_RED_BLINK 	"red_blink"
+#define TASK_NAME_GREEN_BLINK 	"green_blink"
+#define TASK_NAME_MORSE 		"morse_task"
 
 #define SOCKET_SRV_TOUT			1000
 #define SOCKET_SRV_BUF_SIZE		256
@@ -109,6 +112,36 @@ LED_Data g_led_ptc[ LED_PTC_NUM ] =
 		{ LED_PTC8_PIN, LED_PTC8_GPIO },
 };
 
+struct RGBLED_Data {
+	LED_Data R;
+	LED_Data G;
+	LED_Data B;
+};
+
+RGBLED_Data g_led_rgb[ LED_PTB_NUM ] = {
+		{
+				{ LED_PTB2_PIN,   LED_PTB2_GPIO },
+				{ LED_PTB3_PIN,   LED_PTB3_GPIO },
+				{ LED_PTB9_PIN,   LED_PTB9_GPIO },
+		},
+		{
+				{ LED_PTB10_PIN,  LED_PTB10_GPIO },
+				{ LED_PTB11_PIN,  LED_PTB11_GPIO },
+				{ LED_PTB18_PIN,  LED_PTB18_GPIO },
+		},
+		{
+				{ LED_PTB19_PIN,  LED_PTB19_GPIO },
+				{ LED_PTB20_PIN,  LED_PTB20_GPIO },
+				{ LED_PTB23_PIN,  LED_PTB23_GPIO },
+		},
+};
+
+void RGB_GPIO_PinWrite(RGBLED_Data led, int R, int G, int B) {
+	if (R > -1) GPIO_PinWrite( led.R.m_led_gpio, led.R.m_led_pin, R);
+	if (G > -1) GPIO_PinWrite( led.G.m_led_gpio, led.G.m_led_pin, G);
+	if (B > -1) GPIO_PinWrite( led.B.m_led_gpio, led.B.m_led_pin, B);
+}
+
 
 // Random number generator for TCP/IP stack
 BaseType_t xApplicationGetRandomNumber( uint32_t * tp_pul_number ) { return uxRand(); }
@@ -120,6 +153,48 @@ void vApplicationStackOverflowHook( xTaskHandle *tp_task_handle, signed portCHAR
 	PRINTF( "STACK PROBLEM %s.\r\n", tp_task_name );
 }
 
+void task_red_blink( void *t_arg ) {
+	while ( 1 ) {
+		vTaskSuspend(0);
+		RGB_GPIO_PinWrite(g_led_rgb[0], 1, -1, -1);
+		vTaskDelay(10);
+		RGB_GPIO_PinWrite(g_led_rgb[0], 0, -1, -1);
+	}
+
+}
+
+void task_green_blink( void *t_arg ) {
+	while ( 1 ) {
+		vTaskSuspend(0);
+		RGB_GPIO_PinWrite(g_led_rgb[0], -1, 1, -1);
+		vTaskDelay(10);
+		RGB_GPIO_PinWrite(g_led_rgb[0], -1, 0, -0);
+	}
+}
+
+char morseStr[255];
+
+void task_morse ( void *t_arg ) {
+	while ( 1 )  {
+		vTaskSuspend(0);
+		int len = strlen(morseStr);
+		for (int i = 0; i < len; ++i) {
+			char c = morseStr[i];
+			PRINTF("%c\r\n", c);
+			if (c == '.') {
+				GPIO_PinWrite(g_led_ptc[0].m_led_gpio, g_led_ptc[0].m_led_pin, 1);
+				vTaskDelay(100);
+			} else if (c == '-') {
+				GPIO_PinWrite(g_led_ptc[0].m_led_gpio, g_led_ptc[0].m_led_pin, 1);
+				vTaskDelay(200);
+			} else if (c == '/') {
+				vTaskDelay(500);
+			}
+			GPIO_PinWrite(g_led_ptc[0].m_led_gpio, g_led_ptc[0].m_led_pin, 0);
+			vTaskDelay(100);
+		}
+	}
+}
 
 // This task blink alternatively both PTAx LEDs
 void task_led_pta_blink( void *t_arg )
@@ -143,6 +218,11 @@ void task_led_pta_blink( void *t_arg )
 // task socket server
 void task_socket_srv( void *tp_arg )
 {
+	//LED INDICATORS
+	TaskHandle_t redBlink = xTaskGetHandle(TASK_NAME_RED_BLINK);
+	TaskHandle_t greenBlink = xTaskGetHandle(TASK_NAME_GREEN_BLINK);
+	TaskHandle_t morseTask = xTaskGetHandle(TASK_NAME_MORSE);
+
 	PRINTF( "Task socket server started.\r\n" );
 	TickType_t l_receive_tout = 25000 / portTICK_PERIOD_MS;
 
@@ -209,14 +289,32 @@ void task_socket_srv( void *tp_arg )
 
 			// receive data
 			l_len = FreeRTOS_recv(	l_sock_client, l_rx_buf, sizeof( l_rx_buf ), 0 );
+			vTaskResume(redBlink);
 			//
 			if( l_len > 0 )
 			{
 				l_rx_buf[ l_len ] = 0;	// just for printing
 
-				l_len = FreeRTOS_send( l_sock_client, ( void * ) l_rx_buf, l_len, 0 );
+				eTaskState state = eTaskGetState(morseTask);
+				if (state != eTaskState::eSuspended) {
+					const char * msg = "Morse code is currenly running, please try again later\n";
+					FreeRTOS_send( l_sock_client, ( void * ) msg, strlen(msg), 0 );
+					vTaskResume(greenBlink);
+				} else {
+					const char * msg = "Morse code received!\n";
+					FreeRTOS_send( l_sock_client, ( void * ) msg, strlen(msg), 0 );
+					vTaskResume(greenBlink);
 
-				PRINTF( "Server forwarded %d bytes.\r\n", l_len );
+					memcpy(morseStr, l_rx_buf, l_len + 1);
+					vTaskResume(morseTask);
+				}
+
+
+				/*l_len = FreeRTOS_send( l_sock_client, ( void * ) l_rx_buf, l_len, 0 );
+				vTaskResume(greenBlink);
+
+				PRINTF( "Server forwarded %d bytes.\r\n", l_len );*/
+
 			}
 			if ( l_len < 0 )
 			{
@@ -330,8 +428,9 @@ int main(void) {
     // Computer in lab use IP address 158.196.XXX.YYY.
     // Set MAC to 5A FE C0 DE XXX YYY+20
     // IP address will be configured from DHCP
+    //142-79
     //
-	uint8_t ucMAC[ ipMAC_ADDRESS_LENGTH_BYTES ] = { 0x5A, 0xFE, 0xC0, 0xDE, 0x00, 0x00 };
+	uint8_t ucMAC[ ipMAC_ADDRESS_LENGTH_BYTES ] = { 0x5A, 0xFE, 0xC0, 0xDE, 142, 79+20 };
 
    	uint8_t ucIPAddress[ ipIP_ADDRESS_LENGTH_BYTES ] = { 10, 0, 0, 10 };
    	uint8_t ucIPMask[ ipIP_ADDRESS_LENGTH_BYTES ] = { 255, 255, 255, 0 };
@@ -341,15 +440,48 @@ int main(void) {
 
 	// Create tasks
 	if ( xTaskCreate(
-	    		task_led_pta_blink,
-	    		TASK_NAME_LED_PTA,
-				configMINIMAL_STACK_SIZE + 100,
-				NULL,
-				NORMAL_TASK_PRIORITY,
-				NULL ) != pdPASS )
-	    {
-	        PRINTF( "Unable to create task '%s'.\r\n", TASK_NAME_LED_PTA );
-	    }
+			task_led_pta_blink,
+			TASK_NAME_LED_PTA,
+			configMINIMAL_STACK_SIZE + 100,
+			NULL,
+			NORMAL_TASK_PRIORITY,
+			NULL ) != pdPASS )
+	{
+		PRINTF( "Unable to create task '%s'.\r\n", TASK_NAME_LED_PTA );
+	}
+
+	if ( xTaskCreate(
+			task_red_blink,
+			TASK_NAME_RED_BLINK,
+			configMINIMAL_STACK_SIZE + 100,
+			NULL,
+			NORMAL_TASK_PRIORITY,
+			NULL ) != pdPASS )
+	{
+		PRINTF( "Unable to create task '%s'.\r\n", TASK_NAME_RED_BLINK );
+	}
+
+	if ( xTaskCreate(
+			task_green_blink,
+			TASK_NAME_GREEN_BLINK,
+			configMINIMAL_STACK_SIZE + 100,
+			NULL,
+			NORMAL_TASK_PRIORITY,
+			NULL ) != pdPASS )
+	{
+		PRINTF( "Unable to create task '%s'.\r\n", TASK_NAME_GREEN_BLINK );
+	}
+
+	if ( xTaskCreate(
+			task_morse,
+			TASK_NAME_MORSE,
+			configMINIMAL_STACK_SIZE + 100,
+			NULL,
+			NORMAL_TASK_PRIORITY,
+			NULL ) != pdPASS )
+	{
+		PRINTF( "Unable to create task '%s'.\r\n", TASK_NAME_MORSE );
+	}
 
 	vTaskStartScheduler();
 

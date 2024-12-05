@@ -10859,3 +10859,102 @@ Caused by: java.io.IOException: Stream closed
 
 !ENTRY com.nxp.mcuxpresso.core.debug 1 0 2024-12-05 13:20:32.606
 !MESSAGE Telnet session connected on port 2333->34052 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2024-12-05 13:31:38.595
+!MESSAGE Connected to localhost on port 2332.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2024-12-05 13:31:39.424
+!MESSAGE Telnet session connected on port 2333->38790 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2024-12-05 13:39:14.218
+!MESSAGE Connected to localhost on port 2332.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2024-12-05 13:39:15.053
+!MESSAGE Telnet session connected on port 2333->55360 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2024-12-05 13:39:58.552
+!MESSAGE Connected to localhost on port 2332.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2024-12-05 13:39:59.427
+!MESSAGE Telnet session connected on port 2333->41916 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2024-12-05 13:41:48.869
+!MESSAGE Connected to localhost on port 2332.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2024-12-05 13:41:49.747
+!MESSAGE Telnet session connected on port 2333->46278 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2024-12-05 13:42:38.041
+!MESSAGE Connected to localhost on port 2332.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2024-12-05 13:42:38.873
+!MESSAGE Telnet session connected on port 2333->41026 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2024-12-05 13:43:09.678
+!MESSAGE Connected to localhost on port 2332.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2024-12-05 13:43:10.564
+!MESSAGE Telnet session connected on port 2333->33176 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2024-12-05 13:44:39.307
+!MESSAGE Connected to localhost on port 2332.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2024-12-05 13:44:40.132
+!MESSAGE Telnet session connected on port 2333->40422 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2024-12-05 14:03:38.768
+!MESSAGE Connected to localhost on port 2332.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2024-12-05 14:03:39.599
+!MESSAGE Telnet session connected on port 2333->56810 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2024-12-05 14:04:35.951
+!MESSAGE Connected to localhost on port 2332.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2024-12-05 14:04:36.771
+!MESSAGE Telnet session connected on port 2333->37796 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2024-12-05 14:05:16.250
+!MESSAGE Connected to localhost on port 2332.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2024-12-05 14:05:17.081
+!MESSAGE Telnet session connected on port 2333->41616 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2024-12-05 14:06:00.957
+!MESSAGE Connected to localhost on port 2332.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2024-12-05 14:06:01.822
+!MESSAGE Telnet session connected on port 2333->33300 @ 127.0.0.1
+
+!ENTRY com.crt.utils 1 0 2024-12-05 14:06:46.408
+!MESSAGE Connected to localhost on port 2332.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2024-12-05 14:06:47.294
+!MESSAGE Telnet session connected on port 2333->57568 @ 127.0.0.1
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 4 2024-12-05 14:07:51.117
+!MESSAGE NullPointerException while trying to calculated source lookup path. This can be ignored if it occurs while terminating a debug session. See Bug 500988.
+!STACK 0
+java.lang.NullPointerException: Cannot read the array length because "containers" is null
+	at org.eclipse.cdt.dsf.gdb.launching.GdbSourceLookupDirector.collectSubstitutionsPaths(GdbSourceLookupDirector.java:102)
+	at org.eclipse.cdt.dsf.gdb.launching.GdbSourceLookupDirector.collectSubstitutionsPaths(GdbSourceLookupDirector.java:146)
+	at org.eclipse.cdt.dsf.gdb.launching.GdbSourceLookupDirector.getSubstitutionsPaths(GdbSourceLookupDirector.java:72)
+	at org.eclipse.cdt.dsf.gdb.service.GDBSourceLookup.getSubstitutionsPaths(GDBSourceLookup.java:124)
+	at org.eclipse.cdt.dsf.gdb.service.GDBSourceLookup.sourceContainersChanged(GDBSourceLookup.java:139)
+	at org.eclipse.cdt.dsf.gdb.launching.GdbSourceLookupParticipant.sourceContainersChangedOnDispatchThread(GdbSourceLookupParticipant.java:120)
+	at org.eclipse.cdt.dsf.gdb.launching.GdbSourceLookupParticipant$1.run(GdbSourceLookupParticipant.java:85)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
+!ENTRY com.nxp.mcuxpresso.core.debug 4 0 2024-12-05 14:07:51.119
+!MESSAGE There is already a running debug session for the launch configuration 'tcpip JLink Debug'.
+
+!ENTRY com.crt.utils 1 0 2024-12-05 14:07:59.014
+!MESSAGE Connected to localhost on port 2332.
+
+!ENTRY com.nxp.mcuxpresso.core.debug 1 0 2024-12-05 14:07:59.900
+!MESSAGE Telnet session connected on port 2333->52158 @ 127.0.0.1
