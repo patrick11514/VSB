@@ -17,6 +17,7 @@
         "typescript": "^5.6.3"
     },
     "dependencies": {
+        "chart.js": "^4.4.7",
         "express": "^4.21.1",
         "sweetalert2": "^11.14.5"
     }

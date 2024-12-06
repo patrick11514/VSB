@@ -12,7 +12,7 @@ const SwalAlert = async (data: import('sweetalert2').SweetAlertOptions) => {
 
 const toDate = (date: Date | number) => {
     const d = new Date(date);
-    const hours = d.getHours();
+    const hours = d.getHours().toString().padStart(2, '0');
     const minutes = d.getMinutes().toString().padStart(2, '0');
     const seconds = d.getSeconds().toString().padStart(2, '0');
     const day = d.getDate();

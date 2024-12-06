@@ -239,10 +239,16 @@ type MatchInfo = {
     participants: Participant[];
 };
 
+type MatchMetadata = {
+    matchId: string;
+};
+
 type Match = {
     info: MatchInfo;
-    metadata: {}; //
+    metadata: MatchMetadata;
 };
+
+type ParticipantIds = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
 class RiotAPI {
     private static SummonerData:
@@ -443,5 +449,47 @@ class RiotAPI {
             }),
             stats: []
         };
+    }
+
+    static async getTimeline(matchId: string, region: Region) {
+        const data = await getData<{
+            metadata: MatchMetadata;
+            info: {
+                participants: {
+                    puuid: string;
+                    participantId: ParticipantIds;
+                }[];
+                frameInterval: number;
+                frames: {
+                    events: (
+                        | {
+                            type: 'PAUSE_END' | 'GAME_END';
+                            realTimestamp: number;
+                            timestamp: number;
+                        }
+                        | {
+                            type: 'NEVER';
+                            timestamp: number;
+                        }
+                    )[];
+                    participantFrames: Record<
+                        ParticipantIds,
+                        {
+                            currentGold: number;
+                            minionsKilled: number;
+                            totalGold: number;
+                            xp: number;
+                            damageStats: {
+                                totalDamageDone: number;
+                                totalDamageDoneToChampions: number;
+                            };
+                        }
+                    >;
+                    timestamp: number;
+                }[];
+            };
+        }>(`/lol/match/v5/matches/${matchId}/timeline`, this.getRoutingByRegion(region));
+
+        return data;
     }
 }

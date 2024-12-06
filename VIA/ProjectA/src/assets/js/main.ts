@@ -19,10 +19,12 @@ if (region) {
 const button = document.querySelector<HTMLButtonElement>('button#search')!;
 
 type UserData = {
+    region: Region;
     level: number;
     lastUpdate: number;
     pfp: number;
     username: string;
+    puuid: string;
     tag: string;
     title?: string;
     item: string[];
@@ -141,7 +143,9 @@ const lookup = async () => {
     const filtered = matches.filter((match) => checkResponse(match));
 
     userData = {
+        region: reg,
         username: mainData.gameName,
+        puuid: profileData.puuid,
         tag: mainData.tagLine,
         level: profileData.summonerLevel,
         pfp: profileData.profileIconId,
@@ -440,6 +444,135 @@ const moreMatchData = async (match: Match, moreStatsDiv: HTMLDivElement) => {
         elems.push(playerList);
     }
 
+    /*  Get timestamp end extract data from it  */
+    const timeline = await RiotAPI.getTimeline(match.metadata.matchId, userData.region);
+
+    if (!timeline || 'status' in timeline) {
+        SwalAlert({
+            icon: 'error',
+            title: 'Unable to load game data'
+        });
+        return;
+    }
+
+    //getId in timeline of me
+    const id = timeline.info.participants.find(
+        (part) => part.puuid === userData!.puuid
+    )!.participantId;
+
+    const extractedFrames: [
+        number,
+        (typeof timeline)['info']['frames'][number]['participantFrames'][ParticipantIds]
+    ][] = [];
+
+    for (const frame of timeline.info.frames) {
+        extractedFrames.push([frame.timestamp, frame.participantFrames[id]]);
+    }
+
+    const graphs: (keyof (typeof extractedFrames)[number][1])[] = [
+        'xp',
+        'totalGold',
+        'damageStats',
+        'minionsKilled'
+    ];
+    const names = ['Experience', 'Golds', 'Damage', 'Minions'];
+    const colors = ['#00b330', '#ffdd00', '#ff0000', '#0088ff'];
+
+    elems.push(elementWithText('h1', 'Your stats through game'));
+
+    /*  Graph Config  */
+
+    const graphDiv = document.createElement('div');
+    const buttonsDiv = document.createElement('div');
+    const canvasDiv = document.createElement('div');
+
+    const graphConfig: ChartOptions = {
+        scales: {
+            x: {
+                grid: {
+                    color: '#b5b5b5'
+                },
+                ticks: {
+                    color: '#b5b5b5'
+                }
+            },
+            y: {
+                grid: {
+                    color: '#b5b5b5'
+                },
+                ticks: {
+                    color: '#b5b5b5'
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#b5b5b5'
+                }
+            }
+        }
+    };
+
+    const canvasList: HTMLCanvasElement[] = [];
+    const buttonList: HTMLButtonElement[] = [];
+
+    let i = 0;
+    /*  Creating graphs  */
+    for (const graph of graphs) {
+        const canvas = document.createElement('canvas');
+        if (i != 0) canvas.classList.add('!hidden');
+
+        canvasList.push(canvas);
+
+        const button = document.createElement('button');
+        if (i == 0) button.classList.add('active');
+        buttonList.push(button);
+
+        button.textContent = names[i];
+        button.addEventListener('click', () => {
+            canvasList.forEach((c) => c.classList.add('!hidden'));
+            canvas.classList.remove('!hidden');
+            buttonList.forEach((c) => c.classList.remove('active'));
+            button.classList.add('active');
+        });
+
+        canvasDiv.appendChild(canvas);
+        buttonsDiv.appendChild(button);
+
+        const frameTimestamp: [number, number][] = extractedFrames.map((frame) => [
+            frame[0],
+            graph === 'damageStats'
+                ? frame[1][graph]['totalDamageDoneToChampions']
+                : frame[1][graph]
+        ]);
+
+        new Chart(canvasList[i], {
+            type: 'line',
+            data: {
+                labels: frameTimestamp.map(
+                    (frame) => Math.floor(frame[0] / 1000 / 60) + ' min'
+                ),
+                datasets: [
+                    {
+                        label: names[i],
+                        data: frameTimestamp.map((frame) => frame[1]),
+                        backgroundColor: colors[i],
+                        borderColor: colors[i],
+                        borderWidth: 4
+                    }
+                ]
+            },
+            options: graphConfig
+        });
+
+        ++i;
+    }
+
+    graphDiv.appendChild(buttonsDiv);
+    graphDiv.appendChild(canvasDiv);
+    elems.push(graphDiv);
+
     //now we can remove loading + add other elements
     moreStatsDiv.removeChild(moreStatsDiv.childNodes[0]);
 
@@ -458,7 +591,7 @@ const addMatch = async (match: Match) => {
     const { info } = match;
     const rootDiv = document.createElement('div');
 
-    rootDiv.dataset.matchId = match.info.gameId.toString();
+    rootDiv.dataset.matchId = match.metadata.matchId;
 
     const mainDiv = document.createElement('div');
     const players: ReturnType<typeof getPlayerData>[] = [];
