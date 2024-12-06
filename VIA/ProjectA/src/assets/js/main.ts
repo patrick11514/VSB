@@ -251,7 +251,7 @@ const getPlayerData = (
         runes: participant.perks,
         cs: participant.totalMinionsKilled,
         vision: participant.visionScore,
-        damage: participant.totalDamageDealt,
+        damage: participant.totalDamageDealtToChampions,
         golds: participant.goldEarned
     };
 };
@@ -311,8 +311,12 @@ const moreMatchData = async (match: Match, moreStatsDiv: HTMLDivElement) => {
     //all elements which will be added at the end
     const elems: HTMLElement[] = [];
 
+    let maxDamage = 0;
+    for (const team of teams)
+        for (const player of team.players) maxDamage = Math.max(maxDamage, player.damage);
+
     for (const team of teams) {
-        const text = elementWithText('h1', team.win ? 'Winners' : 'Losers');
+        const text = elementWithText('h2', team.win ? 'Winners' : 'Losers');
         const winLoss = team.win ? 'win' : 'loss';
         text.classList.add(winLoss);
         elems.push(text);
@@ -320,12 +324,7 @@ const moreMatchData = async (match: Match, moreStatsDiv: HTMLDivElement) => {
         const playerList = document.createElement('div');
         playerList.classList.add(winLoss);
 
-        let maxDamage = 0;
-        for (const player of team.players) maxDamage = Math.max(maxDamage, player.damage);
-
         for (const player of team.players) {
-            const div = document.createElement('div');
-
             /*  Champion + level  */
             const champ = document.createElement('div');
             champ.appendChild(
@@ -336,7 +335,7 @@ const moreMatchData = async (match: Match, moreStatsDiv: HTMLDivElement) => {
                 )
             );
             champ.appendChild(elementWithText('div', player.lvl.toString()));
-            div.append(champ);
+            playerList.append(champ);
 
             /*  Summoner spells*/
             const summs = document.createElement('div');
@@ -346,7 +345,7 @@ const moreMatchData = async (match: Match, moreStatsDiv: HTMLDivElement) => {
                     elementWithAttr('img', 'src', RiotAPI.getAsset('summoner', data.id))
                 );
             }
-            div.appendChild(summs);
+            playerList.appendChild(summs);
 
             /*  Runes  */
             const runeList = await RiotAPI.extractRunes(player.runes);
@@ -365,10 +364,14 @@ const moreMatchData = async (match: Match, moreStatsDiv: HTMLDivElement) => {
                 );
                 ++i;
             }
-            div.appendChild(runes);
+            playerList.appendChild(runes);
 
             /*  Summoner Name  */
-            div.appendChild(elementWithText('div', player.name));
+            const name = elementWithText('div', player.name);
+            if (player.me) {
+                name.classList.add('me');
+            }
+            playerList.appendChild(name);
 
             const scoreDiv = document.createElement('div');
             /* KDA */
@@ -393,7 +396,7 @@ const moreMatchData = async (match: Match, moreStatsDiv: HTMLDivElement) => {
             KDA.appendChild(kdaValue);
             KDA.appendChild(elementWithText('span', ' KDA'));
             scoreDiv.appendChild(KDA);
-            div.appendChild(scoreDiv);
+            playerList.appendChild(scoreDiv);
 
             /*  Items  */
             const items = document.createElement('div');
@@ -409,7 +412,7 @@ const moreMatchData = async (match: Match, moreStatsDiv: HTMLDivElement) => {
                 }
             }
 
-            div.appendChild(items);
+            playerList.appendChild(items);
 
             /*  Stats  */
             const stats = document.createElement('div');
@@ -431,9 +434,7 @@ const moreMatchData = async (match: Match, moreStatsDiv: HTMLDivElement) => {
             /*  Wards  */
             stats.appendChild(elementWithText('div', `${player.vision} Vision`));
 
-            div.appendChild(stats);
-
-            playerList.appendChild(div);
+            playerList.appendChild(stats);
         }
 
         elems.push(playerList);
@@ -447,6 +448,8 @@ const moreMatchData = async (match: Match, moreStatsDiv: HTMLDivElement) => {
     for (const el of elems) {
         moreStatsDiv.appendChild(el);
     }
+
+    moreStatsDiv.dataset.loaded = 'true';
 };
 
 const addMatch = async (match: Match) => {
@@ -616,8 +619,6 @@ const addMatch = async (match: Match) => {
             moreStats.classList.remove('!hidden');
             button.classList.remove('bi-caret-down-fill');
             button.classList.add('bi-caret-up-fill');
-
-            console.log(!moreStats.dataset.loaded);
 
             if (!moreStats.dataset.loaded) {
                 moreMatchData(match, moreStats);

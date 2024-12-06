@@ -34,6 +34,10 @@ module.exports = {
                 "ssm": ["0.75rem", {
                     lineHeight: "1rem"
                 }]
+            },
+            gridTemplateColumns: {
+                "players": "3.5rem 1.5rem 1.5rem max-content max-content calc(1.5rem * 4 + 0.25rem * 3) auto",
+                "stats": "repeat(auto-fit, minmax(max-content, 1fr))"
             }
         },
     },

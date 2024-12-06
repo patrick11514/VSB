@@ -200,6 +200,7 @@ type Participant = {
     win: boolean;
     goldEarned: number;
     totalDamageDealt: number;
+    totalDamageDealtToChampions: number;
     largestMultiKill: number;
     champLevel: number;
     totalMinionsKilled: number;
