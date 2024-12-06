@@ -3,6 +3,7 @@ const username = search.querySelector<HTMLInputElement>('#username')!;
 const tag = search.querySelector<HTMLInputElement>('#tag')!;
 const region = search.querySelector<HTMLSelectElement>('#region')!;
 const lastUpdate = document.querySelector('#lastUpdate')!;
+const matchList = document.querySelector('#matches')!;
 
 //fill options
 if (region) {
@@ -28,13 +29,13 @@ type UserData = {
     ranks: Record<
         RankedQueue,
         | {
-              lp: number;
-              rank: Rank;
-              tier: Tier;
-              wins: number;
-              loses: number;
-              wr: number;
-          }
+            lp: number;
+            rank: Rank;
+            tier: Tier;
+            wins: number;
+            loses: number;
+            wr: number;
+        }
         | undefined
     >;
     matches: Match[];
@@ -130,7 +131,7 @@ const lookup = async () => {
                 loses: queue.losses,
                 rank: queue.rank,
                 tier: queue.tier,
-                wr: (queue.wins / queue.losses) * 100 //in percents
+                wr: (queue.wins / (queue.wins + queue.losses)) * 100 //in percents
             };
         }
     }
@@ -206,15 +207,440 @@ const QueueToIdMap = {
     RANKED_FLEX_SR: 'flex-rank'
 } satisfies Record<RankedQueue, string>;
 
-const render = () => {
+const getPlayerData = (
+    participant: Participant,
+    myRiotId: [string, string]
+): {
+    champId: number;
+    champName: string;
+    lvl: number;
+    kills: number;
+    deaths: number;
+    asists: number;
+    items: number[];
+    trinket: number;
+    name: string;
+    me: boolean;
+    win: boolean;
+    summoners: number[];
+    runes: Participant['perks'];
+    cs: number;
+    vision: number;
+    damage: number;
+    golds: number;
+} => {
+    type Nums = 0 | 1 | 2 | 3 | 4;
+
+    return {
+        champId: participant.championId,
+        champName: participant.championName,
+        lvl: participant.champLevel,
+        kills: participant.kills,
+        deaths: participant.deaths,
+        asists: participant.assists,
+        items: Array.from({ length: 6 }).map(
+            (_, i) => participant[`item${i}` as `item${Nums}`]
+        ),
+        trinket: participant.item6,
+        name: participant.summonerName,
+        me:
+            participant.riotIdGameName === myRiotId[0] &&
+            participant.riotIdTagline === myRiotId[1],
+        win: participant.win,
+        summoners: [participant.summoner1Id, participant.summoner2Id],
+        runes: participant.perks,
+        cs: participant.totalMinionsKilled,
+        vision: participant.visionScore,
+        damage: participant.totalDamageDealt,
+        golds: participant.goldEarned
+    };
+};
+
+const elementWithText = (element: keyof HTMLElementTagNameMap, text: string) => {
+    const el = document.createElement(element);
+    el.textContent = text;
+    return el;
+};
+
+const elementWithAttr = <
+    $Element extends keyof HTMLElementTagNameMap,
+    $Attr extends keyof HTMLElementTagNameMap[$Element]
+>(
+    element: $Element,
+    attr: $Attr,
+    value: HTMLElementTagNameMap[$Element][$Attr]
+) => {
+    const el = document.createElement(element);
+    el[attr] = value;
+    return el;
+};
+
+const moreMatchData = async (match: Match, moreStatsDiv: HTMLDivElement) => {
+    if (!userData) return;
+
+    //prepare all elements and then put them at the end, just to replace loading
+    const teamInfo = elementWithText('h1', 'Teams info');
+    const { info } = match;
+    const teams: {
+        win: boolean;
+        players: ReturnType<typeof getPlayerData>[];
+    }[] = [
+            {
+                win: false,
+                players: []
+            },
+            {
+                win: false,
+                players: []
+            }
+        ];
+    for (const participant of info.participants) {
+        if (participant.teamId == 100) {
+            teams[0].win = participant.win;
+            teams[0].players.push(
+                getPlayerData(participant, [userData.username, userData.tag])
+            );
+        } else {
+            teams[1].win = participant.win;
+            teams[1].players.push(
+                getPlayerData(participant, [userData.username, userData.tag])
+            );
+        }
+    }
+
+    //all elements which will be added at the end
+    const elems: HTMLElement[] = [];
+
+    for (const team of teams) {
+        const text = elementWithText('h1', team.win ? 'Winners' : 'Losers');
+        const winLoss = team.win ? 'win' : 'loss';
+        text.classList.add(winLoss);
+        elems.push(text);
+
+        const playerList = document.createElement('div');
+        playerList.classList.add(winLoss);
+
+        let maxDamage = 0;
+        for (const player of team.players) maxDamage = Math.max(maxDamage, player.damage);
+
+        for (const player of team.players) {
+            const div = document.createElement('div');
+
+            /*  Champion + level  */
+            const champ = document.createElement('div');
+            champ.appendChild(
+                elementWithAttr(
+                    'img',
+                    'src',
+                    RiotAPI.getAsset('champion', player.champName)
+                )
+            );
+            champ.appendChild(elementWithText('div', player.lvl.toString()));
+            div.append(champ);
+
+            /*  Summoner spells*/
+            const summs = document.createElement('div');
+            for (const summonerSpell of player.summoners) {
+                const data = await RiotAPI.getSummonerSpell(summonerSpell);
+                summs.appendChild(
+                    elementWithAttr('img', 'src', RiotAPI.getAsset('summoner', data.id))
+                );
+            }
+            div.appendChild(summs);
+
+            /*  Runes  */
+            const runeList = await RiotAPI.extractRunes(player.runes);
+            const runes = document.createElement('div');
+            let i = 0;
+            for (const rune of runeList.main) {
+                runes.appendChild(
+                    elementWithAttr(
+                        'img',
+                        'src',
+                        RiotAPI.getAsset(
+                            'runeFromFunc',
+                            i == 0 ? rune.runes[0] : rune.category
+                        )
+                    )
+                );
+                ++i;
+            }
+            div.appendChild(runes);
+
+            /*  Summoner Name  */
+            div.appendChild(elementWithText('div', player.name));
+
+            const scoreDiv = document.createElement('div');
+            /* KDA */
+            const kda = document.createElement('h1');
+            kda.appendChild(elementWithText('span', player.kills.toString()));
+            kda.appendChild(elementWithText('span', '/'));
+            kda.appendChild(elementWithText('span', player.deaths.toString()));
+            kda.appendChild(elementWithText('span', '/'));
+            kda.appendChild(elementWithText('span', player.asists.toString()));
+            scoreDiv.appendChild(kda);
+
+            /*  KDA num  */
+            const KDA = document.createElement('h2');
+            const kdaValue = document.createElement('span');
+            const kdaNum = (player.kills + player.asists) / player.deaths;
+            kdaValue.textContent = kdaNum.toFixed(2);
+            if (kdaNum >= 5) {
+                kdaValue.classList.add('excellent');
+            } else if (kdaNum >= 3) {
+                kdaValue.classList.add('perfect');
+            }
+            KDA.appendChild(kdaValue);
+            KDA.appendChild(elementWithText('span', ' KDA'));
+            scoreDiv.appendChild(KDA);
+            div.appendChild(scoreDiv);
+
+            /*  Items  */
+            const items = document.createElement('div');
+
+            /*  Regular items  */
+            for (const item of [...player.items, player.trinket]) {
+                if (item == 0) {
+                    items.appendChild(elementWithText('div', ''));
+                } else {
+                    items.appendChild(
+                        elementWithAttr('img', 'src', RiotAPI.getAsset('item', item))
+                    );
+                }
+            }
+
+            div.appendChild(items);
+
+            /*  Stats  */
+            const stats = document.createElement('div');
+
+            /*  Damage  */
+            const damage = document.createElement('div');
+            damage.appendChild(elementWithText('span', `${player.damage} Damage`));
+            const graph = document.createElement('div');
+            const line = document.createElement('div');
+            line.style.width = (100 * (player.damage / maxDamage)).toString() + '%';
+            graph.appendChild(line);
+            damage.appendChild(graph);
+            stats.appendChild(damage);
+
+            /*  CS  */
+            stats.appendChild(elementWithText('div', `${player.cs} CS`));
+            /*  Golds  */
+            stats.appendChild(elementWithText('div', `${player.golds} Golds`));
+            /*  Wards  */
+            stats.appendChild(elementWithText('div', `${player.vision} Vision`));
+
+            div.appendChild(stats);
+
+            playerList.appendChild(div);
+        }
+
+        elems.push(playerList);
+    }
+
+    //now we can remove loading + add other elements
+    moreStatsDiv.removeChild(moreStatsDiv.childNodes[0]);
+
+    //add other elements
+    moreStatsDiv.appendChild(teamInfo);
+    for (const el of elems) {
+        moreStatsDiv.appendChild(el);
+    }
+};
+
+const addMatch = async (match: Match) => {
+    if (!userData) return;
+
+    const { info } = match;
+    const rootDiv = document.createElement('div');
+
+    rootDiv.dataset.matchId = match.info.gameId.toString();
+
+    const mainDiv = document.createElement('div');
+    const players: ReturnType<typeof getPlayerData>[] = [];
+
+    for (const participant of info.participants) {
+        players.push(getPlayerData(participant, [userData.username, userData.tag]));
+    }
+
+    const me = players.find((player) => player.me)!;
+    rootDiv.classList.add(me.win ? 'win' : 'lose');
+
+    /*  BASIC MATCH INFO  */
+    const matchInfo = document.createElement('div');
+    const gameType = document.createElement('h1');
+    let gameName = QUEUES[info.queueId as keyof typeof QUEUES] ?? 'Unknown';
+    if (info.queueId >= 830 && info.queueId <= 850) {
+        gameName += `(${COOP_TITLES[(info.queueId - 830) / 10]})`;
+    }
+    gameType.textContent = gameName;
+    matchInfo.appendChild(gameType);
+
+    matchInfo.appendChild(elementWithText('h3', timeDiff(info.gameEndTimestamp)));
+
+    const result = document.createElement('h2');
+    result.textContent = me.win ? 'WIN ' : 'LOSE ';
+    const gameTime = document.createElement('span');
+
+    const minutes = Math.floor(info.gameDuration / 60);
+    const seconds = info.gameDuration - minutes * 60;
+
+    gameTime.textContent = `${minutes}:${seconds}`;
+    result.appendChild(gameTime);
+    matchInfo.appendChild(result);
+
+    mainDiv.appendChild(matchInfo);
+
+    /*  CHAMPION + LEVEL  */
+    const champLvl = document.createElement('div');
+    champLvl.appendChild(
+        elementWithAttr('img', 'src', RiotAPI.getAsset('champion', me.champName))
+    );
+    champLvl.appendChild(elementWithText('div', me.lvl.toString()));
+    mainDiv.appendChild(champLvl);
+
+    /*  SUMMONERS  */
+    const summoner = document.createElement('div');
+    for (const summonerSpell of me.summoners) {
+        const data = await RiotAPI.getSummonerSpell(summonerSpell);
+        summoner.appendChild(
+            elementWithAttr('img', 'src', RiotAPI.getAsset('summoner', data.id))
+        );
+    }
+    mainDiv.appendChild(summoner);
+
+    /*  Runes  */
+    const runeList = await RiotAPI.extractRunes(me.runes);
+    const runes = document.createElement('div');
+    let i = 0;
+    for (const rune of runeList.main) {
+        runes.appendChild(
+            elementWithAttr(
+                'img',
+                'src',
+                RiotAPI.getAsset('runeFromFunc', i == 0 ? rune.runes[0] : rune.category)
+            )
+        );
+        ++i;
+    }
+    mainDiv.appendChild(runes);
+
+    /* Player score */
+    const score = document.createElement('div');
+
+    /* KDA */
+    const kda = document.createElement('h1');
+    kda.appendChild(elementWithText('span', me.kills.toString()));
+    kda.appendChild(elementWithText('span', '/'));
+    kda.appendChild(elementWithText('span', me.deaths.toString()));
+    kda.appendChild(elementWithText('span', '/'));
+    kda.appendChild(elementWithText('span', me.asists.toString()));
+    score.appendChild(kda);
+
+    /*  KDA num  */
+    const KDA = document.createElement('h2');
+    const kdaValue = document.createElement('span');
+    const kdaNum = (me.kills + me.asists) / me.deaths;
+    kdaValue.textContent = kdaNum.toFixed(2);
+    if (kdaNum >= 5) {
+        kdaValue.classList.add('excellent');
+    } else if (kdaNum >= 3) {
+        kdaValue.classList.add('perfect');
+    }
+    KDA.appendChild(kdaValue);
+    KDA.appendChild(elementWithText('span', ' KDA'));
+    score.appendChild(KDA);
+
+    /*  CS  */
+    score.appendChild(elementWithText('h2', `${me.cs} CS`));
+    /*  Vision  */
+    score.appendChild(elementWithText('h2', `${me.vision} vision`));
+    mainDiv.appendChild(score);
+
+    /*  Items  */
+    const items = document.createElement('div');
+
+    /*  Regular items  */
+    for (const item of [...me.items, me.trinket]) {
+        if (item == 0) {
+            items.appendChild(elementWithText('div', ''));
+        } else {
+            items.appendChild(
+                elementWithAttr('img', 'src', RiotAPI.getAsset('item', item))
+            );
+        }
+    }
+
+    mainDiv.appendChild(items);
+
+    /*  Players  */
+    const playerList = document.createElement('div');
+    for (const player of players) {
+        const playerEl = document.createElement('div');
+
+        if (player.me) {
+            playerEl.classList.add('me');
+        }
+
+        playerEl.appendChild(
+            elementWithAttr('img', 'src', RiotAPI.getAsset('champion', player.champName))
+        );
+        playerEl.appendChild(elementWithText('span', player.name));
+        playerList.appendChild(playerEl);
+    }
+    mainDiv.appendChild(playerList);
+
+    /*  Open Button  */
+    const open = document.createElement('div');
+    const button = document.createElement('i');
+    button.classList.value = 'bi bi-caret-down-fill text-2xl';
+    open.appendChild(button);
+    mainDiv.appendChild(open);
+
+    rootDiv.appendChild(mainDiv);
+
+    /* More stats div */
+    const moreStats = document.createElement('div');
+    moreStats.classList.add('!hidden');
+    moreStats.appendChild(
+        elementWithAttr(
+            'img',
+            'src',
+            'https://media.tenor.com/_62bXB8gnzoAAAAj/loading.gif'
+        )
+    );
+
+    button.addEventListener('click', () => {
+        if (moreStats.classList.contains('!hidden')) {
+            moreStats.classList.remove('!hidden');
+            button.classList.remove('bi-caret-down-fill');
+            button.classList.add('bi-caret-up-fill');
+
+            console.log(!moreStats.dataset.loaded);
+
+            if (!moreStats.dataset.loaded) {
+                moreMatchData(match, moreStats);
+            }
+            return;
+        }
+        moreStats.classList.add('!hidden');
+        button.classList.add('bi-caret-down-fill');
+        button.classList.remove('bi-caret-up-fill');
+    });
+
+    rootDiv.appendChild(moreStats);
+
+    matchList.appendChild(rootDiv);
+};
+
+const render = async () => {
     if (!userData) {
         profile.classList.add('invisible');
         content.classList.add('invisible');
         lastUpdate.classList.add('invisible');
         return;
     }
-
-    console.log(userData);
 
     lastUpdate.textContent = 'Last Update: ' + toDate(userData.lastUpdate as any);
     icon.querySelector<HTMLImageElement>('img')!.src = RiotAPI.getAsset(
@@ -231,15 +657,21 @@ const render = () => {
     for (const child of Array.from(item.children)) child.remove();
 
     for (const challenge of userData.item) {
-        const img = document.createElement('img');
-        img.src = RiotAPI.getAsset('challenges', challenge);
-        item.appendChild(img);
+        item.appendChild(
+            elementWithAttr('img', 'src', RiotAPI.getAsset('challenges', challenge))
+        );
     }
 
+    //ranks
     for (const [queue, data] of Object.entries(userData.ranks) as Entries<
         UserData['ranks']
     >) {
         putRank(content.querySelector<HTMLDivElement>('#' + QueueToIdMap[queue])!, data);
+    }
+
+    //match list
+    for (const match of userData.matches) {
+        await addMatch(match);
     }
 
     profile.classList.remove('invisible');

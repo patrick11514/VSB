@@ -15,89 +15,331 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 </head>
 
-<body class="flex h-full w-full flex-col items-center justify-center gap-2 bg-background p-4 font-roboto text-text">
-    <h1 class="text-5xl font-bold text-primary">League of Legends Stats</h1>
-    <div id="search" class="flex gap-2 rounded-md border-2 border-white p-2">
-        <input id="username" type="text" required placeholder="username" />
-        <h3 class="text-xl">#</h3>
-        <input id="tag" type="text" required placeholder="tag" />
-        <select id="region"></select>
-    </div>
-    <button id="search"
-        class="transition-color rounded-md border-[1px] border-white bg-secondary px-4 py-1 text-xl font-bold duration-200 hover:bg-accent active:translate-y-2 disabled:grayscale">
-        Search
-    </button>
-
-    <h2 id="lastUpdate" class="invisible mr-auto pt-2 text-center font-bold text-gray-500">
-        Last Update: 22:30:40 1.10.2024
-    </h2>
-    <section id="profile" class="invisible mr-auto flex gap-2 pt-4">
-        <div id="icon" class="relative flex w-max">
-            <img class="aspect-square w-28 rounded-md border-2 border-white"
-                src="https://static.bigbrain.gg/assets/lol/riot_static/14.23.1/img/profileicon/5735.png" />
-            <div class="absolute -top-4 flex w-full">
-                <span class="mx-auto rounded-md border-[1px] border-primary bg-secondary px-1 text-center">128</span>
-            </div>
+<body class="flex h-full w-full bg-background p-4 font-roboto text-text">
+    <section class="mx-auto flex w-full flex-col items-center justify-center gap-2 xl:w-[90%] 2xl:w-[80%]">
+        <h1 class="text-5xl font-bold text-primary">League of Legends Stats</h1>
+        <div id="search" class="flex gap-2 rounded-md border-2 border-white p-2">
+            <input id="username" type="text" required placeholder="username" />
+            <h3 class="text-xl">#</h3>
+            <input id="tag" type="text" required placeholder="tag" />
+            <select id="region"></select>
         </div>
+        <button id="search"
+            class="transition-color rounded-md border-[1px] border-white bg-secondary px-4 py-1 text-xl font-bold duration-200 hover:bg-accent active:translate-y-2 disabled:grayscale">
+            Search
+        </button>
 
-        <div class="flex flex-col justify-center">
-            <h1 id="username" class="text-center text-2xl font-bold">
-                patrick115 <span class="text-xl text-gray-500">#Czech</span>
-            </h1>
-            <h1 id="title" class="text-center text-lg font-bold">Super človíček</h1>
-            <section id="challenges" class="flex w-full items-center justify-center gap-2">
-                <img src="/assets/ddragon/img/challenges-images/101000-IRON.png" />
-                <img src="/assets/ddragon/img/challenges-images/101000-IRON.png" />
-                <img src="/assets/ddragon/img/challenges-images/101000-IRON.png" />
-            </section>
-        </div>
-    </section>
-
-    <section id="content" class="invisible flex w-full justify-stretch gap-4">
-        <section class="flex max-w-max flex-1 flex-col gap-4">
-            <div class="w-full rounded-lg border-2 border-accent bg-secondary p-4">
-                <h1 class="w-full text-nowrap text-xl font-bold text-primary">
-                    Solo/Duo
-                </h1>
-                <div id="solo-rank" class="flex gap-2">
-                    <img class="w-20" src="/assets/images/Emerald.png" />
-                    <div class="flex flex-col justify-center">
-                        <h2 class="text-xl font-bold">Emerald III</h2>
-                        <h4 class="text-lg">28 LP</h4>
-                    </div>
-                    <div class="ml-auto flex flex-col justify-center text-right">
-                        <h4 class="text-lg">2W 4L</h4>
-                        <h4 class="text-lg">28% Win Rate</h4>
-                    </div>
+        <h2 id="lastUpdate" class="invisible mr-auto pt-2 text-center font-bold text-gray-500">
+            Last Update: 22:30:40 1.10.2024
+        </h2>
+        <section id="profile" class="invisible mr-auto flex gap-2 pt-4">
+            <div id="icon" class="relative flex w-max">
+                <img class="aspect-square w-28 rounded-md border-2 border-white"
+                    src="https://static.bigbrain.gg/assets/lol/riot_static/14.23.1/img/profileicon/5735.png" />
+                <div class="absolute -top-4 flex w-full">
+                    <span class="mx-auto rounded-md border-[1px] border-primary bg-secondary px-1 text-center">
+                        128
+                    </span>
                 </div>
             </div>
-            <div class="w-full rounded-lg border-2 border-accent bg-secondary p-4">
-                <h1 class="w-full text-nowrap text-xl font-bold text-primary">
-                    Flex 5v5
+
+            <div class="flex flex-col justify-center">
+                <h1 id="username" class="text-center text-2xl font-bold">
+                    patrick115 <span class="text-xl text-gray-500">#Czech</span>
                 </h1>
-                <div id="flex-rank" class="flex gap-2">
-                    <img class="w-20" src="/assets/images/Unranked.png" />
-                    <div class="flex flex-col justify-center">
-                        <h2 class="text-xl font-bold">Unranked</h2>
-                        <h4 class="text-lg">N/A LP</h4>
-                    </div>
-                    <div class="ml-auto flex flex-col justify-center text-right">
-                        <h4 class="text-lg">0W 0L</h4>
-                        <h4 class="text-lg">N/A% Win Rate</h4>
-                    </div>
-                </div>
+                <h1 id="title" class="text-center text-lg font-bold">
+                    Super človíček
+                </h1>
+                <section id="challenges" class="flex w-full items-center justify-center gap-2">
+                    <img src="/assets/ddragon/img/challenges-images/101000-IRON.png" />
+                    <img src="/assets/ddragon/img/challenges-images/101000-IRON.png" />
+                    <img src="/assets/ddragon/img/challenges-images/101000-IRON.png" />
+                </section>
             </div>
         </section>
 
-        <section id="content"
-            class="flex w-auto flex-1 flex-col gap-2 rounded-lg border-2 border-accent bg-secondary p-2">
-            <div class="flex gap-2 rounded-md border-2 border-primary bg-background">
-                <div class="flex flex-col gap-2">
-                    <h1>Solo/Duo</h1>
-                    <h3>2 days ago</h3>
-                    <h2>WIN <span>33:45</span></h2>
+        <section id="content" class="-invisible flex w-full flex-col justify-stretch gap-4 lg:flex-row">
+            <section class="mx-auto flex max-w-max flex-1 flex-col gap-4 lg:m-0">
+                <div class="w-full rounded-lg border-2 border-accent bg-secondary p-4">
+                    <h1 class="w-full text-nowrap text-xl font-bold text-primary">
+                        Solo/Duo
+                    </h1>
+                    <div id="solo-rank" class="flex gap-2">
+                        <img class="w-20" src="/assets/images/Emerald.png" />
+                        <div class="flex flex-col justify-center">
+                            <h2 class="text-xl font-bold">Emerald III</h2>
+                            <h4 class="text-lg">28 LP</h4>
+                        </div>
+                        <div class="ml-auto flex flex-col justify-center text-right">
+                            <h4 class="text-lg">2W 4L</h4>
+                            <h4 class="text-lg">28% Win Rate</h4>
+                        </div>
+                    </div>
                 </div>
-            </div>
+                <div class="w-full rounded-lg border-2 border-accent bg-secondary p-4">
+                    <h1 class="w-full text-nowrap text-xl font-bold text-primary">
+                        Flex 5v5
+                    </h1>
+                    <div id="flex-rank" class="flex gap-2">
+                        <img class="w-20" src="/assets/images/Unranked.png" />
+                        <div class="flex flex-col justify-center">
+                            <h2 class="text-xl font-bold">Unranked</h2>
+                            <h4 class="text-lg">N/A LP</h4>
+                        </div>
+                        <div class="ml-auto flex flex-col justify-center text-right">
+                            <h4 class="text-lg">0W 0L</h4>
+                            <h4 class="text-lg">N/A% Win Rate</h4>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="matches" class="flex w-auto flex-1 flex-col gap-2 rounded-lg border-2 border-accent p-2">
+                <div class="lose !hidden">
+                    <div>
+                        <div>
+                            <h1>Solo/Duo</h1>
+                            <h3>2 days ago</h3>
+                            <h2>WIN <span>33:45</span></h2>
+                        </div>
+
+                        <div>
+                            <img src="/assets/ddragon/14.23.1/img/champion/Caitlyn.png" />
+                            <div>14</div>
+                        </div>
+                        <div>
+                            <img src="/assets/ddragon/14.23.1/img/spell/SummonerFlash.png" />
+                            <img src="/assets/ddragon/14.23.1/img/spell/SummonerHeal.png" />
+                        </div>
+                        <div>
+                            <img
+                                src="/assets/ddragon/img/perk-images/Styles/Precision/FleetFootwork/FleetFootwork.png" />
+                            <img src="/assets/ddragon/img/perk-images/Styles/7202_Sorcery.png" />
+                        </div>
+                        <div>
+                            <h1>
+                                <span>14</span> <span>/</span> <span>7</span>
+                                <span>/</span> <span>9</span>
+                            </h1>
+                            <h2><span class="perfect">3.29</span> KDA</h2>
+                            <h2>105 CS</h2>
+                            <h2>17 vision</h2>
+                        </div>
+                        <div>
+                            <img src="/assets/ddragon/14.23.1/img/item/1001.png" />
+                            <img src="/assets/ddragon/14.23.1/img/item/1004.png" />
+                            <img src="/assets/ddragon/14.23.1/img/item/1006.png" />
+                            <img src="/assets/ddragon/14.23.1/img/item/1011.png" />
+                            <img src="/assets/ddragon/14.23.1/img/item/1018.png" />
+                            <img src="/assets/ddragon/14.23.1/img/item/1026.png" />
+                            <div></div>
+                        </div>
+                        <div>
+                            <div>
+                                <img src="/assets/ddragon/14.23.1/img/champion/Darius.png" />
+                                <span>patrick115</span>
+                            </div>
+                            <div class="me">
+                                <img src="/assets/ddragon/14.23.1/img/champion/Darius.png" />
+                                <span>patrick115</span>
+                            </div>
+                            <div>
+                                <img src="/assets/ddragon/14.23.1/img/champion/Darius.png" />
+                                <span>patrick115</span>
+                            </div>
+                            <div>
+                                <img src="/assets/ddragon/14.23.1/img/champion/Darius.png" />
+                                <span>patrick115</span>
+                            </div>
+                            <div>
+                                <img src="/assets/ddragon/14.23.1/img/champion/Darius.png" />
+                                <span>patrick115</span>
+                            </div>
+                            <div>
+                                <img src="/assets/ddragon/14.23.1/img/champion/Darius.png" />
+                                <span>patrick115</span>
+                            </div>
+                            <div>
+                                <img src="/assets/ddragon/14.23.1/img/champion/Darius.png" />
+                                <span>patrick115</span>
+                            </div>
+                            <div>
+                                <img src="/assets/ddragon/14.23.1/img/champion/Darius.png" />
+                                <span>patrick115</span>
+                            </div>
+                            <div>
+                                <img src="/assets/ddragon/14.23.1/img/champion/Darius.png" />
+                                <span>patrick115</span>
+                            </div>
+                            <div>
+                                <img src="/assets/ddragon/14.23.1/img/champion/Darius.png" />
+                                <span>patrick115</span>
+                            </div>
+                        </div>
+                        <div>
+                            <i class="bi bi-caret-down-fill text-2xl"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <img src="/assets/images/loading.gif" />
+                        <h1>Team info</h1>
+                        <h2 class="loss">Losers</h2>
+                        <div class="loss">
+                            <div>
+                                <div>
+                                    <img src="/assets/ddragon/14.23.1/img/champion/Caitlyn.png" />
+                                    <div>14</div>
+                                </div>
+                                <div>
+                                    <img src="/assets/ddragon/14.23.1/img/spell/SummonerFlash.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/spell/SummonerHeal.png" />
+                                </div>
+                                <div>
+                                    <img
+                                        src="/assets/ddragon/img/perk-images/Styles/Precision/FleetFootwork/FleetFootwork.png" />
+                                    <img src="/assets/ddragon/img/perk-images/Styles/7202_Sorcery.png" />
+                                </div>
+                                <h1>patrick115</h1>
+                                <div>
+                                    <h1>
+                                        <span>14</span> <span>/</span> <span>7</span>
+                                        <span>/</span> <span>9</span>
+                                    </h1>
+                                    <h2><span class="perfect">3.29</span> KDA</h2>
+                                </div>
+                                <div>
+                                    <img src="/assets/ddragon/14.23.1/img/item/1001.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/item/1004.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/item/1006.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/item/1011.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/item/1018.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/item/1026.png" />
+                                    <div></div>
+                                </div>
+                                <div>
+                                    <div>
+                                        <span>32,000 Damage</span>
+                                        <div>
+                                            <div style="width: 50%"></div>
+                                        </div>
+                                    </div>
+                                    <div>32 CS</div>
+                                    <div>25 500 Golds</div>
+                                    <div>56 Wards</div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <img src="/assets/ddragon/14.23.1/img/champion/Caitlyn.png" />
+                                    <div>14</div>
+                                </div>
+                                <div>
+                                    <img src="/assets/ddragon/14.23.1/img/spell/SummonerFlash.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/spell/SummonerHeal.png" />
+                                </div>
+                                <div>
+                                    <img
+                                        src="/assets/ddragon/img/perk-images/Styles/Precision/FleetFootwork/FleetFootwork.png" />
+                                    <img src="/assets/ddragon/img/perk-images/Styles/7202_Sorcery.png" />
+                                </div>
+                                <h1>patrick115</h1>
+                                <div>
+                                    <h1>
+                                        <span>14</span> <span>/</span> <span>7</span>
+                                        <span>/</span> <span>9</span>
+                                    </h1>
+                                    <h2><span class="perfect">3.29</span> KDA</h2>
+                                </div>
+                                <div>
+                                    <img src="/assets/ddragon/14.23.1/img/item/1001.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/item/1004.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/item/1006.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/item/1011.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/item/1018.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/item/1026.png" />
+                                    <div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h2 class="win">Winners</h2>
+                        <div class="win">
+                            <div>
+                                <div>
+                                    <img src="/assets/ddragon/14.23.1/img/champion/Caitlyn.png" />
+                                    <div>14</div>
+                                </div>
+                                <div>
+                                    <img src="/assets/ddragon/14.23.1/img/spell/SummonerFlash.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/spell/SummonerHeal.png" />
+                                </div>
+                                <div>
+                                    <img
+                                        src="/assets/ddragon/img/perk-images/Styles/Precision/FleetFootwork/FleetFootwork.png" />
+                                    <img src="/assets/ddragon/img/perk-images/Styles/7202_Sorcery.png" />
+                                </div>
+                                <h1>patrick115</h1>
+                                <div>
+                                    <h1>
+                                        <span>14</span> <span>/</span> <span>7</span>
+                                        <span>/</span>
+                                        <span>9</span>
+                                    </h1>
+                                    <h2><span class="perfect">3.29</span> KDA</h2>
+                                </div>
+                                <div>
+                                    <img src="/assets/ddragon/14.23.1/img/item/1001.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/item/1004.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/item/1006.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/item/1011.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/item/1018.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/item/1026.png" />
+                                    <div></div>
+                                </div>
+                                <div>
+                                    <span>32,000 Damage</span>
+                                    <div>
+                                        <div style="width: 50%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <img src="/assets/ddragon/14.23.1/img/champion/Caitlyn.png" />
+                                    <div>14</div>
+                                </div>
+                                <div>
+                                    <img src="/assets/ddragon/14.23.1/img/spell/SummonerFlash.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/spell/SummonerHeal.png" />
+                                </div>
+                                <div>
+                                    <img
+                                        src="/assets/ddragon/img/perk-images/Styles/Precision/FleetFootwork/FleetFootwork.png" />
+                                    <img src="/assets/ddragon/img/perk-images/Styles/7202_Sorcery.png" />
+                                </div>
+                                <h1>patrick115</h1>
+                                <div>
+                                    <h1>
+                                        <span>14</span> <span>/</span> <span>7</span>
+                                        <span>/</span>
+                                        <span>9</span>
+                                    </h1>
+                                    <h2><span class="perfect">3.29</span> KDA</h2>
+                                </div>
+                                <div>
+                                    <img src="/assets/ddragon/14.23.1/img/item/1001.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/item/1004.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/item/1006.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/item/1011.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/item/1018.png" />
+                                    <img src="/assets/ddragon/14.23.1/img/item/1026.png" />
+                                    <div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </section>
     </section>
 </body>

@@ -3,12 +3,16 @@ module.exports = {
     content: ["./src/**/*.{html,ts,js,css}", "!./src/assets/ddragon/**/*"],
     theme: {
         extend: {
+            screens: {
+                sxl: "1200px"
+            },
             colors: {
                 'text': '#dae3fa',
                 'background': '#040c21',
                 'primary': '#88acf0',
                 'secondary': '#321189',
                 'accent': '#8a2be4',
+                "gold": "rgb(255, 155, 0)"
             },
             fontFamily: {
                 "roboto": "Roboto"

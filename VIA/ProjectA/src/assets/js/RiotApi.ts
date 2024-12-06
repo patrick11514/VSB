@@ -57,11 +57,11 @@ const MAPPINGS = {
 
 type RiotResponse<$Data> =
     | {
-          status: {
-              status_code: number;
-              message: string;
-          };
-      }
+        status: {
+            status_code: number;
+            message: string;
+        };
+    }
     | $Data;
 
 const getData = async <$Return>(
@@ -105,7 +105,12 @@ type Entries<T> = {
 
 const AssetMap = {
     challenges: 'img/challenges-images',
-    profileImage: `${DDRAGON_VERSION}/img/profileicon`
+    profileImage: `${DDRAGON_VERSION}/img/profileicon`,
+    champion: `${DDRAGON_VERSION}/img/champion`,
+    item: `${DDRAGON_VERSION}/img/item`,
+    summoner: `${DDRAGON_VERSION}/img/spell`,
+    rune: `img/perk-images/Styles`,
+    runeFromFunc: `img`
 } as const satisfies Record<string, string>;
 
 type Tier =
@@ -221,6 +226,7 @@ type MatchInfo = {
     gameEndTimestamp: number;
     gameId: number;
     gameMode: GameMode;
+    queueId: number;
     teams: {
         bans: {
             championId: number;
@@ -238,6 +244,36 @@ type Match = {
 };
 
 class RiotAPI {
+    private static SummonerData:
+        | {
+            data: Record<
+                string,
+                {
+                    id: string;
+                    name: string;
+                    key: `${number}`;
+                }
+            >;
+        }
+        | undefined = undefined;
+
+    private static PerkData:
+        | {
+            id: number;
+            key: string;
+            icon: string;
+            name: string;
+            slots: {
+                runes: {
+                    id: number;
+                    key: string;
+                    icon: string;
+                    name: string;
+                }[];
+            }[];
+        }[]
+        | undefined = undefined;
+
     private static getRoutingByRegion(region: Region): Routing {
         for (const [routing, regions] of Object.entries(MAPPINGS) as Entries<
             typeof MAPPINGS
@@ -302,8 +338,8 @@ class RiotAPI {
         return {
             title: title
                 ? config.find((item) => item.id.toString() == title)?.localizedNames[
-                      'en_US'
-                  ].name
+                    'en_US'
+                ].name
                 : undefined,
             challenges: preferences.challengeIds
                 .map((challengeId) => {
@@ -348,5 +384,63 @@ class RiotAPI {
             getData<Match>(`/lol/match/v5/matches/${id}`, routing)
         );
         return await Promise.all(promises);
+    }
+
+    static async getSummonerSpell(id: number) {
+        if (this.SummonerData === undefined) {
+            //get data
+            const response = await fetch(
+                `/assets/ddragon/${DDRAGON_VERSION}/data/en_US/summoner.json`
+            );
+            const data = await response.json();
+            this.SummonerData = (data as typeof this.SummonerData)!;
+        }
+
+        console.log(this.SummonerData);
+
+        const spell = Object.values(this.SummonerData.data).find(
+            (summ) => summ.key == id.toString()
+        )!;
+
+        return spell;
+    }
+
+    private static getRuneIcon(style: number, subStyle: number) {
+        if (!this.PerkData) return '';
+
+        const primaryStyle = this.PerkData.find((perk) => perk.id === style);
+        if (!primaryStyle) return '';
+
+        const flattedSlots = primaryStyle.slots.map((slot) => slot.runes).flat();
+        const SubStyle = flattedSlots.find((sub) => sub.id === subStyle);
+        if (!SubStyle) return '';
+
+        return SubStyle.icon.slice(0, -4);
+    }
+
+    static async extractRunes(perks: Participant['perks']) {
+        if (this.PerkData === undefined) {
+            //get data
+            const response = await fetch(
+                `/assets/ddragon/${DDRAGON_VERSION}/data/en_US/runesReforged.json`
+            );
+            const data = await response.json();
+            this.PerkData = (data as typeof this.PerkData)!;
+        }
+
+        return {
+            main: perks.styles.map((style) => {
+                return {
+                    category:
+                        this.PerkData!.find(
+                            (perk) => perk.id === style.style
+                        )?.icon.slice(0, -4) ?? '',
+                    runes: style.selections.map((sel) =>
+                        this.getRuneIcon(style.style, sel.perk)
+                    )
+                };
+            }),
+            stats: []
+        };
     }
 }

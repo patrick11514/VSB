@@ -17,6 +17,295 @@
     @apply w-10;
 }
 
+#matches {
+    & > div {
+        @apply flex flex-col gap-1 rounded-md border-2 p-2 text-center;
+        & > div:first-child {
+            @apply flex justify-center md:justify-start;
+
+            /* Queue + date + WIN/LOSE + time */
+            & > :nth-child(1) {
+                @apply mr-2 flex flex-col justify-center;
+
+                h1 {
+                    @apply text-lg font-bold;
+                }
+
+                h2 {
+                    @apply mt-2 font-bold;
+
+                    span {
+                        @apply font-normal text-white;
+                    }
+                }
+            }
+
+            /* Champion image */
+            & > :nth-child(2) {
+                @apply relative my-auto flex aspect-square h-max w-16 items-center justify-center;
+
+                div {
+                    @apply absolute bottom-0 left-0 rounded-md bg-black px-1 font-bold;
+                }
+            }
+
+            /* Summoner spells + Rune */
+            & > :nth-child(3),
+            & > :nth-child(4) {
+                @apply my-auto flex w-8 flex-col justify-center gap-1;
+
+                img {
+                    @apply rounded-md;
+                }
+            }
+
+            /* Runes border + bg */
+            & > :nth-child(4) img {
+                @apply bg-white bg-opacity-20;
+                &:last-child {
+                    @apply p-1;
+                }
+            }
+
+            /* Score */
+            & > :nth-child(5) {
+                @apply flex flex-col;
+
+                h1 {
+                    @apply mx-4 text-xl font-bold;
+
+                    span {
+                        &:first-child {
+                            @apply text-green-500;
+                        }
+                        &:nth-child(2),
+                        &:nth-child(4) {
+                            @apply text-gray-700;
+                        }
+                        &:nth-child(3) {
+                            @apply text-red-500;
+                        }
+                    }
+                }
+
+                h2 span:first-child {
+                    @apply font-bold;
+                    &.perfect {
+                        @apply text-secondary;
+                    }
+                    &.excelent {
+                        @apply text-gold;
+                    }
+                }
+            }
+
+            & > :nth-child(6) {
+                @apply my-auto grid h-max grid-cols-4 gap-1;
+                img,
+                div {
+                    @apply w-8 rounded-md bg-white bg-opacity-20;
+                    &:last-child {
+                        @apply col-start-4 row-start-1;
+                    }
+                }
+            }
+
+            & > :nth-child(7) {
+                @apply ml-auto hidden grid-flow-col grid-cols-2 grid-rows-5 gap-x-4 gap-y-px lg:grid;
+                div {
+                    @apply flex items-center gap-2;
+                    img {
+                        @apply aspect-square h-6 rounded-sm;
+                    }
+
+                    span {
+                        @apply text-ellipsis whitespace-nowrap;
+                    }
+
+                    &.me {
+                        img {
+                            @apply rounded-full border-[1px] border-yellow-500;
+                        }
+
+                        span {
+                            @apply font-bold;
+                        }
+                    }
+                }
+            }
+
+            & > :nth-child(8) {
+                @apply ml-auto flex cursor-pointer items-end lg:ml-0;
+                i {
+                    @apply transition-colors duration-200;
+                }
+
+                &:hover i {
+                    @apply text-accent;
+                }
+            }
+        }
+
+        & > :last-child {
+            @apply flex flex-col gap-2;
+
+            & > img {
+                @apply mx-auto w-14;
+            }
+
+            & > h1 {
+                @apply text-left text-2xl font-bold;
+            }
+
+            & > h2 {
+                @apply text-left text-xl font-bold;
+                &.win {
+                    @apply text-accent;
+                }
+                &.loss {
+                    @apply text-red-500;
+                }
+            }
+
+            & > div:nth-of-type(1),
+            & > div:nth-of-type(2) {
+                @apply flex flex-col gap-1 rounded-md p-2;
+
+                &.win {
+                    @apply bg-secondary;
+
+                    & > div > :nth-child(7) > div > div {
+                        @apply bg-primary;
+                    }
+                }
+
+                &.loss {
+                    @apply bg-red-700;
+
+                    & > div > :nth-child(7) > div > div {
+                        @apply bg-red-400;
+                    }
+                }
+
+                & > div {
+                    @apply flex flex-row items-center gap-1;
+
+                    /* Champion image */
+                    & > :nth-child(1) {
+                        @apply relative my-auto flex aspect-square h-14 w-14 items-center justify-center;
+
+                        div {
+                            @apply absolute bottom-0 left-0 rounded-md bg-black px-1 font-bold;
+                        }
+                    }
+
+                    /* Summoner spells + Rune */
+                    & > :nth-child(2),
+                    & > :nth-child(3) {
+                        @apply my-auto flex h-6 w-6 flex-col justify-center gap-1;
+
+                        img {
+                            @apply rounded-md;
+                        }
+                    }
+
+                    /* Runes border + bg */
+                    & > :nth-child(3) img {
+                        @apply bg-white bg-opacity-20;
+                        &:last-child {
+                            @apply p-1;
+                        }
+                    }
+
+                    /* Name */
+                    & > :nth-child(4) {
+                        @apply ml-2 mr-auto text-xl font-bold;
+                    }
+
+                    /* Score */
+                    & > :nth-child(5) {
+                        @apply flex flex-col;
+
+                        h1 {
+                            @apply mx-4 whitespace-nowrap text-lg font-bold;
+
+                            span {
+                                &:first-child {
+                                    @apply text-green-500;
+                                }
+                                &:nth-child(2),
+                                &:nth-child(4) {
+                                    @apply text-gray-700;
+                                }
+                                &:nth-child(3) {
+                                    @apply text-red-500;
+                                }
+                            }
+                        }
+
+                        h2 span:first-child {
+                            @apply font-bold;
+                            &.perfect {
+                                @apply text-secondary;
+                            }
+                            &.excelent {
+                                @apply text-gold;
+                            }
+                        }
+                    }
+
+                    & > :nth-child(6) {
+                        @apply my-auto grid h-max grid-cols-4 gap-1;
+                        img,
+                        div {
+                            @apply h-6 w-6 rounded-md bg-white bg-opacity-20;
+                            &:last-child {
+                                @apply col-start-4 row-start-1;
+                            }
+                        }
+                    }
+                    & > :nth-child(7) {
+                        @apply flex flex-row flex-wrap items-center justify-center gap-1;
+                        & > :nth-child(1) {
+                            @apply mx-2;
+
+                            & > span {
+                                @apply whitespace-nowrap font-bold;
+                            }
+
+                            & > div {
+                                @apply h-2 w-full rounded-full bg-black bg-opacity-20;
+                                div {
+                                    @apply h-2 rounded-full;
+                                }
+                            }
+                        }
+
+                        & > :nth-child(2),
+                        & > :nth-child(3),
+                        & > :nth-child(4) {
+                            @apply mx-1 whitespace-nowrap font-bold;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    & > .win {
+        @apply border-accent bg-secondary;
+        & > :nth-child(1) > h2 {
+            @apply text-green-500;
+        }
+    }
+
+    & > .lose {
+        @apply border-red-700 bg-red-900;
+        & > :nth-child(1) > h2 {
+            @apply text-red-500;
+        }
+    }
+}
+
 /* cyrillic-ext */
 @font-face {
     font-family: 'Roboto';
