@@ -29,6 +29,13 @@ void DarkForest::addObjects() {
   this->addObject(new Flashlight(glm::vec3{0.5, 0.5, 0.5}, this->getCamera(),
                                  1.0, 0.03, 0.00005));
 
+  this->addObject(new SkyBox(
+      std::array<std::string, 6>{"../textures/posx.jpg", "../textures/negx.jpg",
+                                 "../textures/posy.jpg", "../textures/negy.jpg",
+                                 "../textures/posz.jpg",
+                                 "../textures/negz.jpg"},
+      this->shaderStorage.getShaderProgram("dark_skybox").get()));
+
   std::random_device dev;
   std::mt19937 rng(dev());
 
