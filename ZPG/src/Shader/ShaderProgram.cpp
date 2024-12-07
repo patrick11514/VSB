@@ -2,6 +2,7 @@
 #include "ShaderProgram.hpp"
 #include "../Controller.hpp"
 #include "../Light/DirectionalLight.hpp"
+#include "../Light/Flashlight.hpp"
 #include "../Light/ReflectorLight.hpp"
 #include "../Scenes/Scene.hpp"
 #include "Shader.hpp"
@@ -117,7 +118,9 @@ void ShaderProgram::update(Observable *who) {
     auto *light = static_cast<Light *>(who);
 
     this->putLightPosition(light);
-    // this->putLightProperties(light);
+    if (light->getPropertiesUpdated()) {
+      this->putLightProperties(light);
+    }
   }
 }
 
@@ -156,7 +159,6 @@ void ShaderProgram::putLightPosition(Light *light) const {
 
     this->putParameter(std::format("lights[{}].angle", light->getId()),
                        reflectorLight->getAngle());
-  } else {
   }
 }
 

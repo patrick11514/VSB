@@ -6,7 +6,10 @@
 
 #include <glm/ext/vector_float3.hpp>
 
+enum Events { Properties, Position };
+
 enum LightType { POINT, DIRECTIONAL, REFLECTOR };
+
 class Light : public BaseObject, public Observable {
 private:
   std::shared_ptr<Transformation> transformations; ///< Object transformations
@@ -17,6 +20,9 @@ private:
   float kc; // contant attenuation
   float kl; // linear attenuation
   float kq; // quadratic attenuation
+protected:
+  bool propertiesUpdated = false;
+
 public:
   Light(glm::vec3 color, std::shared_ptr<Transformation> transformations,
         float kc, float kl, float kq, LightType type)
@@ -32,9 +38,13 @@ public:
   void assignId(int id);
 
   int getId() const;
+
   glm::vec3 getColor() const;
+  void setColor(glm::vec3 color);
+
   LightType getType() const;
   float getKc() const;
   float getKl() const;
   float getKq() const;
+  bool getPropertiesUpdated();
 };

@@ -1,13 +1,18 @@
 #include "Controller.hpp"
 #include "App.hpp"
+#include "Light/Flashlight.hpp"
 #include "Modifiers/Drawable.hpp"
 #include "Object/BaseObject.hpp"
+#include "Object/Material/TreeMaterial.hpp"
+#include "Object/Objects.hpp"
 #include "Object/Texture/Texture.hpp"
+#include "Transformation/Translate.hpp"
 #include "Window.hpp"
 
 #include <GLFW/glfw3.h>
 #include <cstdio>
 #include <glm/ext/matrix_clip_space.hpp>
+#include <glm/ext/matrix_projection.hpp>
 
 Controller *Controller::instance = nullptr;
 
@@ -57,21 +62,40 @@ void Controller::onMouseButton([[maybe_unused]] GLFWwindow *window, int key,
       GLuint x = this->cursor.x;
       GLuint y = this->app->window->getResolution().y - this->cursor.y;
 
-      GLfloat depth;
-      glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-      GLuint id;
-      glReadPixels(x, y, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &id);
+      if (this->controlMode == ControlMode::Destroy) {
+        GLuint id;
+        glReadPixels(x, y, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &id);
 
-      auto *scene = this->app->getCurrentScene();
+        auto *scene = this->app->getCurrentScene();
 
-      if (id > 0) {
-        Drawable *object = scene->getObject(id);
-        if (object != nullptr)
-          printf("Removing %d\n", object->getId());
-        scene->removeObject(dynamic_cast<BaseObject *>(object));
+        if (id > 0) {
+          Drawable *object = scene->getObject(id);
+          if (object != nullptr)
+            scene->removeObject(dynamic_cast<BaseObject *>(object));
+        }
+      } else if (this->controlMode == ControlMode::Place) {
+        GLfloat depth;
+        glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+        glm::vec3 screenX = glm::vec3(x, y, depth);
+
+        Window *window = this->app->window;
+        glm::vec4 viewPort = glm::vec4(0, 0, window->getResolution());
+        glm::vec3 pos =
+            glm::unProject(screenX, this->getCamera()->getViewMatrix(),
+                           window->getProjectionMatrix(), viewPort);
+
+        auto scene = this->app->getCurrentScene();
+
+        auto tree =
+            createTree(this->app->shaders.getShaderProgram("blinnphong").get(),
+                       std::make_shared<Transformation>()->addTransformation(
+                           new Translate(pos)),
+                       std::make_shared<TreeMaterial>());
+        tree->assignId();
+        scene->addObject(tree);
+
+        printf("%f %f %f\n", pos.x, pos.y, pos.z);
       }
-
-      printf("Depth: %f, Id: %d\n", depth, id);
     }
     break;
   case GLFW_RELEASE:
@@ -145,6 +169,43 @@ void Controller::onFrame() {
     case GLFW_KEY_J:
       this->staticSkyBox = false;
       break;
+    case GLFW_KEY_I: {
+      // switch flashligh color
+      // Tree remove mode = red
+      this->controlMode = ControlMode::Destroy;
+      auto lights = this->app->getCurrentScene()->getLights();
+      for (auto *light : lights) {
+        if (auto flashlight = dynamic_cast<Flashlight *>(light)) {
+          flashlight->setColor(glm::vec3{1.0, 0.0, 0.0});
+        }
+      }
+      break;
+    }
+    case GLFW_KEY_O: {
+      // switch flashligh color
+      // Tree plan mode = green
+      this->controlMode = ControlMode::Place;
+      auto lights = this->app->getCurrentScene()->getLights();
+      for (auto *light : lights) {
+        if (auto flashlight = dynamic_cast<Flashlight *>(light)) {
+          flashlight->setColor(glm::vec3{0.0, 1.0, 0.0});
+        }
+      }
+      break;
+    }
+
+    case GLFW_KEY_P: {
+      // switch flashligh color
+      // Zombie bezier = blue
+      this->controlMode = ControlMode::Bezier;
+      auto lights = this->app->getCurrentScene()->getLights();
+      for (auto *light : lights) {
+        if (auto flashlight = dynamic_cast<Flashlight *>(light)) {
+          flashlight->setColor(glm::vec3{0.0, 0.0, 1.0});
+        }
+      }
+      break;
+    }
     }
   }
 }

@@ -4,9 +4,11 @@
 #include <GLFW/glfw3.h>
 
 struct Cursor {
-  int x;
-  int y;
+  double x;
+  double y;
 };
+
+enum ControlMode { Destroy, Place, Bezier };
 
 /**
  * @brief Main Controller, which handles keyboard, mouse etc...
@@ -22,9 +24,6 @@ private:
       {GLFW_MOUSE_BUTTON_MIDDLE, false}}; ///< Map of all currently pressed
                                           ///< mouse button keys
 
-  double prevX = 0; ///< previous x position of mouse
-  double prevY = 0; ///< previsout y position of mouse
-
   static Controller *instance;
 
   Controller(App *app); ///< Default constructor which get app pointer
@@ -32,6 +31,7 @@ private:
   bool staticSkyBox = false;
 
   Cursor cursor;
+  ControlMode controlMode = ControlMode::Destroy;
 
 public:
   static Controller *getInstance(App *app);

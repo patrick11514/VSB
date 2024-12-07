@@ -43,7 +43,7 @@ void Forest::addObjects() {
           new Translate(glm::vec3{20.0, 5.0, 0.0})),
       0.0, 0.0, 0.0));
 
-  this->addObject(new Flashlight(glm::vec3{0.0, 0.0, 1.0}, this->getCamera(),
+  this->addObject(new Flashlight(glm::vec3{1.0, 0.0, 0.0}, this->getCamera(),
                                  1.0, 0.03, 0.00005));
 
   this->addObject(new SkyBox(

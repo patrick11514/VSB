@@ -1,4 +1,5 @@
 #include "BallLight.hpp"
+#include "Light.hpp"
 
 void BallLight::draw() {
   this->notifyObservers();

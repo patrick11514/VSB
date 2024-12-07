@@ -7,8 +7,8 @@ void Drawable::update() const {
 }
 
 void Drawable::draw() {
-  this->data->drawArrays();
   glStencilFunc(GL_ALWAYS, this->id, 0xFF);
+  this->data->drawArrays();
 }
 
 void Drawable::assignId() {
