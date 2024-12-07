@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ * File: ObjectDataStorage.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contains ObjectDataStorage class
+ */
+
 #include <memory>
 #include <unordered_map>
 

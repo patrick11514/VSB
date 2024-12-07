@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ * File: Scene.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contains Scene Class
+ */
+
 #include <unordered_set>
 #include <vector>
 

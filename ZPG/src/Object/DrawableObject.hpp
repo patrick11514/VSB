@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ * File: DrawableObject.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contains DrawableObject class
+ */
+
 #include <glm/ext/matrix_float4x4.hpp>
 #include <memory>
 
@@ -23,7 +29,9 @@ public:
    * @param shaderProgram Pointer to shader program, which will be used to
    * render this object
    * @param transformations Pointer to transformations used on this object
-   * @param renderFunction Render function to render Object(s) from slided data
+   * @param renderFunction Render Function which is optional and is used
+   * specific cases, like draw more things from data (3 triangles, 2 quads
+   * etc..), because in default it draw everything as triangles
    */
   DrawableObject(std::shared_ptr<ObjectData> data, ShaderProgram *shaderProgram,
                  std::shared_ptr<Transformation> transformations,
@@ -40,9 +48,5 @@ public:
     return this->transformations.get();
   };
 
-  /**
-   * @brief Draw object using the renderFunction
-   * @param time Elapsed time of animation
-   */
   void draw() override;
 };

@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ * File: ObjectData.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contains ObjectData class
+ */
+
 #include <GL/glew.h>
 #include <functional>
 #include <stdio.h>
@@ -9,7 +15,7 @@
 
 /**
  * @brief Slice raw float data into specific parts like: point coordinates,
- * normal, color etc...
+ * normals, uv...
  */
 class ObjectData {
 private:

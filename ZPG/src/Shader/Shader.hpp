@@ -1,4 +1,11 @@
 #pragma once
+
+/*
+ * File: Shader.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contains Shader Class
+ */
+
 #include <GL/glew.h>
 #include <string>
 

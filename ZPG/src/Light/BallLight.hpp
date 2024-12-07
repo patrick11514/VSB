@@ -1,5 +1,12 @@
 #pragma once
 
+/*
+ * File: BallLight.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contains BallLight class which is just PointLight with ball
+ * model
+ */
+
 #include "../Modifiers/Drawable.hpp"
 #include "../Object/Models/sphere.h"
 #include "../Object/ObjectData.hpp"
@@ -7,8 +14,21 @@
 
 #include <glm/ext/vector_float3.hpp>
 
+/**
+ * @brief Ball Light, which is PointLight with white ball model
+ */
 class BallLight : public PointLight, public Drawable {
 public:
+  /**
+   * @brief BallLight constructor
+   * @param color Color of light
+   * @param transformations Transformations of light and model
+   * @param kc Constant attenuation coeficient
+   * @param kl Linera attenuation coeficient
+   * @param kq Quadratic attenuation coeficient
+   * @param shaderProgram Shader Program used to draw this light
+   * @param material Material for ball
+   */
   BallLight(glm::vec3 color,
             const std::shared_ptr<Transformation> &transformations, float kc,
             float kl, float kq, ShaderProgram *shaderProgram,
@@ -27,5 +47,5 @@ public:
                      }),
                  shaderProgram, material) {};
 
-  void draw() override;
+  void draw() override; ///< Method called on draw
 };

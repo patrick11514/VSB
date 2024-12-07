@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ * File: App.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contains App class
+ */
+
 // Include GLEW
 #include <GL/glew.h>
 // Include GLFW

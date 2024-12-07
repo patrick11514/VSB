@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ * File: Observable.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contains Observable class
+ */
+
 #include "Observer.hpp"
 #include <vector>
 

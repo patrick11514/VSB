@@ -1,5 +1,12 @@
 #pragma once
 
+/*
+ * File: ObjectFactory.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File containing Factory for constructing Object either from
+ * float data or obj file
+ */
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -9,6 +16,22 @@
 #include "../Shader/ShaderProgram.hpp"
 #include "../Transformation/Transformation.hpp"
 
+// clang-format off
+
+/*
+
+Factories Path
+
+ObjectFactory ----> ObjObjectFactory ----------> ObjectDataFactory --> FinalObjectFactory
+                \                            /
+                 +--> PointObjectFactory -->/
+*/
+
+// clang-format on
+
+/**
+ * @brief Final factory, which then creates final Drawable Object
+ */
 class FinalObjectFactory {
 private:
   std::shared_ptr<ObjectData> objectData;
@@ -26,6 +49,10 @@ public:
 
 //
 
+/**
+ * @brief Object Data Factory create the ObjectData from model and puts it into
+ * next FinalObjectFactory
+ */
 class ObjectDataFactory {
 private:
   Model model;
@@ -46,6 +73,9 @@ public:
 
 //
 
+/**
+ * @brief Point Factory for putting float data into model
+ */
 class PointObjectFactory {
 public:
   std::shared_ptr<ObjectDataFactory>
@@ -54,6 +84,9 @@ public:
                                                size_t size);
 };
 
+/**
+ * @brief Obj Factory for loading data from obj file
+ */
 class ObjObjectFactory {
 public:
   std::shared_ptr<ObjectDataFactory> loadModel(const std::string &path);
@@ -61,6 +94,9 @@ public:
 
 //
 
+/**
+ * @brief Object factory, which is starting point for Object Creating
+ */
 class ObjectFactory {
 public:
   static std::shared_ptr<PointObjectFactory> pointObject() {

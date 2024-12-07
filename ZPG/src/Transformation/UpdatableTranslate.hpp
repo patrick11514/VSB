@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ * File: UpdatableTranslate.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contains UpdatableTranslate class
+ */
+
 #include "./Translate.hpp"
 
 /**

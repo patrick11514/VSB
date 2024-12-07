@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ * File: ShaderStorage.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contains ShaderStorage class
+ */
+
 #include <string>
 #include <unordered_map>
 

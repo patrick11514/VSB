@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ * File: ShaderProgram.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contains Shader Program class
+ */
+
 #include "../Camera.hpp"
 #include "../Light/Light.hpp"
 #include "../Object/Material/Material.hpp"

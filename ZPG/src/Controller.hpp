@@ -1,13 +1,26 @@
 #pragma once
 
+/*
+ * File: Controller.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contains Controller class
+ */
+
 #include "App.hpp"
 #include <GLFW/glfw3.h>
+#include <vector>
 
+/**
+ * @brief Current cursor position structure
+ */
 struct Cursor {
   double x;
   double y;
 };
 
+/**
+ * @brief Struct, which defines state of Controlling of scene
+ */
 enum ControlMode { Destroy, Place, Bezier };
 
 /**
@@ -24,16 +37,22 @@ private:
       {GLFW_MOUSE_BUTTON_MIDDLE, false}}; ///< Map of all currently pressed
                                           ///< mouse button keys
 
-  static Controller *instance;
+  static Controller *instance; ///< Single instance of Controller
 
   Controller(App *app); ///< Default constructor which get app pointer
 
-  bool staticSkyBox = false;
+  bool staticSkyBox = false; ///< Should skybox move?
 
-  Cursor cursor;
-  ControlMode controlMode = ControlMode::Destroy;
-
+  Cursor cursor;                                  ///< Current cursor position
+  ControlMode controlMode = ControlMode::Destroy; ///< Control mode of
+  std::vector<float> bezier;                      ///< Bezier curve, progress
 public:
+  /**
+   * @brief Singleton constructor, which gets existing instance, or create
+   * new one, where it uses the param app
+   * @param app only used when creating first instance
+   * @retuns Existing or new instance of Controller
+   */
   static Controller *getInstance(App *app);
 
   /**
@@ -68,9 +87,12 @@ public:
    * @param height height of window
    */
   void onResize(GLFWwindow *window, int width, int height);
-
+  /**
+   * @brief On Frame. This functions run, on every render frame,
+   * so we can handle movement etc.. in it
+   */
   void onFrame(); ///< This function is called every frame in main App loop
-
+                  ///
   glm::mat4 getProjectionMatrix() const; ///< Get projection matrix from APP
   Camera *getCamera();                   ///< Get camera from Current scene
   bool getSkyBoxStatic() const;

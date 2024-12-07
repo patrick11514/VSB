@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ * File: IndexedObjectData.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contains IndextObjectData class
+ */
+
 #include <GL/glew.h>
 #include <functional>
 #include <stdio.h>
@@ -10,7 +16,7 @@
 
 /**
  * @brief Slice raw float data into specific parts like: point coordinates,
- * normal, color etc... and store coodinates in index buffer
+ * normal, color etc... and store coodinates's indexes in index buffer
  */
 class IndexedObjectData : public ObjectData {
 private:

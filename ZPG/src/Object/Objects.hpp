@@ -1,5 +1,12 @@
 #pragma once
 
+/*
+ * File: Objects.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contain functions for creating specific object, like Ball,
+ * Tree etc..
+ */
+
 #include "DrawableObject.hpp"
 #include "ObjectDataStorage.hpp"
 

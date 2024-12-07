@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ * File: Scale.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contains Scale Class
+ */
+
 #include "Transformation.hpp"
 /**
  * @brief Basic Scale Transformation

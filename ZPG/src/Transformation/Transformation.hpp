@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ * File: Transformation.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contains Transformation Class
+ */
+
 #include <glm/matrix.hpp>
 #include <memory>
 #include <vector>

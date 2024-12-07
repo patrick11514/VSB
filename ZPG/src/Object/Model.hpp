@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ * File: Model.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contains Model class
+ */
+
 #include <cstddef>
 #include <vector>
 

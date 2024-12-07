@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ * File: RandomRotation.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contains RandomRotation class
+ */
+
 #include "Translate.hpp"
 #include <random>
 /**

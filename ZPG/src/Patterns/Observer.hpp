@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ * File: Observer.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description:  File contains Observer class
+ */
+
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/matrix.hpp>
 

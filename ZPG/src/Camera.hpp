@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ * File: Camera.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contains Camera class
+ */
+
 #include <glm/ext/matrix_transform.hpp>
 
 #include "Object/BaseObject.hpp"

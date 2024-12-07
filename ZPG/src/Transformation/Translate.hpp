@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ * File: Translate.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contains Translate Class
+ */
+
 #include "Transformation.hpp"
 /**
  * @brief Basic Translate Transformation

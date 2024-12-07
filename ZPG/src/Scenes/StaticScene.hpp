@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ * File: StaticScene.hpp
+ * Author: Patrik Mintěl (MIN0150)
+ * Description: File contains StaticScene class
+ */
+
 #include "../Object/Texture/TextureStorage.hpp"
 #include "../Shader/ShaderStorage.hpp"
 #include "Scene.hpp"
