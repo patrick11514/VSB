@@ -1,11 +1,13 @@
 #include "Controller.hpp"
 #include "App.hpp"
+#include "Factories/ObjectFactory.hpp"
 #include "Light/Flashlight.hpp"
 #include "Modifiers/Drawable.hpp"
 #include "Object/BaseObject.hpp"
 #include "Object/Material/TreeMaterial.hpp"
 #include "Object/Objects.hpp"
 #include "Object/Texture/Texture.hpp"
+#include "Transformation/BezierMovement.hpp"
 #include "Transformation/Translate.hpp"
 #include "Window.hpp"
 
@@ -13,6 +15,7 @@
 #include <cstdio>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_projection.hpp>
+#include <memory>
 
 Controller *Controller::instance = nullptr;
 
@@ -73,19 +76,21 @@ void Controller::onMouseButton([[maybe_unused]] GLFWwindow *window, int key,
           if (object != nullptr)
             scene->removeObject(dynamic_cast<BaseObject *>(object));
         }
-      } else if (this->controlMode == ControlMode::Place) {
-        GLfloat depth;
-        glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-        glm::vec3 screenX = glm::vec3(x, y, depth);
+        return;
+      }
+      GLfloat depth;
+      glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+      glm::vec3 screenX = glm::vec3(x, y, depth);
 
-        Window *window = this->app->window;
-        glm::vec4 viewPort = glm::vec4(0, 0, window->getResolution());
-        glm::vec3 pos =
-            glm::unProject(screenX, this->getCamera()->getViewMatrix(),
-                           window->getProjectionMatrix(), viewPort);
+      Window *window = this->app->window;
+      glm::vec4 viewPort = glm::vec4(0, 0, window->getResolution());
+      glm::vec3 pos =
+          glm::unProject(screenX, this->getCamera()->getViewMatrix(),
+                         window->getProjectionMatrix(), viewPort);
 
-        auto scene = this->app->getCurrentScene();
+      auto scene = this->app->getCurrentScene();
 
+      if (this->controlMode == ControlMode::Place) {
         auto tree =
             createTree(this->app->shaders.getShaderProgram("blinnphong").get(),
                        std::make_shared<Transformation>()->addTransformation(
@@ -93,9 +98,43 @@ void Controller::onMouseButton([[maybe_unused]] GLFWwindow *window, int key,
                        std::make_shared<TreeMaterial>());
         tree->assignId();
         scene->addObject(tree);
-
-        printf("%f %f %f\n", pos.x, pos.y, pos.z);
+        return;
       }
+
+      this->points.emplace_back(pos);
+      // add points to corespond arrays
+      auto tran = std::make_shared<Transformation>();
+      if (this->controlMode == ControlMode::BezierCubic) {
+        if (this->points.size() < 3)
+          return;
+
+        tran->addTransformation(new BezierMovement<glm::mat3x3>(
+            glm::mat3x3{this->points[0], this->points[1], this->points[2]}, 5));
+      } else if (this->controlMode == ControlMode::BezierQuadratic) {
+        if (this->points.size() < 4)
+          return;
+
+        tran->addTransformation(new BezierMovement<glm::mat4x3>(
+            glm::mat4x3{this->points[0], this->points[1], this->points[2],
+                        this->points[3]},
+            5));
+      }
+
+      // clear points
+      this->points.clear();
+
+      // create the zombie with curve
+      auto zombie =
+          ObjectFactory::objObject()
+              ->loadModel("../objects/zombie.obj")
+              ->defaultSlice()
+              ->finish(this->app->shaders.getShaderProgram("phong").get(), tran,
+                       this->app->textures.getTexture("zoombie"));
+
+      zombie->assignId();
+      scene->addObject(zombie);
+
+      printf("%f %f %f\n", pos.x, pos.y, pos.z);
     }
     break;
   case GLFW_RELEASE:
@@ -196,12 +235,26 @@ void Controller::onFrame() {
 
     case GLFW_KEY_P: {
       // switch flashligh color
-      // Zombie bezier = blue
-      this->controlMode = ControlMode::Bezier;
+      // Zombie bezier cubic = blue
+      this->controlMode = ControlMode::BezierCubic;
       auto lights = this->app->getCurrentScene()->getLights();
+      this->points = {};
       for (auto *light : lights) {
         if (auto flashlight = dynamic_cast<Flashlight *>(light)) {
           flashlight->setColor(glm::vec3{0.0, 0.0, 1.0});
+        }
+      }
+      break;
+    }
+    case GLFW_KEY_L: {
+      // switch flashligh color
+      // Zombie bezier quadratic = yellow
+      this->controlMode = ControlMode::BezierQuadratic;
+      auto lights = this->app->getCurrentScene()->getLights();
+      this->points = {};
+      for (auto *light : lights) {
+        if (auto flashlight = dynamic_cast<Flashlight *>(light)) {
+          flashlight->setColor(glm::vec3{1.0, 1.0, 0.0});
         }
       }
       break;

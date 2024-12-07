@@ -92,7 +92,6 @@ void ShaderProgram::registerToLight(Scene *scene) {
     for (auto *light : lights) {
       light->registerObserver(this);
 
-      this->putLightProperties(light); // only once
       this->update(light);
     }
   }

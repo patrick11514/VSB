@@ -59,21 +59,7 @@ void DarkForest::addObjects() {
   this->addObject(
       ObjectFactory::objObject()
           ->loadModel("../objects/zombie.obj")
-          ->slice(4,
-                  []() {
-                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-                                          11 * sizeof(float), (GLvoid *)0);
-                    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
-                                          11 * sizeof(float),
-                                          (GLvoid *)(3 * sizeof(float)));
-                    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE,
-                                          11 * sizeof(float),
-                                          (GLvoid *)(6 * sizeof(float)));
-                    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE,
-                                          11 * sizeof(float),
-                                          (GLvoid *)(8 * sizeof(float)));
-                    return 11;
-                  })
+          ->defaultSlice()
           ->finish(this->shaderStorage.getShaderProgram("phong").get(),
                    std::make_shared<Transformation>()
                        ->addTransformation(

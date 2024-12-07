@@ -67,6 +67,8 @@ public:
   slice(int slices = 1,
         std::function<int()> sliceAttrs = ObjectData::defaultSlice);
 
+  std::shared_ptr<FinalObjectFactory>
+  defaultSlice(); ///< Slice to x,y,z, normals, uv, tangents
   friend class PointObjectFactory;
   friend class ObjObjectFactory;
 };

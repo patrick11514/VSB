@@ -21,7 +21,7 @@ struct Cursor {
 /**
  * @brief Struct, which defines state of Controlling of scene
  */
-enum ControlMode { Destroy, Place, Bezier };
+enum ControlMode { Destroy, Place, BezierCubic, BezierQuadratic };
 
 /**
  * @brief Main Controller, which handles keyboard, mouse etc...
@@ -45,7 +45,8 @@ private:
 
   Cursor cursor;                                  ///< Current cursor position
   ControlMode controlMode = ControlMode::Destroy; ///< Control mode of
-  std::vector<float> bezier;                      ///< Bezier curve, progress
+                                                  // berizer curve progress
+  std::vector<glm::vec3> points;                  // bezier curve points
 public:
   /**
    * @brief Singleton constructor, which gets existing instance, or create

@@ -4,6 +4,7 @@
 #include <assimp/Importer.hpp>  // C++ importerinterface
 #include <assimp/postprocess.h> // Post processingflags
 #include <assimp/scene.h>       // aiSceneoutputdata structure
+#include <memory>
 #include <stdexcept>
 
 Assimp::Importer importer;
@@ -88,6 +89,30 @@ ObjectDataFactory::slice(int slices, std::function<int()> sliceAttrs) {
   if (this->indicies.size() == 0)
     return std::shared_ptr<FinalObjectFactory>(new FinalObjectFactory(
         std::make_shared<ObjectData>(this->model, slices, sliceAttrs)));
+
+  return std::shared_ptr<FinalObjectFactory>(
+      new FinalObjectFactory(std::make_shared<IndexedObjectData>(
+          this->model, this->indicies, slices, sliceAttrs)));
+}
+
+std::shared_ptr<FinalObjectFactory> ObjectDataFactory::defaultSlice() {
+  auto sliceAttrs = []() {
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float),
+                          (GLvoid *)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float),
+                          (GLvoid *)(3 * sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float),
+                          (GLvoid *)(6 * sizeof(float)));
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float),
+                          (GLvoid *)(8 * sizeof(float)));
+    return 11;
+  };
+  int slices = 4;
+
+  if (this->indicies.size() == 0) {
+    return std::shared_ptr<FinalObjectFactory>(new FinalObjectFactory(
+        std::make_shared<ObjectData>(this->model, slices, sliceAttrs)));
+  }
 
   return std::shared_ptr<FinalObjectFactory>(
       new FinalObjectFactory(std::make_shared<IndexedObjectData>(

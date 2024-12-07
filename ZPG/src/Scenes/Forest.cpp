@@ -10,11 +10,14 @@
 #include "../Object/Material/TreeMaterial.hpp"
 #include "../Object/Objects.hpp"
 #include "../Object/SkyBox.hpp"
+#include "../Transformation/BezierMovement.hpp"
 #include "../Transformation/DynamicRotation.hpp"
+#include "../Transformation/LineMovement.hpp"
 #include "../Transformation/RandomTranslate.hpp"
 #include "../Transformation/Scale.hpp"
 #include "../Transformation/Translate.hpp"
 
+#include <glm/ext/matrix_float4x3.hpp>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/vector_float3.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -56,21 +59,7 @@ void Forest::addObjects() {
   this->addObject(
       ObjectFactory::objObject()
           ->loadModel("../objects/house.obj")
-          ->slice(4,
-                  []() {
-                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-                                          11 * sizeof(float), (GLvoid *)0);
-                    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
-                                          11 * sizeof(float),
-                                          (GLvoid *)(3 * sizeof(float)));
-                    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE,
-                                          11 * sizeof(float),
-                                          (GLvoid *)(6 * sizeof(float)));
-                    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE,
-                                          11 * sizeof(float),
-                                          (GLvoid *)(8 * sizeof(float)));
-                    return 11;
-                  })
+          ->defaultSlice()
           ->finish(this->shaderStorage.getShaderProgram("phong").get(),
                    std::make_shared<Transformation>()->addTransformation(
                        new Translate(glm::vec3{10.f, 0.f, 10.f})),
@@ -79,21 +68,7 @@ void Forest::addObjects() {
   this->addObject(
       ObjectFactory::objObject()
           ->loadModel("../objects/login.obj")
-          ->slice(4,
-                  []() {
-                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-                                          11 * sizeof(float), (GLvoid *)0);
-                    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
-                                          11 * sizeof(float),
-                                          (GLvoid *)(3 * sizeof(float)));
-                    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE,
-                                          11 * sizeof(float),
-                                          (GLvoid *)(6 * sizeof(float)));
-                    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE,
-                                          11 * sizeof(float),
-                                          (GLvoid *)(8 * sizeof(float)));
-                    return 11;
-                  })
+          ->defaultSlice()
           ->finish(this->shaderStorage.getShaderProgram("phong").get(),
                    std::make_shared<Transformation>()->addTransformation(
                        new Translate(glm::vec3{-10.f, 0.f, 10.f})),
@@ -102,25 +77,33 @@ void Forest::addObjects() {
   this->addObject(
       ObjectFactory::objObject()
           ->loadModel("../objects/Kafka.obj")
-          ->slice(4,
-                  []() {
-                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-                                          11 * sizeof(float), (GLvoid *)0);
-                    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
-                                          11 * sizeof(float),
-                                          (GLvoid *)(3 * sizeof(float)));
-                    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE,
-                                          11 * sizeof(float),
-                                          (GLvoid *)(6 * sizeof(float)));
-                    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE,
-                                          11 * sizeof(float),
-                                          (GLvoid *)(8 * sizeof(float)));
-                    return 11;
-                  })
+          ->defaultSlice()
           ->finish(this->shaderStorage.getShaderProgram("phong").get(),
                    std::make_shared<Transformation>()->addTransformation(
                        new Translate(glm::vec3{-10.f, 0.f, -10.f})),
                    this->textureStorage.getTexture("kafka")));
+
+  this->addObject(
+      ObjectFactory::objObject()
+          ->loadModel("../objects/zombie.obj")
+          ->defaultSlice()
+          ->finish(this->shaderStorage.getShaderProgram("phong").get(),
+                   std::make_shared<Transformation>()->addTransformation(
+                       new LineMovement(glm::vec3{-5, 1, -5},
+                                        glm::vec3{5, 1, 8}, 5)),
+                   this->textureStorage.getTexture("zoombie")));
+
+  this->addObject(
+      ObjectFactory::objObject()
+          ->loadModel("../objects/zombie.obj")
+          ->defaultSlice()
+          ->finish(this->shaderStorage.getShaderProgram("phong").get(),
+                   std::make_shared<Transformation>()->addTransformation(
+                       new BezierMovement<glm::mat4x3>(
+                           glm::mat4x3{glm::vec3{-1, 0, 0}, glm::vec3{0, 1, 0},
+                                       glm::vec3{0, -1, 0}, glm::vec3{1, 0, 0}},
+                           5)),
+                   this->textureStorage.getTexture("zoombie")));
 
   std::random_device dev;
   std::mt19937 rng(dev());
