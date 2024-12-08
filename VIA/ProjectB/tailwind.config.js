@@ -6,10 +6,12 @@ module.exports = {
             colors: {
                 text: "#171A20",
                 blue: "#3e6ae1",
+                "blue-darker": "color-mix(in srgb, #3e6ae1, black 20%)",
                 "cyber-text": "#a2a3a5",
                 "cyber-bg": "#111",
                 "black-tansparent": "rgba(0,0,0,0.05)",
-                "text-gray": "rgb(92, 94, 98)"
+                "text-gray": "rgb(92, 94, 98)",
+                background: "#f4f4f4"
             },
             fontFamily: {
                 "universal-sans": "UniversalSans, Arial, sans-serif"

@@ -11,14 +11,15 @@ const images: Record<string, string> = {
     Hero7: 'https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Homepage-SolarPanels-01-%',
     Hero8: 'https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Homepage-SolarRoof-%-US.png',
     Hero9: 'https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Homepage-Powerwall-%-US.png',
-    Hero10: 'https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Homepage-Accessories-%-US.png'
+    Hero10: 'https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Homepage-Accessories-%-US.png',
+    ModelS: 'https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Model-S-Main-Hero-%-NA.png'
 };
 
 const DEST = './src/assets/images';
 const TYPES = ['Mobile', 'Desktop'] as const;
 
 const download = (name: string, path: string) => {
-    const currTypes = [...TYPES, ...(name === 'Hero1' ? ['Tablet'] : [])];
+    const currTypes = [...TYPES, ...(path.includes('Hero') ? ['Tablet'] : [])];
 
     const promiseArray = [];
 

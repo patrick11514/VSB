@@ -84,6 +84,7 @@ article a {
         & > div:first-child a {
             @apply text-[rgb(70,80,99)] hover:text-text;
         }
+
         & > div:last-child a {
             @apply hover:text-[rgb(70,80,99)];
         }
@@ -92,5 +93,40 @@ article a {
 
 #mobileNav > div,
 #mobileNav > a {
-    @apply w-full cursor-pointer rounded-md px-2 py-4 text-lg transition-all duration-300 hover:bg-gray-500 hover:bg-opacity-10 sm:w-max;
+    @apply w-full cursor-pointer rounded-md px-2 py-4 text-lg transition-colors duration-300 hover:bg-gray-500 hover:bg-opacity-10 sm:w-max;
+}
+
+main#login {
+    label {
+        @apply mb-1 text-sm text-text-gray;
+    }
+
+    input {
+        @apply mb-8 min-w-72 rounded-md border-[1px] border-transparent bg-background px-4 py-2 text-sm font-bold text-text-gray outline-none transition-colors duration-300 focus:border-gray-300;
+        &:invalid {
+            @apply border-[1px] border-red-500;
+        }
+    }
+
+    button {
+        @apply rounded-md py-2 transition-colors duration-200;
+    }
+
+    & > section {
+        @apply absolute left-1/2 -translate-x-1/2;
+    }
+}
+
+main#account {
+    & > :first-child > div.active {
+        @apply text-text;
+        i {
+            @apply bg-gray-200;
+        }
+    }
+}
+
+/* On some sites we want to foce nav to be dark */
+.force-nav-dark *.text-white {
+    @apply !text-text;
 }

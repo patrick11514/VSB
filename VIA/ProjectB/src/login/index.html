@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tesla SSO | Tesla</title>
+    <link href="/assets/css/main.css" rel="stylesheet" />
+    <link rel="preload" as="fetch" href="/assets/svgs/Logo.svg" />
+    <script src="/assets/js/framework.js" defer></script>
+    <script src="/assets/js/login.js" defer></script>
+    <script src="/assets/js/main.js" defer></script>
+    <link rel="icon" type="image/ico" href="/assets/images/favicon.ico" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+</head>
+
+<body class="flex h-full min-h-screen w-full flex-col font-universal-sans text-text">
+    <nav class="flex w-full justify-between p-4">
+        <a class="flex items-center justify-center" href="/"><svg class="h-3" load="Logo.svg"></svg></a>
+        <div
+            class="flex cursor-pointer items-center justify-center gap-4 rounded-md px-2 py-1 text-sm transition-colors duration-300 hover:bg-gray-500 hover:bg-opacity-10">
+            <i class="bi bi-globe text-xl"></i>
+            en-US
+        </div>
+    </nav>
+    <main id="login" class="relative flex h-full flex-1 p-4">
+        <section data-step="1" class="mx-auto flex w-max flex-col">
+            <h1 class="mb-8 text-3xl lg:text-4xl">Sign In</h1>
+            <label for="email">Email</label>
+            <input type="text" id="email" />
+            <button id="checkMail" class="bg-blue text-white hover:bg-blue-darker">Next</button>
+
+            <a href="#" class="mx-auto mt-4 w-max border-b-[1px] border-b-text-gray text-sm font-light text-text-gray">
+                Trouble Signing In? </a>
+            <div
+                class="my-8 flex items-center gap-2 text-sm text-text-gray before:block before:h-[1px] before:flex-1 before:bg-gray-300 after:block after:h-[1px] after:flex-1 after:bg-gray-300">
+                Or
+            </div>
+            <button class="bg-gray-100 hover:bg-gray-200">Create Account</button>
+        </section>
+        <section data-step="2" class="invisible mx-auto flex w-max flex-col">
+            <h1 class="mb-6 text-3xl lg:text-4xl">Sign In</h1>
+            <span class="mb-4 text-sm text-text-gray"></span>
+            <label for="password">Password</label>
+            <input type="password" id="password" />
+            <button id="checkMail" class="bg-blue text-white hover:bg-blue-darker">Log In</button>
+
+            <a href="#" class="mx-auto mt-4 w-max border-b-[1px] border-b-text-gray text-sm font-light text-text-gray">
+                Forgot your password?</a>
+            <div
+                class="my-8 flex items-center gap-2 text-sm text-text-gray before:block before:h-[1px] before:flex-1 before:bg-gray-300 after:block after:h-[1px] after:flex-1 after:bg-gray-300">
+                Or
+            </div>
+            <button class="bg-gray-100 hover:bg-gray-200">Create Account</button>
+        </section>
+    </main>
+    <footer class="flex items-center justify-center gap-2 py-4 text-[0.8rem] text-text-gray">
+        <a href="/">Tesla &copy; 2024</a>
+        <a href="#">Privacy & Legal</a>
+        <a href="#">Contact</a>
+    </footer>
+</body>
+
+</html>

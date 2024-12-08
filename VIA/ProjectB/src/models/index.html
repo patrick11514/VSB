@@ -14,6 +14,22 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 </head>
 
-<body></body>
+<body class="h-full w-full font-universal-sans text-text">
+    <nav include="nav.html"></nav>
+    <section class="relative h-screen w-full">
+        <picture>
+            <source srcset="/assets/images/Hero1-Mobile.png" media="(max-width: 640px)" />
+            <source srcset="/assets/images/Hero1-Tablet.png" media="(max-width: 1024px)" />
+            <img class="h-full w-full object-cover object-center" src="/assets/images/Hero1-Desktop.png" alt="Hero1" />
+        </picture>
+        <div class="absolute top-0 z-10 flex h-full w-full flex-col items-center text-white">
+            <h1 class="mt-28 text-4xl lg:text-6xl">0% APR Available</h1>
+            <div class="mt-8 flex w-full flex-row items-center justify-center gap-6 px-4">
+                <button>Order Model 3</button>
+                <button>Order Model Y</button>
+            </div>
+        </div>
+    </section>
+</body>
 
 </html>

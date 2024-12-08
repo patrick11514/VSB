@@ -6,11 +6,11 @@
 
 ## Requirements:
 
--   [ ] Více sloupcové rozložení obsahu stránek
+-   [x] Více sloupcové rozložení obsahu stránek
 -   [ ] Hlavní nabídka vč. dynamické podnabídky (minimálně 2 úrovně)
 -   [ ] Slider/karusel obsahu či obrázků (dle grafického návrhu)
 -   [ ] Kontaktní formulář s validací (min. HTML 5 a vlastní stylování)
 -   [ ] Fotogalerie s dynamickým zobrazením fotek (zvětšení fotky z galerie)
--   [ ] Počítadlo/odpočet (do určitého čísla nebo podle data) – vlastní JavaScript bez použití knihovny třetí strany!
--   [ ] Responzivní chování webové prezentace
--   [ ] Další prvky vycházející z potřeb obsahu či vybraného vzhledu
+-   [x] Počítadlo/odpočet (do určitého čísla nebo podle data) – vlastní JavaScript bez použití knihovny třetí strany!
+-   [x] Responzivní chování webové prezentace
+-   [x] Další prvky vycházející z potřeb obsahu či vybraného vzhledu

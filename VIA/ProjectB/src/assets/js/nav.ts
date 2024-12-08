@@ -22,6 +22,8 @@ document.addEventListener('included', () => {
         navContent.style.height = `${sum}px`;
     };
 
+    navContent?.querySelectorAll<HTMLDivElement>('div[href]')?.forEach((link) => link.addEventListener('click', () => window.location.replace(link.getAttribute('href')!)));
+
     const handleNavOpen = () => {
         if (!nav || !menuItems || !navContent || !navBackdrop) return;
 
@@ -31,11 +33,13 @@ document.addEventListener('included', () => {
                 if (element.id === currentNav) {
                     element.classList.remove('opacity-0');
                     element.classList.add('opacity-100');
+                    element.classList.add('z-50');
 
                     setNavContentHeight(element);
                 } else {
                     element.classList.add('opacity-0');
                     element.classList.remove('opacity-100');
+                    element.classList.remove('z-50');
                 }
             }
         }
@@ -51,7 +55,10 @@ document.addEventListener('included', () => {
 
             //show backdrop
             navBackdrop.classList.add('backdrop-blur');
-            navBackdrop.classList.remove('invisible');
+            setTimeout(() => {
+                navBackdrop.classList.remove('invisible');
+                navBackdrop.classList.remove('opacity-0');
+            }, 100);
 
             //disable scroll
             document.querySelector('html')!.style.overflow = 'hidden';
@@ -67,8 +74,11 @@ document.addEventListener('included', () => {
             navContent.classList.remove('bg-white');
 
             //hide
-            navBackdrop.classList.remove('backdrop-blur');
-            navBackdrop.classList.add('invisible');
+            navBackdrop.classList.add('opacity-0');
+            setTimeout(() => {
+                navBackdrop.classList.add('invisible');
+                navBackdrop.classList.remove('backdrop-blur');
+            }, 500);
 
             //hide currently opened nav data
             const opened = document.querySelector(`div#` + currentNav);
@@ -171,17 +181,23 @@ document.addEventListener('included', () => {
 
         if (navOpened) {
             navNav.classList.add('invisible');
+            document.documentElement.classList.remove('overflow-hidden');
         } else {
             navNav.classList.remove('invisible');
+            document.documentElement.classList.add('overflow-hidden');
         }
 
         navOpened = !navOpened;
     });
 
+    const announcement = document.querySelector('#announcement');
+    if (announcement) {
+        navNav?.classList.add('-top-[52px]');
+    }
+
     nav?.querySelector('#closeMobileNav')?.addEventListener('click', () => {
         navNav?.classList.add('invisible');
+        document.documentElement.classList.remove('overflow-hidden');
         navOpened = false;
     });
 });
-
-console.log('loaded');

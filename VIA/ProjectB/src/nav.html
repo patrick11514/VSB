@@ -16,7 +16,7 @@
         <div class="icons hidden w-1/4 flex-row items-center justify-end gap-2 text-2xl font-bold lg:flex">
             <i class="bi bi-question-circle"></i>
             <i class="bi bi-globe"></i>
-            <i class="bi bi-person-circle"></i>
+            <a href="/login"><i class="bi bi-person-circle"></i></a>
         </div>
         <button id="mobileButton"
             class="my-auto ml-auto block w-max bg-black bg-opacity-5 px-4 py-2 text-white transition-all duration-200 hover:bg-opacity-10 lg:hidden">
@@ -33,7 +33,7 @@
         <div id="vehicles" class="px-20 opacity-0">
             <div data-dynamic data-offset="0.08" data-attr="--animation-offset"
                 class="flex max-w-[calc(15rem_*_4_+_2rem)] flex-wrap gap-8 border-r-[1px] border-r-gray-300 px-4">
-                <div class="w-52">
+                <div href="/models" class="w-52 nostyle">
                     <img src="/assets/images/NavS.png" />
                     <h2 class="text-center text-lg">Model S</h2>
                     <div class="flex w-full items-center justify-center gap-4">
@@ -225,7 +225,8 @@
             </div>
         </div>
     </div>
-    <div id="backdrop" class="invisible fixed top-0 z-10 hidden h-screen w-full transition-all duration-500 lg:block">
+    <div id="backdrop"
+        class="invisible fixed bg-black bg-opacity-5 top-0 z-10 hidden h-screen w-full transition-all duration-500 lg:block opacity-0">
     </div>
     <!--
 
@@ -233,7 +234,7 @@
 
     !-->
     <div id="mobileNav"
-        class="invisible fixed -top-[52px] left-0 z-[100] flex h-screen w-screen flex-col gap-5 bg-white p-4 text-text lg:hidden">
+        class="invisible fixed left-0 z-[100] flex h-screen w-screen flex-col gap-5 bg-white p-4 text-text lg:hidden">
         <button id="closeMobileNav" class="ml-auto w-max px-1 py-0.5 text-xl"><i class="bi bi-x-lg"></i></button>
         <div class="flex justify-between">Vehicles <i class="bi bi-chevron-right sm:hidden"></i></div>
         <div class="flex justify-between">Energy <i class="bi bi-chevron-right sm:hidden"></i></div>
@@ -252,9 +253,9 @@
             </div>
             <i class="bi bi-chevron-right my-auto sm:hidden"></i>
         </div>
-        <div class="flex gap-4">
+        <a href="/login" class="flex gap-4">
             <i class="bi bi-person-circle text-xl"></i>
             Account
-        </div>
+    </div>
     </div>
 </nav>
