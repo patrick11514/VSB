@@ -7,7 +7,7 @@
 ## Requirements:
 
 -   [x] Více sloupcové rozložení obsahu stránek
--   [ ] Hlavní nabídka vč. dynamické podnabídky (minimálně 2 úrovně)
+-   [x] Hlavní nabídka vč. dynamické podnabídky (minimálně 2 úrovně)
 -   [x] Slider/karusel obsahu či obrázků (dle grafického návrhu)
 -   [ ] Kontaktní formulář s validací (min. HTML 5 a vlastní stylování)
 -   [x] Fotogalerie s dynamickým zobrazením fotek (zvětšení fotky z galerie)
