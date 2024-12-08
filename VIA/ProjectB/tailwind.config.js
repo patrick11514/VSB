@@ -33,7 +33,10 @@ module.exports = {
                 "ssm": ["0.75rem", {
                     lineHeight: "1rem"
                 }]
-            }
+            },
+            zIndex: {
+                5: "5"
+            },
         },
     },
     plugins: [],

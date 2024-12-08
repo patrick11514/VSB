@@ -4,32 +4,135 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Electric Cars, Solar & Clean Energy | Tesla</title>
+    <title>Model S | Tesla</title>
     <link href="/assets/css/main.css" rel="stylesheet" />
     <link rel="preload" as="fetch" href="/assets/svgs/Logo.svg" />
     <link rel="preload" as="fetch" href="/assets/svgs/Cybertruck.svg" />
     <script src="/assets/js/framework.js" defer></script>
+    <script src="/assets/js/model.js" defer></script>
     <script src="/assets/js/main.js" defer></script>
     <link rel="icon" type="image/ico" href="/assets/images/favicon.ico" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 </head>
 
-<body class="h-full w-full font-universal-sans text-text">
-    <nav include="nav.html"></nav>
-    <section class="relative h-screen w-full">
+<body class="h-full w-full bg-black font-universal-sans text-text">
+    <section include="announcement.html"></section>
+    <nav class="no-semi" include="nav.html"></nav>
+    <section class="relative h-hero w-full">
         <picture>
-            <source srcset="/assets/images/Hero1-Mobile.png" media="(max-width: 640px)" />
-            <source srcset="/assets/images/Hero1-Tablet.png" media="(max-width: 1024px)" />
-            <img class="h-full w-full object-cover object-center" src="/assets/images/Hero1-Desktop.png" alt="Hero1" />
+            <source srcset="/assets/images/ModelS-Mobile.png" media="(max-width: 640px)" />
+            <source srcset="/assets/images/ModelS-Tablet.png" media="(max-width: 1024px)" />
+            <img class="h-full w-full object-cover object-center" src="/assets/images/ModelS-Desktop.png" alt="Hero1" />
         </picture>
-        <div class="absolute top-0 z-10 flex h-full w-full flex-col items-center text-white">
-            <h1 class="mt-28 text-4xl lg:text-6xl">0% APR Available</h1>
-            <div class="mt-8 flex w-full flex-row items-center justify-center gap-6 px-4">
-                <button>Order Model 3</button>
-                <button>Order Model Y</button>
+
+        <div class="img-gradient-bottom absolute top-0 z-10 flex h-full w-full flex-col items-center text-white">
+            <h1 class="mt-28 text-4xl lg:text-6xl">Model S</h1>
+            <h2 class="w-max text-2xl lg:text-4xl">From $68,490<sup class="top-[-7px] text-[0.5rem]">4</sup></h2>
+            <a href="#" class="text-md underline lg:text-lg">After Est. Gas Savings $6,500</a>
+            <div class="mb-12 mt-auto flex w-full flex-col items-center justify-center gap-6 px-4">
+                <div class="flex w-full flex-row items-center justify-center gap-16">
+                    <div class="flex flex-col items-center justify-center gap-2">
+                        <h1 class="text-xl font-bold lg:text-2xl">348 mi</h1>
+                        <h4>Range (EPA est.)</h4>
+                    </div>
+                    <div class="flex flex-col items-center justify-center gap-2">
+                        <h1 class="text-xl font-bold lg:text-2xl">1.99 s</h1>
+                        <h4>0-60 mph<sup>2</sup></h4>
+                    </div>
+                    <div class="flex flex-col items-center justify-center gap-2">
+                        <h1 class="text-xl font-bold lg:text-2xl">200 mph</h1>
+                        <h4>Top Speed<sup>3</sup></h4>
+                    </div>
+                    <div class="flex flex-col items-center justify-center gap-2">
+                        <h1 class="text-xl font-bold lg:text-2xl">1,020 hp</h1>
+                        <h4>Peak Power</h4>
+                    </div>
+                </div>
+                <div class="flex flex-row items-center justify-center gap-6">
+                    <button class="bg-blue text-white">Order Now</button>
+                    <button>Demo Drive</button>
+                </div>
             </div>
         </div>
     </section>
+    <h1 class="py-12 text-center text-2xl text-white lg:text-3xl">Interior of the Future</h1>
+    <section class="relative h-hero w-full">
+        <picture>
+            <source srcset="/assets/images/ModelSInterior-Mobile.png" media="(max-width: 640px)" />
+            <img class="h-full w-full object-cover object-center" src="/assets/images/ModelSInterior-Desktop.png"
+                alt="Hero1" />
+        </picture>
+
+        <div class="img-gradient-top absolute top-0 z-10 flex h-full w-full flex-col items-center text-white"></div>
+    </section>
+
+    <section id="carousel"
+        class="relative mx-auto mt-36 aspect-[21/9] w-[95%] flex-1 flex-col overflow-hidden md:w-[80%] lg:w-[70%]">
+        <video class="absolute w-full opacity-0 transition-opacity duration-500" src="/assets/video/Cinematic.mp4"
+            muted></video>
+        <video class="absolute w-full opacity-0 transition-opacity duration-500" src="/assets/video/Yoke.mp4"
+            muted></video>
+        <video class="absolute w-full opacity-0 transition-opacity duration-500" src="/assets/video/Environment.mp4"
+            muted></video>
+        <video class="absolute w-full opacity-0 transition-opacity duration-500" src="/assets/video/SecondRow.mp4"
+            muted></video>
+        <video class="absolute w-full opacity-0 transition-opacity duration-500" src="/assets/video/Arcade.mp4"
+            muted></video>
+    </section>
+
+    <section class="mx-auto mt-8 flex w-[80%] flex-col gap-2 text-white md:w-[60%] lg:w-[40%]">
+        <div id="controls" class="flex flex-row gap-2">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <h2 id="title" class="mt-4 text-2xl font-bold lg:text-3xl">Cinematic Experience</h2>
+        <span id="desc" class="h-36">A 17” touchscreen with left-right tilt offers 2200 x 1300 resolution, true colors
+            and exceptional responsiveness for gaming, movies and more.</span>
+    </section>
+    <section id="gallery" class="mx-auto mt-16 flex w-[95%] flex-col text-white md:w-[85%] lg:w-[75%]">
+        <div class="flex">
+            <img class="w-1/2 cursor-pointer" src="/assets/images/StayConnected.jpg" />
+            <div class="flex w-1/2 items-center">
+                <div class="flex w-1/2 flex-col gap-2">
+                    <h2>Stay Connected</h2>
+                    <h4>Instantly connect with multi-device Bluetooth, or fast charge devices with wireless and 36-watt
+                        USB-C charging.</h4>
+                </div>
+            </div>
+        </div>
+        <div class="flex">
+            <video class="w-1/2 cursor-pointer" src="/assets/video/Audio.mp4" muted autoplay loop></video>
+            <div class="flex w-1/2 items-center">
+                <div class="flex w-1/2 flex-col gap-2">
+                    <h2>Immersive Sound</h2>
+                    <h4>A 22-speaker, 960-watt audio system with Active Road Noise Reduction offers immersive listening
+                        and studio-grade sound quality.</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex">
+            <img class="w-1/2 cursor-pointer" src="/assets/images/Space.jpg" />
+            <div class="flex w-1/2 items-center">
+                <div class="flex w-1/2 flex-col gap-2">
+                    <h2>Room for Everything</h2>
+                    <h4>
+                        With front and rear trunks and fold-flat seats you can fit your bike without taking the wheel
+                        off—and your luggage too.
+                        <a class="border-b-[1px] border-b-white" href="#">Compare Models</a>
+                    </h4>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div id="overlay"
+        class="fixed left-0 top-0 z-50 hidden h-screen w-screen flex-col bg-black bg-opacity-20 p-8 backdrop-blur">
+        <i class="bi bi-x-lg ml-auto cursor-pointer rounded-md bg-black bg-opacity-50 p-1 text-5xl text-red-400"></i>
+        <div id="gallery-item" class="flex h-full items-center justify-center"></div>
+    </div>
 </body>
 
 </html>

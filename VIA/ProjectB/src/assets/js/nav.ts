@@ -182,9 +182,11 @@ document.addEventListener('included', () => {
         if (navOpened) {
             navNav.classList.add('invisible');
             document.documentElement.classList.remove('overflow-hidden');
+            if (announcement) announcement.classList.add('z-30');
         } else {
             navNav.classList.remove('invisible');
             document.documentElement.classList.add('overflow-hidden');
+            if (announcement) announcement.classList.remove('z-30');
         }
 
         navOpened = !navOpened;
@@ -199,5 +201,6 @@ document.addEventListener('included', () => {
         navNav?.classList.add('invisible');
         document.documentElement.classList.remove('overflow-hidden');
         navOpened = false;
+        if (announcement) announcement.classList.add('z-30');
     });
 });

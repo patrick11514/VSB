@@ -130,3 +130,35 @@ main#account {
 .force-nav-dark *.text-white {
     @apply !text-text;
 }
+
+.img-gradient-bottom {
+    background: linear-gradient(to top, black 0%, transparent 20%, transparent 100%);
+}
+.img-gradient-top {
+    background: linear-gradient(to bottom, black 0%, transparent 20%, transparent 100%);
+}
+.img-gradient-top-bottom {
+    background: linear-gradient(to bottom, black 0%, transparent 20%, transparent 80%, black 100%);
+}
+
+#controls > div {
+    @apply h-4 w-4 cursor-pointer rounded-full bg-gray-500 transition-colors duration-500;
+    &.active {
+        @apply bg-white;
+    }
+}
+
+#gallery > div {
+    &:nth-child(2n + 1) {
+        @apply flex-row;
+        & > div > div {
+            @apply ml-auto;
+        }
+    }
+    &:nth-child(2n + 2) {
+        @apply flex-row-reverse;
+        & > div > div {
+            @apply mr-auto;
+        }
+    }
+}

@@ -1,7 +1,7 @@
 <script src="/assets/js/nav.js"></script>
-<nav root class="fixed z-40 flex w-full flex-col text-white transition-all duration-500 lg:text-white"
+<nav root class="fixed z-20 flex w-full flex-col text-white transition-all duration-500 lg:text-white"
     style="transform: translateY(0%)">
-    <div class="z-40 flex h-full w-full px-10 transition-all duration-500">
+    <div class="z-20 flex h-full w-full px-10 transition-all duration-500">
         <a href="/" class="w-1/4 py-6">
             <svg class="h-3" load="Logo.svg"></svg>
         </a>
@@ -29,7 +29,7 @@
 
     !-->
     <div id="navContent"
-        class="invisible fixed z-20 hidden w-full -translate-y-8 p-8 text-text transition-all duration-500 lg:block">
+        class="invisible fixed z-10 hidden w-full -translate-y-8 p-8 text-text transition-all duration-500 lg:block">
         <div id="vehicles" class="px-20 opacity-0">
             <div data-dynamic data-offset="0.08" data-attr="--animation-offset"
                 class="flex max-w-[calc(15rem_*_4_+_2rem)] flex-wrap gap-8 border-r-[1px] border-r-gray-300 px-4">
@@ -226,7 +226,7 @@
         </div>
     </div>
     <div id="backdrop"
-        class="invisible fixed bg-black bg-opacity-5 top-0 z-10 hidden h-screen w-full transition-all duration-500 lg:block opacity-0">
+        class="invisible fixed bg-black bg-opacity-5 top-0 z-5 hidden h-screen w-full transition-all duration-500 lg:block opacity-0">
     </div>
     <!--
 
@@ -234,7 +234,7 @@
 
     !-->
     <div id="mobileNav"
-        class="invisible fixed left-0 z-[100] flex h-screen w-screen flex-col gap-5 bg-white p-4 text-text lg:hidden">
+        class="invisible fixed left-0 z-30 flex h-screen w-screen flex-col gap-5 bg-white p-4 text-text lg:hidden">
         <button id="closeMobileNav" class="ml-auto w-max px-1 py-0.5 text-xl"><i class="bi bi-x-lg"></i></button>
         <div class="flex justify-between">Vehicles <i class="bi bi-chevron-right sm:hidden"></i></div>
         <div class="flex justify-between">Energy <i class="bi bi-chevron-right sm:hidden"></i></div>

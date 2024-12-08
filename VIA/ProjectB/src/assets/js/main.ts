@@ -86,7 +86,9 @@ document.addEventListener('included', () => {
             percentage = 100;
         }
 
-        console.log(percentage, -100 + percentage);
+        if (nav.classList.contains('no-semi') && scroll > 0 && percentage != 100 && diff < 0) {
+            return;
+        }
 
         nav.style.transform = `translateY(${-100 + percentage}%)`;
     };

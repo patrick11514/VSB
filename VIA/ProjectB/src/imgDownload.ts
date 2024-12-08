@@ -12,7 +12,8 @@ const images: Record<string, string> = {
     Hero8: 'https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Homepage-SolarRoof-%-US.png',
     Hero9: 'https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Homepage-Powerwall-%-US.png',
     Hero10: 'https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Homepage-Accessories-%-US.png',
-    ModelS: 'https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Model-S-Main-Hero-%-NA.png'
+    ModelS: 'https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Model-S-Main-Hero-%-NA.png',
+    ModelSInterior: 'https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Model-S-Interior-%.jpg'
 };
 
 const DEST = './src/assets/images';
