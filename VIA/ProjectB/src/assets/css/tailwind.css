@@ -96,7 +96,12 @@ article a {
     @apply w-full cursor-pointer rounded-md px-2 py-4 text-lg transition-colors duration-300 hover:bg-gray-500 hover:bg-opacity-10 sm:w-max;
 }
 
-main#login {
+main#login > section {
+    @apply absolute left-1/2 -translate-x-1/2;
+}
+
+main#login,
+main#account {
     label {
         @apply mb-1 text-sm text-text-gray;
     }
@@ -108,12 +113,22 @@ main#login {
         }
     }
 
-    button {
-        @apply rounded-md py-2 transition-colors duration-200;
+    textarea {
+        @apply mb-8 min-w-72 rounded-md border-[1px] border-transparent bg-background px-4 py-2 text-sm font-bold text-text-gray outline-none transition-colors duration-300 focus:border-gray-300;
+        &:invalid {
+            @apply border-[1px] border-red-500;
+        }
     }
 
-    & > section {
-        @apply absolute left-1/2 -translate-x-1/2;
+    select {
+        @apply mb-8 min-w-72 rounded-md border-[1px] border-transparent bg-background px-4 py-2.5 text-sm font-bold text-text-gray outline-none transition-colors duration-300 focus:border-gray-300;
+        &:invalid {
+            @apply border-[1px] border-red-500;
+        }
+    }
+
+    button {
+        @apply rounded-md py-2 transition-colors duration-200;
     }
 }
 

@@ -208,16 +208,12 @@ document.addEventListener('included', () => {
         const subnav = div.querySelector('#subnav');
         if (!subnav) return;
 
-        console.log('Registered', div);
-
         div.addEventListener('mouseover', () => {
-            console.log('over');
             subnav.classList.remove('hidden');
             subnav.classList.add('flex');
         });
 
         div.addEventListener('mouseleave', () => {
-            console.log('out');
             subnav.classList.remove('flex');
             subnav.classList.add('hidden');
         });

@@ -56,7 +56,7 @@ document.addEventListener('included', () => {
     const counter = document.querySelector<HTMLHeadingElement>('#counter')!;
     const to = new Date(counter.dataset.to!);
     document.querySelector('#to')!.textContent = toDate(to);
-    console.log(to);
+
     const calculate = () => {
         const now = Date.now();
         const mills = to.getTime() - now;
@@ -80,4 +80,56 @@ document.addEventListener('included', () => {
 
     setInterval(calculate, 10);
     calculate();
+
+    //contact form
+    const title = document.querySelector<HTMLInputElement>('input#title')!;
+    const problem = document.querySelector<HTMLSelectElement>('select#problem')!;
+    const text = document.querySelector<HTMLTextAreaElement>('textarea#text')!;
+
+    document.querySelector('button#submit')?.addEventListener('click', () => {
+        let ok = true;
+
+        //title
+        if (!title.value) {
+            title.setCustomValidity('No input');
+            ok = false;
+        } else if (title.value.length < 3) {
+            title.setCustomValidity('Please enter at least 3 characters');
+            ok = false;
+        } else if (title.value.length > 10) {
+            title.setCustomValidity('Please enter maximum 10 characters');
+            ok = false;
+        } else {
+            title.setCustomValidity('');
+        }
+
+        //problem
+        console.log(problem.value);
+        if (!problem.value) {
+            problem.setCustomValidity('No input');
+            ok = false;
+        } else {
+            problem.setCustomValidity('');
+        }
+
+        //problem
+        if (!text.value) {
+            text.setCustomValidity('No input');
+            ok = false;
+        } else if (text.value.length < 3) {
+            text.setCustomValidity('Please enter at least 3 characters');
+            ok = false;
+        } else if (text.value.length > 255) {
+            text.setCustomValidity('Please enter maximum 255 characters');
+            ok = false;
+        } else {
+            text.setCustomValidity('');
+        }
+
+        if (!ok) return;
+
+        //continue
+
+        alert('Form sent');
+    });
 });

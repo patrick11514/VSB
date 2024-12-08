@@ -15,8 +15,9 @@
 
 <body class="flex h-full min-h-screen w-full flex-col font-universal-sans text-text">
     <nav class="force-nav-dark !static" include="nav.html"></nav>
-    <main id="account" class="flex h-full flex-1 flex-col pt-20 md:flex-row">
-        <div class="mt-4 flex flex-row gap-8 p-20 text-xl text-text-gray md:flex-col">
+    <main id="account" class="flex h-full flex-1 flex-col px-4 pt-20 md:flex-row">
+        <div
+            class="mt-4 flex flex-row flex-wrap items-center justify-center gap-8 p-20 text-xl text-text-gray md:flex-col md:flex-nowrap md:justify-start">
             <div data-target="products" class="active flex cursor-pointer items-center gap-2 hover:text-text">
                 <i class="bi bi-house rounded-full p-2"></i>
                 My products
@@ -24,6 +25,10 @@
             <div data-target="countdown" class="flex cursor-pointer items-center gap-2 hover:text-text">
                 <i class="bi bi-alarm rounded-full p-2"></i>
                 Countdown
+            </div>
+            <div data-target="form" class="flex cursor-pointer items-center gap-2 hover:text-text">
+                <i class="bi bi-patch-question rounded-full p-2"></i>
+                Contact Form
             </div>
             <div id="logout" class="flex cursor-pointer items-center gap-2 hover:text-text">
                 <i class="bi bi-box-arrow-right rounded-full p-2"></i>
@@ -53,6 +58,30 @@
             <div class="flex h-64 flex-col items-center justify-center">
                 <h1 id="counter" data-to="2024-12-24T18:00:00" class="text-xl tabular-nums lg:text-2xl"></h1>
                 <h4 id="to"></h4>
+            </div>
+        </section>
+        <section id="form" class="hidden flex-1 flex-col gap-2">
+            <h1 class="mb-2 text-2xl lg:text-3xl">Contact Form</h1>
+            <div class="flex min-h-64 flex-col items-center justify-center gap-2 sm:grid sm:grid-cols-2">
+                <div class="flex flex-col">
+                    <label for="title">Title <span class="text-[0.7rem]">3-10 chars</span></label>
+                    <input id="title" type="text" />
+                </div>
+                <div class="flex flex-col">
+                    <label for="problem">Problem</label>
+                    <select id="problem">
+                        <option value="" disabled selected>Select problem</option>
+                        <option value="display">Non-functional touch on display</option>
+                        <option value="back_camera">Malfunctioning back camera</option>
+                        <option value="break">Non-functional electrical break</option>
+                        <option value="window">Window issues</option>
+                    </select>
+                </div>
+                <div class="col-span-2 flex flex-col">
+                    <label for="text">Describe your problem <span class="text-[0.7rem]">3-255 chars</span></label>
+                    <textarea id="text" rows="8"></textarea>
+                </div>
+                <button id="submit" class="bg-blue text-white hover:bg-blue-darker">Send</button>
             </div>
         </section>
     </main>
