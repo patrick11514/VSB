@@ -5,13 +5,19 @@
 		<item key="DIALOG_Y_ORIGIN" value="365"/>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
-		<item key="selection" value="recv"/>
+		<item key="selection" value="configUSE_STATS_FORMATTING_FUNCTIONS"/>
 		<item key="wrap" value="true"/>
 		<item key="casesensitive" value="false"/>
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
+			<item value="configUSE_STATS_FORMATTING_FUNCTIONS"/>
+			<item value="configUSE_TRACE_FACILITY"/>
+			<item value="task_socket_srv"/>
+			<item value="gate"/>
+			<item value="morse"/>
+			<item value="task_led_pta"/>
 			<item value="recv"/>
 			<item value="RGB"/>
 			<item value="Dynamic"/>
@@ -21,12 +27,6 @@
 			<item value="rand("/>
 			<item value="g_rgb_perc"/>
 			<item value="TASK_NAME_RGB_SET"/>
-			<item value="xSemaphoreTake"/>
-			<item value="g_sem_right_switch"/>
-			<item value="g_l_sem"/>
-			<item value="PRINTF"/>
-			<item value="trace`"/>
-			<item value="trace"/>
 		</list>
 		<list key="replacehistory">
 			<item value="g_rgb_pwm_perc"/>

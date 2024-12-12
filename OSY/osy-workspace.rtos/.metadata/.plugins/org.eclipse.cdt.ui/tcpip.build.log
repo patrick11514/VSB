@@ -1,11 +1,11 @@
-14:07:55 **** Incremental Build of configuration Debug for project tcpip ****
+10:52:49 **** Incremental Build of configuration Debug for project tcpip ****
 make -r -j12 all 
 Building file: ../source/main-tcpip.cpp
 Invoking: MCU C++ Compiler
 arm-none-eabi-c++ -DCPU_MK64FN1M0VLL12 -DCPU_MK64FN1M0VLL12_cm4 -DSDK_OS_BAREMETAL -DSERIAL_PORT_TYPE_UART=1 -DSDK_DEBUGCONSOLE=1 -DSDK_OS_FREE_RTOS -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG -D__NEWLIB__ -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/board" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/source" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos/freertos_kernel/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos/freertos_kernel/portable/GCC/ARM_CM4F" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos-plus/FreeRTOS-Plus-TCP/include" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/freertos-plus/FreeRTOS-Plus-TCP/portable/Compiler/GCC" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/drivers" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/device" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/CMSIS" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/utilities" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/serial_manager" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/uart" -I"/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tcpip/component/lists" -O0 -fno-common -g3 -gdwarf-4 -Wall -c -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -fno-rtti -fno-exceptions -fmerge-constants -fmacro-prefix-map="../source/"= -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -D__NEWLIB__ -fstack-usage -specs=nano.specs -MMD -MP -MF"source/main-tcpip.d" -MT"source/main-tcpip.o" -MT"source/main-tcpip.d" -o "source/main-tcpip.o" "../source/main-tcpip.cpp"
 ../source/main-tcpip.cpp: In function 'void vApplicationIPNetworkEventHook(eIPCallbackEvent_t)':
-../source/main-tcpip.cpp:379:34: warning: variable 's_server_addr' set but not used [-Wunused-but-set-variable]
-  379 |         static freertos_sockaddr s_server_addr;
+../source/main-tcpip.cpp:508:34: warning: variable 's_server_addr' set but not used [-Wunused-but-set-variable]
+  508 |         static freertos_sockaddr s_server_addr;
       |                                  ^~~~~~~~~~~~~
 Finished building: ../source/main-tcpip.cpp
  
@@ -13,8 +13,8 @@ Building target: tcpip.axf
 Invoking: MCU C++ Linker
 arm-none-eabi-c++ -nostdlib -Xlinker -Map="tcpip.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T tcpip_Debug.ld -o "tcpip.axf" ./utilities/fsl_debug_console.o ./utilities/fsl_str.o  ./startup/startup_mk64f12.o  ./source/main-tcpip.o ./source/semihost_hardfault.o  ./freertos/freertos_kernel/portable/MemMang/heap_4.o  ./freertos/freertos_kernel/portable/GCC/ARM_CM4F/port.o  ./freertos/freertos_kernel/croutine.o ./freertos/freertos_kernel/event_groups.o ./freertos/freertos_kernel/list.o ./freertos/freertos_kernel/queue.o ./freertos/freertos_kernel/stream_buffer.o ./freertos/freertos_kernel/tasks.o ./freertos/freertos_kernel/timers.o  ./freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface.o ./freertos-plus/FreeRTOS-Plus-TCP/portable/NetworkInterface/K64F/NetworkInterface_rand.o  ./freertos-plus/FreeRTOS-Plus-TCP/portable/BufferManagement/BufferAllocation_2.o  ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_ARP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DHCP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_DNS.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_IP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Sockets.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_Stream_Buffer.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_TCP_IP.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_TCP_WIN.o ./freertos-plus/FreeRTOS-Plus-TCP/FreeRTOS_UDP_IP.o  ./drivers/fsl_adc16.o ./drivers/fsl_clock.o ./drivers/fsl_common.o ./drivers/fsl_common_arm.o ./drivers/fsl_enet.o ./drivers/fsl_ftm.o ./drivers/fsl_gpio.o ./drivers/fsl_i2c.o ./drivers/fsl_pit.o ./drivers/fsl_smc.o ./drivers/fsl_sysmpu.o ./drivers/fsl_uart.o  ./device/system_MK64F12.o  ./component/uart/fsl_adapter_uart.o  ./component/serial_manager/fsl_component_serial_manager.o ./component/serial_manager/fsl_component_serial_port_uart.o  ./component/lists/fsl_component_generic_list.o  ./board/board.o ./board/clock_config.o ./board/fsl_phy.o ./board/peripherals.o ./board/pin_mux.o   
 Memory region         Used Size  Region Size  %age Used
-   PROGRAM_FLASH:       76688 B         1 MB      7.31%
-      SRAM_UPPER:       65504 B       192 KB     33.32%
+   PROGRAM_FLASH:       79760 B         1 MB      7.61%
+      SRAM_UPPER:       65792 B       192 KB     33.46%
       SRAM_LOWER:          0 GB        64 KB      0.00%
         FLEX_RAM:          0 GB         4 KB      0.00%
 Finished building target: tcpip.axf
@@ -22,8 +22,8 @@ Finished building target: tcpip.axf
 Performing post-build steps
 arm-none-eabi-size "tcpip.axf"; # arm-none-eabi-objcopy -v -O binary "tcpip.axf" "tcpip.bin" ; # checksum -p MK64FN1M0xxx12 -d "tcpip.bin";
    text	   data	    bss	    dec	    hex	filename
-  76256	    432	  65072	 141760	  229c0	tcpip.axf
+  79288	    472	  65312	 145072	  236b0	tcpip.axf
  
 
-14:07:55 Build Finished. 0 errors, 1 warnings. (took 374ms)
+10:52:49 Build Finished. 0 errors, 1 warnings. (took 369ms)
 

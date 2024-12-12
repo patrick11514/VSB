@@ -1,0 +1,56 @@
+"Task Aware Debugger for GDB" version 24.9.0 (202407110857)
+Copyright 2016-2023 NXP
+==================================
+10:51:44.124 INFO: [TadModel] DSF session ID 62 has started.
+10:51:45.856 INFO: [TadState] TAD state changed: DEBUG_STARTED -> DEBUG_INIT_0 (SUSPENDED, USER_REQUEST)
+10:51:47.621 INFO: [TadState] TAD state changed: DEBUG_INIT_0 -> DEBUG_INIT_1 (RESUMED, USER_REQUEST)
+10:51:47.645 INFO: [TadState] TAD state changed: DEBUG_INIT_1 -> DEBUG_SUSPENDED (SUSPENDED, BREAKPOINT)
+10:51:48.177 INFO: [TadState] TAD state changed: DEBUG_SUSPENDED -> DEBUG_RESUMED (RESUMED, USER_REQUEST)
+10:52:01.215 INFO: [TadState] TAD state changed: DEBUG_RESUMED -> READY (SUSPENDED, SIGNAL)
+10:52:01.216 INFO: [Benchmark] Loading data for "Determine RTOS version" has started.
+10:52:01.217 ERROR: [VariableReader] Could not read variable expression: "&(FreeRTOSDebugConfig)".
+10:52:01.217 ERROR: [VariableReader] Status ERROR: org.eclipse.cdt.dsf.gdb code=10004 Failed to execute MI command:
+10:52:01.217 ERROR: [VariableReader] -data-evaluate-expression &(FreeRTOSDebugConfig)
+10:52:01.217 ERROR: [VariableReader] Error message from debugger back end:
+10:52:01.217 ERROR: [VariableReader] No symbol "FreeRTOSDebugConfig" in current context. java.lang.Exception: No symbol "FreeRTOSDebugConfig" in current context.
+10:52:01.217 ERROR: [VariableReader] Could not read variable expression: "sizeof(struct TaskControlBlock_t)".
+10:52:01.217 ERROR: [VariableReader] Status ERROR: org.eclipse.cdt.dsf.gdb code=10004 Failed to execute MI command:
+10:52:01.217 ERROR: [VariableReader] -data-evaluate-expression "sizeof(struct TaskControlBlock_t)"
+10:52:01.217 ERROR: [VariableReader] Error message from debugger back end:
+10:52:01.217 ERROR: [VariableReader] No struct type named TaskControlBlock_t. java.lang.Exception: No struct type named TaskControlBlock_t.
+10:52:01.219 ERROR: [VariableReader] Could not read variable expression: "&(((struct QueueDefinition *) 0)->pcTail)".
+10:52:01.219 ERROR: [VariableReader] Status ERROR: org.eclipse.cdt.dsf.gdb code=10004 Failed to execute MI command:
+10:52:01.219 ERROR: [VariableReader] -data-evaluate-expression "&(((struct QueueDefinition *) 0)->pcTail)"
+10:52:01.219 ERROR: [VariableReader] Error message from debugger back end:
+10:52:01.219 ERROR: [VariableReader] There is no member named pcTail. java.lang.Exception: There is no member named pcTail.
+10:52:01.219 INFO: [FreeRtosTadModel] FreeRTOS version has been identified from available FreeRTOS symbols as 10.11.
+10:52:01.219 INFO: [Benchmark] Loading data for "Determine RTOS version" took 3 ms.
+10:52:01.219 INFO: [Benchmark] Loading data for "Task List" has started.
+10:52:01.278 ERROR: [VariableReader] Could not read variable expression: "ulTotalRunTime".
+10:52:01.278 ERROR: [VariableReader] Status ERROR: org.eclipse.cdt.dsf.gdb code=10004 Failed to execute MI command:
+10:52:01.278 ERROR: [VariableReader] -data-evaluate-expression ulTotalRunTime
+10:52:01.278 ERROR: [VariableReader] Error message from debugger back end:
+10:52:01.278 ERROR: [VariableReader] No symbol "ulTotalRunTime" in current context. java.lang.Exception: No symbol "ulTotalRunTime" in current context.
+10:52:01.278 ERROR: [TaskFactory] ulTotalRunTime not available
+10:52:01.285 ERROR: [VariableReader] Could not read variable expression: "(((struct tskTaskControlBlock *) 0x20005480)->pxEndOfStack)".
+10:52:01.285 ERROR: [VariableReader] Status ERROR: org.eclipse.cdt.dsf.gdb code=10004 Failed to execute MI command:
+10:52:01.285 ERROR: [VariableReader] -data-evaluate-expression "(((struct tskTaskControlBlock *) 0x20005480)->pxEndOfStack)"
+10:52:01.285 ERROR: [VariableReader] Error message from debugger back end:
+10:52:01.285 ERROR: [VariableReader] There is no member named pxEndOfStack. java.lang.Exception: There is no member named pxEndOfStack.
+10:52:01.285 INFO: [FreeRTOS] RTOS macro "configRECORD_STACK_HIGH_ADDRESS" is disabled.
+10:52:01.289 ERROR: [VariableReader] Could not read variable expression: "(((struct tskTaskControlBlock *) 0x20005480)->uxCoreAffinityMask)".
+10:52:01.289 ERROR: [VariableReader] Status ERROR: org.eclipse.cdt.dsf.gdb code=10004 Failed to execute MI command:
+10:52:01.289 ERROR: [VariableReader] -data-evaluate-expression "(((struct tskTaskControlBlock *) 0x20005480)->uxCoreAffinityMask)"
+10:52:01.289 ERROR: [VariableReader] Error message from debugger back end:
+10:52:01.289 ERROR: [VariableReader] There is no member named uxCoreAffinityMask. java.lang.Exception: There is no member named uxCoreAffinityMask.
+10:52:01.289 INFO: [FreeRTOS] RTOS macro "configUSE_CORE_AFFINITY" is disabled.
+10:52:01.290 ERROR: [VariableReader] Could not read variable expression: "(((struct tskTaskControlBlock *) 0x20005480)->ulRunTimeCounter)".
+10:52:01.290 ERROR: [VariableReader] Status ERROR: org.eclipse.cdt.dsf.gdb code=10004 Failed to execute MI command:
+10:52:01.290 ERROR: [VariableReader] -data-evaluate-expression "(((struct tskTaskControlBlock *) 0x20005480)->ulRunTimeCounter)"
+10:52:01.290 ERROR: [VariableReader] Error message from debugger back end:
+10:52:01.290 ERROR: [VariableReader] There is no member named ulRunTimeCounter. java.lang.Exception: There is no member named ulRunTimeCounter.
+10:52:01.290 INFO: [FreeRTOS] RTOS macro "configGENERATE_RUN_TIME_STATS" is disabled.
+10:52:01.503 ERROR: [TaskFactory] Could not read pxEndOfStack variable needed for determining correct stack size! 
+	Please enable "configRECORD_STACK_HIGH_ADDRESS" macro in FreeRTOSConfig.h.
+10:52:01.503 INFO: [Benchmark] Loading data for "Task List" took 284 ms.
+10:52:02.217 INFO: [TadModel] DSF session ID 62 has ended.

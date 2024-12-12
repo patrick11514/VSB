@@ -1,6 +1,0 @@
-"Task Aware Debugger for GDB" version 24.9.0 (202407110857)
-Copyright 2016-2023 NXP
-==================================
-11:37:04.509 INFO: [ZephyrRTOS] .config file could not be read [/home/fei/min0150/Projects/VSB/OSY/osy-workspace.rtos/tasks/Debug/.config (No such file or directory)]
-11:37:04.509 INFO: [TadModel] DSF session ID 2 has started.
-11:37:06.196 INFO: [TadModel] DSF session ID 2 has ended.

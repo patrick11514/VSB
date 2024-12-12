@@ -73,7 +73,10 @@
 #define TASK_NAME_SOCKET_CLI	"socket_cli"
 #define TASK_NAME_RED_BLINK 	"red_blink"
 #define TASK_NAME_GREEN_BLINK 	"green_blink"
-#define TASK_NAME_MORSE 		"morse_task"
+//#define TASK_NAME_MORSE 		"morse_task"
+#define TASK_NAME_GATE_OPEN	    "gate_open_task"
+#define TASK_NAME_GATE_CLOSE    "gate_close_task"
+#define TASK_NAME_SWITCHES 		"switches"
 
 #define SOCKET_SRV_TOUT			1000
 #define SOCKET_SRV_BUF_SIZE		256
@@ -84,6 +87,7 @@
 #define LED_PTA_NUM 	2
 #define LED_PTC_NUM		8
 #define LED_PTB_NUM		9
+#define BTN_PTC_NUM 	4
 
 // pair of GPIO port and LED pin.
 struct LED_Data
@@ -112,6 +116,13 @@ LED_Data g_led_ptc[ LED_PTC_NUM ] =
 		{ LED_PTC8_PIN, LED_PTC8_GPIO },
 };
 
+LED_Data g_btn_ptc[ BTN_PTC_NUM ] = {
+		{ SW_PTC9_PIN , SW_PTC9_GPIO    },
+		{ SW_PTC10_PIN, SW_PTC10_GPIO   },
+		{ SW_PTC11_PIN, SW_PTC11_GPIO   },
+		{ SW_PTC12_PIN, SW_PTC12_GPIO   },
+};
+
 struct RGBLED_Data {
 	LED_Data R;
 	LED_Data G;
@@ -135,6 +146,19 @@ RGBLED_Data g_led_rgb[ LED_PTB_NUM ] = {
 				{ LED_PTB23_PIN,  LED_PTB23_GPIO },
 		},
 };
+
+int toNum(int8_t *s_str) {
+	int8_t* str = s_str;
+	int num = 0;
+	while (*str != '\0') {
+		if (!(*str >= '0' && *str <= '9')) return num;
+
+		num = num * 10;
+		num = num + (*str - '0');
+		str++;
+	}
+	return num;
+}
 
 void RGB_GPIO_PinWrite(RGBLED_Data led, int R, int G, int B) {
 	if (R > -1) GPIO_PinWrite( led.R.m_led_gpio, led.R.m_led_pin, R);
@@ -172,7 +196,48 @@ void task_green_blink( void *t_arg ) {
 	}
 }
 
-char morseStr[255];
+bool gate_open = false;
+int open_interval = 0;
+
+void task_gate_open (void *t_args ) {
+	TaskHandle_t gateClose = xTaskGetHandle(TASK_NAME_LED_PTA);
+
+	while ( 1 ) {
+		vTaskSuspend(0);
+		PRINTF("RESUMING OPEN\r\n");
+		if (gate_open) continue;
+
+		gate_open = true;
+
+		PRINTF("OPENING\r\n");
+		vTaskResume(gateClose);
+		for (int i = 0; i < LED_PTC_NUM; ++i) {
+			GPIO_PinWrite(g_led_ptc[i].m_led_gpio, g_led_ptc[i].m_led_pin, 0);
+			vTaskDelay(open_interval * 1000 / 7);
+		}
+	}
+}
+
+int close_interval = 0;
+
+void task_gate_close (void *t_args ) {
+	while ( 1 ) {
+		vTaskSuspend(0);
+		PRINTF("RESUMING CLOSE\r\n");
+		if (!gate_open) continue;
+
+		PRINTF("CLOSING\r\n");
+
+		for (int i = LED_PTC_NUM - 1; i >= 0; --i) {
+			GPIO_PinWrite(g_led_ptc[i].m_led_gpio, g_led_ptc[i].m_led_pin, 1);
+			vTaskDelay(close_interval * 1000 / 7);
+		}
+
+		gate_open = false;
+	}
+}
+
+/*char morseStr[255];
 
 void task_morse ( void *t_arg ) {
 	while ( 1 )  {
@@ -195,6 +260,7 @@ void task_morse ( void *t_arg ) {
 		}
 	}
 }
+*/
 
 // This task blink alternatively both PTAx LEDs
 void task_led_pta_blink( void *t_arg )
@@ -203,6 +269,9 @@ void task_led_pta_blink( void *t_arg )
 
     while ( 1 )
     {
+    	if (!gate_open) {
+    		vTaskSuspend(0);
+    	}
     	// switch LED on
         GPIO_PinWrite( g_led_pta[ l_inx ].m_led_gpio, g_led_pta[ l_inx ].m_led_pin, 1 );
         vTaskDelay( 200 );
@@ -214,6 +283,49 @@ void task_led_pta_blink( void *t_arg )
     }
 }
 
+bool states[BTN_PTC_NUM] = { false, false, false, false };
+bool lastStates[BTN_PTC_NUM] = { true, true, true, true };
+xSocket_t l_sock_client;
+
+void task_switches( void *t_arg ) {
+	TaskHandle_t greenBlink = xTaskGetHandle(TASK_NAME_GREEN_BLINK);
+
+	while(1) {
+		for (int i = 0; i < BTN_PTC_NUM; ++i) {
+			if ( GPIO_PinRead( g_btn_ptc[i].m_led_gpio, g_btn_ptc[i].m_led_pin ) == 0 )
+			{
+				if (states[i] != lastStates[i]) {
+					states[i] = !states[i];
+
+					char buffer[8] = "BTNX X\n";
+					buffer[3] = i + '0';
+					buffer[5] = '1';
+					if ( l_sock_client != NULL ) {
+						FreeRTOS_send( l_sock_client, ( void * ) buffer, strlen(buffer), 0 );
+						vTaskResume(greenBlink);
+					}
+				}
+
+			} else {
+				if (states[i] == lastStates[i]) {
+					lastStates[i] = !lastStates[i];
+
+					char buffer[8] = "BTNX X\n";
+					buffer[3] = i + '0';
+					buffer[5] = '0';
+					if ( l_sock_client != NULL ) {
+						FreeRTOS_send( l_sock_client, ( void * ) buffer, strlen(buffer), 0 );
+						vTaskResume(greenBlink);
+					}
+				}
+			}
+		}
+
+		vTaskDelay( 1 );
+	}
+}
+
+char task_buffer[40 * 12];
 
 // task socket server
 void task_socket_srv( void *tp_arg )
@@ -221,7 +333,10 @@ void task_socket_srv( void *tp_arg )
 	//LED INDICATORS
 	TaskHandle_t redBlink = xTaskGetHandle(TASK_NAME_RED_BLINK);
 	TaskHandle_t greenBlink = xTaskGetHandle(TASK_NAME_GREEN_BLINK);
-	TaskHandle_t morseTask = xTaskGetHandle(TASK_NAME_MORSE);
+	TaskHandle_t gateOpen = xTaskGetHandle(TASK_NAME_GATE_OPEN);
+	TaskHandle_t gateClose = xTaskGetHandle(TASK_NAME_GATE_CLOSE);
+
+	//TaskHandle_t morseTask = xTaskGetHandle(TASK_NAME_MORSE);
 
 	PRINTF( "Task socket server started.\r\n" );
 	TickType_t l_receive_tout = 25000 / portTICK_PERIOD_MS;
@@ -234,7 +349,6 @@ void task_socket_srv( void *tp_arg )
 	l_srv_address.sin_addr = FreeRTOS_inet_addr_quick( 0, 0, 0, 0 );
 
 	xSocket_t l_sock_listen;
-	xSocket_t l_sock_client;
 	xWinProperties_t l_win_props;
 	struct freertos_sockaddr from;
 	socklen_t fromSize = sizeof from;
@@ -295,7 +409,22 @@ void task_socket_srv( void *tp_arg )
 			{
 				l_rx_buf[ l_len ] = 0;	// just for printing
 
-				eTaskState state = eTaskGetState(morseTask);
+				PRINTF("%s\r\n", l_rx_buf);
+				if (strncmp((char *)l_rx_buf, "OPEN ", 5) == 0) {
+					open_interval = toNum(l_rx_buf + 5);
+					PRINTF("open int: %d\r\n", open_interval);
+					vTaskResume(gateOpen);
+				} else if (strncmp((char *)l_rx_buf, "CLOSE ", 6) == 0) {
+					close_interval = toNum(l_rx_buf + 6);
+					PRINTF("close int: %d\r\n", close_interval);
+					vTaskResume(gateClose);
+				} else if (strcmp((char *)l_rx_buf, "LIST\n") == 0) {
+					vTaskList(task_buffer);
+					FreeRTOS_send(l_sock_client, task_buffer, strlen(task_buffer), 0);
+					vTaskResume(greenBlink);
+				}
+
+				/*eTaskState state = eTaskGetState(morseTask);
 				if (state != eTaskState::eSuspended) {
 					const char * msg = "Morse code is currenly running, please try again later\n";
 					FreeRTOS_send( l_sock_client, ( void * ) msg, strlen(msg), 0 );
@@ -307,7 +436,7 @@ void task_socket_srv( void *tp_arg )
 
 					memcpy(morseStr, l_rx_buf, l_len + 1);
 					vTaskResume(morseTask);
-				}
+				}*/
 
 
 				/*l_len = FreeRTOS_send( l_sock_client, ( void * ) l_rx_buf, l_len, 0 );
@@ -426,11 +555,11 @@ int main(void) {
     // SET CORRECTLY MAC ADDRESS FOR USAGE IN LAB!
     //
     // Computer in lab use IP address 158.196.XXX.YYY.
-    // Set MAC to 5A FE C0 DE XXX YYY+20
+    // Set MAC to 5A FE C0 DE XXX YYY+21
     // IP address will be configured from DHCP
     //142-79
     //
-	uint8_t ucMAC[ ipMAC_ADDRESS_LENGTH_BYTES ] = { 0x5A, 0xFE, 0xC0, 0xDE, 142, 79+20 };
+	uint8_t ucMAC[ ipMAC_ADDRESS_LENGTH_BYTES ] = { 0x5A, 0xFE, 0xC0, 0xDE, 142, 79+21 };
 
    	uint8_t ucIPAddress[ ipIP_ADDRESS_LENGTH_BYTES ] = { 10, 0, 0, 10 };
    	uint8_t ucIPMask[ ipIP_ADDRESS_LENGTH_BYTES ] = { 255, 255, 255, 0 };
@@ -472,7 +601,7 @@ int main(void) {
 		PRINTF( "Unable to create task '%s'.\r\n", TASK_NAME_GREEN_BLINK );
 	}
 
-	if ( xTaskCreate(
+	/*if ( xTaskCreate(
 			task_morse,
 			TASK_NAME_MORSE,
 			configMINIMAL_STACK_SIZE + 100,
@@ -481,7 +610,45 @@ int main(void) {
 			NULL ) != pdPASS )
 	{
 		PRINTF( "Unable to create task '%s'.\r\n", TASK_NAME_MORSE );
+	}*/
+
+	for (int i = 0; i < LED_PTC_NUM; ++i) {
+		GPIO_PinWrite(g_led_ptc[i].m_led_gpio, g_led_ptc[i].m_led_pin, 1);
 	}
+
+	if ( xTaskCreate(
+			task_gate_open,
+			TASK_NAME_GATE_OPEN,
+			configMINIMAL_STACK_SIZE + 100,
+			NULL,
+			NORMAL_TASK_PRIORITY,
+			NULL ) != pdPASS )
+	{
+		PRINTF( "Unable to create task '%s'.\r\n", TASK_NAME_GATE_OPEN );
+	}
+
+	if ( xTaskCreate(
+			task_gate_close,
+			TASK_NAME_GATE_CLOSE,
+			configMINIMAL_STACK_SIZE + 100,
+			NULL,
+			NORMAL_TASK_PRIORITY,
+			NULL ) != pdPASS )
+	{
+		PRINTF( "Unable to create task '%s'.\r\n", TASK_NAME_GATE_CLOSE );
+	}
+
+	if ( xTaskCreate(
+			task_switches,
+			TASK_NAME_SWITCHES,
+			configMINIMAL_STACK_SIZE + 100,
+			NULL,
+			NORMAL_TASK_PRIORITY,
+			NULL ) != pdPASS )
+	{
+		PRINTF( "Unable to create task '%s'.\r\n", TASK_NAME_SWITCHES );
+	}
+
 
 	vTaskStartScheduler();
 
