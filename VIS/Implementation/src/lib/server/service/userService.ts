@@ -3,6 +3,8 @@ import { GlobalConnector } from '../data/globalConnector';
 import { UserMapper } from '../domain/mappers/userMapper';
 import type { UserDomainModel } from '../domain/models/userDomainModel';
 import bcrypt from 'bcrypt';
+import { jwt } from '../variables';
+import type { UserData } from '$/types/types';
 
 export class UserService {
     private mapper = new UserMapper();
@@ -15,8 +17,30 @@ export class UserService {
     }
 
     async exists(name: string, email: string) {
-        const usersDTO = await GlobalConnector.connector.userDao.getUsers();
-        const users = usersDTO.map(this.mapper.toDomainModel);
-        return users.some((user) => user.username === name || user.email === email);
+        return GlobalConnector.connector.userDao.existsByNameOrEmail(name, email);
+    }
+
+    async login(username: string, password: string) {
+        const dto = await GlobalConnector.connector.userDao.getUserByUsername(username);
+        if (!dto) {
+            return undefined;
+        }
+
+        const user = this.mapper.toDomainModel(dto);
+
+        if (!bcrypt.compareSync(password, user.password)) {
+            return undefined;
+        }
+
+        const userData = {
+            id: user.id,
+            username: user.username,
+            email: user.email
+        } satisfies UserData;
+
+        return {
+            cookie: jwt.setCookie(userData),
+            data: userData
+        };
     }
 }

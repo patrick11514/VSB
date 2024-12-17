@@ -1,11 +1,9 @@
 import { MovieDTO } from '../../dto/movie';
-import { GlobalConnector } from '../../globalConnector';
 import { JsonDBAbstract } from '../helpers/jsonDBAbstract';
 import type { MovieDAO } from '../interfaces/movieDao';
-import path from 'node:path';
 
 export class MovieJsonDAO implements MovieDAO {
-    private db = new JsonDBAbstract<MovieDTO>(path.join(GlobalConnector.jsonDBPath, 'movie.json'));
+    private db = new JsonDBAbstract<MovieDTO>('movie.json');
 
     async getMovies(): Promise<MovieDTO[]> {
         const data = this.db.getAll();

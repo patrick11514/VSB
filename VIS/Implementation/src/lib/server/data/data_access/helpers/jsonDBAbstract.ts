@@ -1,10 +1,11 @@
 import JSONdb from 'simple-json-db';
+import Path from 'node:path';
 
 export class JsonDBAbstract<$DataType> {
     private db: JSONdb<$DataType[]>;
 
     constructor(path: string) {
-        this.db = new JSONdb<$DataType[]>(path, {
+        this.db = new JSONdb<$DataType[]>(Path.join('database', path), {
             syncOnWrite: true
         });
     }

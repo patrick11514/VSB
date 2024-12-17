@@ -25,4 +25,20 @@ export class UserMariaDAO implements UserDAO {
             .executeTakeFirst();
         return data.insertId ?? BigInt(-1);
     }
+
+    async existsByNameOrEmail(name: string, email: string): Promise<boolean> {
+        const data = await conn
+            .selectFrom('user')
+            .select('id')
+            .where((eb) => eb.or([eb('username', '=', name), eb('email', '=', email)]))
+            .executeTakeFirst();
+
+        return data !== undefined;
+    }
+
+    async getUserByUsername(username: string): Promise<UserDTO | undefined> {
+        const data = await conn.selectFrom('user').selectAll().where('username', '=', username).executeTakeFirst();
+        if (!data) return data;
+        return new UserDTO(data.id, data.username, data.email, data.password);
+    }
 }

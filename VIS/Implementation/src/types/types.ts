@@ -1,10 +1,14 @@
-export type UserData = {};
+export type UserData = {
+    id: number;
+    username: string;
+    email: string;
+};
 
 export type UserState =
     | {
-          logged: false;
-      }
+        logged: false;
+    }
     | {
-          logged: true;
-          data: UserData;
-      };
+        logged: true;
+        data: UserData;
+    };
