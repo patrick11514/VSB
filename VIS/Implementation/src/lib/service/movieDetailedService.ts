@@ -30,7 +30,7 @@ export class MovieDetailedService {
         if (!result.status) return undefined;
         if (result.data.length == 0) return null;
 
-        return Promise.all(result.data.map(this.enrich));
+        return Promise.all(result.data.map(this.enrich.bind(this)));
     }
 
     getAvgRating(movie: MovieDetailedDTO) {

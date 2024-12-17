@@ -1,0 +1,22 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "firstName": "Emma",
+            "lastName": "Mayers",
+            "age": 22
+        },
+        {
+            "id": 2,
+            "firstName": "Jenna",
+            "lastName": "Ortega",
+            "age": 22
+        },
+        {
+            "id": 3,
+            "firstName": "Patrik",
+            "lastName": "Mintěl",
+            "age": 22
+        }
+    ]
+}

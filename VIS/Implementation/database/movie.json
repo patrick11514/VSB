@@ -1,0 +1,16 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "name": "Úžasný Patrikův Film",
+            "studio": "Patrik",
+            "year": 2024
+        },
+        {
+            "id": 2,
+            "name": "O mně",
+            "studio": "Patrik",
+            "year": 2023
+        }
+    ]
+}

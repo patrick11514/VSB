@@ -1,0 +1,16 @@
+{
+    "data": [
+        {
+            "actorId": 3,
+            "movieId": 1
+        },
+        {
+            "actorId": 1,
+            "movieId": 1
+        },
+        {
+            "actorId": 3,
+            "movieId": 2
+        }
+    ]
+}
