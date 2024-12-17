@@ -25,6 +25,7 @@ export interface Movie {
   id: Generated<number>;
   name: string;
   studio: string;
+  year: number;
 }
 
 export interface Rating {

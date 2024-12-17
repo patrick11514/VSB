@@ -4,9 +4,9 @@ import type { BaseMapper } from './baseMapper';
 
 export class MovieMapper implements BaseMapper {
     toDomainModel(dto: MovieDTO): MovieDomainModel {
-        return new MovieDomainModel(dto.id, dto.name, dto.studio);
+        return new MovieDomainModel(dto.id, dto.name, dto.studio, dto.year);
     }
     toDTO(domain: MovieDomainModel): MovieDTO {
-        return new MovieDTO(domain.id, domain.name, domain.studio);
+        return new MovieDTO(domain.id, domain.name, domain.studio, domain.year);
     }
 }

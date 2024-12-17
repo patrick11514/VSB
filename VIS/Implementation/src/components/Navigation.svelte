@@ -42,6 +42,12 @@
             path: '/login',
             title: 'Přihlášení',
             show: false
+        },
+        {
+            name: 'Movie Management',
+            path: '/movie-management',
+            title: 'Správa Filmů',
+            show: false
         }
     ];
 

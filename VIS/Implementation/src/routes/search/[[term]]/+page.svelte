@@ -36,7 +36,16 @@
             {:else if result === null}
                 {@render Info('Zadanému výrazu neodpovídá žádný film')}
             {:else}
-                {JSON.stringify(result)}
+                <div class="mx-auto grid w-[90%] grid-cols-4 border-[1px] border-black text-center md:w-[80%] lg:w-[70%]">
+                    {#each result as movie}
+                        <!--<div class="flex w-full justify-around border-2 border-black">!-->
+                        <a href="/movie/{movie.id}" class="border-y-[1px] border-l-[1px] border-black">{movie.name}</a>
+                        <a href="/movie/{movie.id}" class="border-y-[1px] border-black">{movie.year}</a>
+                        <a href="/movie/{movie.id}" class="border-y-[1px] border-black">Drama</a>
+                        <a href="/movie/{movie.id}" class="border-y-[1px] border-r-[1px] border-black">{movie.rating.toFixed(1)}/5.0</a>
+                        <!--</div>!-->
+                    {/each}
+                </div>
             {/if}
         {/await}
     {/if}

@@ -15,8 +15,8 @@ export class MovieService {
             result.data.map(async (movie) => {
                 const ratings = await ratingGateway.getRating(movie.id);
                 let rating: number;
-                if (!ratings.status) {
-                    rating = 5;
+                if (!ratings.status || ratings.data.length == 0) {
+                    rating = 5.0;
                 } else {
                     rating = ratings.data.map((r) => r.rating).reduce((a, b) => a + b, 0) / ratings.data.length;
                 }
@@ -26,5 +26,9 @@ export class MovieService {
                 } satisfies MovieDTO;
             })
         );
+    }
+
+    async addMovie(name: string, studio: string, year: number, actors: number[]) {
+        return this.gateway.addMovie(name, studio, year, actors);
     }
 }

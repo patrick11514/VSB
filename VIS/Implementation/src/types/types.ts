@@ -12,3 +12,5 @@ export type UserState =
         logged: true;
         data: UserData;
     };
+
+export type DePromise<$Type> = $Type extends Promise<infer $Inner> ? $Inner : $Type;

@@ -6,7 +6,7 @@ export class RatingService {
     private mapper = new RatingMapper();
 
     async getRating(movieId: number) {
-        const dto = await GlobalConnector.connector.ratingDao.getRatings(new MovieDTO(movieId, '', ''));
+        const dto = await GlobalConnector.connector.ratingDao.getRatings(new MovieDTO(movieId, '', '', 0));
         return dto.map(this.mapper.toDomainModel);
     }
 }

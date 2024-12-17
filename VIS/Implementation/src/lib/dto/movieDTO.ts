@@ -1,5 +1,3 @@
-import type { RatingDTO } from './ratingDTO';
-
 export class MovieDTO {
     constructor(
         public id: number,

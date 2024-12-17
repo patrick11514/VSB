@@ -7,4 +7,8 @@ export class MovieGateway {
         }
         return API.movies.POST(search);
     }
+
+    async addMovie(name: string, studio: string, year: number, actors: number[]) {
+        return API.movies.PUT({ name, studio, year, actors });
+    }
 }

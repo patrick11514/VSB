@@ -2,7 +2,6 @@
     import Button from '$/components/Button.svelte';
     import FormItem from '$/components/FormItem.svelte';
     import Input from '$/components/Input.svelte';
-    import { API } from '$/lib/api';
     import { SwalAlert } from '$/lib/functions';
     import { UserService } from '$/lib/service/userService';
     import { goto } from '$app/navigation';
