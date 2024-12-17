@@ -5,7 +5,7 @@ import type { UserDAO } from '../interfaces/userDao';
 import path from 'node:path';
 
 export class UserJsonDAO implements UserDAO {
-    private db = new JsonDBAbstract<UserDTO>(path.join(GlobalConnector.jsonDBPath, 'actor.json'));
+    private db = new JsonDBAbstract<UserDTO>(path.join(GlobalConnector.jsonDBPath, 'user.json'));
 
     async getUsers(): Promise<UserDTO[]> {
         return this.db.getAll();

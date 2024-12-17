@@ -6,7 +6,7 @@ import type { StarredMovieDAO } from '../interfaces/starred_movieDao';
 import path from 'node:path';
 
 export class StarredMovieJsonDAO implements StarredMovieDAO {
-    private db = new JsonDBAbstract<StarredMovieDTO>(path.join(GlobalConnector.jsonDBPath, 'actor.json'));
+    private db = new JsonDBAbstract<StarredMovieDTO>(path.join(GlobalConnector.jsonDBPath, 'starred.json'));
 
     async getStarred(user: UserDTO): Promise<StarredMovieDTO[]> {
         return this.db.getAll().filter((item) => item.userId === user.id);

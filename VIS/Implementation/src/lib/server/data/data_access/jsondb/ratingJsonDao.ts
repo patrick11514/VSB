@@ -6,7 +6,7 @@ import type { RatingDAO } from '../interfaces/ratingDao';
 import path from 'node:path';
 
 export class RatingJsonDAO implements RatingDAO {
-    private db = new JsonDBAbstract<RatingDTO>(path.join(GlobalConnector.jsonDBPath, 'actor.json'));
+    private db = new JsonDBAbstract<RatingDTO>(path.join(GlobalConnector.jsonDBPath, 'rating.json'));
 
     async getRatings(movie: MovieDTO): Promise<RatingDTO[]> {
         return this.db.getAll().filter((item) => item.id === movie.id);
