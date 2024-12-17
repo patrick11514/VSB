@@ -14,15 +14,15 @@ export class UserMariaDAO implements UserDAO {
         if (!data) return data;
         return new UserDTO(data.id, data.username, data.email, data.password);
     }
-    async createUser(user: UserDTO): Promise<void> {
-        await conn
+    async createUser(user: UserDTO): Promise<bigint> {
+        const data = await conn
             .insertInto('user')
             .values({
-                id: user.id,
                 username: user.username,
-                email: user.username,
+                email: user.email,
                 password: user.password
             })
-            .execute();
+            .executeTakeFirst();
+        return data.insertId ?? BigInt(-1);
     }
 }

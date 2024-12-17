@@ -10,15 +10,15 @@ export class ReviewMariaDAO implements ReviewDAO {
             return new ReviewDTO(item.id, item.user_id, item.movie_id, item.text);
         });
     }
-    async createReview(review: ReviewDTO): Promise<void> {
-        await conn
+    async createReview(review: ReviewDTO): Promise<bigint> {
+        const data = await conn
             .insertInto('review')
             .values({
-                id: review.id,
                 user_id: review.user,
                 movie_id: review.movie,
                 text: review.text
             })
-            .execute();
+            .executeTakeFirst();
+        return data.insertId ?? BigInt(-1);
     }
 }

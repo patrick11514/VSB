@@ -9,10 +9,14 @@ export class JsonDBAbstract<$DataType> {
         });
     }
 
-    addItem(item: $DataType) {
+    addItem(item: $DataType): bigint {
         const current = this.db.get('data') || [];
+        if (typeof item === 'object' && item && 'id' in item) {
+            item.id = current.length + 1;
+        }
         current.push(item);
         this.db.set('data', current);
+        return BigInt(current.length);
     }
 
     removeItem(item: $DataType) {

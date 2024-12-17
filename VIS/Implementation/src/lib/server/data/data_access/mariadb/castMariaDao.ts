@@ -10,13 +10,15 @@ export class CastMariaDAO implements CastDAO {
             return new CastDTO(item.actor_id, item.movie_id);
         });
     }
-    async addCast(cast: CastDTO): Promise<void> {
-        await conn
+    async addCast(cast: CastDTO): Promise<bigint> {
+        const data = await conn
             .insertInto('cast')
             .values({
                 actor_id: cast.actorId,
                 movie_id: cast.movieId
             })
-            .execute();
+            .executeTakeFirst();
+
+        return data.insertId ?? BigInt(-1);
     }
 }

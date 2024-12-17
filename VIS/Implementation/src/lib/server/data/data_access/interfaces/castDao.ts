@@ -3,5 +3,5 @@ import type { MovieDTO } from '../../dto/movie';
 
 export interface CastDAO {
     getCasts(movie: MovieDTO): Promise<CastDTO[]>;
-    addCast(cast: CastDTO): Promise<void>;
+    addCast(cast: CastDTO): Promise<bigint>;
 }

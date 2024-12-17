@@ -13,7 +13,7 @@ export class UserJsonDAO implements UserDAO {
     async getUser(id: number): Promise<UserDTO | undefined> {
         return this.db.getAll().find((item) => item.id === id);
     }
-    async createUser(user: UserDTO): Promise<void> {
-        this.db.addItem(user);
+    async createUser(user: UserDTO): Promise<bigint> {
+        return this.db.addItem(user);
     }
 }

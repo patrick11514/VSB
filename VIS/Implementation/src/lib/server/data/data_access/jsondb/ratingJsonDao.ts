@@ -11,7 +11,7 @@ export class RatingJsonDAO implements RatingDAO {
     async getRatings(movie: MovieDTO): Promise<RatingDTO[]> {
         return this.db.getAll().filter((item) => item.id === movie.id);
     }
-    async createRating(rating: RatingDTO): Promise<void> {
-        this.db.addItem(rating);
+    async createRating(rating: RatingDTO): Promise<bigint> {
+        return this.db.addItem(rating);
     }
 }

@@ -14,7 +14,7 @@ export class MovieJsonDAO implements MovieDAO {
     async getMovie(id: number): Promise<MovieDTO | undefined> {
         return this.db.getAll().find((item) => item.id === id);
     }
-    async createMovie(movie: MovieDTO): Promise<void> {
-        this.db.addItem(movie);
+    async createMovie(movie: MovieDTO): Promise<bigint> {
+        return this.db.addItem(movie);
     }
 }

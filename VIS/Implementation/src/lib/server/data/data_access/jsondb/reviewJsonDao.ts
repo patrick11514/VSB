@@ -11,7 +11,7 @@ export class ReviewJsonDAO implements ReviewDAO {
     async getReviews(movie: MovieDTO): Promise<ReviewDTO[]> {
         return this.db.getAll().filter((item) => item.movie === movie.id);
     }
-    async createReview(review: ReviewDTO): Promise<void> {
-        this.db.addItem(review);
+    async createReview(review: ReviewDTO): Promise<bigint> {
+        return this.db.addItem(review);
     }
 }

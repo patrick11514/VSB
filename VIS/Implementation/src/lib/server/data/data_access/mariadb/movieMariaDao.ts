@@ -14,14 +14,14 @@ export class MovieMariaDAO implements MovieDAO {
         if (!data) return data;
         return new MovieDTO(data.id, data.name, data.studio);
     }
-    async createMovie(movie: MovieDTO): Promise<void> {
-        await conn
+    async createMovie(movie: MovieDTO): Promise<bigint> {
+        const data = await conn
             .insertInto('movie')
             .values({
-                id: movie.id,
                 name: movie.name,
                 studio: movie.studio
             })
-            .execute();
+            .executeTakeFirst();
+        return data.insertId ?? BigInt(-1);
     }
 }

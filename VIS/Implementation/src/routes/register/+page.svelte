@@ -2,6 +2,7 @@
     import Button from '$/components/Button.svelte';
     import FormItem from '$/components/FormItem.svelte';
     import Input from '$/components/Input.svelte';
+    import { API } from '$/lib/api';
 
     type Entries = 'username' | 'email' | 'password' | 'password2';
     type Data = Record<
@@ -46,11 +47,13 @@
         if (Object.values(data).some((item) => item.error)) {
             return;
         }
+
+        console.log(await API.auth.register(Object.fromEntries(Object.entries(data).map(([key, value]) => [key, value.value])) as Record<Entries, string>));
     };
 </script>
 
 <section class="m-auto flex flex-col items-center justify-center rounded-md border-2 border-black p-4 text-center">
-    <h1 class="font-poppins mb-2 w-max border-b-2 border-b-black text-2xl font-bold lg:text-3xl">Registrace</h1>
+    <h1 class="mb-2 w-max border-b-2 border-b-black font-poppins text-2xl font-bold lg:text-3xl">Registrace</h1>
     <FormItem id="username" label="Uživatelské jméno" error={data.username.error}>
         <Input id="username" bind:value={data.username.value} bind:invalid={data.username.error} />
     </FormItem>
