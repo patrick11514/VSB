@@ -13,6 +13,12 @@ export class MovieService {
         return movies.filter((movie) => (!name ? true : movie.name.toLocaleLowerCase().includes(name.toLowerCase())));
     }
 
+    async getMovie(id: number) {
+        const dto = await GlobalConnector.connector.movieDao.getMovie(id);
+        if (!dto) return dto;
+        return this.mapper.toDomainModel(dto);
+    }
+
     async addMovie(name: string, studio: string, year: number, actors: number[]) {
         let newId = await GlobalConnector.connector.movieDao.createMovie(new MovieDTO(0, name, studio, year));
         if (newId < 0) {

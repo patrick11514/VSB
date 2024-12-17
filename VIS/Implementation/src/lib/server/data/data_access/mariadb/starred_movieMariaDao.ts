@@ -10,4 +10,21 @@ export class StarredMovieMariaDAO implements StarredMovieDAO {
             return new StarredMovieDTO(item.movie_id, item.user_id);
         });
     }
+    async setStarred(user: number, movie: number): Promise<bigint> {
+        const data = await conn
+            .insertInto('starred_movie')
+            .values({
+                user_id: user,
+                movie_id: movie
+            })
+            .executeTakeFirst();
+
+        return data.insertId ?? BigInt(-1);
+    }
+    async removeStarred(user: number, movie: number): Promise<void> {
+        await conn
+            .deleteFrom('starred_movie')
+            .where((eb) => eb.or([eb('user_id', '=', user), eb('movie_id', '=', movie)]))
+            .execute();
+    }
 }

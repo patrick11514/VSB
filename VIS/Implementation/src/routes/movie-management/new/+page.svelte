@@ -95,6 +95,10 @@
     };
 </script>
 
+<svelte:head>
+    <title>Nový film | FilmDB</title>
+</svelte:head>
+
 <section class="m-auto flex max-w-[90%] flex-col items-center justify-center rounded-md border-2 border-black p-4 text-center md:max-w-[70%] lg:max-w-[50%]">
     <h1 class="mb-2 w-max border-b-2 border-b-black font-poppins text-2xl font-bold lg:text-3xl">Nový Film</h1>
     <FormItem id="name" label="Název filmu" error={data.name.error}>

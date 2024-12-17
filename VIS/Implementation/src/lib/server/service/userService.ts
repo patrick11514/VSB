@@ -43,4 +43,10 @@ export class UserService {
             data: userData
         };
     }
+
+    async getUser(id: number) {
+        const user = await GlobalConnector.connector.userDao.getUser(id);
+        if (!user) return user;
+        return this.mapper.toDomainModel(user);
+    }
 }

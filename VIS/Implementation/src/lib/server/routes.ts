@@ -14,6 +14,7 @@ import type { ActorDomainModel } from './domain/models/actorDomainModel';
 import { ReviewService } from './service/reviewService';
 import type { RatingDomainModel } from './domain/models/ratingDomainModel';
 import type { ReviewDomainModel } from './domain/models/reviewDomainModel';
+import { StarredMovieService } from './service/starredMovieService';
 
 export const r = router({
     auth: {
@@ -113,20 +114,81 @@ export const r = router({
             } satisfies Response;
         })
     ],
-    rating: procedure.POST.input(z.number()).query(async ({ input }) => {
-        const service = new RatingService();
+    movie: procedure.POST.input(z.number()).query(async ({ input }) => {
+        const service = new MovieService();
+        const data = await service.getMovie(input);
+        if (!data) {
+            return {
+                status: false,
+                code: 404,
+                message: 'Film nenalezen'
+            } satisfies ErrorApiResponse;
+        }
         return {
             status: true,
-            data: await service.getRating(input)
-        } satisfies ResponseWithData<RatingDomainModel[]>;
+            data
+        } satisfies ResponseWithData<MovieDomainModel>;
     }),
-    review: procedure.POST.input(z.number()).query(async ({ input }) => {
-        const service = new ReviewService();
-        return {
-            status: true,
-            data: await service.getReviews(input)
-        } satisfies ResponseWithData<ReviewDomainModel[]>;
-    }),
+    rating: [
+        procedure.POST.input(z.number()).query(async ({ input }) => {
+            const service = new RatingService();
+            return {
+                status: true,
+                data: await service.getRating(input)
+            } satisfies ResponseWithData<RatingDomainModel[]>;
+        }),
+        loginProcedure.PUT.input(
+            z.object({
+                movie_id: z.number(),
+                value: z.number()
+            })
+        ).query(async ({ input, ctx }) => {
+            const service = new RatingService();
+            const id = await service.addRating(input.movie_id, ctx.id, input.value);
+
+            if (id == BigInt(-1)) {
+                return {
+                    status: false,
+                    code: 500,
+                    message: 'Nepovedlo se hodnotit, zkus to prosím znovu'
+                } satisfies ErrorApiResponse;
+            }
+
+            return {
+                status: true
+            } satisfies Response;
+        })
+    ],
+    review: [
+        procedure.POST.input(z.number()).query(async ({ input }) => {
+            const service = new ReviewService();
+            return {
+                status: true,
+                data: await service.getReviews(input)
+            } satisfies ResponseWithData<ReviewDomainModel[]>;
+        }),
+        loginProcedure.PUT.input(
+            z.object({
+                movie_id: z.number(),
+                value: z.string()
+            })
+        ).query(async ({ input, ctx }) => {
+            const service = new ReviewService();
+            const id = await service.addReview(input.movie_id, ctx.id, input.value);
+
+            if (id == BigInt(-1)) {
+                return {
+                    status: false,
+                    code: 500,
+                    message: 'Nepovedlo se napsat hodnocení, zkus to prosím znovu'
+                } satisfies ErrorApiResponse;
+            }
+
+            return {
+                status: true
+            } satisfies Response;
+        })
+    ],
     actor: [
         procedure.GET.query(async () => {
             const service = new ActorService();
@@ -142,7 +204,43 @@ export const r = router({
                 data: await service.getActors(input)
             } satisfies ResponseWithData<ActorDomainModel[]>;
         })
-    ]
+    ],
+    user: procedure.POST.input(z.number()).query(async ({ input }) => {
+        const service = new UserService();
+        const user = await service.getUser(input);
+        if (!user) {
+            return {
+                status: false,
+                code: 404,
+                message: 'Tento uživatel neexistuje'
+            } satisfies ErrorApiResponse;
+        }
+
+        return {
+            status: true,
+            data: user
+        } satisfies ResponseWithData<UserDomainModel>;
+    }),
+    getBookmark: loginProcedure.POST.input(z.number()).query(async ({ input, ctx }) => {
+        const service = new StarredMovieService();
+        return {
+            status: true,
+            data: await service.getBookmark(ctx.id, input)
+        } satisfies ResponseWithData<boolean>;
+    }),
+    toggleBookmark: loginProcedure.POST.input(z.number()).query(async ({ input, ctx }) => {
+        const service = new StarredMovieService();
+        const status = await service.getBookmark(ctx.id, input);
+        if (status) {
+            await service.removeBookmark(ctx.id, input);
+        } else {
+            await service.setBookmark(ctx.id, input);
+        }
+
+        return {
+            status: true
+        } satisfies Response;
+    })
 });
 
 export type AppRouter = typeof r;

@@ -6,7 +6,8 @@ export class MovieDetailedDTO {
         public id: number,
         public name: string,
         public studio: string,
+        public year: number,
         public ratings: RatingDTO[],
         public reviews: ReviewDTO[]
-    ) { }
+    ) {}
 }
