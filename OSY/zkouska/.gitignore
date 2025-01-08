@@ -1,0 +1,5 @@
+*.o
+slowcat
+socket_cl
+socket_srv
+*.out
