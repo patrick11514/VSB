@@ -152,6 +152,8 @@ void App::run() {
 
     if (this->currentScene.has_value()) {
       auto scene = this->getScene(this->currentScene.value());
+      auto res = this->window->getResolution();
+      this->window->updateResolution(res.x, res.y, scene->getCamera());
       auto skybox = scene->getSkybox();
       if (skybox) {
         skybox->draw();
