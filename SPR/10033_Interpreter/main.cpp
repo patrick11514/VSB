@@ -1,8 +1,6 @@
-#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <vector>
 
 static int count = 0;
 static int ip = 0;
