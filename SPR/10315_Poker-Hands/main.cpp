@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <unordered_map>
 #include <vector>
 
 #define TIE 0
@@ -85,44 +86,6 @@ struct Card {
 using Cards = std::array<Card, 5>;
 
 static char line[31];
-static std::array<Cards, 2> cards;
-
-// 01 34 67
-//
-void parseCards() {
-  for (int i = 0; i < 10; ++i) {
-    int start = i * 3;
-
-    char card = line[start];
-    char suit = line[start + 1];
-
-    int value = 0;
-
-    if (card >= '2' && card <= '9') {
-      value = card - '0';
-    } else {
-      switch (card) {
-      case 'T':
-        value = 10;
-        break;
-      case 'J':
-        value = 11;
-        break;
-      case 'Q':
-        value = 12;
-        break;
-      case 'K':
-        value = 13;
-        break;
-      case 'A':
-        value = 14;
-        break;
-      }
-    }
-
-    cards[i / 5][i % 5] = Card{getSuit(suit), value};
-  }
-}
 
 enum Play {
   HIGH_CARDS,
@@ -136,368 +99,341 @@ enum Play {
   STRAIGHT_FLUSH
 };
 
-Play getPlay(Cards &cards, int *counts) {
-  for (auto &card : cards) {
-    counts[card.value - 2]++;
+class Hand {
+private:
+  using Pair = std::pair<int, int>;
+
+  Cards cards;
+
+  std::unordered_map<int, int> counts;
+  std::vector<Pair> sortedPairs;
+
+  //
+  bool isStraightFlush() {
+    Suit suit = cards[0].suit;
+    for (int i = 0; i < 5; ++i) {
+      if (cards[i].value != cards[0].value + i || cards[i].suit != suit)
+        return false;
+    }
+    return true;
+  }
+  //
+  bool isFourOfKind() {
+    if (this->sortedPairs[0].second == 4) {
+      return true;
+    }
+    return false;
+  }
+  //
+  bool isFullHouse() {
+    if (this->sortedPairs[0].second == 3 && this->sortedPairs[1].second == 2) {
+      return true;
+    }
+    return false;
+  }
+  //
+  bool isFlush() {
+    Suit suit = cards[0].suit;
+
+    for (int i = 1; i < 5; ++i) {
+      if (cards[i].suit != suit)
+        return false;
+    }
+    return true;
+  }
+  //
+  bool isStraight() {
+    for (int i = 0; i < 5; ++i) {
+      if (cards[i].value != cards[0].value + i)
+        return false;
+    }
+    return true;
+  }
+  //
+  bool isThreeOfKind() {
+    if (this->sortedPairs[0].second == 3) {
+      return true;
+    }
+    return false;
+  }
+  //
+  bool isTwoPairs() {
+    if (this->sortedPairs[0].second == 2 && this->sortedPairs[1].second == 2) {
+      return true;
+    }
+    return false;
+  }
+  //
+  bool isPair() {
+    if (this->sortedPairs[0].second == 2) {
+      return true;
+    }
+    return false;
+  }
+  //
+
+  Play play;
+
+public:
+  Hand() {}
+  Hand(Cards &cards) : cards(cards) {}
+
+  void print() {
+    for (auto &card : cards) {
+      card.print();
+    }
+    putchar('\n');
   }
 
-  { ///////////////////////////////////
-    // straight flush
-    ///////////////////////////////////
-    bool same = true;
-    for (size_t i = 0; i < cards.size() - 1; ++i) {
-      if (cards[i].suit != cards[i + 1].suit) {
-        same = false;
-        break;
+  void sort() { std::sort(cards.begin(), cards.end()); }
+
+  void getCounts() {
+    for (int i = 0; i <= 14 - 2; ++i) {
+      counts[i] = 0;
+    }
+
+    for (auto &card : cards) {
+      counts[card.value - 2]++;
+    }
+
+    for (auto &pair : counts) {
+      if (pair.second > 0) {
+        sortedPairs.push_back(pair);
       }
     }
 
-    if (same) {
-      bool isOk = true;
-      int lastValue = cards[0].value;
-      for (size_t i = 1; i < cards.size(); ++i) {
-        if (cards[i].value - 1 != lastValue) {
-          isOk = false;
+    std::sort(sortedPairs.begin(), sortedPairs.end(),
+              [](Pair &left, Pair &right) {
+                // sort card count, then by card value
+                if (left.second == right.second) {
+                  return left.first > right.first;
+                }
+                return left.second > right.second;
+              });
+  }
+
+  void calculateResult() {
+    this->sort();
+    this->getCounts();
+
+    if (this->isStraightFlush()) {
+      this->play = STRAIGHT_FLUSH;
+      return;
+    }
+
+    if (this->isFourOfKind()) {
+      this->play = FOUR_OF_KIND;
+      return;
+    }
+
+    if (this->isFullHouse()) {
+      this->play = FULL_HOUSE;
+      return;
+    }
+
+    if (this->isFlush()) {
+      this->play = FLUSH;
+      return;
+    }
+
+    if (this->isStraight()) {
+      this->play = STRAIGHT;
+      return;
+    }
+
+    if (this->isThreeOfKind()) {
+      this->play = THREE_OF_KIND;
+      return;
+    }
+
+    if (this->isTwoPairs()) {
+      this->play = TWO_PAIRS;
+      return;
+    }
+
+    if (this->isPair()) {
+      this->play = PAIR;
+      return;
+    }
+
+    this->play = HIGH_CARDS;
+  }
+
+  bool operator>(Hand &right) {
+    if (this->play > right.play) {
+      return true;
+    }
+
+    if (this->play < right.play) {
+      return false;
+    }
+
+    switch (this->play) {
+    case HIGH_CARDS:
+    case FLUSH:
+      for (int i = 4; i >= 0; --i) {
+        if (this->cards[i] == right.cards[i])
+          continue;
+
+        if (this->cards[i] > right.cards[i]) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+      break;
+    case PAIR: {
+      int thisPair = this->sortedPairs[0].first;
+      int rightPair = right.sortedPairs[0].first;
+
+      if (thisPair > rightPair) {
+        return true;
+      } else if (rightPair > thisPair) {
+        return false;
+      }
+
+      // other cards should by only by count of 1 (4 records (pair + 3 by 1))
+      for (int i = 1; i < 4; ++i) {
+        if (this->sortedPairs[i].first == right.sortedPairs[i].first)
+          continue;
+
+        if (this->sortedPairs[i].first > right.sortedPairs[i].first) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+      break;
+    }
+    case TWO_PAIRS: {
+      for (int i = 0; i < 2; ++i) {
+        if (this->sortedPairs[i].first == right.sortedPairs[i].first)
+          continue;
+
+        if (this->sortedPairs[i].first > right.sortedPairs[i].first) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+      // other card should be only by count of 1 (3 records (2 pairs + 1))
+
+      if (this->sortedPairs[2].first > right.sortedPairs[2].first) {
+        return true;
+      } else {
+        return false;
+      }
+      break;
+    }
+
+    case THREE_OF_KIND:
+    case FULL_HOUSE:
+    case FOUR_OF_KIND: {
+      int thisHighest = this->sortedPairs[0].first;
+      int rightHighest = right.sortedPairs[0].first;
+
+      if (thisHighest > rightHighest) {
+        return true;
+      } else if (rightHighest > thisHighest) {
+        return false;
+      }
+
+      break;
+    }
+
+    case STRAIGHT:
+      if (this->cards[4] > right.cards[4]) {
+        return true;
+      } else {
+        return false;
+      }
+      break;
+
+    case STRAIGHT_FLUSH:
+      if (this->cards[4] > right.cards[4]) {
+        return true;
+      } else {
+        return false;
+      }
+      break;
+    }
+
+    return false;
+  }
+
+  bool operator<(Hand &right) { return !(*this > right); }
+
+  bool operator==(Hand &right) { return !(*this > right) && !(right > *this); }
+};
+
+class Game {
+private:
+  std::array<Hand, 2> hands;
+
+  void parse() {
+    std::array<Cards, 2> hands;
+
+    for (int i = 0; i < 10; ++i) {
+      int start = i * 3;
+
+      char card = line[start];
+      char suit = line[start + 1];
+
+      int value = 0;
+
+      if (card >= '2' && card <= '9') {
+        value = card - '0';
+      } else {
+        switch (card) {
+        case 'T':
+          value = 10;
+          break;
+        case 'J':
+          value = 11;
+          break;
+        case 'Q':
+          value = 12;
+          break;
+        case 'K':
+          value = 13;
+          break;
+        case 'A':
+          value = 14;
           break;
         }
-        lastValue = cards[i].value;
       }
 
-      if (isOk)
-        return STRAIGHT_FLUSH;
-    }
-  }
-  { ///////////////////////////////////
-    // four of kind
-    ///////////////////////////////////
-    for (int i = 0; i < 13; ++i) {
-      if (counts[i] == 4)
-        return FOUR_OF_KIND;
-    }
-  }
-
-  { ///////////////////////////////////
-    // full house
-    ///////////////////////////////////
-    bool two = false;
-    bool three = false;
-    for (int i = 0; i < 13; ++i) {
-      if (counts[i] == 3) {
-        three = true;
-      } else if (counts[i] == 2) {
-        two = true;
-      }
-      if (three && two)
-        return FULL_HOUSE;
-    }
-  }
-
-  { ///////////////////////////////////
-    // flush
-    ///////////////////////////////////
-    bool same = true;
-    Suit lastSuit = cards[0].suit;
-
-    for (size_t i = 1; i < cards.size(); i++) {
-      if (cards[i].suit != lastSuit) {
-        same = false;
-        break;
-      }
+      hands[i / 5][i % 5] = Card{getSuit(suit), value};
     }
 
-    if (same)
-      return FLUSH;
+    this->hands[0] = Hand(hands[0]);
+    this->hands[1] = Hand(hands[1]);
   }
 
-  { ///////////////////////////////////
-    // Straight
-    //////////////////////////////////
-    bool isOk = true;
-    int lastValue = cards[0].value;
+public:
+  int getResult() {
+    this->parse();
 
-    for (size_t i = 1; i < cards.size(); ++i) {
-      if (cards[i].value - 1 != lastValue) {
-        isOk = false;
-        break;
-      }
-      lastValue = cards[i].value;
-    }
+    this->hands[0].calculateResult();
+    this->hands[1].calculateResult();
+    // PlayResult white = this->hands[1].getResult();
+    //
 
-    if (isOk)
-      return STRAIGHT;
-  }
-  { ///////////////////////////////////
-    // Three of kind
-    //////////////////////////////////
-
-    for (int i = 0; i < 13; ++i) {
-      if (counts[i] == 3)
-        return THREE_OF_KIND;
+    if (this->hands[0] == this->hands[1]) {
+      return TIE;
+    } else if (this->hands[0] < this->hands[1]) {
+      return WW;
+    } else {
+      return BW;
     }
   }
-
-  { ///////////////////////////////////
-    // Two pairs
-    //////////////////////////////////
-    int pairs = 0;
-
-    for (int i = 0; i < 13; ++i) {
-      if (counts[i] == 2) {
-        pairs++;
-      }
-
-      if (pairs == 2)
-        return TWO_PAIRS;
-    }
-  }
-
-  { ///////////////////////////////////
-    // Pair
-    //////////////////////////////////
-    for (int i = 0; i < 13; ++i) {
-      if (counts[i] == 2)
-        return PAIR;
-    }
-  }
-
-  return HIGH_CARDS;
-}
-
-std::vector<Card> getRemainingCards(Cards &cards, Play play, int *counts) {
-  std::vector<Card> cardsList;
-
-  switch (play) {
-  case HIGH_CARDS: {
-    return std::vector<Card>{cards.begin(), cards.end()};
-  }
-  case PAIR: {
-    for (auto &card : cards) {
-      if (counts[card.value - 2] != 2)
-        cardsList.emplace_back(card);
-    }
-    break;
-  }
-  case TWO_PAIRS: {
-    for (auto &card : cards) {
-      if (counts[card.value - 2] != 2) {
-        cardsList.emplace_back(card);
-      }
-    }
-    break;
-  }
-  case THREE_OF_KIND:
-  case STRAIGHT:
-  case FLUSH:
-  case FULL_HOUSE:
-  case FOUR_OF_KIND:
-  case STRAIGHT_FLUSH:
-    break;
-  }
-
-  return cardsList;
-}
+};
 
 int process() {
-  parseCards();
-
-  std::sort(cards[0].begin(), cards[0].end());
-  std::sort(cards[1].begin(), cards[1].end());
-
-  int Bcounts[13];
-  int Wcounts[13];
-
-  Play black = getPlay(cards[0], Bcounts);
-  Play white = getPlay(cards[1], Wcounts);
-
-  if (black > white) {
-    return BW;
-  }
-
-  if (white > black) {
-    return WW;
-  }
-
-  Cards BC = cards[0];
-  std::vector<Card> BRest = getRemainingCards(BC, black, Bcounts);
-
-  Cards WC = cards[1];
-  std::vector<Card> WRest = getRemainingCards(WC, white, Wcounts);
-
-  // handle same
-  switch (black) {
-  case HIGH_CARDS:
-  case FLUSH:
-    for (int i = 4; i >= 0; --i) {
-      if (BC[i] == WC[i])
-        continue;
-
-      if (BC[i] > WC[i]) {
-        return BW;
-      } else {
-        return WW;
-      }
-    }
-    break;
-  case PAIR: {
-    int BPair = 0;
-    for (int i = 0; i < 13; ++i) {
-      if (Bcounts[i] == 2) {
-        BPair = i;
-        break;
-      }
-    }
-
-    int WPair = 0;
-    for (int i = 0; i < 13; ++i) {
-      if (Wcounts[i] == 2) {
-        WPair = i;
-        break;
-      }
-    }
-
-    if (BPair > WPair)
-      return BW;
-    else if (WPair > BPair)
-      return WW;
-
-    for (int i = 2; i >= 0; --i) {
-      if (BRest[i] == WRest[i])
-        continue;
-      if (BRest[i] > WRest[i]) {
-        return BW;
-      } else {
-        return WW;
-      }
-    }
-    break;
-  }
-  case TWO_PAIRS: {
-    int Bidx = 0;
-    int BPairs[2];
-    for (int i = 12; i >= 0; --i) {
-      if (Bcounts[i] == 2) {
-        BPairs[Bidx++] = i;
-      }
-      if (Bidx == 2)
-        break;
-    }
-
-    int Widx = 0;
-    int WPairs[2];
-    for (int i = 12; i >= 0; --i) {
-      if (Wcounts[i] == 2) {
-        WPairs[Widx++] = i;
-      }
-      if (Widx == 2)
-        break;
-    }
-
-    if (BPairs[0] == WPairs[0]) {
-      if (BPairs[1] == WPairs[1]) {
-        if (BRest[0] == WRest[0])
-          break;
-        else if (BRest[0] > WRest[0]) {
-          return BW;
-        } else {
-          return WW;
-        }
-      }
-
-      if (BPairs[1] > WPairs[1]) {
-        return BW;
-      } else {
-        return WW;
-      }
-    }
-
-    if (BPairs[0] > WPairs[0]) {
-      return BW;
-    } else {
-      return WW;
-    }
-
-    break;
-  }
-  case THREE_OF_KIND: {
-    int BType = 0;
-    for (int i = 0; i < 13; ++i) {
-      if (Bcounts[i] == 3) {
-        BType = i;
-        break;
-      }
-    }
-    int WType = 0;
-    for (int i = 0; i < 13; ++i) {
-      if (Wcounts[i] == 3) {
-        WType = i;
-        break;
-      }
-    }
-
-    if (BType > WType) {
-      return BW;
-    } else if (WType > BType) {
-      return WW;
-    }
-    break;
-  }
-
-  case STRAIGHT:
-  case STRAIGHT_FLUSH:
-    if (BC[4] > WC[4])
-      return BW;
-    else if (WC[4] > BC[4])
-      return WW;
-    break;
-  case FULL_HOUSE: {
-    int BType = 0;
-    for (int i = 0; i < 13; ++i) {
-      if (Bcounts[i] == 3) {
-        BType = i;
-        break;
-      }
-    }
-    int WType = 0;
-    for (int i = 0; i < 13; ++i) {
-      if (Wcounts[i] == 3) {
-        WType = i;
-        break;
-      }
-    }
-
-    if (BType > WType)
-      return BW;
-    else if (WType > BType)
-      return WW;
-    break;
-  }
-
-  case FOUR_OF_KIND: {
-
-    int BType = 0;
-    for (int i = 0; i < 13; ++i) {
-      if (Bcounts[i] == 4) {
-        BType = i;
-        break;
-      }
-    }
-    int WType = 0;
-    for (int i = 0; i < 13; ++i) {
-      if (Wcounts[i] == 4) {
-        WType = i;
-        break;
-      }
-    }
-
-    if (BType > WType)
-      return BW;
-    else if (WType > BType)
-      return WW;
-    break;
-  }
-  }
-
-  return TIE;
+  Game game;
+  return game.getResult();
 }
 
 int main() {
