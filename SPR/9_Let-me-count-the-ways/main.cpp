@@ -26,6 +26,7 @@ int solve(int cents, std::array<int, 5> &solution, int index, int count = 0) {
   std::array<int, 5> copy{solution};
 
   while (true) {
+    print(copy);
     if (sumCents(copy) > cents) {
       return count;
     }
