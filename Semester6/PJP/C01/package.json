@@ -4,7 +4,7 @@
     "main": "build/index.js",
     "type": "module",
     "scripts": {
-        "dev": "tsx watch ./src/index.ts",
+        "dev": "tsx ./src/index.ts",
         "build": "rm -rf build && mkdir -p build && tsc && tsc-alias",
         "start": "node ./build/index.js",
         "check": "tsc --noEmit",
