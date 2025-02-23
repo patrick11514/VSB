@@ -1,13 +1,14 @@
-type Cat = {
-    name: string;
-    age: number;
-    color: 'white' | 'orange' | 'black' | 'gray';
-};
+import readline from 'node:readline/promises';
+import { parse } from './lib/parser';
 
-const myCuteAnimal = {
-    name: 'Mourek',
-    age: 2,
-    color: 'orange'
-} satisfies Cat;
+const io = readline.createInterface({
+    input: process.stdin
+});
 
-console.log(myCuteAnimal);
+const lines = parseInt(await io.question(''));
+
+for (let i = 0; i < lines; ++i) {
+    console.log(parse(await io.question('')));
+}
+
+io.close();
