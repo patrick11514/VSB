@@ -1,14 +1,21 @@
 import readline from 'node:readline/promises';
-import { parse } from './lib/parser';
+import { evaluate, parse } from './lib/parser';
 
 const io = readline.createInterface({
     input: process.stdin
 });
 
 const lines = parseInt(await io.question(''));
-
 for (let i = 0; i < lines; ++i) {
-    console.log(parse(await io.question('')));
+    try {
+        const result = parse(await io.question(''));
+        console.log(evaluate(result));
+
+        //TODO with binary
+    } catch (e) {
+        console.error(e);
+        console.log('ERROR');
+    }
 }
 
 io.close();
