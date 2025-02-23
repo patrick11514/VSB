@@ -10,8 +10,6 @@ for (let i = 0; i < lines; ++i) {
     try {
         const result = parse(await io.question(''));
         console.log(evaluate(result));
-
-        //TODO with binary
     } catch (e) {
         console.error(e);
         console.log('ERROR');
