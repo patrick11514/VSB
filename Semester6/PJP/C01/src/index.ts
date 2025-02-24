@@ -11,7 +11,6 @@ for (let i = 0; i < lines; ++i) {
         const result = parse(await io.question(''));
         console.log(evaluate(result));
     } catch (e) {
-        console.error(e);
         console.log('ERROR');
     }
 }
