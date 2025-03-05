@@ -1,3 +1,6 @@
 [submodule "Semester6/VAJ/2025s-lab-01-patrick11514"]
 	path = Semester6/VAJ/2025s-lab-01-patrick11514
 	url = git@github.com:vsb-vaj/2025s-lab-01-patrick11514.git
+[submodule "Semester6/VAJ/2025s-lab-02-patrick11514"]
+	path = Semester6/VAJ/2025s-lab-02-patrick11514
+	url = git@github.com:vsb-vaj/2025s-lab-02-patrick11514.git
