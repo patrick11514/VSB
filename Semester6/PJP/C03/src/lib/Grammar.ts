@@ -129,6 +129,14 @@ export class Grammar {
             first.set(rule, set);
         }
 
+        //sort
+        for (const key of first.keys()) {
+            first.set(
+                key,
+                new Set([...first.get(key)!].sort((a, b) => a.name.localeCompare(b.name)))
+            );
+        }
+
         return first;
     }
 
@@ -159,7 +167,54 @@ export class Grammar {
                     sets.get(symbol)!.add(rule.lhs);
                     continue;
                 }
+
+                if (next instanceof Terminal) {
+                    sets.get(symbol)!.add(next);
+                    continue;
+                }
+
+                //next is nonterminal
+                //we need to add first of next to follow of symbol
+                for (const _symbol of first.get(next)!) {
+                    if (_symbol instanceof NonTerminal) continue;
+                    if (_symbol instanceof Epsilon) continue;
+                    sets.get(symbol)!.add(_symbol);
+                }
             }
         }
+
+        let changed = true;
+        while (changed) {
+            changed = false;
+
+            for (const set of sets.values()) {
+                for (const symbol of set) {
+                    if (symbol instanceof Terminal) continue;
+
+                    const nonTerminalSet = sets.get(symbol)!;
+                    //add this nonTerminal's set to the set of the current nonTerminal
+                    for (const terminal of nonTerminalSet) {
+                        if (!set.has(terminal)) {
+                            set.add(terminal);
+                            changed = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        const follow = new Map<NonTerminal, Set<Terminal>>();
+        for (const nonTerminal of this.nonTerminals) {
+            follow.set(
+                nonTerminal,
+                new Set(
+                    [...sets.get(nonTerminal)!]
+                        .filter((s) => s instanceof Terminal)
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                )
+            );
+        }
+
+        return follow;
     }
 }

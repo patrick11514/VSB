@@ -45,5 +45,9 @@ export const parseGrammar = (grammar: string): Grammar => {
         }
     }
 
-    return new Grammar([...terminals.values()], [...nonTerminals.values()], rules);
+    return new Grammar(
+        [...terminals.values()].sort((a, b) => (a.name > b.name ? 1 : -1)),
+        [...nonTerminals.values()].sort((a, b) => (a.name > b.name ? 1 : -1)),
+        rules
+    );
 };
