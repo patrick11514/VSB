@@ -34,7 +34,7 @@ export class Grammar {
         return nullable;
     }
 
-    getFirstTable() {
+    getFirstTable(withEpsilon = false) {
         const nullable = this.computeNullable();
         const sets = new Map<NonTerminal, Set<Symbol>>();
 
@@ -49,7 +49,7 @@ export class Grammar {
 
             for (const symbol of rule.rhs) {
                 ++walked;
-                if (!(symbol instanceof Epsilon)) {
+                if (withEpsilon || !(symbol instanceof Epsilon)) {
                     set.add(symbol);
                 }
                 if (symbol instanceof Terminal) {
@@ -95,6 +95,8 @@ export class Grammar {
 
         const first = new Map<Rule, Set<Terminal>>();
 
+        console.log(sets);
+
         for (const rule of this.rules) {
             const set = new Set<Terminal>();
 
@@ -119,9 +121,10 @@ export class Grammar {
             if (
                 //if we walk all symbols
                 walked === rule.rhs.length &&
-                //and the last one is nonterminal, this means, that all symbols
-                //are nullable
-                rule.rhs[walked - 1] instanceof NonTerminal
+                //and the last one is nonterminal, which can be rewritten to epsilon,
+                //this means, that all symbols are nullable
+                rule.rhs[walked - 1] instanceof NonTerminal &&
+                nullable.has(rule.rhs[walked - 1])
             ) {
                 set.add(new Epsilon());
             }
@@ -141,7 +144,7 @@ export class Grammar {
     }
 
     computeFollowSets(): Map<NonTerminal, Set<Terminal>> {
-        const first = this.getFirstTable();
+        const first = this.getFirstTable(true);
         const sets = new Map<NonTerminal, Set<Symbol>>();
         //first rule is start, so add epsilon to it
         sets.set(this.rules[0].lhs, new Set([new Epsilon()]));
@@ -177,7 +180,12 @@ export class Grammar {
                 //we need to add first of next to follow of symbol
                 for (const _symbol of first.get(next)!) {
                     if (_symbol instanceof NonTerminal) continue;
-                    if (_symbol instanceof Epsilon) continue;
+                    if (_symbol instanceof Epsilon) {
+                        //if we can rewrite this nonterminal to epsilon,
+                        //we need to add follow of next to follow of symbol
+                        sets.get(symbol)!.add(next);
+                        continue;
+                    }
                     sets.get(symbol)!.add(_symbol);
                 }
             }
