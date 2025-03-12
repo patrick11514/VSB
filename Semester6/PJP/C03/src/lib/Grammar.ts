@@ -9,7 +9,7 @@ export class Grammar {
         public readonly terminals: Terminal[],
         public readonly nonTerminals: NonTerminal[],
         public readonly rules: Rule[]
-    ) {}
+    ) { }
 
     computeNullable(): Set<NonTerminal> {
         const nullable = new Set<NonTerminal>();
@@ -94,8 +94,6 @@ export class Grammar {
         const sets = this.getFirstTable();
 
         const first = new Map<Rule, Set<Terminal>>();
-
-        console.log(sets);
 
         for (const rule of this.rules) {
             const set = new Set<Terminal>();

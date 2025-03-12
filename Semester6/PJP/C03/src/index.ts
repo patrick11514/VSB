@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import { parseGrammar } from './lib/parser';
 
-const input = fs.readFileSync('G3.txt', 'utf8');
+const input = fs.readFileSync('G1.txt', 'utf8');
 
 const grammar = parseGrammar(input);
 const first = grammar.computeFirstSets();
