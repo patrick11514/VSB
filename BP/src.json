@@ -1,0 +1,69 @@
+[
+    {
+        "name": "webapp",
+        "type": "online",
+        "author": "Kinza Yasar",
+        "title": "What is web application (web apps) and its benefits?",
+        "date": "2024-11",
+        "citeDate": "2025-03-05",
+        "lang": "english",
+        "url": "https://www.techtarget.com/searchsoftwarequality/definition/Web-application-Web-app"
+    },
+    {
+        "name": "apptypes",
+        "type": "online",
+        "author": "Tuhin Bhatt",
+        "title": "Web Applications Types: Examples, Benefits and Challenges",
+        "date": "2025-02-10",
+        "citeDate": "2025-03-05",
+        "lang": "english",
+        "url": "https://www.intelivita.com/blog/types-of-web-applications/"
+    },
+    {
+        "name": "declarative-programming",
+        "type": "online",
+        "author": "Rahul Awati",
+        "title": "Declarative programming",
+        "date": "2024-03",
+        "citeDate": "2025-03-14",
+        "lang": "english",
+        "url": "https://www.techtarget.com/searchitoperations/definition/declarative-programming"
+    },
+    {
+        "name": "imperative-programming",
+        "type": "online",
+        "title": "Imperative programming",
+        "date": "2018-11",
+        "citeDate": "2025-03-14",
+        "lang": "english",
+        "url": "https://www.techtarget.com/whatis/definition/imperative-programming"
+    },
+    {
+        "type": "online",
+        "url": "https://legacy.reactjs.org/docs/faq-internals.html",
+        "name": "virtual-dom",
+        "title": "Virtual DOM and Internals",
+        "date": "2019-02-07",
+        "citeDate": "2025-03-14",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://www.freecodecamp.org/news/what-is-the-virtual-dom-in-react/",
+        "name": "vdom",
+        "title": "What is the Virtual DOM in React?",
+        "author": "Matéu.sh",
+        "date": "2024-06-05",
+        "citeDate": "2025-03-14",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model",
+        "name": "DOM",
+        "title": "Document Object Model (DOM)",
+        "date": "2023-12-17",
+        "citeDate": "2025-03-14",
+        "lang": "english"
+    }
+]
