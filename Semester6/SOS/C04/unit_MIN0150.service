@@ -1,0 +1,9 @@
+[Unit]
+Description=Checks if user have too many files in home folder
+
+[Service]
+Type=oneshot
+ExecStart=/opt/MIN0150.bash
+
+[Install]
+WantedBy=multi-user.target

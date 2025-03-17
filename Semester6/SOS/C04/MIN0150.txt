@@ -1,0 +1,10 @@
+○ unit_MIN0150.service - Checks if user have too many files in home folder
+     Loaded: loaded (/etc/systemd/system/unit_MIN0150.service; enabled; preset: enabled)
+     Active: inactive (dead) since Mon 2025-03-17 15:58:36 CET; 5min ago
+    Process: 505 ExecStart=/opt/MIN0150.bash (code=exited, status=0/SUCCESS)
+   Main PID: 505 (code=exited, status=0/SUCCESS)
+        CPU: 26ms
+
+Mar 17 15:58:36 localhost systemd[1]: Starting unit_MIN0150.service - Checks if user have too many files in home folder...
+Mar 17 15:58:36 localhost systemd[1]: unit_MIN0150.service: Deactivated successfully.
+Mar 17 15:58:36 localhost systemd[1]: Finished unit_MIN0150.service - Checks if user have too many files in home folder.
