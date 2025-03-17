@@ -65,5 +65,59 @@
         "date": "2023-12-17",
         "citeDate": "2025-03-14",
         "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://docs.solidjs.com/concepts/signals",
+        "name": "solidjs",
+        "title": "Introduction Signals",
+        "date": "2024-11-26",
+        "citeDate": "2025-03-16",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/Events",
+        "name": "mdn-events",
+        "title": "Introduction to Events",
+        "date": "2024-12-19",
+        "citeDate": "2025-03-16",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://legacy.reactjs.org/docs/events.html",
+        "name": "react-syntheticevent",
+        "title": "SyntheticEvent",
+        "date": "2023-01-24",
+        "citeDate": "2025-03-17",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://angular.dev/guide/templates/two-way-binding",
+        "name": "angular-twoway",
+        "title": "Two-way binding",
+        "date": "2025-03-04",
+        "citeDate": "2025-03-17",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://vuejs.org/guide/components/v-model.html",
+        "name": "vue-twoway",
+        "title": "Component v-model",
+        "date": "2025-01-01",
+        "citeDate": "2025-03-17",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://svelte.dev/docs/svelte/bind",
+        "name": "svelte-twoway",
+        "title": "bind:",
+        "date": "2025-02-17",
+        "citeDate": "2025-03-17",
+        "lang": "english"
     }
 ]
