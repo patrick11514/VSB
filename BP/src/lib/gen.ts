@@ -9,7 +9,7 @@ export const gen = (citations: Cite[]): string => {
             line += `    author\t\t\t= {${cite.author}},\n`;
         }
         line += `    date\t\t\t= {${cite.date}},\n`;
-        line += `    title\t\t\t= {${cite.title}},\n`;
+        line += `    title\t\t\t= {${cite.title.replaceAll('&', '\\&')}},\n`;
         line += `    lang\t\t\t= {${cite.lang}},\n`;
         switch (cite.lang) {
             case 'english':

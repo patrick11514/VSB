@@ -11,7 +11,8 @@
         "format": "prettier --write .",
         "lint": "prettier --check . && eslint src",
         "cite:add": "node ./build/index.js --add",
-        "cite:generate": "node ./build/index.js --generate"
+        "cite:generate": "node ./build/index.js --generate",
+	"cite:copy": "cp sources.bib ~/Projects/BachelorThesis"
     },
     "dependencies": {
         "cli-color": "^2.0.4",
