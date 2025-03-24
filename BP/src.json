@@ -119,5 +119,162 @@
         "date": "2025-02-17",
         "citeDate": "2025-03-17",
         "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://react.dev/learn/understanding-your-ui-as-a-tree",
+        "name": "react-tree",
+        "title": "Understanding Your UI as a Tree",
+        "date": "2023-12-21",
+        "citeDate": "2025-03-18",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Performance/JavaScript",
+        "name": "mdn-optimize",
+        "title": "JavaScript performance optimization",
+        "date": "2024-12-19",
+        "citeDate": "2025-03-18",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://thepriyammondal.medium.com/memoization-the-secret-to-faster-javascript-functions-651a0d951902",
+        "name": "memoization",
+        "title": "Memoization: The Secret to Faster JavaScript Functions",
+        "author": "PRIYAM MONDAL",
+        "date": "2023-03-31",
+        "citeDate": "2025-03-18",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://vuejs.org/guide/essentials/computed#computed-caching-vs-methods",
+        "name": "vue-computed-cache",
+        "title": "Computed",
+        "date": "2024-11-25",
+        "citeDate": "2025-03-19",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://vuejs.org/guide/components/props.html#one-way-data-flow",
+        "name": "vue-props",
+        "title": "One way data flow",
+        "date": "2024-09-16",
+        "citeDate": "2025-03-19",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://vuejs.org/guide/components/events.html",
+        "name": "vue-events",
+        "title": "Component Events",
+        "date": "2024-04-30",
+        "citeDate": "2025-03-19",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://medium.com/@rahulnagubandi/the-great-debate-vanilla-js-vs-modern-frameworks-0768ff83c547",
+        "name": "js-vs-frameworks",
+        "title": "The Great Debate: Vanilla JS vs Modern Frameworks",
+        "author": "Rahul Nagubandi",
+        "date": "2025-02-05",
+        "citeDate": "2025-03-20",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://www.geeksforgeeks.org/what-are-the-advantages-of-react-js/",
+        "name": "react-geeks",
+        "title": "What are the advantages of React.js ?",
+        "date": "2023-12-06",
+        "citeDate": "2025-03-20",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://developer.mozilla.org/en-US/docs/Glossary/SPA",
+        "name": "spa",
+        "title": "SPA (Single-page application)",
+        "date": "2024-12-19",
+        "citeDate": "2025-03-21",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps",
+        "name": "pwa",
+        "title": "Progressive web apps",
+        "date": "2025-02-21",
+        "citeDate": "2025-03-21",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://legacy.reactjs.org/docs/introducing-jsx.html",
+        "name": "jsx-react",
+        "title": "Introducing JSX",
+        "date": "2023-03-18",
+        "citeDate": "2025-03-21",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://reactnative.dev/",
+        "name": "react-native",
+        "title": "React Native",
+        "date": "2025-03-20",
+        "citeDate": "2025-03-21",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://survey.stackoverflow.co/2024/technology#1-web-frameworks-and-technologies",
+        "name": "stackoverflow-web-framework",
+        "title": "Stackoverflow 2024 Developer Survey",
+        "date": "2025-03-21",
+        "citeDate": "2025-03-21",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://medium.com/@danialeshete/comparative-web-performance-evaluation-benchmarking-of-vue-react-using-jswfb-a76982097225",
+        "name": "vue-vs-react",
+        "title": "Comparative Web Performance evaluation of Vue & React using JSWFB",
+        "author": "Danial Eshete",
+        "date": "2022-03-15",
+        "citeDate": "2025-03-21",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://dev.to/wootcot/why-i-chose-svelte-over-react-29i9",
+        "name": "svelte-vs-react",
+        "title": "Why I chose Svelte over React? ",
+        "author": "Alish Giri",
+        "date": "2024-06-12",
+        "citeDate": "2025-03-21",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://2023.stateofjs.com/en-US/libraries/front-end-frameworks/",
+        "name": "stateofjs",
+        "title": "Front-end frameworks",
+        "date": "2023",
+        "citeDate": "2025-03-21",
+        "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://svelte.dev/blog/svelte-5-is-alive",
+        "name": "svelte-5",
+        "title": "Svelte 5 is alive",
+        "date": "2024-10-22",
+        "citeDate": "2025-03-22",
+        "lang": "english"
     }
 ]
