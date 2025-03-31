@@ -1,0 +1,7 @@
+node_modules
+.env
+build
+logs/*
+
+src/lib/Generated/*
+!src/lib/Generated/*.g4
