@@ -10,9 +10,10 @@
         "check": "tsc --noEmit",
         "format": "prettier --write .",
         "lint": "prettier --check . && eslint src",
-        "generate": "cd src/lib/Generated && antlr4 -Dlanguage=TypeScript *.g4"
+        "generate": "cd src/lib/Generated && antlr4 -Dlanguage=TypeScript -visitor *.g4"
     },
     "dependencies": {
+        "antlr4": "^4.13.2",
         "cli-color": "^2.0.4",
         "dotenv": "^16.4.7",
         "prettier": "^3.1.0",
