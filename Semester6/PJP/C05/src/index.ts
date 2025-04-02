@@ -1,24 +1,21 @@
 import fs from 'node:fs';
-import ArrayInitLexer from './lib/Generated/ArrayInitLexer';
-import ArrayInitParser from './lib/Generated/ArrayInitParser';
+import GrammarLexer from './lib/Generated/GrammarLexer';
+import GrammarParser from './lib/Generated/GrammarParser';
 import { CharStream, CommonTokenStream, ParseTreeWalker } from 'antlr4';
-import ValueListener from './lib/ValueListener';
-import TransformVisitor from './lib/TransformVisitor';
+import EvalVisitor from './lib/EvalVisitor';
+import EvalListener from './lib/EvalListener';
 
 const data = fs.readFileSync('input.txt', 'utf8');
 const charStream = new CharStream(data);
-const lexer = new ArrayInitLexer(charStream);
+const lexer = new GrammarLexer(charStream);
 const tokenStream = new CommonTokenStream(lexer);
-const parser = new ArrayInitParser(tokenStream);
-const tree = parser.init();
-console.log(tree.toStringTree(parser.ruleNames, parser));
-
+const parser = new GrammarParser(tokenStream);
+const tree = parser.prog();
 if (parser.syntaxErrorsCount == 0) {
-    const walker = new ParseTreeWalker();
-    walker.walk(new ValueListener(), tree);
+    console.log(tree.toStringTree(parser.ruleNames, parser));
 
-    const transform = new TransformVisitor();
-    console.log(transform.visit(tree));
-} else {
-    console.log('ERRORS: ', parser.syntaxErrorsCount);
+    const visitor = new EvalVisitor();
+    visitor.visit(tree);
+
+    ParseTreeWalker.DEFAULT.walk(new EvalListener(), tree);
 }
