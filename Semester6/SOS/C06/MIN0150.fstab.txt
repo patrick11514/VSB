@@ -1,0 +1,1 @@
+UUID=1ace1dc8-75d9-4db2-80e1-b997e71cf902	/home	ext4	defaults,usrquota,grpquota	0	0

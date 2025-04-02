@@ -1,0 +1,7 @@
+total 8
+drwxrwsr-x  2 root  project 4096 Apr  3 00:05 .
+drwxr-xr-x 19 root  root    4096 Apr  2 23:57 ..
+-rw-r--r--  1 user2 project    0 Apr  3 00:05 algorithm.c
+-rw-r--r--  1 user2 project    0 Apr  3 00:05 algorithm.h
+-rw-r--r--  1 user5 project    0 Apr  3 00:05 CMakeLists.txt
+-rw-r--r--  1 user1 project    0 Apr  3 00:05 main.c
