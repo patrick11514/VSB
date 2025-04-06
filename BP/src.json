@@ -276,5 +276,14 @@
         "date": "2024-10-22",
         "citeDate": "2025-03-22",
         "lang": "english"
+    },
+    {
+        "type": "online",
+        "url": "https://vuejs.org/guide/extras/render-function#creating-vnodes",
+        "name": "VueVNode",
+        "title": "Render Functions & JSX",
+        "date": "2025-01-21",
+        "citeDate": "2025-03-28",
+        "lang": "english"
     }
 ]
