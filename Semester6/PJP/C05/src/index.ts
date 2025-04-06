@@ -17,5 +17,7 @@ if (parser.syntaxErrorsCount == 0) {
     const visitor = new EvalVisitor();
     visitor.visit(tree);
 
+    console.log('====');
+
     ParseTreeWalker.DEFAULT.walk(new EvalListener(), tree);
 }

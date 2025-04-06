@@ -1,4 +1,3 @@
-import { ParseTree } from 'antlr4';
 import GrammarListener from './Generated/GrammarListener';
 import {
     AddContext,
@@ -9,50 +8,50 @@ import {
     ParContext,
     StatContext
 } from './Generated/GrammarParser';
+import { ParseTreeProperty } from './ParseTreeProperty';
 
 export default class EvalListener extends GrammarListener {
-    value = new Map<ParseTree, number>();
+    private values = new ParseTreeProperty<number>();
 
     exitInt = (ctx: IntContext) => {
-        this.value.set(ctx, parseInt(ctx.INT().getText()));
+        this.values.set(ctx, parseInt(ctx.INT().getText()));
     };
 
     exitOct = (ctx: OctContext) => {
-        this.value.set(ctx, parseInt(ctx.OCT().getText(), 8));
+        this.values.set(ctx, parseInt(ctx.OCT().getText(), 8));
     };
 
     exitHex = (ctx: HexContext) => {
-        this.value.set(ctx, parseInt(ctx.HEX().getText(), 16));
+        this.values.set(ctx, parseInt(ctx.HEX().getText(), 16));
     };
 
     exitAdd = (ctx: AddContext) => {
-        const left = this.value.get(ctx.expr_list()[0])!;
-        const right = this.value.get(ctx.expr_list()[1])!;
+        const left = this.values.get(ctx.expr_list()[0])!;
+        const right = this.values.get(ctx.expr_list()[1])!;
 
         if (ctx._op.text === '+') {
-            return left + right;
+            return this.values.set(ctx, left + right);
         }
-        return left - right;
+        this.values.set(ctx, left - right);
     };
 
     exitMul = (ctx: MulContext) => {
-        const left = this.value.get(ctx.expr_list()[0])!;
-        const right = this.value.get(ctx.expr_list()[1])!;
+        const left = this.values.get(ctx.expr_list()[0])!;
+        const right = this.values.get(ctx.expr_list()[1])!;
 
         if (ctx._op.text === '*') {
-            return left * right;
+            return this.values.set(ctx, left * right);
         }
-        return left / right;
+        this.values.set(ctx, left / right);
     };
 
     exitPar = (ctx: ParContext) => {
-        this.value.set(ctx, this.value.get(ctx.expr())!);
+        this.values.set(ctx, this.values.get(ctx.expr())!);
     };
 
     exitStat = (ctx: StatContext) => {
-        console.log(this.value.values());
         for (const expr of ctx.expr_list()) {
-            console.log(this.value.get(expr));
+            console.log(this.values.get(expr));
         }
     };
 }
