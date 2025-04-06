@@ -10,7 +10,8 @@
         "check": "tsc --noEmit",
         "format": "prettier --write .",
         "lint": "prettier --check . && eslint src",
-        "generate": "cd src/lib/Generated && antlr4 -Dlanguage=TypeScript -visitor *.g4"
+        "generate": "cd src/lib/Generated && antlr4 -Dlanguage=TypeScript -visitor *.g4",
+        "generate:watch": "./watchBuild.sh"
     },
     "dependencies": {
         "antlr4": "^4.13.2",
@@ -32,5 +33,11 @@
         "tsx": "^4.19.2",
         "typescript": "^5.7.3",
         "typescript-eslint": "^8.23.0"
+    },
+    "pnpm": {
+        "onlyBuiltDependencies": [
+            "es5-ext",
+            "esbuild"
+        ]
     }
 }
