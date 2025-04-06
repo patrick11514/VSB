@@ -1,20 +1,24 @@
 import { ParseTree } from 'antlr4';
+import { z } from 'zod';
+
+export const startSchema = z.object({
+    start: z.object({
+        tokenIndex: z.number(),
+        line: z.number(),
+        column: z.number()
+    })
+});
 
 export class ParseTreeProperty<$Value> {
     private map: Map<string, $Value> = new Map();
 
     private getUniqueKey = (node: ParseTree) => {
         let tokenIndex = -1;
-        if (
-            'start' in node &&
-            typeof node.start === 'object' &&
-            node.start !== null &&
-            'tokenIndex' in node.start &&
-            typeof node.start.tokenIndex === 'number'
-        ) {
-            tokenIndex = node.start.tokenIndex;
+        const parsed = startSchema.safeParse(node);
+        if (parsed.success) {
+            tokenIndex = parsed.data.start.tokenIndex;
         }
-        return `${tokenIndex};;${node.constructor.name};;${node.getText()}`;
+        return `${tokenIndex};;${node.getText()}`;
     };
 
     set(node: ParseTree, value: $Value) {

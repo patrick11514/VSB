@@ -19,3 +19,5 @@ y = 10;
 
 write "21) + wont work with strings";
 write "x+y", "x"+"y";
+write "x*y", "x"*"y";
+

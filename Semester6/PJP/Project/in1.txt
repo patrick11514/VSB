@@ -55,3 +55,7 @@ c = "";
 e = true;
 read a,b,c,e;
 write "a,b,c,e: ", a, ",", b, ",", c, ",",e;
+
+bool zz;
+zz = true;
+zz = !zz;

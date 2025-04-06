@@ -4,7 +4,7 @@ start  : statement+ EOF ;
 statement : command? ';'                                      # CMD
           | '{' statement+ '}'                                # BLOCK
           | 'if' '(' condition ')' statement                   # IF
-          | 'if' '(' condition ')' statement 'else' statement # IFFELSE
+          | 'if' '(' condition ')' statement 'else' statement # IFELSE
           | 'while' '(' condition ')' statement                # WHILE
           ;
  
@@ -17,26 +17,26 @@ command : vartype VARID (',' VARID)*                     # CMDVAR
 
 condition : expr ;
 
-expr : '-' (INT | FLOAT)           # MINUS
-     | '!' expr                    # NOT
-     | expr ('*' | '/' | '%') expr # MUL
-     | expr ('+' | '-' | '.') expr # ADD
-     | expr ('<' |'>') expr        # REL
-     | expr ('==' | '!=') expr     # EQUAL
-     | expr '&&' expr              # AND
-     | expr '||' expr              # OR
-     | expr '=' expr               # ASSIGN
-     | INT                         # INT
-     | FLOAT                       # FLOAT
-     | BOOL                        # BOOL   
-     | STR                         # STR
-     | VARID                       # VARID
-     | '(' expr ')'                # PAREN
+expr : VARID '=' expr                  # ASSIGN
+     | '-' expr                        # MINUS
+     | '!' expr                        # NOT
+     | expr op=('*' | '/' | '%') expr  # MUL
+     | expr op=('+' | '-' | '.') expr  # ADD
+     | expr op=('<' |'>') expr         # REL
+     | expr op=('==' | '!=') expr      # EQUAL
+     | expr '&&' expr                  # AND
+     | expr '||' expr                  # OR
+     | INT                             # INT
+     | FLOAT                           # FLOAT
+     | BOOL                            # BOOL   
+     | STR                             # STR
+     | VARID                           # VARID
+     | '(' expr ')'                    # PAREN
      ;
 
 //LITERALS
 INT : [0-9]+ ;
-FLOAT : [1-9][0-9]* '.' [0-9]+ ;
+FLOAT : [0-9]+ '.' [0-9]+ ;
 BOOL : 'true' | 'false' ;
 STR : '"' .*? '"' ;
 
