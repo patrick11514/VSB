@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { Float } from './Float';
 import ProjectListener from './Generated/ProjectListener';
 import {
@@ -22,7 +21,7 @@ import {
     VARIDContext,
     WHILEContext
 } from './Generated/ProjectParser';
-import { ParseTreeProperty, startSchema } from './ParseTreeProperty';
+import { ParseTreeProperty } from './ParseTreeProperty';
 import { TypeError } from './TypeError';
 
 enum VariableType {
@@ -400,9 +399,6 @@ export class TypeChecker extends ProjectListener {
         const left = this.values.get(ctx.expr(0))!;
         const right = this.values.get(ctx.expr(1))!;
 
-        const first = left as number;
-        const second = right as number;
-
         if (ctx._op.text === '%') {
             const invalidTypes = [
                 VariableType.STRING,
@@ -410,6 +406,9 @@ export class TypeChecker extends ProjectListener {
                 VariableType.FLOAT
             ];
             if (this.checkEq(ctx, invalidTypes, "'int'")) return;
+            const first = left as number;
+            const second = right as number;
+
             this.values.set(ctx, first % second);
             return;
         }
@@ -418,11 +417,31 @@ export class TypeChecker extends ProjectListener {
 
         if (this.checkEq(ctx, invalidTypes, "'int' and 'float'")) return;
 
-        if (ctx._op.text === '*') {
-            this.values.set(ctx, first * second);
-            return;
+        let floatResult = false;
+
+        let first = left as number | Float;
+        if (first instanceof Float) {
+            first = first.getValue();
+            floatResult = true;
         }
-        this.values.set(ctx, first / second);
+        let second = right as number | Float;
+        if (second instanceof Float) {
+            second = second.getValue();
+            floatResult = true;
+        }
+
+        let res: number | Float;
+        if (ctx._op.text === '*') {
+            res = first * second;
+        } else {
+            res = first / second;
+        }
+
+        if (floatResult) {
+            res = new Float(res.toString());
+        }
+
+        this.values.set(ctx, res);
     };
 
     exitADD = (ctx: ADDContext) => {
@@ -441,17 +460,34 @@ export class TypeChecker extends ProjectListener {
             return;
         }
 
-        const first = left as number;
-        const second = right as number;
+        let floatResult = false;
+
+        let first = left as number | Float;
+        if (first instanceof Float) {
+            first = first.getValue();
+            floatResult = true;
+        }
+        let second = right as number | Float;
+        if (second instanceof Float) {
+            second = second.getValue();
+            floatResult = true;
+        }
 
         const invalidTypes = [VariableType.STRING, VariableType.BOOL];
         if (this.checkEq(ctx, invalidTypes, "'int' and 'float'")) return;
 
+        let res: number | Float;
         if (ctx._op.text === '+') {
-            this.values.set(ctx, first + second);
-            return;
+            res = first + second;
+        } else {
+            res = first - second;
         }
-        this.values.set(ctx, first - second);
+
+        if (floatResult) {
+            res = new Float(res.toString());
+        }
+
+        this.values.set(ctx, res);
     };
 
     exitREL = (ctx: RELContext) => {
@@ -461,12 +497,21 @@ export class TypeChecker extends ProjectListener {
         const invalidTypes = [VariableType.STRING, VariableType.BOOL];
         if (this.checkEq(ctx, invalidTypes, "'int' and 'float'")) return;
 
+        let first = left as number | Float;
+        if (first instanceof Float) {
+            first = first.getValue();
+        }
+        let second = right as number | Float;
+        if (second instanceof Float) {
+            second = second.getValue();
+        }
+
         if (ctx._op.text === '<') {
-            this.values.set(ctx, left < right);
+            this.values.set(ctx, first < second);
             return;
         }
 
-        this.values.set(ctx, left > right);
+        this.values.set(ctx, first > second);
     };
 
     exitEQUAL = (ctx: EQUALContext) => {
@@ -504,6 +549,15 @@ export class TypeChecker extends ProjectListener {
                 )
             );
             return;
+        }
+
+        let first = left as number | Float | string;
+        if (first instanceof Float) {
+            first = first.getValue();
+        }
+        let second = right as number | Float | string;
+        if (second instanceof Float) {
+            second = second.getValue();
         }
 
         if (ctx._op.text === '==') {

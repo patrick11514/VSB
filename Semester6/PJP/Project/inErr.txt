@@ -20,4 +20,8 @@ y = 10;
 write "21) + wont work with strings";
 write "x+y", "x"+"y";
 write "x*y", "x"*"y";
+float zz, xx, yy;
+zz = 10;
+xx = 20;
+yy = zz + xx + 4.2;
 
