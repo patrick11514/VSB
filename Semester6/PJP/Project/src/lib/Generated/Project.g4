@@ -17,8 +17,7 @@ command : vartype VARID (',' VARID)*                     # CMDVAR
 
 condition : expr ;
 
-expr : VARID '=' expr                  # ASSIGN
-     | '-' expr                        # MINUS
+expr : '-' expr                        # MINUS
      | '!' expr                        # NOT
      | expr op=('*' | '/' | '%') expr  # MUL
      | expr op=('+' | '-' | '.') expr  # ADD
@@ -26,6 +25,7 @@ expr : VARID '=' expr                  # ASSIGN
      | expr op=('==' | '!=') expr      # EQUAL
      | expr '&&' expr                  # AND
      | expr '||' expr                  # OR
+     | <assoc=right> VARID '=' expr    # ASSIGN
      | INT                             # INT
      | FLOAT                           # FLOAT
      | BOOL                            # BOOL   
