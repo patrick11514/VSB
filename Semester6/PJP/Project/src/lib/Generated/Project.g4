@@ -3,9 +3,9 @@ start  : statement+ EOF ;
 
 statement : command? ';'                                      # CMD
           | '{' statement+ '}'                                # BLOCK
-          | 'if' '(' condition ')' statement                   # IF
-          | 'if' '(' condition ')' statement 'else' statement # IFELSE
-          | 'while' '(' condition ')' statement                # WHILE
+          | 'if' '(' expr ')' statement                   # IF
+          | 'if' '(' expr ')' statement 'else' statement # IFELSE
+          | 'while' '(' expr ')' statement                # WHILE
           ;
  
 
@@ -15,8 +15,6 @@ command : vartype VARID (',' VARID)*                     # CMDVAR
         | 'write' expr (',' expr)*                       # CMDWRITE
         ; 
 
-condition : expr ;
-
 expr : '-' expr                        # MINUS
      | '!' expr                        # NOT
      | expr op=('*' | '/' | '%') expr  # MUL
@@ -25,6 +23,7 @@ expr : '-' expr                        # MINUS
      | expr op=('==' | '!=') expr      # EQUAL
      | expr '&&' expr                  # AND
      | expr '||' expr                  # OR
+     | expr '?' expr ':' expr          # TERNARY
      | <assoc=right> VARID '=' expr    # ASSIGN
      | INT                             # INT
      | FLOAT                           # FLOAT

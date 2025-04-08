@@ -65,6 +65,7 @@ export class TypeError {
         };
 
         for (let i = 0; i < 2; ++i) {
+            if (line < 0) break;
             putLine(line, TypeError.sourceCode[line - 1]);
             line++;
         }
@@ -188,6 +189,7 @@ export class TypeError {
 
         //print 2 lines after
         for (let i = 0; i < 2; ++i) {
+            if (TypeError.sourceCode[line - 1] === undefined) break;
             putLine(line, TypeError.sourceCode[line - 1]);
             line++;
         }

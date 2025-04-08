@@ -18,6 +18,7 @@ import {
     PARENContext,
     RELContext,
     STRContext,
+    TERNARYContext,
     VARIDContext,
     WHILEContext
 } from './Generated/ProjectParser';
@@ -315,7 +316,7 @@ export class TypeChecker extends ProjectListener {
             return;
         }
 
-        const compare = this.checkTypes(rightType, leftType);
+        const compare = this.checkTypes(left.getText(), value);
         if (
             compare === TypeCheckRes.MISMATCH ||
             (leftType === VariableType.INT &&
@@ -523,7 +524,7 @@ export class TypeChecker extends ProjectListener {
 
         const leftType = this.getType(left);
         const rightType = this.getType(right);
-        const comp = this.checkTypes(leftType, rightType);
+        const comp = this.checkTypes(left, right);
         if (comp === TypeCheckRes.MISMATCH) {
             this.errors.push(
                 new TypeError(
@@ -588,8 +589,11 @@ export class TypeChecker extends ProjectListener {
         this.values.set(ctx, left || right);
     };
 
-    private checkBool(ctx: IFContext | IFELSEContext | WHILEContext, cmd: string) {
-        const condition = ctx.condition();
+    private checkBool(
+        ctx: IFContext | IFELSEContext | WHILEContext | TERNARYContext,
+        cmd: string
+    ) {
+        const condition = ctx.expr(0);
         const value = this.values.get(condition)!;
         const type = this.getType(value);
         if (type != VariableType.BOOL) {
@@ -630,5 +634,65 @@ export class TypeChecker extends ProjectListener {
 
     exitWHILE = (ctx: WHILEContext) => {
         this.checkBool(ctx, 'while');
+    };
+
+    exitTERNARY = (ctx: TERNARYContext) => {
+        this.checkBool(ctx, '? :');
+        const condition = ctx.expr(0);
+
+        const trueIsh = ctx.expr(1);
+        const trueIshValue = this.values.get(trueIsh)!;
+        const trueIshType = this.getType(trueIshValue);
+
+        const falseIsh = ctx.expr(2);
+        const falseIshValue = this.values.get(falseIsh)!;
+        const falseIshType = this.getType(falseIshValue);
+
+        const compare = this.checkTypes(trueIshValue, falseIshValue);
+
+        if (compare === TypeCheckRes.MISMATCH) {
+            this.errors.push(
+                new TypeError(
+                    {
+                        line: ctx.start.line,
+                        char: ctx.start.column
+                    },
+                    'type mismatch',
+                    `Cannot combine type '${unParseType(trueIshType)}' and type '${unParseType(falseIshType)}'`,
+                    [
+                        {
+                            start: {
+                                line: falseIsh.start.line,
+                                char: falseIsh.start.column
+                            },
+                            end: {
+                                line: falseIsh.start.line,
+                                char: falseIsh.start.column + falseIsh.getText().length
+                            },
+                            message: `while this is type of '${unParseType(falseIshType)}'`
+                        },
+                        {
+                            start: {
+                                line: trueIsh.start.line,
+                                char: trueIsh.start.column
+                            },
+                            end: {
+                                line: trueIsh.start.line,
+                                char: trueIsh.start.column + trueIsh.getText().length
+                            },
+                            message: `This is type of '${unParseType(trueIshType)}'`
+                        }
+                    ]
+                )
+            );
+            return;
+        }
+
+        const cond = this.values.get(condition)! as boolean;
+        if (cond) {
+            this.values.set(ctx, this.values.get(trueIsh)!);
+        } else {
+            this.values.set(ctx, this.values.get(falseIsh)!);
+        }
     };
 }
