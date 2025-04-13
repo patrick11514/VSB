@@ -1,0 +1,26 @@
+int a;
+a = 1;
+int b;
+b = -2;
+float c;
+c = a / b;
+
+bool d;
+d = !true;
+d = a > c && false || true;
+
+bool z;
+z = b != c && a == c;
+
+a == c;
+
+read a,b,c,d,z;
+write "AHOJ";
+write "AHOJ", a, b, c + a;
+write "END";
+
+if (a > b) {
+    write "a > b";
+} else {
+    write "a <= b";
+}

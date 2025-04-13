@@ -60,6 +60,6 @@ bool zz;
 zz = true;
 zz = !zz;
 
-float yy, xx;
-xx = 5.55;
-yy = xx > 2 ? 8 : 4.5;
+//float yy, xx;
+//xx = 5.55;
+//yy = xx > 2 ? 8 : 4.5;
