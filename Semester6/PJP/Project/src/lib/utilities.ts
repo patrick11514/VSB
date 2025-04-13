@@ -73,3 +73,29 @@ export const checkTypes = (aType: VariableType, bType: VariableType): TypeCheckR
         return TypeCheckRes.CONVERTABLE;
     return TypeCheckRes.MISMATCH;
 };
+
+export type TypeLiteral = 'I' | 'B' | 'S' | 'F' | 'N';
+
+export const typeToString = (type: VariableType): TypeLiteral => {
+    return (
+        {
+            [VariableType.INT]: 'I',
+            [VariableType.FLOAT]: 'F',
+            [VariableType.BOOL]: 'B',
+            [VariableType.STRING]: 'S',
+            [VariableType.NULL]: 'N'
+        } as const
+    )[type];
+};
+
+export const stringToType = (type: TypeLiteral): VariableType => {
+    return (
+        {
+            I: VariableType.INT,
+            F: VariableType.FLOAT,
+            B: VariableType.BOOL,
+            S: VariableType.STRING,
+            N: VariableType.NULL
+        } as const
+    )[type];
+};

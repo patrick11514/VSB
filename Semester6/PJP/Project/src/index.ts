@@ -5,6 +5,7 @@ import { CharStream, CommonTokenStream, ParseTreeVisitor, ParseTreeWalker } from
 import { TypeChecker } from './lib/TypeChecker';
 import { TypeError } from './lib/TypeError';
 import { Transpiler } from './lib/Transpiler';
+import { VirtualMachine } from './lib/VirualMachine';
 
 const FILENAME = 'in3.txt';
 
@@ -30,11 +31,13 @@ if (parser.syntaxErrorsCount == 0) {
         }
     } else {
         const transpiler = new Transpiler(checker.getTranspilerInput());
-        const sourceCode = transpiler.visitStart(tree).code.join('\n');
+        const sourceCode = transpiler.visitStart(tree).code;
 
-        console.log(sourceCode);
+        //console.log(sourceCode);
+        //fs.writeFileSync(FILENAME + '.out', sourceCode.join('\n'), 'utf8');
 
-        fs.writeFileSync(FILENAME + '.out', sourceCode, 'utf8');
+        const virtualMachine = new VirtualMachine(sourceCode);
+        virtualMachine.run();
     }
 } else {
     console.log(`Found ${parser.syntaxErrorsCount} errors`);

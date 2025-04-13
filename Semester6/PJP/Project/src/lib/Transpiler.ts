@@ -29,11 +29,13 @@ import {
 import ProjectVisitor from './Generated/ProjectVisitor';
 import {
     TypeCheckRes,
+    TypeLiteral,
     VariableType,
     checkTypes as _checkTypes,
     defaultValueToString,
     getDefaultValue,
-    parseType
+    parseType,
+    typeToString
 } from './utilities';
 
 const ResultSchema = z.object({
@@ -57,20 +59,6 @@ type VisitResult = {
 
 export type TranspilerInput = {
     variableTypes: Map<string, VariableType>;
-};
-
-type TypeLiteral = 'I' | 'B' | 'S' | 'F' | 'N';
-
-const typeToString = (type: VariableType): TypeLiteral => {
-    return (
-        {
-            [VariableType.INT]: 'I',
-            [VariableType.FLOAT]: 'F',
-            [VariableType.BOOL]: 'B',
-            [VariableType.STRING]: 'S',
-            [VariableType.NULL]: 'N'
-        } as const
-    )[type];
 };
 
 export class Transpiler extends ProjectVisitor<VisitResult> {

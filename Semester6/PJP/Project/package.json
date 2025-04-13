@@ -6,6 +6,7 @@
     "scripts": {
         "dev": "tsx watch ./src/index.ts",
         "build": "rm -rf build && mkdir -p build && tsc && tsc-alias",
+        "start:dev": "tsx ./src/index.ts",
         "start": "node ./build/index.js",
         "check": "tsc --noEmit",
         "format": "prettier --write .",
