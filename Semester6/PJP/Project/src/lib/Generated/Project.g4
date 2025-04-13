@@ -1,10 +1,10 @@
 grammar Project;
 start  : statement+ EOF ;  
 
-statement : command? ';'                                      # CMD
-          | '{' statement+ '}'                                # BLOCK
+statement : command? ';'                                  # CMD
+          | '{' statement+ '}'                            # BLOCK
           | 'if' '(' expr ')' statement                   # IF
-          | 'if' '(' expr ')' statement 'else' statement # IFELSE
+          | 'if' '(' expr ')' statement 'else' statement  # IFELSE
           | 'while' '(' expr ')' statement                # WHILE
           ;
  
@@ -23,7 +23,7 @@ expr : '-' expr                        # MINUS
      | expr op=('==' | '!=') expr      # EQUAL
      | expr '&&' expr                  # AND
      | expr '||' expr                  # OR
-     | expr '?' expr ':' expr          # TERNARY
+   //| expr '?' expr ':' expr          # TERNARY
      | <assoc=right> VARID '=' expr    # ASSIGN
      | INT                             # INT
      | FLOAT                           # FLOAT
