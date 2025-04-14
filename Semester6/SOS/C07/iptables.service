@@ -1,0 +1,10 @@
+[Unit]
+Description=Load iptables
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/init_firewall.sh
+
+[Install]
+WantedBy=multi-user.target

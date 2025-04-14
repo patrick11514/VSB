@@ -1,0 +1,10 @@
+○ iptables.service - Load iptables
+     Loaded: loaded (/etc/systemd/system/iptables.service; enabled; preset: enabled)
+     Active: inactive (dead) since Wed 2025-04-09 22:28:22 CEST; 4min 18s ago
+    Process: 548 ExecStart=/opt/init_firewall.sh (code=exited, status=0/SUCCESS)
+   Main PID: 548 (code=exited, status=0/SUCCESS)
+        CPU: 35ms
+
+Apr 09 22:28:22 vbox systemd[1]: Starting iptables.service - Load iptables...
+Apr 09 22:28:22 vbox systemd[1]: iptables.service: Deactivated successfully.
+Apr 09 22:28:22 vbox systemd[1]: Finished iptables.service - Load iptables.
