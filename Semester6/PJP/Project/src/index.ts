@@ -7,7 +7,7 @@ import { TypeError } from './lib/TypeError';
 import { Transpiler } from './lib/Transpiler';
 import { VirtualMachine } from './lib/VirualMachine';
 
-const FILENAME = 'in3.txt';
+const FILENAME = 'in1.txt';
 
 const data = fs.readFileSync(FILENAME, 'utf8');
 TypeError.fileName = FILENAME;
@@ -34,7 +34,7 @@ if (parser.syntaxErrorsCount == 0) {
         const sourceCode = transpiler.visitStart(tree).code;
 
         //console.log(sourceCode);
-        //fs.writeFileSync(FILENAME + '.out', sourceCode.join('\n'), 'utf8');
+        fs.writeFileSync(FILENAME + '.out', sourceCode.join('\n'), 'utf8');
 
         const virtualMachine = new VirtualMachine(sourceCode);
         virtualMachine.run();

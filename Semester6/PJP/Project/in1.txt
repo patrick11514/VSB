@@ -63,3 +63,6 @@ zz = !zz;
 //float yy, xx;
 //xx = 5.55;
 //yy = xx > 2 ? 8 : 4.5;
+
+int ll;
+for (ll = 0; ll < 8; ll = ll + 1) write ll;

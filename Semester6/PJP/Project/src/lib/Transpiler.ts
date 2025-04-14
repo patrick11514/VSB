@@ -12,6 +12,7 @@ import {
     CMDWRITEContext,
     EQUALContext,
     FLOATContext,
+    FORContext,
     IFContext,
     IFELSEContext,
     INTContext,
@@ -120,6 +121,9 @@ export class Transpiler extends ProjectVisitor<VisitResult> {
 
         const statement = this.visit(ctx.statement());
         lines.push(...statement.code);
+        if (statement.pop) {
+            lines.push('pop');
+        }
         lines.push(this.getLabel());
 
         return {
@@ -138,12 +142,18 @@ export class Transpiler extends ProjectVisitor<VisitResult> {
         lines.push(`fjmp ${this.labelCounter}`);
         const ifStmt = this.visit(ctx.statement(0));
         lines.push(...ifStmt.code);
+        if (ifStmt.pop) {
+            lines.push('pop');
+        }
         //end label tzn jump to end
         lines.push(`jmp ${this.labelCounter + 1}`);
         const elseStmt = this.visit(ctx.statement(1));
         //else label
         lines.push(this.getLabel());
         lines.push(...elseStmt.code);
+        if (elseStmt.pop) {
+            lines.push('pop');
+        }
         //end label
         lines.push(this.getLabel());
 
@@ -167,8 +177,43 @@ export class Transpiler extends ProjectVisitor<VisitResult> {
         //jump to end if false
         lines.push(`fjmp ${this.labelCounter}`);
         lines.push(...body.code);
+        if (body.pop) {
+            lines.push('pop');
+        }
         lines.push(`jmp ${beforeLabel}`); //jump to expression
         //end label
+        lines.push(this.getLabel());
+
+        return {
+            code: lines,
+            resultType: VariableType.NULL,
+            pop: false
+        };
+    };
+
+    visitFOR = (ctx: FORContext) => {
+        const lines = [];
+        const pre = this.visit(ctx.expr(0));
+        lines.push(...pre.code);
+        if (pre.pop) {
+            lines.push('pop');
+        }
+        const condition = this.visit(ctx.expr(1));
+        const preConditionLabel = this.labelCounter;
+        lines.push(this.getLabel());
+        lines.push(...condition.code);
+        lines.push(`fjmp ${this.labelCounter}`);
+        const body = this.visit(ctx.statement());
+        lines.push(...body.code);
+        if (body.pop) {
+            lines.push('pop');
+        }
+        const increment = this.visit(ctx.expr(2));
+        lines.push(...increment.code);
+        if (increment.pop) {
+            lines.push('pop');
+        }
+        lines.push(`jmp ${preConditionLabel}`);
         lines.push(this.getLabel());
 
         return {

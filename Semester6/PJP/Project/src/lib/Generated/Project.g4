@@ -6,6 +6,7 @@ statement : command? ';'                                  # CMD
           | 'if' '(' expr ')' statement                   # IF
           | 'if' '(' expr ')' statement 'else' statement  # IFELSE
           | 'while' '(' expr ')' statement                # WHILE
+          | 'for' '(' expr ';' expr ';' expr ')' statement# FOR
           ;
  
 

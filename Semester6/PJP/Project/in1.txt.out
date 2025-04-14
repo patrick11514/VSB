@@ -181,3 +181,24 @@ not
 save zz
 load zz
 pop
+push I 0
+save ll
+push I 0
+save ll
+load ll
+pop
+label 0
+load ll
+push I 8
+lt I
+fjmp 1
+load ll
+print 1
+load ll
+push I 1
+add I
+save ll
+load ll
+pop
+jmp 0
+label 1

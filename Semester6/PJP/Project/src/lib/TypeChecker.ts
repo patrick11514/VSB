@@ -8,6 +8,7 @@ import {
     CMDVARContext,
     EQUALContext,
     FLOATContext,
+    FORContext,
     IFContext,
     IFELSEContext,
     INTContext,
@@ -656,4 +657,35 @@ export class TypeChecker extends ProjectListener {
              this.values.set(ctx, this.values.get(falseIsh)!);
          }
      };*/
+    exitFOR = (ctx: FORContext) => {
+        const condition = ctx.expr(1);
+        const value = this.values.get(condition)!;
+        const type = this.getType(value);
+        if (type !== VariableType.BOOL) {
+            this.errors.push(
+                new TypeError(
+                    {
+                        line: ctx.start.line,
+                        char: ctx.start.column
+                    },
+                    'type mismatch',
+                    `Condition in for cycle need to return 'bool'`,
+                    [
+                        {
+                            start: {
+                                line: condition.start.line,
+                                char: condition.start.column
+                            },
+                            end: {
+                                line: condition.start.line,
+                                char: condition.start.column + condition.getText().length
+                            },
+                            message: `Valid type for for cycle condition is 'bool'`
+                        }
+                    ]
+                )
+            );
+            return;
+        }
+    };
 }
