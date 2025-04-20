@@ -285,5 +285,15 @@
         "date": "2025-01-21",
         "citeDate": "2025-03-28",
         "lang": "english"
+    },
+    {
+        "type": "book",
+        "publisher": "Course Technology",
+        "isbn": "9781305394049",
+        "name": "vodnik2015html5",
+        "title": "HTML5 and CSS3, Illustrated Complete",
+        "author": "Sasha Vodnik",
+        "lang": "english",
+        "year": "2015"
     }
 ]

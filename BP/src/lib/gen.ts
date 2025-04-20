@@ -5,22 +5,29 @@ export const gen = (citations: Cite[]): string => {
 
     for (const cite of citations) {
         let line = `@${cite.type}{${cite.name},\n`;
+
         if (cite.author) {
-            line += `    author\t\t\t= {${cite.author}},\n`;
+            line += `    author          = {${cite.author}},\n`;
         }
-        line += `    date\t\t\t= {${cite.date}},\n`;
-        line += `    title\t\t\t= {${cite.title.replaceAll('&', '\\&')}},\n`;
-        line += `    lang\t\t\t= {${cite.lang}},\n`;
-        switch (cite.lang) {
-            case 'english':
-                line += `    langidopts\t\t= {variant=american},\n`;
-                break;
+
+        line += `    title           = {${cite.title.replaceAll('&', '\\&')}},\n`;
+        line += `    lang            = {${cite.lang}},\n`;
+
+        if (cite.lang === 'english') {
+            line += `    langidopts      = {variant=american},\n`;
         }
-        line += `    urldate\t\t\t= {${cite.citeDate}},\n`;
 
         switch (cite.type) {
             case 'online':
-                line += `    url\t\t\t\t= {${cite.url}},\n`;
+                line += `    date            = {${cite.date}},\n`;
+                line += `    urldate         = {${cite.citeDate}},\n`;
+                line += `    url             = {${cite.url}},\n`;
+                break;
+
+            case 'book':
+                line += `    publisher       = {${cite.publisher}},\n`;
+                line += `    isbn            = {${cite.isbn}},\n`;
+                line += `    year            = {${cite.year}},\n`;
                 break;
         }
 

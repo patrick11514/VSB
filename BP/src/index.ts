@@ -3,7 +3,7 @@ import { prompt } from './lib/prompt';
 import { BaseCite, Cite } from './types/types';
 import fs from 'node:fs';
 
-const types: Cite['type'][] = ['online'];
+const types: Cite['type'][] = ['online', 'book'];
 
 const toYYYYMMDD = (date: Date): string => {
     return date.toISOString().split('T')[0];
@@ -19,7 +19,7 @@ if (process.argv.includes('--generate')) {
         console.log(`${i + 1}. ${types[i]}`);
     }
 
-    const { type, name, title, author, date, citeDate, lang } = await prompt([
+    const { type, name, title, author, lang } = await prompt([
         {
             type: 'select',
             name: 'type',
@@ -39,18 +39,6 @@ if (process.argv.includes('--generate')) {
             initial: ''
         },
         {
-            type: 'input',
-            name: 'date',
-            message: 'Enter the date of the source: ',
-            initial: toYYYYMMDD(new Date())
-        },
-        {
-            type: 'input',
-            name: 'citeDate',
-            message: 'Enter the date you cited the source: ',
-            initial: toYYYYMMDD(new Date())
-        },
-        {
             type: 'select',
             name: 'lang',
             message: 'Enter the language of the source: ',
@@ -62,15 +50,25 @@ if (process.argv.includes('--generate')) {
         name,
         title,
         author: author === '' ? undefined : author,
-        date,
-        citeDate,
         lang
     } satisfies BaseCite;
 
     let cite: Cite;
     switch (type) {
         case 'online':
-            const { url } = await prompt([
+            const { date, citeDate, url } = await prompt([
+                {
+                    type: 'input',
+                    name: 'date',
+                    message: 'Enter the date of the source: ',
+                    initial: toYYYYMMDD(new Date())
+                },
+                {
+                    type: 'input',
+                    name: 'citeDate',
+                    message: 'Enter the date you cited the source: ',
+                    initial: toYYYYMMDD(new Date())
+                },
                 {
                     type: 'input',
                     name: 'url',
@@ -78,7 +76,40 @@ if (process.argv.includes('--generate')) {
                 }
             ] as const);
 
-            cite = { type, url, ...baseCite } satisfies Cite;
+            cite = {
+                type,
+                date,
+                citeDate,
+                url,
+                ...baseCite
+            } satisfies Cite;
+            break;
+        case 'book':
+            const { year, publisher, isbn } = await prompt([
+                {
+                    type: 'input',
+                    name: 'year',
+                    message: 'Enter the year of the source: '
+                },
+                {
+                    type: 'input',
+                    name: 'publisher',
+                    message: 'Enter the publisher: '
+                },
+                {
+                    type: 'input',
+                    name: 'isbn',
+                    message: 'Enter the ISBN (optional): ',
+                    initial: ''
+                }
+            ] as const);
+            cite = {
+                type,
+                year,
+                publisher,
+                isbn: isbn === '' ? undefined : isbn,
+                ...baseCite
+            };
             break;
     }
 
