@@ -261,10 +261,10 @@
     },
     {
         "type": "online",
-        "url": "https://2023.stateofjs.com/en-US/libraries/front-end-frameworks/",
+        "url": "https://2024.stateofjs.com/en-US/libraries/front-end-frameworks/",
         "name": "stateofjs",
         "title": "Front-end frameworks",
-        "date": "2023",
+        "date": "2024",
         "citeDate": "2025-03-21",
         "lang": "english"
     },
@@ -289,11 +289,31 @@
     {
         "type": "book",
         "publisher": "Course Technology",
-        "isbn": "9781305394049",
+        "isbn": "978-1305394049",
         "name": "vodnik2015html5",
         "title": "HTML5 and CSS3, Illustrated Complete",
         "author": "Sasha Vodnik",
         "lang": "english",
         "year": "2015"
+    },
+    {
+        "type": "book",
+        "year": "2017",
+        "publisher": "Fullstack.io",
+        "isbn": "978-0-9913446-2-8",
+        "name": "accomazzoReact",
+        "title": "Fullstack React: The Complete Guide toReactJS and Friends, Fullstack.io",
+        "author": "Anthony Accomazzo and Nathaniel Murray and Ari Lerner",
+        "lang": "english"
+    },
+    {
+        "type": "book",
+        "year": "2014",
+        "publisher": "O'Reilly Media",
+        "isbn": "9781491950272",
+        "name": "JSEdicElliott",
+        "title": "Programming JavaScript Applications",
+        "author": "Eric Elliott",
+        "lang": "english"
     }
 ]
