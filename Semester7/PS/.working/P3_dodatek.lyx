@@ -1,0 +1,238 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language czech
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize a4paper
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2.5cm
+\topmargin 2.5cm
+\rightmargin 2.5cm
+\bottommargin 2.5cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style german
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle plain
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Písemka č.
+ 3 (P3) - dodatečná verze
+\end_layout
+
+\begin_layout Section*
+Příklad 1.
+\end_layout
+
+\begin_layout Standard
+V populaci České republiky je 90 % obyvatel Rh pozitivní (Rh faktor pozitivní/ne
+gativní určuje společně se systémem krevních skupin AB0 typ krve člověka).
+\end_layout
+
+\begin_layout Enumerate
+Jaká je pravděpodobnost, že budeme muset otestovat více než 20 lidí než
+ 3 lidé budou mít Rh negativní výsledek? (jestliže vybíráme z celé populace
+ ČR) [0,3 b]
+\end_layout
+
+\begin_layout Enumerate
+Jaká je pravděpodobnost, že budeme muset otestovat více než 20 lidí než
+ 3 lidé budou mít Rh negativní výsledek, jestliže víme, že jsme již otestovali
+ 5 lidí a žádný z nich Rh negativní nebyl? [0,5 b]
+\end_layout
+
+\begin_layout Enumerate
+Určete očekávaný (střední) počet testů do nalezení 3 Rh negativních osob.
+ [0,2 b]
+\end_layout
+
+\begin_layout Enumerate
+Jaká je pravděpodobnost, že mezi náhodně vybranými 20 lidmi budou alespoň
+ 3 lidé Rh negativní? [1,0 b]
+\end_layout
+
+\begin_layout Section*
+Příklad 2.
+\end_layout
+
+\begin_layout Standard
+V přírodní rezervaci se v průměru nachází 1 stádo divoké zvěře na 25 km2.
+ Celá rezervace je, co se týče vegetace, zdrojů potravy či vody, vyvážená,
+ tudíž neočekáváme, že by v některých oblastech docházelo k nerovnoměrné
+ kulminaci více stád.
+\end_layout
+
+\begin_layout Enumerate
+Jaká je pravděpodobnost, že ve zkoumané oblasti rezervace o rozloze 100
+ km2 bude méně než 6 stád? [0,2 b]
+\end_layout
+
+\begin_layout Enumerate
+Jaká je pravděpodobnost, že ve zkoumané oblasti rezervace o rozloze 100
+ km2 bude alespoň 1 stádo ale méně než 6 stád? [0,3 b]
+\end_layout
+
+\begin_layout Enumerate
+Jaká je pravděpodobnost, že ve zkoumané oblasti rezervace o rozloze 100
+ km2 bude alespoň 5 stád, jestliže víme, že tam není více než 8 stád? [0,5
+ b]
+\end_layout
+
+\begin_layout Enumerate
+Redakce přírodovědeckého časopisu chce provést focení stáda.
+ Za tímto účelem vybere 10 oblastí a do každé oblasti umístí sledovací zařízení,
+ přičemž každé zařízení zvládne monitorovat oblast o rozloze 5 km2.
+ Aby focení bylo úspěšné, musí v alespoň třech monitorovaných oblastech
+ zachytit alespoň jedno stádo (předpokládáme, že zařízení jsou spolehlivá,
+ takže pokud se stádo v oblasti vyskytne, pak pořízené fotky jsou použitelné).
+ Jaká je pravděpodobnost, že získají fotky pro blížící se vydání časopisu?
+ [1,0 b]
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Příklad 3.
+\end_layout
+
+\begin_layout Standard
+Doba, po kterou server funguje bez problémů, aniž by potřeboval restartovat,
+ má exponenciální rozdělení.
+ Průměrná doba do nutného restartu je 250 dní.
+\end_layout
+
+\begin_layout Enumerate
+Načrtněte hustotu pravděpodobnosti uvedené náhodné veličiny a její distribuční
+ funkci.
+ [0,2 b]
+\end_layout
+
+\begin_layout Enumerate
+Jaká je pravděpodobnost, že server bude potřebovat restartovat nejdříve
+ za 300 dnů? Výsledek zaznačte do náčrtku hustoty pravděpodobnosti z bodu
+ a).
+ [0,4 b]
+\end_layout
+
+\begin_layout Enumerate
+Server jede už 300 dní bez restartu, jaká je pravděpodobnost, že bude potřeba
+ jej restartovat v následujících 14 dnech? [0,5 b]
+\end_layout
+
+\begin_layout Enumerate
+Do jaké doby bude nutné provést restart serveru s 95% pravděpodobností?
+ [0,4 b]
+\end_layout
+
+\begin_layout Section*
+Příklad 4.
+\end_layout
+
+\begin_layout Standard
+Systolický krevní tlak dospělých má normální rozdělení se střední hodnotou
+ 112 [mmHg] a rozptylem 100 [mmHg
+\begin_inset Formula $^{2}$
+\end_inset
+
+].
+\end_layout
+
+\begin_layout Enumerate
+Načrtněte hustotu pravděpodobnosti uvedené náhodné veličiny a její distribuční
+ funkci.
+ [0,3 b]
+\end_layout
+
+\begin_layout Enumerate
+Kolik procent dospělých má systolický krevní v ideálním rozmezí, které je
+ 80 až 120 mmHg? Výsledek zaznačte do náčrtku hustoty pravděpodobnosti z
+ bodu a).
+ [0,4 b]
+\end_layout
+
+\begin_layout Enumerate
+Kolik procent dospělých má systolický krevní tlak vyšší než 130 mmHg? Výsledek
+ zaznačte do náčrtku distribuční funkce z bodu a).
+ [0,4 b]
+\end_layout
+
+\begin_layout Enumerate
+Určete hodnotu 95.
+ percentilu uvedené náhodné veličiny.
+ Slovně ji interpretujte.
+ [0,4 b]
+\end_layout
+
+\end_body
+\end_document
