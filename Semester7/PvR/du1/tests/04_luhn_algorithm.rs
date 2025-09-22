@@ -20,7 +20,7 @@ fn luhn_algorithm(num: u128) -> bool {
 
         sum += if i % 2 == 0 {
             let mul = digit * 2;
-            if mul > 10 {
+            if mul >= 10 {
                 mul - 9
             } else {
                 mul
@@ -32,7 +32,7 @@ fn luhn_algorithm(num: u128) -> bool {
         i += 1;
     }
 
-    (10 - (sum % 10) % 10) == check_num
+    ((10 - (sum % 10)) % 10) == check_num
 }
 
 /// Below you can find a set of unit tests.

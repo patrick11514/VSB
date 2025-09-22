@@ -14,17 +14,17 @@
 /// Your task is to write a set (at least 8) of unit tests, use them to find (at least 2) bugs in
 /// this function and then fix the function.
 fn sanitize(input: &str) -> &str {
-    // Remove all x from the end of the string
-    let input = input.trim_end_matches("x");
-    // Remove all o from the end of the string
-    let mut input = input.trim_end_matches("o");
+    let mut input = input;
 
-    // Remove .exe from the end
-    if input.ends_with(".exe") {
-        input = &input[0..input.len() - 4];
+    loop {
+        if input.ends_with("x") || input.ends_with("o") {
+            input = input.trim_end_matches(['x', 'o']);
+        } else if input.ends_with(".exe") {
+            input = &input[0..input.len() - 4];
+        } else {
+            return input;
+        }
     }
-
-    input
 }
 
 /// TODO: write tests for the `sanitize` function
@@ -37,4 +37,55 @@ fn sanitize(input: &str) -> &str {
 mod tests {
     use super::sanitize;
 
+    #[test]
+    fn empty() {
+        assert_eq!(sanitize(""), "");
+    }
+
+    #[test]
+    fn already_sanitized() {
+        assert_eq!(sanitize("normal text"), "normal text");
+        assert_eq!(sanitize("javascript"), "javascript");
+        assert_eq!(sanitize("hello world"), "hello world");
+    }
+
+    #[test]
+    fn strip_x() {
+        assert_eq!(sanitize("carxx"), "car");
+    }
+
+    #[test]
+    fn strip_o() {
+        assert_eq!(sanitize("hellooo"), "hell");
+    }
+
+    #[test]
+    fn ox_combination() {
+        assert_eq!(sanitize("carxo"), "car");
+        assert_eq!(sanitize("carox"), "car");
+    }
+
+    /// comment says: "lowercase & uppercase english alphabet + numbers"
+    /// so idk if the input 'output.exe' is valid, but the function removes
+    /// it, so I created test for it
+    #[test]
+    fn remove_exe() {
+        assert_eq!(sanitize("output.exe"), "output");
+        assert_eq!(sanitize("output.exe.exe"), "output");
+    }
+
+    #[test]
+    fn chain_rules() {
+        assert_eq!(sanitize("output.exeo"), "output");
+        assert_eq!(sanitize("output.exex"), "output");
+        assert_eq!(sanitize("outputo.exe"), "output");
+        assert_eq!(sanitize("outputx.exe"), "output");
+    }
+
+    #[test]
+    fn to_empty() {
+        assert_eq!(sanitize("xx"), "");
+        assert_eq!(sanitize("oo"), "");
+        assert_eq!(sanitize(".exe"), "");
+    }
 }
