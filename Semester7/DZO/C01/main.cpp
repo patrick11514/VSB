@@ -2,59 +2,81 @@
 
 #include <opencv2/opencv.hpp>
 
-int main()
+template <typename MatType, int Width, int Height>
+cv::Mat applyConvolution(cv::Mat &image, const cv::Matx<float, Width, Height> &matrix, float maskFrac)
 {
-    cv::Mat src_8uc3_img = cv::imread("../images/lena.png", cv::IMREAD_COLOR); // load color image from file system to Mat variable, this will be loaded using 8 bits (uchar)
+    cv::Mat output(image.size(), image.type());
 
-    if (src_8uc3_img.empty())
+    for (int row = 0; row < image.size().height; ++row)
     {
-        printf("Unable to read input file (%s, %d).", __FILE__, __LINE__);
-    }
-    // cv::imshow( "LENA", img );
-
-    cv::Mat gray_8uc1_img;  // declare variable to hold grayscale version of img variable, gray levels wil be represented using 8 bits (uchar)
-    cv::Mat gray_32fc1_img; // declare variable to hold grayscale version of img variable, gray levels wil be represented using 32 bits (float)
-
-    cv::cvtColor(src_8uc3_img, gray_8uc1_img, cv::COLOR_BGR2GRAY);  // convert input color image to grayscale one, CV_BGR2GRAY specifies direction of conversion
-    gray_8uc1_img.convertTo(gray_32fc1_img, CV_32FC1, 1.0 / 255.0); // convert grayscale image from 8 bits to 32 bits, resulting values will be in the interval 0.0 - 1.0
-
-    int x = 10, y = 15; // pixel coordinates
-
-    uchar p1 = gray_8uc1_img.at<uchar>(y, x);        // read grayscale value of a pixel, image represented using 8 bits
-    float p2 = gray_32fc1_img.at<float>(y, x);       // read grayscale value of a pixel, image represented using 32 bits
-    cv::Vec3b p3 = src_8uc3_img.at<cv::Vec3b>(y, x); // read color value of a pixel, image represented using 8 bits per color channel
-
-    // print values of pixels
-    printf("p1 = %d\n", p1);
-    printf("p2 = %f\n", p2);
-    printf("p3[ 0 ] = %d, p3[ 1 ] = %d, p3[ 2 ] = %d\n", p3[0], p3[1], p3[2]);
-
-    gray_8uc1_img.at<uchar>(y, x) = 0; // set pixel value to 0 (black)
-
-    // draw a rectangle
-    cv::rectangle(gray_8uc1_img, cv::Point(65, 84), cv::Point(75, 94),
-                  cv::Scalar(50), -1);
-
-    // declare variable to hold gradient image with dimensions: width= 256 pixels, height= 50 pixels.
-    // Gray levels wil be represented using 8 bits (uchar)
-    cv::Mat gradient_8uc1_img(50, 256, CV_8UC1);
-
-    // For every pixel in image, assign a brightness value according to the x coordinate.
-    // This wil create a horizontal gradient.
-    for (int y = 0; y < gradient_8uc1_img.rows; y++)
-    {
-        for (int x = 0; x < gradient_8uc1_img.cols; x++)
+        for (int col = 0; col < image.size().width; ++col)
         {
-            gradient_8uc1_img.at<uchar>(y, x) = x;
+            cv::Vec3f sum{0, 0, 0};
+
+            // Loop matrix + points around
+            int startRow = std::max(row - (Height / 2), 0);
+            int endRow = std::min(row + (Height / 2), image.size().height - 1);
+            int rowPixels = endRow - startRow;
+
+            int startCol = std::max(col - (Width / 2), 0);
+            int endCol = std::min(col + (Width / 2), image.size().width - 1);
+            int colPixels = endCol - startCol;
+
+            for (int _row = startRow; _row <= endRow; ++_row)
+            {
+                for (int _col = startCol; _col <= endCol; ++_col)
+                {
+                    auto pixel = image.at<MatType>(_col, _row);
+                    int matValue = matrix(endRow - _row, endCol - _col);
+                    sum[0] += pixel[0] * matValue;
+                    sum[1] += pixel[1] * matValue;
+                    sum[2] += pixel[2] * matValue;
+                }
+            }
+
+            output.at<MatType>(col, row) = MatType{
+                cv::saturate_cast<uchar>(sum[0] * maskFrac),
+                cv::saturate_cast<uchar>(sum[1] * maskFrac),
+                cv::saturate_cast<uchar>(sum[2] * maskFrac)};
         }
     }
 
-    // diplay images
-    cv::imshow("Gradient", gradient_8uc1_img);
-    cv::imshow("Lena gray", gray_8uc1_img);
-    cv::imshow("Lena gray 32f", gray_32fc1_img);
+    return output;
+}
 
-    cv::waitKey(0); // wait until keypressed
+int main()
+{
+    cv::Mat img = cv::imread("../images/lena.png", cv::IMREAD_COLOR); // load color image from file system to Mat variable, this will be loaded using 8 bits (uchar)
+
+    if (img.empty())
+    {
+        printf("Unable to read input file (%s, %d).", __FILE__, __LINE__);
+    }
+    cv::imshow("LENA", img);
+
+    auto boxBlur = applyConvolution<cv::Vec3b>(img, cv::Matx<float, 3, 3>::ones(), 1.f / 9.f);
+    cv::imshow("LENA box blur", boxBlur);
+
+    auto gausseanBlur = applyConvolution<cv::Vec3b>(img, cv::Matx<float, 3, 3>{1, 2, 1, 2, 3, 2, 1, 2, 1}, 1.f / 16.f);
+    cv::imshow("LENA gausean blur", gausseanBlur);
+
+    float matrix[25] = {
+        1, 4, 6, 4, 1,
+        4, 16, 24, 16, 4,
+        6, 24, 36, 24, 6,
+        4, 16, 24, 16, 4,
+        1, 4, 6, 4, 1};
+    auto gausseanBlur5x5 = applyConvolution<cv::Vec3b>(img, cv::Matx<float, 5, 5>{matrix}, 1.f / 256.f);
+    cv::imshow("LENA gausean blur 5x5", gausseanBlur5x5);
+
+    // Bacause of hyprland, I need to filter keys :)
+    int key;
+    while (true)
+    {
+        key = cv::waitKey(0);
+        if (key == 27 || key == '\r')
+            break; // ESC or Enter
+    }
 
     return 0;
 }
