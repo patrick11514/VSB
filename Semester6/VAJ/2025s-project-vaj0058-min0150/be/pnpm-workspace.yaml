@@ -1,0 +1,9 @@
+packages:
+  - '.'
+
+onlyBuiltDependencies:
+  - '@prisma/client'
+  - '@prisma/engines'
+  - es5-ext
+  - esbuild
+  - prisma

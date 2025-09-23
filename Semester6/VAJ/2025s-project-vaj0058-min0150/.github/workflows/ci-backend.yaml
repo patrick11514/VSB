@@ -1,0 +1,51 @@
+name: Backend CI
+
+on:
+  pull_request:
+    paths:
+      - "be/**"
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Cache pnpm store
+        uses: actions/cache@v3
+        with:
+          path: be/node_modules
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install pnpm
+        run: |
+          cd be
+          npm install -g pnpm
+
+      - name: Install dependencies
+        run: |
+          cd be
+          pnpm install --frozen-lockfile
+
+      - name: Build backend
+        run: |
+          cd be
+          pnpm run build
+
+      - name: Lint backend
+        run: |
+          cd be
+          pnpm run lint
+
+      - name: TypeScript check
+        run: |
+          cd be
+          pnpm run check

@@ -1,0 +1,26 @@
+{
+  "name": "template-lab-2024s-03",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch index.js",
+    "start": "node index.js"
+  },
+  "author": "",
+  "type": "module",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "6.5.0",
+    "express": "4.21.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "prisma": "^6.5.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client"
+    ]
+  }
+}

@@ -1,0 +1,40 @@
+{
+    "name": "vajbe",
+    "version": "0.0.1",
+    "main": "build/index.js",
+    "type": "module",
+    "scripts": {
+        "dev": "NODE_ENV=development tsx watch ./src/index.ts",
+        "build": "rm -rf build && mkdir -p build && tsc && tsc-alias",
+        "start": "NODE_ENV=production node ./build/index.js",
+        "check": "tsc --noEmit",
+        "format": "prettier --write .",
+        "lint": "prettier --check . && eslint src",
+        "migrate": "prisma migrate dev",
+        "studio": "prisma studio"
+    },
+    "dependencies": {
+        "@prisma/client": "^6.6.0",
+        "cli-color": "^2.0.4",
+        "dotenv": "^16.5.0",
+        "express": "^5.1.0",
+        "prettier": "^3.1.0",
+        "strip-color": "^0.1.0",
+        "zod": "^3.24.1"
+    },
+    "devDependencies": {
+        "@eslint/compat": "^1.2.6",
+        "@eslint/js": "^9.20.0",
+        "@types/cli-color": "^2.0.6",
+        "@types/express": "^5.0.1",
+        "@types/node": "^22.13.1",
+        "@types/strip-color": "^0.1.2",
+        "eslint": "^9.20.0",
+        "eslint-config-prettier": "^10.0.1",
+        "prisma": "^6.6.0",
+        "tsc-alias": "^1.8.10",
+        "tsx": "^4.19.2",
+        "typescript": "^5.7.3",
+        "typescript-eslint": "^8.23.0"
+    }
+}

@@ -1,0 +1,51 @@
+name: Frontend CI
+
+on:
+  pull_request:
+    paths:
+      - "fe/**"
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Cache pnpm store
+        uses: actions/cache@v3
+        with:
+          path: fe/node_modules
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install pnpm
+        run: |
+          cd fe
+          npm install -g pnpm
+
+      - name: Install dependencies
+        run: |
+          cd fe
+          pnpm install --frozen-lockfile
+
+      - name: Build frontend
+        run: |
+          cd fe
+          pnpm run build
+
+      - name: Lint frontend
+        run: |
+          cd fe
+          pnpm run lint
+
+      - name: TypeScript check
+        run: |
+          cd fe
+          pnpm run check

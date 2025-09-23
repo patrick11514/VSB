@@ -1,0 +1,42 @@
+@import 'tailwindcss';
+
+@theme {
+    --color-text: oklab(93.5% -0.003 -0);
+    --color-background: oklab(12.6% -0.004 -0);
+    --color-primary: oklab(83.66% -0.059 -0.04);
+    --color-secondary: oklab(32.29% 0.023 -0.17);
+    --color-accent: oklab(79.93% -0.103 -0.06);
+
+    --font-roboto: 'Roboto', sans-serif;
+    --font-poppins: 'Poppins', sans-serif;
+    --font-ephesis: 'Ephesis', cursive;
+}
+
+@keyframes fireFlicker {
+    0% {
+        fill: #f97316;
+    } /* orange-500 */
+    20% {
+        fill: #ef4444;
+    } /* red-500 */
+    40% {
+        fill: #f59e0b;
+    } /* amber-500 */
+    60% {
+        fill: #dc2626;
+    } /* red-600 */
+    80% {
+        fill: #fb923c;
+    } /* orange-400 */
+    100% {
+        fill: #f97316;
+    }
+}
+
+.group:hover .fire {
+    animation: fireFlicker 1.5s infinite ease-in-out;
+}
+
+.h-main {
+    height: max(40rem, calc(100vh - 68px));
+}
