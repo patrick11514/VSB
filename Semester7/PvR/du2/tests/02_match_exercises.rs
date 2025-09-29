@@ -46,7 +46,7 @@ fn exercise_4(v: char) -> bool {
     //    '0'..='9' => true,
     //    _ => false,
     //}
-    !v.is_ascii_digit()
+    matches!(v, '0'..='9')
 }
 
 /// Check if `v` is a digit. If it is, return a u32 containing the numerical value of that digit
