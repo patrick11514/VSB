@@ -84,7 +84,7 @@ fn pc_transition(state: ComputerState, event: Event) -> ComputerState {
                 };
 
                 if new_idle_time > 1000 {
-                    new_idle_time = new_idle_time - 1000;
+                    new_idle_time -= 1000;
                     local_state = ComputerState::Sleeping {
                         uptime: uptime + time,
                         sleep_time: new_idle_time,
@@ -106,7 +106,7 @@ fn pc_transition(state: ComputerState, event: Event) -> ComputerState {
             {
                 new_state = ComputerState::Off
             }
-            return new_state;
+            new_state
         }
     }
 }

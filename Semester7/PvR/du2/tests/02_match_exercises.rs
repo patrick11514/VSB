@@ -42,10 +42,11 @@ fn exercise_3(v: char) -> u8 {
 /// Check if the character in `v` is a digit (0-9).
 /// The match expression should have two arms.
 fn exercise_4(v: char) -> bool {
-    match v {
-        '0'..='9' => true,
-        _ => false,
-    }
+    //match v {
+    //    '0'..='9' => true,
+    //    _ => false,
+    //}
+    !v.is_ascii_digit()
 }
 
 /// Check if `v` is a digit. If it is, return a u32 containing the numerical value of that digit
