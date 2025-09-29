@@ -31,8 +31,8 @@ enum Instruction {
     DecrementB,
     AcceptByte,
     OutputByte,
-    LoopStart { loop_start: usize },
-    LoopEnd { loop_end: usize },
+    LoopStart { loop_end: usize },
+    LoopEnd { loop_start: usize },
 }
 #[derive(Debug, Eq, PartialEq)]
 struct Program {
@@ -49,9 +49,12 @@ impl Program {
         let mut input_pointer = 0;
 
         let mut output = String::new();
-        let mut data_ptr = 0;
 
         loop {
+            if ip >= self.instructions.len() {
+                break;
+            }
+
             if instructions_executed > 1000 {
                 return Err(ExecuteError::InfiniteLoop);
             }
@@ -72,11 +75,28 @@ impl Program {
                     memory[data_pointer] -= 1;
                 }
                 Instruction::AcceptByte => {
+                    if input_pointer >= input.len() {
+                        return Err(ExecuteError::NoInputLeft);
+                    }
+
                     memory[data_pointer] = input[input_pointer];
                     input_pointer += 1;
                 }
-                Instruction::LoopStart { loop_start } => {}
-                Instruction::LoopEnd { loop_end } => todo!(),
+                Instruction::OutputByte => {
+                    output.push(
+                        memory[data_pointer] as char, /* 100% safe conversion :) */
+                    );
+                }
+                Instruction::LoopStart { loop_end } => {
+                    if memory[data_pointer] == 0 {
+                        ip = *loop_end;
+                    }
+                }
+                Instruction::LoopEnd { loop_start } => {
+                    if memory[data_pointer] != 0 {
+                        ip = *loop_start;
+                    }
+                }
             }
 
             ip += 1;
@@ -102,12 +122,15 @@ fn parse_program(program: &str) -> Result<Program, ParseError> {
             ',' => instructions.push(Instruction::AcceptByte),
             '[' => {
                 stack.push(i);
-                instructions.push(Instruction::LoopStart { loop_start: i });
+                instructions.push(Instruction::LoopStart {
+                    loop_end: 0, /* Temporary value, which will be changed at the end */
+                });
             }
             ']' => match stack.pop() {
                 None => return Err(ParseError::UnmatchedLoop { location: i }),
-                Some(_) => {
-                    instructions.push(Instruction::LoopEnd { loop_end: i });
+                Some(start) => {
+                    instructions.push(Instruction::LoopEnd { loop_start: start });
+                    instructions[start] = Instruction::LoopStart { loop_end: i }; // Now we update to correct end index
                 }
             },
             _ => {
