@@ -17,8 +17,11 @@ cv::Mat anisotropic_filter(cv::Mat &img, int times)
 
     for (int t = 0; t < times; ++t)
     {
+#pragma omp parallel for
         for (int row = 1; row < img.size().height - 1; ++row)
         {
+
+#pragma omp parallel for
             for (int col = 1; col < img.size().width - 1; ++col)
             {
                 auto c = prev.at<double>(row, col);
