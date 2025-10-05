@@ -1,4 +1,5 @@
 #include "camera.hpp"
+#include <cstdio>
 
 Camera::Camera(const int width, const int height, const float fov_y,
                const glm::vec3 view_from, const glm::vec3 view_at) {
@@ -9,14 +10,10 @@ Camera::Camera(const int width, const int height, const float fov_y,
   view_from_ = view_from;
   view_at_ = view_at;
 
-  // TODO compute focal lenght based on the vertical field of view and the
-  // camera resolution
   f_y_ = height_ / (2.f * std::tanf((fov_y_ / 2.f)));
 
-  // TODO build M_c_w_ matrix
   auto z_c = glm::normalize(view_from_ - view_at_);
   auto x_c = glm::normalize(glm::cross(up_, z_c));
-
   auto y_c = glm::normalize(glm::cross(z_c, x_c));
 
   M_c_w_ = glm::mat3(x_c, y_c, z_c);

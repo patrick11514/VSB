@@ -1,6 +1,8 @@
 #include "raytracer.hpp"
 #include "../objloader/objloader.hpp"
+#include "../utils/triangle.hpp"
 #include "../utils/utils.hpp"
+#include <stdexcept>
 
 Raytracer::Raytracer(const int width, const int height, const float fov_y,
                      const glm::vec3 view_from, const glm::vec3 view_at,
@@ -50,8 +52,8 @@ void Raytracer::LoadScene(const std::string file_name) {
   for (auto surface : surfaces_) {
     RTCGeometry mesh = rtcNewGeometry(device_, RTC_GEOMETRY_TYPE_TRIANGLE);
 
-    glm::vec3 *vertices = (glm::vec3 *)rtcSetNewGeometryBuffer(
-        mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, sizeof(glm::vec3),
+    SimpleVec3f *vertices = (SimpleVec3f *)rtcSetNewGeometryBuffer(
+        mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, sizeof(SimpleVec3f),
         3 * surface->no_triangles());
 
     Triangle3ui *triangles = (Triangle3ui *)rtcSetNewGeometryBuffer(
@@ -62,9 +64,9 @@ void Raytracer::LoadScene(const std::string file_name) {
 
     rtcSetGeometryVertexAttributeCount(mesh, 2);
 
-    Normal3f *normals = (Normal3f *)rtcSetNewGeometryBuffer(
+    SimpleVec3f *normals = (SimpleVec3f *)rtcSetNewGeometryBuffer(
         mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, RTC_FORMAT_FLOAT3,
-        sizeof(Normal3f), 3 * surface->no_triangles());
+        sizeof(SimpleVec3f), 3 * surface->no_triangles());
 
     Coord2f *tex_coords = (Coord2f *)rtcSetNewGeometryBuffer(
         mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 1, RTC_FORMAT_FLOAT2,
@@ -104,7 +106,6 @@ void Raytracer::LoadScene(const std::string file_name) {
 }
 
 Color4f Raytracer::get_pixel(const int x, const int y, const float t) {
-
   RTCRayHit ray_hit{};
   ray_hit.ray = camera_.GenerateRay((float)x, (float)y);
   ray_hit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
@@ -195,8 +196,11 @@ glm::vec3 Raytracer::Trace(RTCRayHit &ray_hit, int depth, int max_depth) {
   rtcInitIntersectContext(&context);
   rtcIntersect1(scene_, &context, &ray_hit);
 
-  if (ray_hit.hit.geomID == RTC_INVALID_GEOMETRY_ID)
+  if (ray_hit.hit.geomID == RTC_INVALID_GEOMETRY_ID) {
     return glm::vec3{1.f, 0.5f, 0.345f};
+  }
+
+  printf("HIT :)\n");
 
   auto geometry = rtcGetGeometry(scene_, ray_hit.hit.geomID);
 
@@ -233,7 +237,7 @@ glm::vec3 Raytracer::Trace(RTCRayHit &ray_hit, int depth, int max_depth) {
     N = -N;
 
   if (material->shader == Shader::BASIC) {
-    return color * DirectDiffuse(P, N);
+    return color;
   }
 
   RTCRayHit nextRayHit{};

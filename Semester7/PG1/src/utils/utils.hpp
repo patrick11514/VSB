@@ -1,5 +1,7 @@
 #pragma once
+#include "structs.hpp"
 #include <embree3/rtcore.h>
+#include <glm/glm.hpp>
 #include <string>
 #include <vector>
 
@@ -107,3 +109,7 @@ void error_handler(void *user_ptr, const RTCError code, const char *str);
 
 inline const int S_OK = 0;
 inline const int S_ERR = -1;
+
+inline glm::vec3 fromSimpleVec(const SimpleVec3f &vec) {
+  return glm::vec3{vec.x, vec.y, vec.z};
+}

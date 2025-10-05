@@ -24,3 +24,7 @@ struct RTC_ALIGN(16) Color4f {
 struct Color3f {
   float r, g, b;
 };
+
+struct SimpleVec3f {
+  float x, y, z;
+};
