@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester7/PG1/build",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/main.cpp.o -c /home/patrick115/Projects/VSB/Semester7/PG1/src/main.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester7/PG1/src/main.cpp",
+  "output": "CMakeFiles/main.dir/src/main.cpp.o"
+}
+]
