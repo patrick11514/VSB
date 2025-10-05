@@ -1,8 +1,11 @@
 #include "utils.hpp"
 
 #include <cstring>
+#include <embree3/rtcore.h>
+#include <exception>
 #include <functional>
 #include <random>
+#include <stdexcept>
 
 using std::mt19937;
 using std::uniform_real_distribution;
@@ -162,3 +165,32 @@ char *RTrim(char *s) {
 }
 
 char *Trim(char *s) { return RTrim(LTrim(s)); }
+
+void error_handler(void *user_ptr, const RTCError code, const char *str) {
+  if (code != RTC_ERROR_NONE) {
+    std::string descr = str ? ": " + std::string(str) : "";
+
+    switch (code) {
+    case RTC_ERROR_UNKNOWN:
+      throw std::runtime_error("RTC_ERROR_UNKNOWN" + descr);
+    case RTC_ERROR_INVALID_ARGUMENT:
+      throw std::runtime_error("RTC_ERROR_INVALID_ARGUMENT" + descr);
+      break;
+    case RTC_ERROR_INVALID_OPERATION:
+      throw std::runtime_error("RTC_ERROR_INVALID_OPERATION" + descr);
+      break;
+    case RTC_ERROR_OUT_OF_MEMORY:
+      throw std::runtime_error("RTC_ERROR_OUT_OF_MEMORY" + descr);
+      break;
+    case RTC_ERROR_UNSUPPORTED_CPU:
+      throw std::runtime_error("RTC_ERROR_UNSUPPORTED_CPU" + descr);
+      break;
+    case RTC_ERROR_CANCELLED:
+      throw std::runtime_error("RTC_ERROR_CANCELLED" + descr);
+      break;
+    default:
+      throw std::runtime_error("invalid error code" + descr);
+      break;
+    }
+  }
+}

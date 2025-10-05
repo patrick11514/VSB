@@ -1,14 +1,16 @@
 #include "raytracer.hpp"
+#include "../objloader/objloader.hpp"
+#include "../utils/utils.hpp"
 
 Raytracer::Raytracer(const int width, const int height, const float fov_y,
-                     const Vector3 view_from, const Vector3 view_at,
+                     const glm::vec3 view_from, const glm::vec3 view_at,
                      const char *config)
-    : SimpleGuiDX11(width, height) {
+    : SimpleGuiLinux(width, height) {
   InitDeviceAndScene(config);
 
   camera_ = Camera(width, height, fov_y, view_from, view_at);
-  lights_.emplace_back(
-      new Light(Vector3{100.f, 150.f, 200.f}, .20f, Vector3{1.f, 1.f, 1.f}));
+  lights_.emplace_back(new Light(glm::vec3{100.f, 150.f, 200.f}, .20f,
+                                 glm::vec3{1.f, 1.f, 1.f}));
 }
 
 Raytracer::~Raytracer() {
@@ -48,8 +50,8 @@ void Raytracer::LoadScene(const std::string file_name) {
   for (auto surface : surfaces_) {
     RTCGeometry mesh = rtcNewGeometry(device_, RTC_GEOMETRY_TYPE_TRIANGLE);
 
-    Vertex3f *vertices = (Vertex3f *)rtcSetNewGeometryBuffer(
-        mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, sizeof(Vertex3f),
+    glm::vec3 *vertices = (glm::vec3 *)rtcSetNewGeometryBuffer(
+        mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, sizeof(glm::vec3),
         3 * surface->no_triangles());
 
     Triangle3ui *triangles = (Triangle3ui *)rtcSetNewGeometryBuffer(
@@ -111,20 +113,19 @@ Color4f Raytracer::get_pixel(const int x, const int y, const float t) {
   return Color4f{color.x, color.y, color.z, 1.f};
 }
 
-RTCRay Raytracer::GenerateNextRay(RTCRayHit &hit, Vector3 &normal) {
-  Vector3 origin{hit.ray.org_x, hit.ray.org_y, hit.ray.org_z};
-  Vector3 direction{hit.ray.dir_x, hit.ray.dir_y, hit.ray.dir_z};
+RTCRay Raytracer::GenerateNextRay(RTCRayHit &hit, glm::vec3 &_normal) {
+  glm::vec3 origin{hit.ray.org_x, hit.ray.org_y, hit.ray.org_z};
+  glm::vec3 direction =
+      glm::normalize(glm::vec3{hit.ray.dir_x, hit.ray.dir_y, hit.ray.dir_z});
   float t = hit.ray.tfar;
-  Vector3 point = origin + direction * t;
+  glm::vec3 point = origin + direction * t;
 
-  normal.Normalize();
-  direction.Normalize();
-  if (direction.DotProduct(normal) > 0.0f)
+  auto normal = glm::normalize(_normal);
+  if (glm::dot(direction, normal) > 0.0f)
     normal = -normal;
 
-  Vector3 reflected =
-      normal * (2.0f * direction.DotProduct(normal)) - direction;
-  reflected.Normalize();
+  glm::vec3 reflected =
+      glm::normalize(normal * (2.0f * glm::dot(direction, normal)) - direction);
 
   const float eps = 1e-4f;
 
@@ -146,16 +147,16 @@ RTCRay Raytracer::GenerateNextRay(RTCRayHit &hit, Vector3 &normal) {
   return out;
 }
 
-Vector3 Raytracer::DirectDiffuse(const Vector3 &position,
-                                 const Vector3 &normal) {
+glm::vec3 Raytracer::DirectDiffuse(const glm::vec3 &position,
+                                   const glm::vec3 &normal) {
   const float eps = 1e-4f;
-  Vector3 Lo{0.f, 0.f, 0.f};
+  glm::vec3 Lo{0.f, 0.f, 0.f};
 
   for (auto *L : lights_) {
-    Vector3 Lvec = L->position - position;
-    float r2 = Lvec.DotProduct(Lvec);
+    glm::vec3 Lvec = L->position - position;
+    float r2 = glm::dot(Lvec, Lvec);
     float r = std::sqrt(r2);
-    Vector3 Ldir = Lvec / r;
+    glm::vec3 Ldir = Lvec / r;
 
     RTCRayHit sh{};
     sh.ray.org_x = position.x + normal.x * eps;
@@ -177,7 +178,7 @@ Vector3 Raytracer::DirectDiffuse(const Vector3 &position,
     if (sh.hit.geomID != RTC_INVALID_GEOMETRY_ID)
       continue;
 
-    float NdotL = normal.DotProduct(Ldir);
+    float NdotL = glm::dot(normal, Ldir);
     if (NdotL < 1.0) {
       NdotL = 1.0f;
     }
@@ -186,16 +187,16 @@ Vector3 Raytracer::DirectDiffuse(const Vector3 &position,
   return Lo;
 }
 
-Vector3 Raytracer::Trace(RTCRayHit &ray_hit, int depth, int max_depth) {
+glm::vec3 Raytracer::Trace(RTCRayHit &ray_hit, int depth, int max_depth) {
   if (depth >= max_depth)
-    return Vector3{1.f, 0.5f, 0.345f};
+    return glm::vec3{1.f, 0.5f, 0.345f};
 
   RTCIntersectContext context;
   rtcInitIntersectContext(&context);
   rtcIntersect1(scene_, &context, &ray_hit);
 
   if (ray_hit.hit.geomID == RTC_INVALID_GEOMETRY_ID)
-    return Vector3{1.f, 0.5f, 0.345f};
+    return glm::vec3{1.f, 0.5f, 0.345f};
 
   auto geometry = rtcGetGeometry(scene_, ray_hit.hit.geomID);
 
@@ -221,15 +222,14 @@ Vector3 Raytracer::Trace(RTCRayHit &ray_hit, int depth, int max_depth) {
     color.z *= texel.b;
   }
 
-  Vector3 O{ray_hit.ray.org_x, ray_hit.ray.org_y, ray_hit.ray.org_z};
-  Vector3 D{ray_hit.ray.dir_x, ray_hit.ray.dir_y, ray_hit.ray.dir_z};
+  glm::vec3 O{ray_hit.ray.org_x, ray_hit.ray.org_y, ray_hit.ray.org_z};
+  glm::vec3 D = glm::normalize(
+      glm::vec3{ray_hit.ray.dir_x, ray_hit.ray.dir_y, ray_hit.ray.dir_z});
   float t = ray_hit.ray.tfar;
-  Vector3 P = O + D * t;
+  glm::vec3 P = O + D * t;
 
-  Vector3 N{normal.x, normal.y, normal.z};
-  N.Normalize();
-  D.Normalize();
-  if (D.DotProduct(N) > 0.f)
+  glm::vec3 N = glm::normalize(glm::vec3{normal.x, normal.y, normal.z});
+  if (glm::dot(D, N) > 0.f)
     N = -N;
 
   if (material->shader == Shader::BASIC) {
@@ -237,7 +237,7 @@ Vector3 Raytracer::Trace(RTCRayHit &ray_hit, int depth, int max_depth) {
   }
 
   RTCRayHit nextRayHit{};
-  auto vNormal = Vector3{normal.x, normal.y, normal.z};
+  auto vNormal = glm::vec3{normal.x, normal.y, normal.z};
   nextRayHit.ray = GenerateNextRay(ray_hit, vNormal);
   nextRayHit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
   return color * Trace(nextRayHit, depth + 1, max_depth);
@@ -266,7 +266,7 @@ int Raytracer::Ui() {
   ImGui::SliderFloat("Camera Y", &camera_y, 0.0f, 1000.0f);
   ImGui::SliderFloat("Camera Z", &camera_z, 0.0f, 1000.0f);
 
-  camera_.set_view_from(Vector3{camera_x, camera_y, camera_z});
+  camera_.set_view_from(glm::vec3{camera_x, camera_y, camera_z});
 
   // Buttons return true when clicked (most widgets return true when
   // edited/activated)

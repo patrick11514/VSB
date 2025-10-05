@@ -1,5 +1,7 @@
 #pragma once
+#include <embree3/rtcore.h>
 #include <string>
+#include <vector>
 
 #define MAT_ELEM(mat, type, x, y)                                              \
   reinterpret_cast<type *>((mat).data + (mat).step * (y) +                     \
@@ -100,3 +102,8 @@ char *RTrim(char *s);
 \return Ukazatel na novou pozici v tomt� �et�zci
 */
 char *Trim(char *s);
+
+void error_handler(void *user_ptr, const RTCError code, const char *str);
+
+inline const int S_OK = 0;
+inline const int S_ERR = -1;
