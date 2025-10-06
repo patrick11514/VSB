@@ -7,7 +7,7 @@
 //
 // Hint: you can use `string.chars()` for iterating the Unicode characters of a string.
 
-fn strip_prefix<'a, 'b>(needle: &'a str, prefix: &'b str) -> &'a str {
+fn strip_prefix<'a>(needle: &'a str, prefix: &str) -> &'a str {
     let chars = prefix.chars().collect::<Vec<char>>();
 
     for (byte, char) in needle.char_indices() {

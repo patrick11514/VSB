@@ -24,10 +24,121 @@
 // The format of the ticket is `<movie-name>;<day>;<visitor-name>`. The second semicolon is optional
 // when the visitor name is missing. There must not be any trailing data in the input string.
 
+#[derive(Debug)]
+enum Day {
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
+    Sunday,
+}
+
+struct Ticket<'a> {
+    movie: &'a str,
+    day: Day,
+    visitor: Option<&'a str>,
+}
+
+fn is_valid_char(ch: char) -> bool {
+    match ch {
+        'a'..='z' | 'A'..='Z' | '0'..='9' | ' ' | ';' => true,
+        _ => false,
+    }
+}
+
+fn get_day(str: &str) -> Option<Day> {
+    Some(if str.eq_ignore_ascii_case("monday") {
+        Day::Monday
+    } else if str.eq_ignore_ascii_case("tuesday") {
+        Day::Tuesday
+    } else if str.eq_ignore_ascii_case("wednesday") {
+        Day::Wednesday
+    } else if str.eq_ignore_ascii_case("thursday") {
+        Day::Thursday
+    } else if str.eq_ignore_ascii_case("friday") {
+        Day::Friday
+    } else if str.eq_ignore_ascii_case("saturday") {
+        Day::Saturday
+    } else if str.eq_ignore_ascii_case("sunday") {
+        Day::Sunday
+    } else {
+        println!("day: {}", str);
+        return None;
+    })
+}
+
+fn parse_ticket<'a>(input: &'a str) -> Option<Ticket<'a>> {
+    let mut name: Option<&str> = None;
+    let mut day: Option<Day> = None;
+    let mut visitor: Option<&str> = None;
+
+    let mut cols = 0;
+    let mut prev_byte = 0;
+    let end_byte = input.len();
+
+    for (mut byte_idx, char) in input.char_indices() {
+        if !is_valid_char(char) {
+            println!("no valid char");
+            return None;
+        }
+
+        if char == ';' || byte_idx == end_byte - 1 {
+            if byte_idx == end_byte - 1 {
+                //peek at current char if tailing semicolon, don't increase byte_idx, so we ignore it
+                if let Some(ch) = input[byte_idx..].chars().next()
+                    && ch != ';'
+                {
+                    byte_idx += 1; //Normally we would be here at ;, and want slice from
+                    //start -> semicol (exclusive), but when we are on last
+                    //char we want to include it, so we add 1
+                }
+            }
+
+            match cols {
+                0 => name = Some(&input[prev_byte..byte_idx]),
+                1 => {
+                    day = match get_day(&input[prev_byte..byte_idx]) {
+                        None => {
+                            //early return
+                            println!("no day");
+                            return None;
+                        }
+                        some => some,
+                    }
+                }
+                2 => visitor = Some(&input[prev_byte..byte_idx]),
+                _ => {
+                    println!("too many");
+                    return None;
+                }
+            }
+
+            prev_byte = byte_idx + 1;
+
+            cols += 1;
+        }
+    }
+
+    match (name, day, visitor) {
+        (Some(movie), Some(day), visitor) => {
+            println!("PARSED: {};{:?};{}", movie, day, visitor.unwrap_or("NONE"));
+
+            Some(Ticket {
+                movie,
+                day,
+                visitor,
+            })
+        }
+        _ => None,
+    }
+}
+
 /// Below you can find a set of unit tests.
 #[cfg(test)]
 mod tests {
-    use crate::{parse_ticket, Day};
+    use crate::{Day, parse_ticket};
 
     #[test]
     fn empty() {
@@ -93,10 +204,10 @@ mod tests {
 
     #[test]
     fn trailing_data() {
-        assert!(parse_ticket(
-            "Eternal Sunshine Of The Spotless Mind;sunday;Arnold Schwarzenegger ;00"
-        )
-        .is_none());
+        assert!(
+            parse_ticket("Eternal Sunshine Of The Spotless Mind;sunday;Arnold Schwarzenegger ;00")
+                .is_none()
+        );
     }
 
     #[test]

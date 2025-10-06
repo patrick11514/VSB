@@ -21,6 +21,63 @@
 //!
 //! Use ownership and move semantics to guarantee the rules described above.
 
+pub struct Data {
+    index: usize,
+    data: Vec<u8>,
+}
+
+pub struct EncryptedData {
+    index: usize,
+    key: u8,
+    data: Vec<u8>,
+}
+
+impl Data {
+    pub fn new(data: Vec<u8>) -> Self {
+        Data { index: 0, data }
+    }
+
+    pub fn read(&mut self) -> Option<u8> {
+        let result = self.data.get(self.index).copied();
+        self.index += 1;
+        result
+    }
+
+    pub fn encrypt(self, key: u8) -> EncryptedData {
+        EncryptedData {
+            index: self.index,
+            data: self.data,
+            key,
+        }
+    }
+}
+
+impl EncryptedData {
+    fn internal_read(&mut self) -> Option<u8> {
+        let result = self.data.get(self.index).copied();
+        self.index += 1;
+        result
+    }
+
+    pub fn read(&mut self) -> Option<u8> {
+        match self.internal_read() {
+            None => None,
+            Some(byte) => Some(byte ^ self.key),
+        }
+    }
+
+    pub fn decrypt(self, key: u8) -> Result<Data, EncryptedData> {
+        if self.key == key {
+            Ok(Data {
+                index: self.index,
+                data: self.data,
+            })
+        } else {
+            Err(self)
+        }
+    }
+}
+
 // The doctests below should fail to compile.
 // We need to use doctests, otherwise we could not check that the code does not compile.
 // To debug the tests, try to remove the `compile_fail` attribute and run `cargo test` to see what
@@ -56,7 +113,7 @@ fn encrypted_data_cannot_encrypt() {}
 fn access_data_after_encrypting() {}
 
 /// ```compile_fail
-/// use week02::encrypt_decrypt::Data;
+/// use week03::encrypt_decrypt::Data;
 ///
 /// let mut data = Data::new(vec![1, 2, 3]);
 /// let mut encrypted = data.encrypt(5);

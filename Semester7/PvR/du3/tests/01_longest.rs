@@ -3,11 +3,11 @@
 // TODO: Implement a function called `longest`, which will return the longer of the two
 // input strings. If they are the same length, return the first string.
 fn longest<'a>(first: &'a str, second: &'a str) -> &'a str {
-    return if first.len() < second.len() {
+    if first.len() < second.len() {
         second
     } else {
         first
-    };
+    }
 }
 
 /// Below you can find a set of unit tests.
