@@ -7,16 +7,9 @@ Camera::Camera(const int width, const int height, const float fov_y,
   height_ = height;
   fov_y_ = fov_y;
 
-  view_from_ = view_from;
   view_at_ = view_at;
 
-  f_y_ = height_ / (2.f * std::tanf((fov_y_ / 2.f)));
-
-  auto z_c = glm::normalize(view_from_ - view_at_);
-  auto x_c = glm::normalize(glm::cross(up_, z_c));
-  auto y_c = glm::normalize(glm::cross(z_c, x_c));
-
-  M_c_w_ = glm::mat3(x_c, y_c, z_c);
+  this->set_view_from(view_from);
 }
 
 RTCRay Camera::GenerateRay(const float x_i, const float y_i) const {
@@ -55,7 +48,6 @@ void Camera::set_view_from(glm::vec3 view_from) {
 
   auto z_c = glm::normalize(view_from_ - view_at_);
   auto x_c = glm::normalize(glm::cross(up_, z_c));
-
   auto y_c = glm::normalize(glm::cross(z_c, x_c));
 
   M_c_w_ = glm::mat3(x_c, y_c, z_c);

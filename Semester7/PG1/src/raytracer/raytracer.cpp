@@ -200,8 +200,6 @@ glm::vec3 Raytracer::Trace(RTCRayHit &ray_hit, int depth, int max_depth) {
     return glm::vec3{1.f, 0.5f, 0.345f};
   }
 
-  printf("HIT :)\n");
-
   auto geometry = rtcGetGeometry(scene_, ray_hit.hit.geomID);
 
   Normal3f normal;
