@@ -121,6 +121,53 @@ cv::Mat spectrum_normalize(cv::Mat spectrum)
     return output;
 }
 
+cv::Mat inverse_fourier(cv::Mat realImag)
+{
+    cv::Mat normalized(realImag.size(), CV_64F, 0);
+
+    auto base = [&](int k, int l, int m, int n)
+    {
+        // REAL | IMAG
+        cv::Vec2d res;
+
+        auto bracket = (static_cast<double>(m * k) / realImag.rows) + (static_cast<double>(n * l) / realImag.cols);
+        auto x = 2 * std::numbers::pi * bracket;
+
+        res[REAL] = std::cos(x);
+        res[IMAG] = std::sin(x);
+
+        return res;
+    };
+
+    for (int k = 0; k < normalized.rows; ++k)
+    {
+        for (int l = 0; l < normalized.cols; ++l)
+        {
+            auto source = realImag.at<double>(k, l);
+
+            cv::Vec2d sum{0.f, 0.f};
+
+            for (int row = 0; row < normalized.rows; ++row)
+            {
+                for (int col = 0; col < normalized.cols; ++col)
+                {
+                    auto pixel = normalized.at<double>(row, col);
+                    auto _base = base(k, l, row, col);
+                    sum[REAL] += _base[REAL] * pixel;
+                    sum[IMAG] += _base[IMAG] * pixel;
+                }
+            }
+
+            output.at<cv::Vec2d>(k, l) = sum;
+        }
+    }
+
+    cv::Mat output;
+    normalized.convertTo(output, CV_64F, 1.f / (std::sqrt(normalized.rows * normalized.cols)));
+
+    return output;
+}
+
 int main()
 {
     cv::Mat img = cv::imread("../images/lena64.png", cv::IMREAD_GRAYSCALE);
