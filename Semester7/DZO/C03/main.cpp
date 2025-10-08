@@ -6,6 +6,8 @@
 #define REAL 0
 #define IMAG 1
 
+#include <string>
+
 cv::Mat furier(cv::Mat input)
 {
     cv::Mat normalized;
@@ -27,12 +29,10 @@ cv::Mat furier(cv::Mat input)
         return res;
     };
 
-    for (int k = 0; k < output.rows; ++k)
+    for (int k = 0; k < normalized.rows; ++k)
     {
-        for (int l = 0; l < output.cols; ++l)
+        for (int l = 0; l < normalized.cols; ++l)
         {
-            auto source = input.at<double>(k, l);
-
             cv::Vec2d sum{0.f, 0.f};
 
             for (int row = 0; row < normalized.rows; ++row)
@@ -62,7 +62,7 @@ cv::Mat phase_shift(cv::Mat realImag)
         for (int col = 0; col < realImag.cols; ++col)
         {
             auto values = realImag.at<cv::Vec2d>(row, col);
-            output.at<double>(row, col) = std::atan2(values[IMAG], values[REAL]);
+            output.at<double>(row, col) = std::atan2(values[REAL], values[IMAG]);
         }
     }
 
@@ -97,13 +97,10 @@ cv::Mat power_spectrum(cv::Mat realImag)
 cv::Mat spectrum_normalize(cv::Mat spectrum)
 {
     cv::Mat normalized;
-    cv::log(spectrum + 1, normalized);
+    cv::log(spectrum, normalized);
     cv::normalize(normalized, normalized, 0, 1, cv::NORM_MINMAX);
 
     cv::Mat output{spectrum.size(), CV_64F};
-
-    auto rowHalf = normalized.rows / 2 - 1;
-    auto colHalf = normalized.cols / 2 - 1;
 
     for (int row = 0; row < normalized.rows; ++row)
     {
@@ -123,7 +120,7 @@ cv::Mat spectrum_normalize(cv::Mat spectrum)
 
 cv::Mat inverse_fourier(cv::Mat realImag)
 {
-    cv::Mat normalized(realImag.size(), CV_64F, 0);
+    cv::Mat normalized(realImag.size(), CV_64F, 0.f);
 
     auto base = [&](int k, int l, int m, int n)
     {
@@ -139,26 +136,24 @@ cv::Mat inverse_fourier(cv::Mat realImag)
         return res;
     };
 
-    for (int k = 0; k < normalized.rows; ++k)
+    for (int k = 0; k < realImag.rows; ++k)
     {
-        for (int l = 0; l < normalized.cols; ++l)
+        for (int l = 0; l < realImag.cols; ++l)
         {
-            auto source = realImag.at<double>(k, l);
+            double sum = 0.f;
 
-            cv::Vec2d sum{0.f, 0.f};
-
-            for (int row = 0; row < normalized.rows; ++row)
+            for (int row = 0; row < realImag.rows; ++row)
             {
-                for (int col = 0; col < normalized.cols; ++col)
+                for (int col = 0; col < realImag.cols; ++col)
                 {
-                    auto pixel = normalized.at<double>(row, col);
+                    auto vec = realImag.at<cv::Vec2d>(row, col);
                     auto _base = base(k, l, row, col);
-                    sum[REAL] += _base[REAL] * pixel;
-                    sum[IMAG] += _base[IMAG] * pixel;
+
+                    sum += vec[REAL] * _base[REAL] - vec[IMAG] * _base[IMAG];
                 }
             }
 
-            output.at<cv::Vec2d>(k, l) = sum;
+            normalized.at<double>(k, l) = sum;
         }
     }
 
@@ -189,6 +184,9 @@ int main()
     cv::imshow("Lena Phase", phase);
     cv::imshow("Lena Spectrum", spectrum);
     cv::imshow("Lena norm Spectrum", norm_spectrum);
+
+    auto inverse = inverse_fourier(real_imag);
+    cv::imshow("Lena inverse", inverse);
 
     // Bacause of hyprland, I need to filter keys :)
     int key;
