@@ -132,11 +132,8 @@ fn draw(height: u32, width: u32, objects: &[&dyn Drawable]) -> String {
             let pixel = objects
                 .iter()
                 .filter_map(|obj| obj.pixel_at(Point { row, col }))
-                .last();
-            canvas.push(match pixel {
-                Some(ch) => ch,
-                None => '.',
-            });
+                .next_back();
+            canvas.push(pixel.unwrap_or('.'));
         }
         canvas.push('\n');
     }

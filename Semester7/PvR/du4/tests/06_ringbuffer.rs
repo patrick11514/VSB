@@ -41,6 +41,98 @@
 //! You don't need to use `unsafe`, pointers, or anything special, just use the simplest data
 //! representation that you can think of. The implementation should fit within 120 lines of code.
 
+use std::mem::swap;
+
+#[derive(Debug)]
+struct RingBuffer<T> {
+    data: Vec<T>,
+    start: usize,
+    end: usize,
+    capacity: usize,
+    len: usize,
+}
+
+impl<T: Default> RingBuffer<T> {
+    pub fn new(capacity: usize) -> Self {
+        let mut data = Vec::with_capacity(capacity);
+
+        for _ in 0..capacity {
+            data.push(T::default());
+        }
+
+        RingBuffer {
+            data,
+            start: 0,
+            end: 0,
+            capacity,
+            len: 0,
+        }
+    }
+
+    fn inc_index(&self, value: usize) -> usize {
+        (value + 1) % self.capacity
+    }
+
+    pub fn enqueue(&mut self, value: T) -> Option<T> {
+        if self.capacity == 0 {
+            return None;
+        }
+
+        let mut value = value;
+
+        swap(&mut value, &mut self.data[self.end]);
+
+        if self.end == self.start && self.len == self.capacity {
+            self.start = self.inc_index(self.start);
+            self.end = self.inc_index(self.end);
+
+            return Some(value); //Prev value
+        }
+
+        self.len += 1;
+        self.end = self.inc_index(self.end);
+
+        None
+    }
+
+    pub fn len(&self) -> usize {
+        self.len
+    }
+
+    pub fn dequeue(&mut self) -> Option<T> {
+        if self.len == 0 || self.capacity == 0 {
+            return None;
+        }
+
+        let mut value = T::default();
+        swap(&mut value, &mut self.data[self.start]);
+
+        self.start = self.inc_index(self.start);
+        self.len -= 1;
+
+        Some(value)
+    }
+
+    pub fn peek(&self) -> Option<&T> {
+        if self.len == 0 {
+            return None;
+        }
+
+        Some(&self.data[self.start])
+    }
+
+    pub fn into_vec(self) -> Vec<T> {
+        let mut vec: Vec<T> = Vec::with_capacity(self.capacity);
+        let mut rb = self; // Create a mutable copy of self to call dequeue
+
+        while let Some(v) = rb.dequeue() {
+            vec.push(v);
+        }
+
+        vec
+    }
+}
+
 /// TODO: write a simple "DSL" (domain-specific language) that can
 /// be used to test the ringbuffer in a more visual way.
 /// For example, you could create a function that "renders" the ringbuffer

@@ -130,14 +130,58 @@ impl PartialOrd for Hand {
 impl Ord for Hand {
     // TODO: implement this method
     fn cmp(&self, other: &Self) -> Ordering {
-        todo!()
+        let first = self.value();
+        let second = other.value();
+
+        if first < second {
+            Ordering::Less
+        } else if first > second {
+            Ordering::Greater
+        } else {
+            for i in 0..5 {
+                if self.cards[i] == other.cards[i] {
+                    continue;
+                }
+
+                return self.cards[i].cmp(&other.cards[i]);
+            }
+
+            Ordering::Equal
+        }
     }
 }
 
 impl Hand {
     // TODO: implement this method
     fn value(&self) -> HandValue {
-        todo!()
+        let mut hash_map = HashMap::<Card, u8>::new();
+
+        for card in self.cards {
+            let count = hash_map.get(&card).unwrap_or(&0);
+            hash_map.insert(card, count + 1);
+        }
+
+        let max = *hash_map.values().max().unwrap_or(&0);
+
+        if max == 5 {
+            HandValue::FiveOfAKind
+        } else if max == 4 {
+            HandValue::FourOfAKind
+        } else if max == 3 {
+            if hash_map.len() == 2 {
+                HandValue::FullHouse
+            } else {
+                HandValue::ThreeOfAKind
+            }
+        } else if max == 2 {
+            if hash_map.len() == 3 {
+                HandValue::TwoPairs
+            } else {
+                HandValue::OnePair
+            }
+        } else {
+            HandValue::HighCard
+        }
     }
 }
 
