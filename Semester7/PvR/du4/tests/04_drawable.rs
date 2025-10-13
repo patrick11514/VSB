@@ -58,6 +58,20 @@ impl Rectangle {
     }
 }
 
+impl Drawable for Rectangle {
+    fn pixel_at(&self, point: Point) -> Option<char> {
+        if point.row >= self.point.row
+            && point.row < (self.point.row + self.height)
+            && point.col >= self.point.col
+            && point.col < (self.point.col + self.width)
+        {
+            Some(self.char)
+        } else {
+            None
+        }
+    }
+}
+
 struct Circle {
     point: Point,
     radius: u32,
@@ -74,7 +88,61 @@ impl Circle {
     }
 }
 
-fn draw(height: u32, width: u32, &[&dyn Drawable])
+impl Drawable for Circle {
+    fn pixel_at(&self, point: Point) -> Option<char> {
+        let dx = self.point.col.abs_diff(point.col);
+        let dy = self.point.row.abs_diff(point.row);
+
+        //let diff = dx * dx + dy + dy;
+
+        //my circle have spikes :(
+        if dx * dx + dy * dy <= self.radius * self.radius {
+            // also this didn't worked :(
+            // if  diff.isqrt() <= self.radius {
+            Some(self.char)
+        } else {
+            None
+        }
+
+        //and I tried for fun to prompt ChatGPT for it and surprisingly the code generated the
+        //correct circles, but I don't want to present this code as mine :)
+        /*
+            let cx = self.point.col as f64 + 0.5;
+            let cy = self.point.row as f64 + 0.5;
+            let r  = self.radius as f64;
+
+            let x0 = point.col as f64;
+            let y0 = point.row as f64;
+            let x1 = x0 + 1.0;
+            let y1 = y0 + 1.0;
+
+            let dx = if cx < x0 { x0 - cx } else if cx > x1 { cx - x1 } else { 0.0 };
+            let dy = if cy < y0 { y0 - cy } else if cy > y1 { cy - y1 } else { 0.0 };
+
+            if dx*dx + dy*dy <= r*r { Some(self.char) } else { None }
+        */
+    }
+}
+
+fn draw(height: u32, width: u32, objects: &[&dyn Drawable]) -> String {
+    let mut canvas = String::with_capacity((width * height + width) /* for new line */ as usize);
+
+    for row in 0..height {
+        for col in 0..width {
+            let pixel = objects
+                .iter()
+                .filter_map(|obj| obj.pixel_at(Point { row, col }))
+                .last();
+            canvas.push(match pixel {
+                Some(ch) => ch,
+                None => '.',
+            });
+        }
+        canvas.push('\n');
+    }
+
+    canvas
+}
 
 /// Below you can find a set of unit tests.
 /// The tests use the [`insta`](https://insta.rs/) snapshot testing library to make it easier to
