@@ -100,16 +100,21 @@ cv::Mat spectrum_normalize(cv::Mat spectrum)
     cv::log(spectrum, normalized);
     cv::normalize(normalized, normalized, 0, 1, cv::NORM_MINMAX);
 
-    cv::Mat output{spectrum.size(), CV_64F};
+    return normalized;
+}
 
-    for (int row = 0; row < normalized.rows; ++row)
+cv::Mat flip_quadrants(cv::Mat realImag)
+{
+    cv::Mat output{realImag.size(), CV_64F};
+
+    for (int row = 0; row < realImag.rows; ++row)
     {
-        for (int col = 0; col < normalized.cols; ++col)
+        for (int col = 0; col < realImag.cols; ++col)
         {
-            auto value = normalized.at<double>(row, col);
+            auto value = realImag.at<double>(row, col);
 
-            int newRow = (row + normalized.rows / 2) % normalized.rows;
-            int newCol = (col + normalized.cols / 2) % normalized.cols;
+            int newRow = (row + realImag.rows / 2) % realImag.rows;
+            int newCol = (col + realImag.cols / 2) % realImag.cols;
 
             output.at<double>(newRow, newCol) = value;
         }
@@ -179,7 +184,7 @@ int main()
     auto real_imag = furier(gray_scale_float);
     auto phase = phase_shift(real_imag);
     auto spectrum = power_spectrum(real_imag);
-    auto norm_spectrum = spectrum_normalize(spectrum);
+    auto norm_spectrum = flip_quadrants(spectrum_normalize(spectrum));
 
     cv::imshow("Lena Phase", phase);
     cv::imshow("Lena Spectrum", spectrum);
