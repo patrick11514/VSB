@@ -93,12 +93,9 @@ impl Drawable for Circle {
         let dx = self.point.col.abs_diff(point.col);
         let dy = self.point.row.abs_diff(point.row);
 
-        //let diff = dx * dx + dy + dy;
+        let diff = dx * dx + dy * dy;
 
-        //my circle have spikes :(
-        if dx * dx + dy * dy <= self.radius * self.radius {
-            // also this didn't worked :(
-            // if  diff.isqrt() <= self.radius {
+        if diff.isqrt() <= self.radius {
             Some(self.char)
         } else {
             None
