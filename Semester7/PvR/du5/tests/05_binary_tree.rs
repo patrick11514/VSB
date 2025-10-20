@@ -68,7 +68,7 @@ impl<T> BinaryTree<T> {
                 value: _,
                 left,
                 right,
-            } => left.height().max(right.height()),
+            } => 1 + left.height().max(right.height()),
         }
     }
 
@@ -79,11 +79,11 @@ impl<T> BinaryTree<T> {
                 value: _,
                 left,
                 right,
-            } => left.size() + right.size(),
+            } => 1 + left.size() + right.size(),
         }
     }
 
-    fn iter(&self) -> BinaryTreeIterator<T> {
+    fn iter<'a>(&'a self) -> BinaryTreeIterator<'a, T> {
         BinaryTreeIterator::new(self)
     }
 }
@@ -97,7 +97,7 @@ impl<T: PartialOrd + Copy> BinaryTree<T> {
                 right: Box::new(BinaryTree::Leaf),
             },
             BinaryTree::Node { value, left, right } => BinaryTree::Node {
-                value,
+                value: value,
                 left: if item < value {
                     Box::new(left.insert(item))
                 } else {
@@ -132,11 +132,18 @@ impl<T: PartialEq + PartialOrd> BinaryTree<T> {
 
 struct BinaryTreeIterator<'a, T> {
     tree: &'a BinaryTree<T>,
+    branches: Option<Vec<&'a BinaryTree<T>>>,
 }
 
 impl<'a, T> BinaryTreeIterator<'a, T> {
     fn new(tree: &'a BinaryTree<T>) -> Self {
-        BinaryTreeIterator { tree }
+        BinaryTreeIterator {
+            tree,
+            branches: match tree {
+                BinaryTree::Leaf => None,
+                BinaryTree::Node { .. } => Some(vec![tree]),
+            },
+        }
     }
 }
 
@@ -144,7 +151,22 @@ impl<'a, T> Iterator for BinaryTreeIterator<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<Self::Item> {
-        todo!() //TODO PATRIK
+        match &self.branches {
+            None => None, //End of tree
+            Some(stack) => {
+                if stack.len() == 0 {
+                    self.branches = None;
+                    return None;
+                } else {
+                    let top = stack[stack.len() - 1];
+                    match top {
+                        BinaryTree::Leaf => {}
+                        BinaryTree::Node { value, left, right } => todo!(),
+                    }
+                    todo!() //Not implemented :( my brain is fried
+                }
+            }
+        }
     }
 }
 

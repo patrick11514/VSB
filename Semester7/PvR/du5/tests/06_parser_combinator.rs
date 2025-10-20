@@ -96,11 +96,155 @@ fn char_parser(c: char) -> impl Fn(&str) -> ParseResult<&str, char> {
     }
 }
 
+fn take_while<F>(fc: F) -> impl Fn(&str) -> ParseResult<&str, String>
+where
+    F: Fn(char) -> bool,
+{
+    move |input: &str| match input.find(&fc) {
+        Some(idx) => Ok((&input[idx..], input[..idx].into())),
+        None => Ok((input, "".into())),
+    }
+}
+
+fn string_parser(str: &str) -> impl Fn(&str) -> ParseResult<&str, String> {
+    move |input: &str| {
+        if !input.starts_with(str) {
+            Err(format!("Input doesn't start with {str}"))
+        } else {
+            Ok((&input[str.len()..], str.into()))
+        }
+    }
+}
+
+fn map<P, F, R1, R2>(parser: P, fc: F) -> impl Fn(&str) -> ParseResult<&str, R2>
+where
+    P: Fn(&str) -> ParseResult<&str, R1>,
+    F: Fn(R1) -> R2,
+{
+    move |input: &str| match parser(input) {
+        Ok((rest, res)) => Ok((rest, fc(res))),
+        Err(err) => Err(err),
+    }
+}
+
+fn try_map<P, F, R>(parser: P, fc: F) -> impl Fn(&str) -> Result<R, String>
+where
+    P: Fn(&str) -> ParseResult<&str, String>,
+    F: Fn(String) -> R,
+{
+    move |input: &str| match parser(input) {
+        Ok((_, res)) => Ok(fc(res)),
+        Err(err) => Err(err),
+    }
+}
+
+fn or<P1, P2, R>(first: P1, second: P2) -> impl FnMut(&str) -> ParseResult<&str, R>
+where
+    P1: Fn(&str) -> ParseResult<&str, R>,
+    P2: Fn(&str) -> ParseResult<&str, R>,
+{
+    move |input: &str| match first(input) {
+        Ok(res) => Ok(res),
+        Err(_) => second(input),
+    }
+}
+
+fn opt<P, T>(parser: P) -> impl Fn(&str) -> ParseResult<&str, Option<T>>
+where
+    P: Fn(&str) -> ParseResult<&str, T>,
+{
+    move |input: &str| match parser(input) {
+        Ok((rest, parsed)) => Ok((rest, Some(parsed))),
+        Err(_) => Ok((input, None)),
+    }
+}
+
+fn preceded_by<P1, R1, P2, R2>(first: P1, second: P2) -> impl Fn(&str) -> ParseResult<&str, R2>
+where
+    P1: Fn(&str) -> ParseResult<&str, R1>,
+    P2: Fn(&str) -> ParseResult<&str, R2>,
+{
+    move |input: &str| match first(input) {
+        Ok((rest, _)) => second(rest),
+        Err(err) => Err(err),
+    }
+}
+
+fn followed_by<P1, R1, P2, R2>(first: P1, second: P2) -> impl Fn(&str) -> ParseResult<&str, R1>
+where
+    P1: Fn(&str) -> ParseResult<&str, R1>,
+    P2: Fn(&str) -> ParseResult<&str, R2>,
+{
+    move |input: &str| match first(input) {
+        Ok((rest, res)) => match second(rest) {
+            Ok((rest, _)) => Ok((rest, res)),
+            Err(err) => Err(err),
+        },
+        Err(err) => Err(err),
+    }
+}
+
+fn delimited_by<P, R>(char1: char, char2: char, parser: P) -> impl Fn(&str) -> ParseResult<&str, R>
+where
+    P: Fn(&str) -> ParseResult<&str, R>,
+{
+    move |input: &str| {
+        let preceded = preceded_by(char_parser(char1), &parser);
+        followed_by(preceded, char_parser(char2))(input)
+    }
+}
+
+fn sequence<P1, R1, P2, R2>(first: P1, second: P2) -> impl Fn(&str) -> ParseResult<&str, (R1, R2)>
+where
+    P1: Fn(&str) -> ParseResult<&str, R1>,
+    P2: Fn(&str) -> ParseResult<&str, R2>,
+{
+    move |input: &str| match first(input) {
+        Ok((rest, res1)) => match second(rest) {
+            Ok((rest, res2)) => Ok((rest, (res1, res2))),
+            Err(err) => Err(err),
+        },
+        Err(err) => Err(err),
+    }
+}
+
+fn repeated<P, R>(parser: P) -> impl Fn(&str) -> ParseResult<&str, Vec<R>>
+where
+    P: Fn(&str) -> ParseResult<&str, R>,
+{
+    //! - `repeated`: Receives a parser and returns a parser that tries to apply it as many times as
+    //!   possible. It collects all the return values in a `Vec`.
+
+    move |input: &str| {
+        let mut vec = Vec::new();
+        let mut rest = input;
+
+        loop {
+            match parser(rest) {
+                Ok((r, res)) => {
+                    vec.push(res);
+                    rest = r;
+                }
+                Err(_) => return Ok((rest, vec)),
+            }
+        }
+    }
+}
+
+fn tag_parser(tag: &str) -> impl Fn(&str) -> ParseResult<&str, String> {
+    let open_tag = format!("<{tag}>");
+    let close_tag = format!("</{tag}>");
+
+    move |input: &str| {
+        let preceded = preceded_by(string_parser(&open_tag), take_while(|c| c != '<'));
+        followed_by(preceded, string_parser(&close_tag))(input)
+    }
+}
 
 /// Below you can find a set of unit tests.
 #[cfg(test)]
 mod tests {
-    use super::{char_parser, ParseResult, Parser};
+    use super::{ParseResult, Parser, char_parser};
 
     use std::collections::HashMap;
     use std::fmt::Debug;
@@ -286,7 +430,10 @@ mod tests {
             (String::from("begin"), String::from("ABC")),
         );
         check(
-            sequence(map(char_parser('1'), |_| 42), map(char_parser('2'), |_| 84)),
+            sequence(
+                map(map(char_parser('1'), |c| c.to_string()), |_| 42),
+                map(map(char_parser('2'), |c| c.to_string()), |_| 84),
+            ),
             "12x",
             "x",
             (42, 84),
@@ -403,7 +550,10 @@ mod tests {
         check(json_parser(), "859xyz", "xyz", Json::Integer(859));
         check_fail(json_parser(), "abcd");
         check_fail(json_parser(), "abcd123");
-        check_fail(json_parser(), "11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
+        check_fail(
+            json_parser(),
+            "11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+        );
     }
 
     #[test]
