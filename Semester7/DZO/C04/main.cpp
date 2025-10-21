@@ -199,6 +199,22 @@ cv::Mat generate_filter(cv::Size size, int radius, bool inverse = false)
     return mask;
 }
 
+cv::Mat generate_row_mask(cv::Size size, int percentageFromSides)
+{
+    cv::Mat mask(size, CV_64F, 0.f);
+
+    int treshold = size.width * (percentageFromSides / 100);
+
+    int centerY = size.height / 2;
+
+    for (int col = 0; col < size.width; ++col)
+    {
+        if (col < treshold || (size))
+    }
+
+    return mask;
+}
+
 cv::Mat apply_filter(cv::Mat realImag, cv::Mat mask)
 {
     cv::Mat output = realImag.clone();
@@ -235,6 +251,9 @@ int main()
 
     auto real_imag = furier(gray_scale_float);
     auto flipped = flip_quadrants<cv::Vec2d>(real_imag);
+
+    auto power = power_spectrum(flipped);
+    cv::imshow("power", power);
 
     for (int i = 10; i < 30; i += 5)
     {
