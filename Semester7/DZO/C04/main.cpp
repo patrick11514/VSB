@@ -201,7 +201,7 @@ cv::Mat generate_filter(cv::Size size, int radius, bool inverse = false)
 
 cv::Mat generate_row_mask(cv::Size size, int percentageFromSides)
 {
-    cv::Mat mask(size, CV_64F, 0.f);
+    cv::Mat mask(size, CV_64F, 1.f);
 
     int treshold = size.width * (percentageFromSides / 100);
 
@@ -209,7 +209,10 @@ cv::Mat generate_row_mask(cv::Size size, int percentageFromSides)
 
     for (int col = 0; col < size.width; ++col)
     {
-        if (col < treshold || (size))
+        if (col < treshold || (size.width / 2 + treshold) < col)
+        {
+            mask.at<double>(size.height / 2, col) = 0.f;
+        }
     }
 
     return mask;
@@ -267,6 +270,26 @@ int main()
             cv::imshow(std::format("Lena {} - {}", i, l == 0 ? "high" : "low"), inverse);
         }
     }
+
+    cv::Mat img2 = cv::imread("../images/lena64_bars.png", cv::IMREAD_GRAYSCALE);
+
+    if (img2.empty())
+    {
+        printf("Unable to read input file (%s, %d).", __FILE__, __LINE__);
+    }
+    cv::imshow("LENA Bars", img2);
+
+    cv::Mat gray_scale_float2;
+    img2.convertTo(gray_scale_float2, CV_64F, 1.0 / 255.0);
+
+    auto real_imag2 = furier(gray_scale_float2);
+    auto flipped2 = flip_quadrants<cv::Vec2d>(real_imag2);
+
+    auto row_mask = generate_row_mask(flipped2.size(), 0.2);
+    auto bars_removed = apply_filter(flipped2, row_mask);
+    auto inverse2 = inverse_fourier(flip_quadrants<cv::Vec2d>(bars_removed));
+
+    cv::imshow("Lena bars removed", inverse2);
 
     // Bacause of hyprland, I need to filter keys :)
     int key;
