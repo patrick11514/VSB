@@ -757,8 +757,6 @@ mod tests {
             object,
         )))
     }
-
-    */
     #[track_caller]
     fn check<P, T>(mut parser: P, input: &str, expected_rest: &str, expected: T)
     where
