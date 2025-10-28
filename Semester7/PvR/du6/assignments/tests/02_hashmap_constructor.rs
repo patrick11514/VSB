@@ -16,17 +16,17 @@
 macro_rules! make_map {
     () => {
         {
-            ::std::collections::HashMap::with_capacity(0)
+            let map = ::std::collections::HashMap::with_capacity(0);
+            map
         }
     };
     ( $($key:expr => $value:expr),+ $(,)? ) => {
         {
-            let mut map = ::std::collections::HashMap::with_capacity(count_args!($($key),+));
+            let mut map = ::std::collections::HashMap::with_capacity(0 /* Totally lost with the macro magic, so idk how to do that :D */);
             $(
-                if map.contains_key(&$key) {
+                if let Some(_) = map.insert($key, $value) {
                     panic!("Duplicate key in make_map macro");
                 }
-                map.insert($key, $value);
             )+
             map
         }

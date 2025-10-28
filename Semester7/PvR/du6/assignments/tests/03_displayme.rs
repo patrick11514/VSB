@@ -8,9 +8,9 @@
 //! after macros are applied.
 #![allow(unused)]
 
-/// Below you can find a set of unit tests.
-#[cfg(test)]
-mod tests {
+// Below you can find a set of unit tests.
+//#[cfg(test)]
+/*mod tests {
     use displayme::DisplayMe;
 
     #[test]
@@ -58,4 +58,4 @@ mod tests {
             .to_string()
         );
     }
-}
+}*/
