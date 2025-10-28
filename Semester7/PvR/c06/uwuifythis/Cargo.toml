@@ -1,0 +1,15 @@
+[package]
+name = "uwuifythis"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+proc-macro = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+uwuify = "0.2"
+syn = { version = "2", features = ["full", "visit-mut"] }
+quote = "1"
+proc-macro2 = "1"

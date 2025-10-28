@@ -207,11 +207,17 @@ cv::Mat generate_row_mask(cv::Size size, int percentageFromSides)
 
     int centerY = size.height / 2;
 
-    for (int col = 0; col < size.width; ++col)
+    for (int row = 0; row < size.height; ++row)
     {
-        if (col < treshold || (size.width / 2 + treshold) < col)
+        for (int col = 0; col < size.width; ++col)
         {
-            mask.at<double>(size.height / 2, col) = 0.f;
+            if (
+                (col < treshold || col > (size.width - treshold)) /*&&
+               (row > centerY - 2 && row < centerY + 2)*/
+            )
+            {
+                mask.at<double>(row, col) = 0.f;
+            }
         }
     }
 
@@ -258,19 +264,19 @@ int main()
     auto power = power_spectrum(flipped);
     cv::imshow("power", power);
 
-    for (int i = 10; i < 30; i += 5)
-    {
-        for (int l = 0; l <= 1; ++l)
+    /*    for (int i = 10; i < 30; i += 5)
         {
-            auto mask = generate_filter(flipped.size(), i, l == 1);
-            auto pass = apply_filter(flipped, mask);
-            auto inverse = inverse_fourier(flip_quadrants<cv::Vec2d>(pass));
+            for (int l = 0; l <= 1; ++l)
+            {
+                auto mask = generate_filter(flipped.size(), i, l == 1);
+                auto pass = apply_filter(flipped, mask);
+                auto inverse = inverse_fourier(flip_quadrants<cv::Vec2d>(pass));
 
-            // cv::imshow(std::format("MASK: {} - {}", i, l == 0 ? "high" : "low"), mask);
-            cv::imshow(std::format("Lena {} - {}", i, l == 0 ? "high" : "low"), inverse);
+                // cv::imshow(std::format("MASK: {} - {}", i, l == 0 ? "high" : "low"), mask);
+                cv::imshow(std::format("Lena {} - {}", i, l == 0 ? "high" : "low"), inverse);
+            }
         }
-    }
-
+    */
     cv::Mat img2 = cv::imread("../images/lena64_bars.png", cv::IMREAD_GRAYSCALE);
 
     if (img2.empty())
@@ -288,6 +294,11 @@ int main()
     auto row_mask = generate_row_mask(flipped2.size(), 0.2);
     auto bars_removed = apply_filter(flipped2, row_mask);
     auto inverse2 = inverse_fourier(flip_quadrants<cv::Vec2d>(bars_removed));
+
+    cv::imshow("bars mask", row_mask);
+
+    auto power2 = power_spectrum(bars_removed);
+    cv::imshow("power2", power2);
 
     cv::imshow("Lena bars removed", inverse2);
 

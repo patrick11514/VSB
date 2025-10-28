@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "playground",
+    "uwuifythis"
+]
+resolver = "2"
