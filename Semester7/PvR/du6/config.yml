@@ -1,0 +1,61 @@
+pipeline:
+- type: cargo
+  title: Test 01_newtype_wrapper
+  cmd: test
+  args:
+  - --test
+  - 01_newtype_wrapper
+- type: cargo
+  title: Run linter (cargo clippy) on 01_newtype_wrapper
+  cmd: clippy
+  args:
+  - --test
+  - 01_newtype_wrapper
+  - --keep-going
+  - --
+  - -Adead_code
+- type: cargo
+  title: Test 02_hashmap_constructor
+  cmd: test
+  args:
+  - --test
+  - 02_hashmap_constructor
+- type: cargo
+  title: Run linter (cargo clippy) on 02_hashmap_constructor
+  cmd: clippy
+  args:
+  - --test
+  - 02_hashmap_constructor
+  - --keep-going
+  - --
+  - -Adead_code
+- type: cargo
+  title: Test 03_displayme
+  cmd: test
+  args:
+  - --test
+  - 03_displayme
+- type: cargo
+  title: Run linter (cargo clippy) on 03_displayme
+  cmd: clippy
+  args:
+  - --test
+  - 03_displayme
+  - --keep-going
+  - --
+  - -Adead_code
+- type: cargo
+  title: Test 04_memory_map
+  cmd: test
+  args:
+  - --test
+  - 04_memory_map
+- type: cargo
+  title: Run linter (cargo clippy) on 04_memory_map
+  cmd: clippy
+  args:
+  - --test
+  - 04_memory_map
+  - --keep-going
+  - --
+  - -Adead_code
