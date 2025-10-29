@@ -199,26 +199,28 @@ cv::Mat generate_filter(cv::Size size, int radius, bool inverse = false)
     return mask;
 }
 
-cv::Mat generate_row_mask(cv::Size size, int percentageFromSides)
+cv::Mat generate_row_mask(cv::Size size, float percentageFromSides)
 {
     cv::Mat mask(size, CV_64F, 1.f);
 
-    int treshold = size.width * (percentageFromSides / 100);
+    int radius = size.width * percentageFromSides / 2;
 
     int centerY = size.height / 2;
+    int centerX = size.width / 2;
 
     for (int row = 0; row < size.height; ++row)
     {
-        for (int col = 0; col < size.width; ++col)
-        {
-            if (
-                (col < treshold || col > (size.width - treshold)) /*&&
-               (row > centerY - 2 && row < centerY + 2)*/
-            )
+        if (row > centerY - 2 && row < centerY + 2)
+            for (int col = 0; col < size.width; ++col)
             {
-                mask.at<double>(row, col) = 0.f;
+                int dx = std::abs(col - centerX);
+                int dy = std::abs(row - centerY);
+
+                if (dx * dx + dy * dy > radius * radius)
+                {
+                    mask.at<double>(row, col) = 0.f;
+                }
             }
-        }
     }
 
     return mask;
@@ -264,19 +266,19 @@ int main()
     auto power = power_spectrum(flipped);
     cv::imshow("power", power);
 
-    /*    for (int i = 10; i < 30; i += 5)
+    for (int i = 10; i < 30; i += 5)
+    {
+        for (int l = 0; l <= 1; ++l)
         {
-            for (int l = 0; l <= 1; ++l)
-            {
-                auto mask = generate_filter(flipped.size(), i, l == 1);
-                auto pass = apply_filter(flipped, mask);
-                auto inverse = inverse_fourier(flip_quadrants<cv::Vec2d>(pass));
+            auto mask = generate_filter(flipped.size(), i, l == 1);
+            auto pass = apply_filter(flipped, mask);
+            auto inverse = inverse_fourier(flip_quadrants<cv::Vec2d>(pass));
 
-                // cv::imshow(std::format("MASK: {} - {}", i, l == 0 ? "high" : "low"), mask);
-                cv::imshow(std::format("Lena {} - {}", i, l == 0 ? "high" : "low"), inverse);
-            }
+            // cv::imshow(std::format("MASK: {} - {}", i, l == 0 ? "high" : "low"), mask);
+            cv::imshow(std::format("Lena {} - {}", i, l == 0 ? "high" : "low"), inverse);
         }
-    */
+    }
+
     cv::Mat img2 = cv::imread("../images/lena64_bars.png", cv::IMREAD_GRAYSCALE);
 
     if (img2.empty())
