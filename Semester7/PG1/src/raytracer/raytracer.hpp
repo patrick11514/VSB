@@ -2,18 +2,24 @@
 
 #include "../camera/camera.hpp"
 #include "../light/light.hpp"
-#include "../ui/simpleguidx11_linux.hpp"
+#include "../ui/gui_linux.hpp"
 #include "../utils/structs.hpp"
 #include "../utils/surface.hpp"
+#include "../spherical_map/spherical_map.hpp"
 
-/*! \class Raytracer
-\brief General ray tracer class.
+struct ReflectRefractData
+{
+  glm::vec3 normal;
+  glm::vec3 direction;
+  glm::vec3 position;
+  RTCRayHit hit;
+  Material *material;
+  int depth;
+  int max_depth;
+};
 
-\author Tom� Fabi�n
-\version 0.1
-\date 2018
-*/
-class Raytracer : public SimpleGuiLinux {
+class Raytracer : public SimpleGuiSDL3
+{
 public:
   Raytracer(const int width, const int height, const float fov_y,
             const glm::vec3 view_from, const glm::vec3 view_at,
@@ -27,9 +33,10 @@ public:
   void LoadScene(const std::string file_name);
 
   Color4f get_pixel(const int x, const int y, const float t = 0.0f) override;
-  RTCRay GenerateNextRay(RTCRayHit &ray_hit, glm::vec3 &normal);
-  glm::vec3 Trace(RTCRayHit &ray_hit, int depth, int max_depth = 5);
+  RTCRay GenerateNextRay(const glm::vec3 &position, const glm::vec3 &dir, float ior);
+  glm::vec3 Trace(RTCRayHit &ray_hit, int depth, int max_depth = 10);
   glm::vec3 DirectDiffuse(const glm::vec3 &P, const glm::vec3 &N);
+  glm::vec3 ReflectRefract(const ReflectRefractData &data);
 
   int Ui();
 
@@ -41,4 +48,5 @@ private:
   RTCDevice device_;
   RTCScene scene_;
   Camera camera_;
+  SphericalMap spherical_map_;
 };

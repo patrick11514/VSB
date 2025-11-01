@@ -16,10 +16,11 @@ find_package(glm REQUIRED)
 find_package(SDL3 REQUIRED CONFIG)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
+find_package(OpenMP)
 include_directories(${GLEW_INCLUDE_DIRS})
 
 file(GLOB_RECURSE SOURCES "src/*.cpp" "src/**/*.cpp")
 
 add_executable(main ${SOURCES})
 
-target_link_libraries(main PRIVATE embree imgui::imgui ${FREEIMAGE_LIBRARY} glm::glm SDL3::SDL3 ${OPENGL_LIBRARIES} GLEW::GLEW)
+target_link_libraries(main PRIVATE embree imgui::imgui ${FREEIMAGE_LIBRARY} glm::glm SDL3::SDL3 ${OPENGL_LIBRARIES} GLEW::GLEW OpenMP::OpenMP_CXX )

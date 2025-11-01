@@ -5,30 +5,32 @@
 #include <string>
 #include <vector>
 
-#define MAT_ELEM(mat, type, x, y)                                              \
-  reinterpret_cast<type *>((mat).data + (mat).step * (y) +                     \
+#define MAT_ELEM(mat, type, x, y)                          \
+  reinterpret_cast<type *>((mat).data + (mat).step * (y) + \
                            (mat).elemSize() * (x))
 
 // A macro to disallow the copy constructor and operator= functions
 // This should be used in the private: declarations for a class
-#define DISALLOW_COPY_AND_ASSIGN(type_name)                                    \
-  type_name(const type_name &);                                                \
+#define DISALLOW_COPY_AND_ASSIGN(type_name) \
+  type_name(const type_name &);             \
   void operator=(const type_name &)
 
-#define SAFE_DELETE(p)                                                         \
-  {                                                                            \
-    if (p != NULL) {                                                           \
-      delete p;                                                                \
-      p = NULL;                                                                \
-    }                                                                          \
+#define SAFE_DELETE(p) \
+  {                    \
+    if (p != NULL)     \
+    {                  \
+      delete p;        \
+      p = NULL;        \
+    }                  \
   }
 
-#define SAFE_DELETE_ARRAY(p)                                                   \
-  {                                                                            \
-    if (p != NULL) {                                                           \
-      delete[] p;                                                              \
-      p = NULL;                                                                \
-    }                                                                          \
+#define SAFE_DELETE_ARRAY(p) \
+  {                          \
+    if (p != NULL)           \
+    {                        \
+      delete[] p;            \
+      p = NULL;              \
+    }                        \
   }
 
 /*! \fn float template<typename T> void SafeDeleteVectorItems( std::vector<T> v
@@ -36,25 +38,31 @@
 \brief Dealokuje v�echny prvky typu T vektoru v.
 \param v Standardn� vektor.
 */
-template <typename T> void SafeDeleteVectorItems(std::vector<T> v) {
-  while (v.size() > 0) {
+template <typename T>
+void SafeDeleteVectorItems(std::vector<T> v)
+{
+  while (v.size() > 0)
+  {
     T item = v.back();
     v.pop_back();
     SAFE_DELETE(item);
   }
 }
 
-namespace utils {
-/*! \fn void swap( T & a, T & b )
-\brief Prohod� hodnoty a, b.
-\param a Prvni T hodnota.
-\param b Druha T hodnota.
-*/
-template <typename T> void swap(T &a, T &b) {
-  const T tmp = a;
-  a = b;
-  b = tmp;
-}
+namespace utils
+{
+  /*! \fn void swap( T & a, T & b )
+  \brief Prohod� hodnoty a, b.
+  \param a Prvni T hodnota.
+  \param b Druha T hodnota.
+  */
+  template <typename T>
+  void swap(T &a, T &b)
+  {
+    const T tmp = a;
+    a = b;
+    b = tmp;
+  }
 } // namespace utils
 
 /*! \fn float Random( const float range_min, const float range_max )
@@ -110,6 +118,15 @@ void error_handler(void *user_ptr, const RTCError code, const char *str);
 inline const int S_OK = 0;
 inline const int S_ERR = -1;
 
-inline glm::vec3 fromSimpleVec(const SimpleVec3f &vec) {
+inline glm::vec3 fromSimpleVec(const SimpleVec3f &vec)
+{
   return glm::vec3{vec.x, vec.y, vec.z};
+}
+
+inline RTCRayHit CreateEmptyRayHit(const RTCRay &ray)
+{
+  RTCRayHit hit{};
+  hit.ray = ray;
+  hit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+  return hit;
 }

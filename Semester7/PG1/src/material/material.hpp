@@ -23,7 +23,11 @@
 */
 #define IOR_GLASS 1.5f
 
-enum Shader { BASIC = 1, GLASS = 2 };
+enum Shader
+{
+  BASIC = 1,
+  GLASS = 2
+};
 
 /*! \class Material
 \brief A simple material.
@@ -32,7 +36,8 @@ enum Shader { BASIC = 1, GLASS = 2 };
 \version 0.9
 \date 2011-2018
 */
-class Material {
+class Material
+{
 public:
   //! Implicitn� konstruktor.
   /*!
@@ -99,6 +104,7 @@ public:
   glm::vec3 ambient;  /*!< RGB barva prost�ed� \f$\left<0, 1\right>^3\f$. */
   glm::vec3 diffuse;  /*!< RGB barva rozptylu \f$\left<0, 1\right>^3\f$. */
   glm::vec3 specular; /*!< RGB barva odrazu \f$\left<0, 1\right>^3\f$. */
+  glm::vec3 attenuation;
 
   glm::vec3 emission; /*!< RGB barva emise \f$\left<0, 1\right>^3\f$. */
 

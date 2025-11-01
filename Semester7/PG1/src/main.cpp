@@ -4,11 +4,12 @@
 #include <emmintrin.h>
 #include <xmmintrin.h>
 
-int main() {
+int main()
+{
   printf("PG1, (c)2011-2025 Tomas Fabian\n\n");
 
-  Raytracer raytracer(640, 480, deg2rad(45.0), glm::vec3(175, 140, 130),
-                      glm::vec3(0, 0, 35), "threads=0,verbose=0");
+  Raytracer raytracer(640, 480, deg2rad(45.0), glm::vec3(175, -140, 130),
+                      glm::vec3(0, 0, 0), "threads=0,verbose=0");
   raytracer.LoadScene("../data/6887_allied_avenger.obj");
   raytracer.MainLoop();
 }

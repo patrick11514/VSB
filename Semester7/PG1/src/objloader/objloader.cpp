@@ -5,12 +5,15 @@
 #include <cstring>
 #include <map>
 
-bool MaterialExists(std::vector<Material *> &materials, char *material_name) {
+bool MaterialExists(std::vector<Material *> &materials, char *material_name)
+{
   for (std::vector<Material *>::const_iterator iter = materials.begin();
-       iter != materials.end(); ++iter) {
+       iter != materials.end(); ++iter)
+  {
     Material *material = *iter;
 
-    if (material->get_name().compare(material_name) == 0) {
+    if (material->get_name().compare(material_name) == 0)
+    {
       return true;
     }
   }
@@ -20,13 +23,17 @@ bool MaterialExists(std::vector<Material *> &materials, char *material_name) {
 
 Texture *TextureProxy(const std::string &full_name,
                       std::map<std::string, Texture *> &already_loaded_textures,
-                      const int flip = -1, const bool single_channel = false) {
+                      const int flip = -1, const bool single_channel = false)
+{
   std::map<std::string, Texture *>::iterator already_loaded_texture =
       already_loaded_textures.find(full_name);
   Texture *texture = NULL;
-  if (already_loaded_texture != already_loaded_textures.end()) {
+  if (already_loaded_texture != already_loaded_textures.end())
+  {
     texture = already_loaded_texture->second;
-  } else {
+  }
+  else
+  {
     texture = new Texture(full_name.c_str()); // , flip, single_channel);
     already_loaded_textures[full_name] = texture;
   }
@@ -44,10 +51,12 @@ vr�ceny p�es pole \a materials.
 \param materials pole materi�l�, do kter�ho se budou ukl�dat na�ten� materi�ly.
 */
 int LoadMTL(const char *file_name, const char *path,
-            std::vector<Material *> &materials) {
+            std::vector<Material *> &materials)
+{
   // otev�en� soouboru
   FILE *file = fopen(file_name, "rt");
-  if (file == NULL) {
+  if (file == NULL)
+  {
     printf("File %s not found.\n", file_name);
 
     return -1;
@@ -66,7 +75,8 @@ int LoadMTL(const char *file_name, const char *path,
   size_t number_of_items_read = fread(buffer, sizeof(*buffer), file_size, file);
 
   // otestujeme korektnost na�ten� dat
-  if (!feof(file) && (number_of_items_read != file_size)) {
+  if (!feof(file) && (number_of_items_read != file_size))
+  {
     printf("Unexpected end of file encountered.\n");
 
     fclose(file);
@@ -97,12 +107,17 @@ int LoadMTL(const char *file_name, const char *path,
   Material *material = NULL;
 
   // --- na��t�n� v�ech materi�l� ---
-  while (line != NULL) {
-    if (line[0] != '#') {
-      if (strstr(line, "newmtl") == line) {
-        if (material != NULL) {
+  while (line != NULL)
+  {
+    if (line[0] != '#')
+    {
+      if (strstr(line, "newmtl") == line)
+      {
+        if (material != NULL)
+        {
           material->set_name(material_name);
-          if (!MaterialExists(materials, material_name)) {
+          if (!MaterialExists(materials, material_name))
+          {
             materials.push_back(material);
             printf("\r%I64u material(s)\t\t", materials.size());
           }
@@ -113,7 +128,9 @@ int LoadMTL(const char *file_name, const char *path,
         // printf( "material name=%s\n", material_name );
 
         material = new Material();
-      } else {
+      }
+      else
+      {
         char *tmp = Trim(line);
         if (strstr(tmp, "Ka") == tmp) // ambient color of the material
         {
@@ -176,13 +193,21 @@ int LoadMTL(const char *file_name, const char *path,
         {
           sscanf(tmp, "%*s %d", &material->shader);
         }
+
+        if (strstr(tmp, "Tl") == tmp)
+        {
+          float x, y, z;
+          sscanf(tmp, "%*s %f %f %f", &x, &y, &z);
+          material->attenuation = glm::vec3{1.f - x, 1.f - y, 1.f - z};
+        }
       }
     }
 
     line = strtok(NULL, delim); // na�ten� dal��ho ��dku
   }
 
-  if (material != NULL) {
+  if (material != NULL)
+  {
     material->set_name(material_name);
     materials.push_back(material);
     printf("\r%I64u material(s)\t\t", materials.size());
@@ -201,10 +226,12 @@ int LoadMTL(const char *file_name, const char *path,
 
 int LoadOBJ(const char *file_name, std::vector<Surface *> &surfaces,
             std::vector<Material *> &materials, const bool flip_yz,
-            const glm::vec3 default_color) {
+            const glm::vec3 default_color)
+{
   // otev�en� soouboru
   FILE *file = fopen(file_name, "rt");
-  if (file == NULL) {
+  if (file == NULL)
+  {
     printf("File %s not found.\n", file_name);
 
     return -1;
@@ -213,7 +240,8 @@ int LoadOBJ(const char *file_name, std::vector<Surface *> &surfaces,
   // cesta k zadan�mu souboru
   char path[128] = {""};
   const char *tmp = strrchr(file_name, '/');
-  if (tmp != NULL) {
+  if (tmp != NULL)
+  {
     memcpy(path, file_name, sizeof(char) * (tmp - file_name + 1));
   }
 
@@ -231,7 +259,8 @@ int LoadOBJ(const char *file_name, std::vector<Surface *> &surfaces,
   size_t number_of_items_read = fread(buffer, sizeof(*buffer), file_size, file);
 
   // otestujeme korektnost na�ten� dat
-  if (!feof(file) && (number_of_items_read != file_size)) {
+  if (!feof(file) && (number_of_items_read != file_size))
+  {
     printf("Unexpected end of file encountered.\n");
 
     fclose(file);
@@ -259,15 +288,18 @@ int LoadOBJ(const char *file_name, std::vector<Surface *> &surfaces,
   char *line = strtok(buffer, delim);
 
   // --- na��t�n� v�ech materi�lov�ch knihoven, prvn� pr�chod ---
-  while (line != NULL) {
-    switch (line[0]) {
+  while (line != NULL)
+  {
+    switch (line[0])
+    {
     case 'm': // mtllib
     {
       sscanf(line, "%*s %s", &material_library);
       printf("Material library: %s\n", material_library);
       material_libraries.push_back(
           std::string(path).append(std::string(material_library)));
-    } break;
+    }
+    break;
     }
 
     line = strtok(NULL, delim); // na�ten� dal��ho ��dku
@@ -276,7 +308,8 @@ int LoadOBJ(const char *file_name, std::vector<Surface *> &surfaces,
   memcpy(buffer, buffer_backup,
          file_size + 1); // obnoven� bufferu po �innosti strtok
 
-  for (int i = 0; i < static_cast<int>(material_libraries.size()); ++i) {
+  for (int i = 0; i < static_cast<int>(material_libraries.size()); ++i)
+  {
     LoadMTL(material_libraries[i].c_str(), path, materials);
   }
 
@@ -287,39 +320,50 @@ int LoadOBJ(const char *file_name, std::vector<Surface *> &surfaces,
   line = strtok(buffer, delim);
 
   // --- na��t�n� v�ech sou�adnic, druh� pr�chod ---
-  while (line != NULL) {
-    switch (line[0]) {
+  while (line != NULL)
+  {
+    switch (line[0])
+    {
     case 'v': // seznam vrchol�, norm�l nebo texturovac�ch sou�adnic aktu�ln�
               // skupiny
     {
-      switch (line[1]) {
+      switch (line[1])
+      {
       case ' ': // vertex
       {
         glm::vec3 vertex;
-        if (flip_yz) {
+        if (flip_yz)
+        {
           // float x, y, z;
           sscanf(line, "%*s %f %f %f", &vertex.x, &vertex.z, &vertex.y);
           vertex.y *= -1;
-        } else {
+        }
+        else
+        {
           sscanf(line, "%*s %f %f %f", &vertex.x, &vertex.y, &vertex.z);
         }
 
         vertices.push_back(vertex);
-      } break;
+      }
+      break;
 
       case 'n': // norm�la vertexu
       {
         glm::vec3 normal;
-        if (flip_yz) {
+        if (flip_yz)
+        {
           // float x, y, z;
           sscanf(line, "%*s %f %f %f", &normal.x, &normal.z, &normal.y);
           normal.y *= -1;
-        } else {
+        }
+        else
+        {
           sscanf(line, "%*s %f %f %f", &normal.x, &normal.y, &normal.z);
         }
         normal = glm::normalize(normal);
         per_vertex_normals.push_back(normal);
-      } break;
+      }
+      break;
 
       case 't': // texturovac� sou�adnice
       {
@@ -327,9 +371,11 @@ int LoadOBJ(const char *file_name, std::vector<Surface *> &surfaces,
         float z = 0;
         sscanf(line, "%*s %f %f %f", &texture_coord.u, &texture_coord.v, &z);
         texture_coords.push_back(texture_coord);
-      } break;
       }
-    } break;
+      break;
+      }
+    }
+    break;
     }
 
     line = strtok(NULL, delim); // na�ten� dal��ho ��dku
@@ -346,8 +392,8 @@ int LoadOBJ(const char *file_name, std::vector<Surface *> &surfaces,
   char material_name[128];
   char vertices_indices[4][8 * 3 + 2]; // pomocn� �et�zec pro na��t�n� index� a�
                                        // 4 x "v/vt/vn"
-  char vertex_indices[3][8]; // pomocn� �et�zec jednotliv�ch index� "v", "vt" a
-                             // "vn"
+  char vertex_indices[3][8];           // pomocn� �et�zec jednotliv�ch index� "v", "vt" a
+                                       // "vn"
 
   std::vector<Vertex> face_vertices; // pole v�ech vertex� pr�v� na��tan� face
 
@@ -356,19 +402,24 @@ int LoadOBJ(const char *file_name, std::vector<Surface *> &surfaces,
   line = strtok(buffer, delim); // reset
 
   // --- na��t�n� jednotliv�ch objekt� (group), t�et� pr�chod ---
-  while (line != NULL) {
-    switch (line[0]) {
+  while (line != NULL)
+  {
+    switch (line[0])
+    {
     case 'g': // group
     {
-      if (face_vertices.size() > 0) {
+      if (face_vertices.size() > 0)
+      {
         surfaces.push_back(
             BuildSurface(std::string(group_name), face_vertices));
         printf("\r%I64u group(s)\t\t", surfaces.size());
         ++no_surfaces;
         face_vertices.clear();
 
-        for (int i = 0; i < static_cast<int>(materials.size()); ++i) {
-          if (materials[i]->get_name().compare(material_name) == 0) {
+        for (int i = 0; i < static_cast<int>(materials.size()); ++i)
+        {
+          if (materials[i]->get_name().compare(material_name) == 0)
+          {
             Surface *s = *--surfaces.end();
             s->set_material(materials[i]);
             break;
@@ -378,25 +429,30 @@ int LoadOBJ(const char *file_name, std::vector<Surface *> &surfaces,
 
       sscanf(line, "%*s %s", &group_name);
       // printf( "Group name: %s\n", group_name );
-    } break;
+    }
+    break;
 
     case 'u': // usemtl
     {
       sscanf(line, "%*s %s", &material_name);
       // printf( "Material name: %s\n", material_name );
-    } break;
+    }
+    break;
 
     case 'f': // face
     {
       // ! p�edpokl�d�me pouze troj�heln�ky !
       // ! p�edpokl�d�me vyu�it� v�ech t�� polo�ek v/vt/vn !
       int no_slashes = 0;
-      for (int i = 0; i < int(strlen(line)); ++i) {
-        if (line[i] == '/') {
+      for (int i = 0; i < int(strlen(line)); ++i)
+      {
+        if (line[i] == '/')
+        {
           ++no_slashes;
         }
       }
-      switch (no_slashes) {
+      switch (no_slashes)
+      {
       case 2 * 3: // triangles
         sscanf(line, "%*s %s %s %s", &vertices_indices[0], &vertices_indices[1],
                &vertices_indices[2]);
@@ -411,12 +467,16 @@ int LoadOBJ(const char *file_name, std::vector<Surface *> &surfaces,
 
       // TODO smoothing groups
 
-      for (int i = 0; i < 3; ++i) {
-        if (strstr(vertices_indices[i], "//")) {
+      for (int i = 0; i < 3; ++i)
+      {
+        if (strstr(vertices_indices[i], "//"))
+        {
           sscanf(vertices_indices[i], "%[0-9]//%[0-9]", &vertex_indices[0],
                  &vertex_indices[2]);
           vertex_indices[1][0] = 0;
-        } else {
+        }
+        else
+        {
           sscanf(vertices_indices[i], "%[0-9]/%[0-9]/%[0-9]",
                  &vertex_indices[0], &vertex_indices[1], &vertex_indices[2]);
         }
@@ -425,21 +485,26 @@ int LoadOBJ(const char *file_name, std::vector<Surface *> &surfaces,
         const int texture_coord_index = atoi(vertex_indices[1]) - 1;
         const int per_vertex_normal_index = atoi(vertex_indices[2]) - 1;
 
-        if (texture_coord_index >= 0) {
+        if (texture_coord_index >= 0)
+        {
           face_vertices.push_back(
               Vertex(vertices[vertex_index],
                      per_vertex_normals[per_vertex_normal_index], default_color,
                      &texture_coords[texture_coord_index]));
-        } else {
+        }
+        else
+        {
           face_vertices.push_back(Vertex(
               vertices[vertex_index],
               per_vertex_normals[per_vertex_normal_index], default_color));
         }
       }
 
-      if (no_slashes == 2 * 4) {
+      if (no_slashes == 2 * 4)
+      {
         const int i[] = {0, 2, 3};
-        for (int j = 0; j < 3; ++j) {
+        for (int j = 0; j < 3; ++j)
+        {
           sscanf(vertices_indices[i[j]], "%[0-9]/%[0-9]/%[0-9]",
                  &vertex_indices[0], &vertex_indices[1], &vertex_indices[2]);
 
@@ -453,20 +518,24 @@ int LoadOBJ(const char *file_name, std::vector<Surface *> &surfaces,
                      &texture_coords[texture_coord_index]));
         }
       }
-    } break;
+    }
+    break;
     }
 
     line = strtok(NULL, delim); // na�ten� dal��ho ��dku
   }
 
-  if (face_vertices.size() > 0) {
+  if (face_vertices.size() > 0)
+  {
     surfaces.push_back(BuildSurface(std::string(group_name), face_vertices));
     printf("\r%I64u group(s)\t\t", surfaces.size());
     ++no_surfaces;
     face_vertices.clear();
 
-    for (int i = 0; i < static_cast<int>(materials.size()); ++i) {
-      if (materials[i]->get_name().compare(material_name) == 0) {
+    for (int i = 0; i < static_cast<int>(materials.size()); ++i)
+    {
+      if (materials[i]->get_name().compare(material_name) == 0)
+      {
         Surface *s = *--surfaces.end();
         s->set_material(materials[i]);
         break;

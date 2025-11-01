@@ -2,12 +2,15 @@
 #include "../objloader/objloader.hpp"
 #include "../utils/triangle.hpp"
 #include "../utils/utils.hpp"
+#include "../utils/math.hpp"
 #include <stdexcept>
+#include <imgui.h>
 
 Raytracer::Raytracer(const int width, const int height, const float fov_y,
                      const glm::vec3 view_from, const glm::vec3 view_at,
                      const char *config)
-    : SimpleGuiLinux(width, height) {
+    : SimpleGuiSDL3(width, height), spherical_map_("../data/brown_photostudio_02_4k.exr")
+{
   InitDeviceAndScene(config);
 
   camera_ = Camera(width, height, fov_y, view_from, view_at);
@@ -15,15 +18,18 @@ Raytracer::Raytracer(const int width, const int height, const float fov_y,
                                  glm::vec3{1.f, 1.f, 1.f}));
 }
 
-Raytracer::~Raytracer() {
+Raytracer::~Raytracer()
+{
   ReleaseDeviceAndScene();
 
-  for (auto *light : lights_) {
+  for (auto *light : lights_)
+  {
     delete light;
   }
 }
 
-int Raytracer::InitDeviceAndScene(const char *config) {
+int Raytracer::InitDeviceAndScene(const char *config)
+{
   device_ = rtcNewDevice(config);
   error_handler(nullptr, rtcGetDeviceError(device_),
                 "Unable to create a new device.\n");
@@ -38,18 +44,21 @@ int Raytracer::InitDeviceAndScene(const char *config) {
   return S_OK;
 }
 
-int Raytracer::ReleaseDeviceAndScene() {
+int Raytracer::ReleaseDeviceAndScene()
+{
   rtcReleaseScene(scene_);
   rtcReleaseDevice(device_);
 
   return S_OK;
 }
 
-void Raytracer::LoadScene(const std::string file_name) {
+void Raytracer::LoadScene(const std::string file_name)
+{
   const int no_surfaces = LoadOBJ(file_name.c_str(), surfaces_, materials_);
 
   // surfaces loop
-  for (auto surface : surfaces_) {
+  for (auto surface : surfaces_)
+  {
     RTCGeometry mesh = rtcNewGeometry(device_, RTC_GEOMETRY_TYPE_TRIANGLE);
 
     SimpleVec3f *vertices = (SimpleVec3f *)rtcSetNewGeometryBuffer(
@@ -73,11 +82,13 @@ void Raytracer::LoadScene(const std::string file_name) {
         sizeof(Coord2f), 3 * surface->no_triangles());
 
     // triangles loop
-    for (int i = 0, k = 0; i < surface->no_triangles(); ++i) {
+    for (int i = 0, k = 0; i < surface->no_triangles(); ++i)
+    {
       Triangle &triangle = surface->get_triangle(i);
 
       // vertices loop
-      for (int j = 0; j < 3; ++j, ++k) {
+      for (int j = 0; j < 3; ++j, ++k)
+      {
         const Vertex &vertex = triangle.vertex(j);
 
         vertices[k].x = vertex.position.x;
@@ -105,7 +116,9 @@ void Raytracer::LoadScene(const std::string file_name) {
   rtcCommitScene(scene_);
 }
 
-Color4f Raytracer::get_pixel(const int x, const int y, const float t) {
+Color4f Raytracer::get_pixel(const int x, const int y, const float t)
+{
+
   RTCRayHit ray_hit{};
   ray_hit.ray = camera_.GenerateRay((float)x, (float)y);
   ray_hit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
@@ -114,138 +127,199 @@ Color4f Raytracer::get_pixel(const int x, const int y, const float t) {
   return Color4f{color.x, color.y, color.z, 1.f};
 }
 
-RTCRay Raytracer::GenerateNextRay(RTCRayHit &hit, glm::vec3 &_normal) {
-  glm::vec3 origin{hit.ray.org_x, hit.ray.org_y, hit.ray.org_z};
-  glm::vec3 direction =
-      glm::normalize(glm::vec3{hit.ray.dir_x, hit.ray.dir_y, hit.ray.dir_z});
-  float t = hit.ray.tfar;
-  glm::vec3 point = origin + direction * t;
-
-  auto normal = glm::normalize(_normal);
-  if (glm::dot(direction, normal) > 0.0f)
-    normal = -normal;
-
-  glm::vec3 reflected =
-      glm::normalize(normal * (2.0f * glm::dot(direction, normal)) - direction);
-
-  const float eps = 1e-4f;
-
+RTCRay Raytracer::GenerateNextRay(const glm::vec3 &position, const glm::vec3 &dir, float ior)
+{
   RTCRay out{};
-  out.org_x = point.x + normal.x * eps;
-  out.org_y = point.y + normal.y * eps;
-  out.org_z = point.z + normal.z * eps;
+  out.org_x = position.x + EPSILON;
+  out.org_y = position.y + EPSILON;
+  out.org_z = position.z + EPSILON;
 
-  out.dir_x = reflected.x;
-  out.dir_y = reflected.y;
-  out.dir_z = reflected.z;
+  out.dir_x = dir.x;
+  out.dir_y = dir.y;
+  out.dir_z = dir.z;
 
-  out.tnear = 0.0f;
+  out.tnear = 0.01;
   out.tfar = FLT_MAX;
-  out.time = 0.0f;
-  out.mask = -1;
+  out.time = ior;
+  out.mask = 0;
   out.flags = 0;
 
   return out;
 }
 
-glm::vec3 Raytracer::DirectDiffuse(const glm::vec3 &position,
-                                   const glm::vec3 &normal) {
-  const float eps = 1e-4f;
-  glm::vec3 Lo{0.f, 0.f, 0.f};
+glm::vec3 Raytracer::DirectDiffuse(const glm::vec3 &position, const glm::vec3 &normal)
+{
+  glm::vec3 color{.0f, .0f, .0f};
 
-  for (auto *L : lights_) {
-    glm::vec3 Lvec = L->position - position;
-    float r2 = glm::dot(Lvec, Lvec);
-    float r = std::sqrt(r2);
-    glm::vec3 Ldir = Lvec / r;
+  for (auto *L : lights_)
+  {
+    RTCRay shadowRay{};
+    glm::vec3 lightDir = L->position - position;
+    float lightDistance = glm::length(lightDir);
+    lightDir = glm::normalize(lightDir);
 
-    RTCRayHit sh{};
-    sh.ray.org_x = position.x + normal.x * eps;
-    sh.ray.org_y = position.y + normal.y * eps;
-    sh.ray.org_z = position.z + normal.z * eps;
-    sh.ray.dir_x = Ldir.x;
-    sh.ray.dir_y = Ldir.y;
-    sh.ray.dir_z = Ldir.z;
-    sh.ray.tnear = 0.0f;
-    sh.ray.tfar = r - eps;
-    sh.ray.mask = -1;
-    sh.ray.time = 0.0f;
-    sh.ray.flags = 0;
-    sh.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+    shadowRay.org_x = position.x + EPSILON;
+    shadowRay.org_y = position.y + EPSILON;
+    shadowRay.org_z = position.z + EPSILON;
 
-    RTCIntersectContext ctx;
-    rtcInitIntersectContext(&ctx);
-    rtcIntersect1(scene_, &ctx, &sh);
-    if (sh.hit.geomID != RTC_INVALID_GEOMETRY_ID)
-      continue;
+    shadowRay.dir_x = lightDir.x;
+    shadowRay.dir_y = lightDir.y;
+    shadowRay.dir_z = lightDir.z;
 
-    float NdotL = glm::dot(normal, Ldir);
-    if (NdotL < 1.0) {
-      NdotL = 1.0f;
+    shadowRay.tnear = 0.01;
+    shadowRay.tfar = lightDistance;
+    shadowRay.time = 0;
+
+    shadowRay.mask = 0;
+    shadowRay.id = 0;
+    shadowRay.flags = 0;
+
+    RTCRayHit shadowRayHit{};
+    shadowRayHit.ray = shadowRay;
+    shadowRayHit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+
+    RTCIntersectContext context;
+    rtcInitIntersectContext(&context);
+    rtcIntersect1(scene_, &context, &shadowRayHit);
+
+    if (shadowRayHit.hit.geomID == RTC_INVALID_GEOMETRY_ID)
+    {
+      // We are not in shadow YAYYYYY
+      auto dot = glm::dot(lightDir, normal);
+      if (dot > 0.f)
+      {
+        color += L->intensity * L->color * dot;
+      }
     }
-    Lo = Lo + L->radiance() * (NdotL / r2);
   }
-  return Lo;
+
+  return color;
 }
 
-glm::vec3 Raytracer::Trace(RTCRayHit &ray_hit, int depth, int max_depth) {
-  if (depth >= max_depth)
-    return glm::vec3{1.f, 0.5f, 0.345f};
+glm::vec3 Raytracer::Trace(RTCRayHit &ray_hit, int depth, int max_depth)
+{
+  if (depth < max_depth)
+  {
+    RTCIntersectContext context;
+    rtcInitIntersectContext(&context);
+    rtcIntersect1(scene_, &context, &ray_hit);
 
-  RTCIntersectContext context;
-  rtcInitIntersectContext(&context);
-  rtcIntersect1(scene_, &context, &ray_hit);
+    if (ray_hit.hit.geomID != RTC_INVALID_GEOMETRY_ID)
+    {
 
-  if (ray_hit.hit.geomID == RTC_INVALID_GEOMETRY_ID) {
-    return glm::vec3{1.f, 0.5f, 0.345f};
+      auto geometry = rtcGetGeometry(scene_, ray_hit.hit.geomID);
+
+      Normal3f normal;
+      // get interpolated normal
+      rtcInterpolate0(geometry, ray_hit.hit.primID, ray_hit.hit.u, ray_hit.hit.v,
+                      RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, &normal.x, 3);
+      // and texture coordinates
+      Coord2f tex_coord;
+      rtcInterpolate0(geometry, ray_hit.hit.primID, ray_hit.hit.u, ray_hit.hit.v,
+                      RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 1, &tex_coord.u, 2);
+
+      tex_coord.v = 1 - tex_coord.v;
+
+      auto material = (Material *)rtcGetGeometryUserData(geometry);
+
+      glm::vec3 O{ray_hit.ray.org_x, ray_hit.ray.org_y, ray_hit.ray.org_z};
+      glm::vec3 D{ray_hit.ray.dir_x, ray_hit.ray.dir_y, ray_hit.ray.dir_z};
+      float t = ray_hit.ray.tfar;
+      glm::vec3 P = O + D * t;
+
+      glm::vec3 N = glm::normalize(glm::vec3{normal.x, normal.y, normal.z});
+      auto frontFace = glm::dot(D, N) < 0.f;
+      if (!frontFace)
+        N = -N;
+
+      if (material->shader == Shader::BASIC)
+      {
+        auto color = material->diffuse;
+
+        auto tex_diffuse = material->get_texture(Material::kDiffuseMapSlot);
+        if (tex_diffuse)
+        {
+          Color3f texel = tex_diffuse->get_texel(tex_coord.u, tex_coord.v);
+          color.x *= texel.r;
+          color.y *= texel.g;
+          color.z *= texel.b;
+        }
+        return color * DirectDiffuse(P, N);
+      }
+
+      auto reflRefr = ReflectRefract(ReflectRefractData{
+          .normal = N,
+          .direction = D,
+          .position = P,
+          .hit = ray_hit,
+          .material = material,
+          .depth = depth + 1,
+          .max_depth = max_depth,
+      });
+
+      return reflRefr;
+    }
   }
 
-  auto geometry = rtcGetGeometry(scene_, ray_hit.hit.geomID);
-
-  Normal3f normal;
-  // get interpolated normal
-  rtcInterpolate0(geometry, ray_hit.hit.primID, ray_hit.hit.u, ray_hit.hit.v,
-                  RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, &normal.x, 3);
-  // and texture coordinates
-  Coord2f tex_coord;
-  rtcInterpolate0(geometry, ray_hit.hit.primID, ray_hit.hit.u, ray_hit.hit.v,
-                  RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 1, &tex_coord.u, 2);
-
-  tex_coord.v = 1 - tex_coord.v;
-
-  auto material = (Material *)rtcGetGeometryUserData(geometry);
-  auto color = material->diffuse;
-
-  auto tex_diffuse = material->get_texture(Material::kDiffuseMapSlot);
-  if (tex_diffuse) {
-    Color3f texel = tex_diffuse->get_texel(tex_coord.u, tex_coord.v);
-    color.x *= texel.r;
-    color.y *= texel.g;
-    color.z *= texel.b;
-  }
-
-  glm::vec3 O{ray_hit.ray.org_x, ray_hit.ray.org_y, ray_hit.ray.org_z};
-  glm::vec3 D = glm::normalize(
-      glm::vec3{ray_hit.ray.dir_x, ray_hit.ray.dir_y, ray_hit.ray.dir_z});
-  float t = ray_hit.ray.tfar;
-  glm::vec3 P = O + D * t;
-
-  glm::vec3 N = glm::normalize(glm::vec3{normal.x, normal.y, normal.z});
-  if (glm::dot(D, N) > 0.f)
-    N = -N;
-
-  if (material->shader == Shader::BASIC) {
-    return color;
-  }
-
-  RTCRayHit nextRayHit{};
-  auto vNormal = glm::vec3{normal.x, normal.y, normal.z};
-  nextRayHit.ray = GenerateNextRay(ray_hit, vNormal);
-  nextRayHit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
-  return color * Trace(nextRayHit, depth + 1, max_depth);
+  return spherical_map_.texel(ray_hit.ray.dir_x, ray_hit.ray.dir_y, ray_hit.ray.dir_z);
 }
 
-int Raytracer::Ui() {
+glm::vec3 Raytracer::ReflectRefract(const ReflectRefractData &data)
+{
+  auto reflected = glm::reflect(glm::normalize(data.direction), data.normal);
+
+  auto n1 = data.hit.ray.time; // here we have ior stored
+  auto n2 = data.material->ior;
+
+  if (n1 == n2)
+  {
+    // we left the object
+    n2 = AIR_INDICIE;
+  }
+
+  float n1n2 = n1 / n2;
+  float cosI = -glm::dot(glm::normalize(data.direction), data.normal);
+
+  float sin2T = n1n2 * n1n2 * (1.0f - cosI * cosI);
+  float cosT = std::sqrtf(1.f - sin2T);
+
+  bool TIR = sin2T > 1.0f;
+  float R;
+  if (TIR)
+  {
+    R = 1.0f;
+  }
+  else
+  {
+    float F0 = (n1 - n2) / (n1 + n2);
+    F0 *= F0;
+    float cosTheta = n1 <= n2 ? cosI : cosT;
+    R = F0 + (1 - F0) * (std::powf(1.f - cosTheta, 5.f));
+  }
+
+  auto dn = glm::dot(data.direction, data.normal);
+  auto sqr = 1 - n1n2 * n1n2 * (1 - dn * dn);
+
+  auto refracted = n1n2 * data.direction - (n1n2 * dn + std::sqrtf(sqr)) * data.normal;
+
+  auto reflectedRay = CreateEmptyRayHit(GenerateNextRay(data.position, reflected, n1));
+  if (R == 1.0f)
+  {
+    return Trace(reflectedRay, data.depth, data.max_depth);
+  }
+  auto refractedRay = CreateEmptyRayHit(GenerateNextRay(data.position, refracted, n2));
+
+  auto refl = Trace(reflectedRay, data.depth, data.max_depth);
+  auto refr = Trace(refractedRay, data.depth, data.max_depth);
+
+  glm::vec3 tint = data.material->attenuation;
+  refr *= tint;
+
+  return R * refl + (1 - R) * refr;
+}
+
+int Raytracer::Ui()
+{
   static int counter = 0;
 
   // Use a Begin/End pair to created a named window
@@ -254,7 +328,6 @@ int Raytracer::Ui() {
   ImGui::Text("Surfaces = %d", surfaces_.size());
   ImGui::Text("Materials = %d", materials_.size());
   ImGui::Separator();
-  ImGui::Checkbox("Vsync", &vsync_);
 
   // ImGui::Checkbox( "Demo Window", &show_demo_window ); // Edit bools storing
   // our window open/close state ImGui::Checkbox( "Another Window",
@@ -264,11 +337,19 @@ int Raytracer::Ui() {
   static float camera_y = -140.f;
   static float camera_z = 130.f;
 
+  float prev_camera_x = camera_x;
+  float prev_camera_y = camera_y;
+  float prev_camera_z = camera_z;
+
   ImGui::SliderFloat("Camera X", &camera_x, 0.0f, 1000.0f);
   ImGui::SliderFloat("Camera Y", &camera_y, 0.0f, 1000.0f);
   ImGui::SliderFloat("Camera Z", &camera_z, 0.0f, 1000.0f);
 
-  camera_.set_view_from(glm::vec3{camera_x, camera_y, camera_z});
+  if (prev_camera_x != camera_x || prev_camera_y != camera_y || prev_camera_z != camera_z)
+  {
+    // std::lock_guard<std::mutex> lock(temp_buffer_lock_);
+    camera_.set_view_from(glm::vec3{camera_x, camera_y, camera_z});
+  }
 
   // Buttons return true when clicked (most widgets return true when
   // edited/activated)
@@ -279,6 +360,7 @@ int Raytracer::Ui() {
 
   ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
               1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+  ImGui::Text("Renderer FPS: %.1f", producer_fps_.load());
   ImGui::End();
 
   // 3. Show another simple window.
