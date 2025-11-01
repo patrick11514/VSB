@@ -1,7 +1,7 @@
 //! Run this file with `cargo test --test 04_factorio`.
 
 //! TODO (4p): Implement a Factorio-like assembly pipeline
-//! Welcome to the Space Age!
+//! Welcome to the Space Age! (Love Space Age ❤️)
 //!
 //! Implement a struct called `FactorioBuilder`, which will allow configuring a *pipeline* of
 //! *assembly lines*.

@@ -1,6 +1,6 @@
 //! Run this file with `cargo test --test 02_parallel_sum_slice`.
 
-use std::{sync::Arc, thread};
+use std::thread;
 
 /// TODO (1p): Implement the following function, which should add all numbers in the `items` slice
 /// in parallel, using `threads` threads.
@@ -18,37 +18,36 @@ use std::{sync::Arc, thread};
 /// discussed in the lecture (you can watch the recording), and try to think if there was something
 /// useful there that could help you borrow local data here.
 fn parallel_sum_slice(items: &[u64], thread_count: usize) -> u64 {
-    let items = Arc::new(items);
     let len = items.len();
 
     let part = (len.div_ceil(thread_count)).max(1);
     let mut current = 0;
 
-    let mut threads = Vec::with_capacity(thread_count);
-    for _ in 0..thread_count {
-        if current >= len {
-            break;
-        }
-
-        let items = items.clone();
-
-        let start = current;
-        let end = (start + part).min(len);
-
-        current = end;
-
-        threads.push(thread::spawn(move || {
-            let mut total = 0;
-
-            for i in start..end {
-                total += items[i];
+    thread::scope(|s| {
+        let mut threads = Vec::with_capacity(thread_count);
+        for _ in 0..thread_count {
+            if current >= len {
+                break;
             }
 
-            total
-        }))
-    }
+            let start = current;
+            let end = (start + part).min(len);
 
-    threads.into_iter().map(|t| t.join().unwrap()).sum()
+            current = end;
+
+            threads.push(s.spawn(move || {
+                let mut total = 0;
+
+                for i in start..end {
+                    total += items[i];
+                }
+
+                total
+            }))
+        }
+
+        threads.into_iter().map(|t| t.join().unwrap()).sum()
+    })
 }
 
 /// Below you can find a set of unit tests.

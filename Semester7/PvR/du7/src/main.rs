@@ -1,5 +1,5 @@
 //! You can use this file for experiments.
-use std::{
+/*use std::{
     sync::{
         RwLock,
         mpsc::{self, Receiver, SyncSender},
@@ -67,9 +67,9 @@ where {
         self.queue.recv().unwrap()
     }
 }
-
+*/
 fn main() {
-    let queue = WorkerQueue::<u32>::new(4, 4);
+    /* let queue = WorkerQueue::<u32>::new(4, 4);
 
     for _ in 0..10 {
         thread::spawn(|| {
@@ -79,5 +79,5 @@ fn main() {
 
     for _ in 0..10 {
         println!("Result: {}", queue.next_result());
-    }
+    }*/
 }
