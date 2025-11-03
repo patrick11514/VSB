@@ -160,6 +160,200 @@
 //! see the output interactively. Alternatively, you can try to use a debugger (e.g. GDB, LLDB or
 //! GDB/LLDB integrated within an IDE).
 
+use std::{
+    sync::{
+        Arc,
+        mpsc::{self, Receiver, SyncSender},
+    },
+    thread::{self, JoinHandle},
+};
+
+struct FactorioBuilder<I, O> {
+    size: usize,
+    input: SyncSender<I>,
+    output: Receiver<O>,
+    threads: Vec<JoinHandle<()>>,
+}
+
+struct Pipeline {
+    threads: Vec<JoinHandle<()>>,
+}
+
+impl<'a, T: Send + 'static> FactorioBuilder<T, T> {
+    fn new(size: usize) -> Self {
+        let (itx, irx) = mpsc::sync_channel(size);
+        let (otx, orx) = mpsc::sync_channel(size);
+
+        let t = thread::spawn(move || {
+            while let Ok(value) = irx.recv() {
+                let _ = otx.send(value);
+            }
+        });
+
+        Self {
+            size,
+            input: itx,
+            output: orx,
+            threads: vec![t],
+        }
+    }
+}
+
+trait ThreadFn<I, O>: Fn(I) -> O + Send + 'static {}
+
+//Used AI for this blanked impl - https://gemini.google.com/share/d0256b54db64 :)
+impl<T, I, O> ThreadFn<I, O> for T where T: Fn(I) -> O + Send + 'static {}
+
+impl<I: Send + 'static, O: Send + Sync + 'static> FactorioBuilder<I, O> {
+    fn build(self) -> (Pipeline, mpsc::SyncSender<I>, mpsc::Receiver<O>) {
+        (
+            Pipeline {
+                threads: self.threads,
+            },
+            self.input,
+            self.output,
+        )
+    }
+
+    fn map<F, T: Send + 'static>(self, func: F) -> FactorioBuilder<I, T>
+    where
+        F: ThreadFn<O, T>,
+    {
+        let (tx, rx) = mpsc::sync_channel(self.size);
+
+        let mut threads = self.threads;
+        threads.push(thread::spawn(move || {
+            while let Ok(value) = self.output.recv() {
+                let _ = tx.send(func(value));
+            }
+        }));
+
+        FactorioBuilder {
+            size: self.size,
+            input: self.input,
+            output: rx,
+            threads: threads,
+        }
+    }
+
+    fn filter<F>(self, func: F) -> FactorioBuilder<I, O>
+    where
+        //also asked AI about this for<'a> ... <&'a O> hack
+        F: for<'a> ThreadFn<&'a O, bool>,
+    {
+        let (tx, rx) = mpsc::sync_channel(self.size);
+
+        let mut threads = self.threads;
+        threads.push(thread::spawn(move || {
+            while let Ok(value) = self.output.recv() {
+                if func(&value) {
+                    let _ = tx.send(value);
+                }
+            }
+        }));
+
+        FactorioBuilder {
+            size: self.size,
+            input: self.input,
+            output: rx,
+            threads: threads,
+        }
+    }
+
+    fn filter_map<F, T: Send + 'static>(self, func: F) -> FactorioBuilder<I, T>
+    where
+        F: ThreadFn<O, Option<T>>,
+    {
+        let (tx, rx) = mpsc::sync_channel(self.size);
+
+        let mut threads = self.threads;
+        threads.push(thread::spawn(move || {
+            while let Ok(value) = self.output.recv() {
+                if let Some(value) = func(value) {
+                    let _ = tx.send(value);
+                }
+            }
+        }));
+
+        FactorioBuilder {
+            size: self.size,
+            input: self.input,
+            output: rx,
+            threads: threads,
+        }
+    }
+
+    fn fork_join<F, J, T, U>(
+        self,
+        fork_fn: F,
+        thread_count: usize,
+        join_fn: J,
+    ) -> FactorioBuilder<I, U>
+    where
+        T: Send + 'static,
+        U: Send + 'static,
+        F: Fn(&O, usize) -> T + Send + Sync + 'static,
+        J: ThreadFn<Vec<T>, U>,
+    {
+        let (tx, rx) = mpsc::sync_channel(self.size);
+
+        let mut threads = self.threads;
+        threads.push(thread::spawn(move || {
+            thread::scope(|s| {
+                let mut threads = Vec::new();
+                let fork_fn = Arc::new(fork_fn);
+
+                for idx in 0..thread_count {
+                    let (in_rx, in_tx) = mpsc::sync_channel::<Arc<O>>(self.size);
+                    let (out_rx, out_tx) = mpsc::sync_channel(self.size);
+
+                    let fork_fn = fork_fn.clone();
+
+                    threads.push((
+                        s.spawn(move || {
+                            while let Ok(value) = in_tx.recv() {
+                                out_rx.send(fork_fn(value.as_ref(), idx)).unwrap();
+                            }
+                        }),
+                        in_rx,
+                        out_tx,
+                    ));
+                }
+
+                while let Ok(value) = self.output.recv() {
+                    let value = Arc::new(value);
+                    for (_, rx, _) in &threads {
+                        rx.send(value.clone()).unwrap();
+                    }
+
+                    let mut values = Vec::with_capacity(thread_count);
+
+                    for (_, _, tx) in &threads {
+                        values.push(tx.recv().unwrap());
+                    }
+
+                    let _ = tx.send(join_fn(values));
+                }
+            })
+        }));
+
+        FactorioBuilder {
+            size: self.size,
+            input: self.input,
+            output: rx,
+            threads: threads,
+        }
+    }
+}
+
+impl Pipeline {
+    fn close(self) {
+        for t in self.threads {
+            t.join().unwrap();
+        }
+    }
+}
+
 /// Below you can find a set of unit tests.
 #[cfg(test)]
 mod tests {
@@ -483,7 +677,6 @@ mod tests {
         drop(rx);
         factorio.close();
     }
-
     /// I --> FilterMap --> Map --> Filter --> O
     #[test]
     fn filter_map_map() {
@@ -821,7 +1014,6 @@ mod tests {
     }
 
     // TODO(bonus): uncomment the following tests and make them pass :)
-    /*
     #[test]
     #[should_panic]
     fn fork_join_panic() {
@@ -877,5 +1069,4 @@ mod tests {
         drop(rx);
         factorio.close();
     }
-    */
 }
