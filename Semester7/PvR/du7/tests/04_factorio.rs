@@ -179,7 +179,7 @@ struct Pipeline {
     threads: Vec<JoinHandle<()>>,
 }
 
-impl<'a, T: Send + 'static> FactorioBuilder<T, T> {
+impl<T: Send + 'static> FactorioBuilder<T, T> {
     fn new(size: usize) -> Self {
         let (itx, irx) = mpsc::sync_channel(size);
         let (otx, orx) = mpsc::sync_channel(size);
@@ -232,7 +232,7 @@ impl<I: Send + 'static, O: Send + Sync + 'static> FactorioBuilder<I, O> {
             size: self.size,
             input: self.input,
             output: rx,
-            threads: threads,
+            threads,
         }
     }
 
@@ -256,7 +256,7 @@ impl<I: Send + 'static, O: Send + Sync + 'static> FactorioBuilder<I, O> {
             size: self.size,
             input: self.input,
             output: rx,
-            threads: threads,
+            threads,
         }
     }
 
@@ -279,7 +279,7 @@ impl<I: Send + 'static, O: Send + Sync + 'static> FactorioBuilder<I, O> {
             size: self.size,
             input: self.input,
             output: rx,
-            threads: threads,
+            threads,
         }
     }
 
@@ -341,7 +341,7 @@ impl<I: Send + 'static, O: Send + Sync + 'static> FactorioBuilder<I, O> {
             size: self.size,
             input: self.input,
             output: rx,
-            threads: threads,
+            threads,
         }
     }
 }

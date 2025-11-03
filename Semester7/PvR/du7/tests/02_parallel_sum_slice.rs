@@ -38,8 +38,8 @@ fn parallel_sum_slice(items: &[u64], thread_count: usize) -> u64 {
             threads.push(s.spawn(move || {
                 let mut total = 0;
 
-                for i in start..end {
-                    total += items[i];
+                for item in items.iter().take(end).skip(start) {
+                    total += item;
                 }
 
                 total

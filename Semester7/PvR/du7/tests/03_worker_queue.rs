@@ -61,11 +61,13 @@ use std::{
     thread::{self, JoinHandle},
 };
 
+type ThreadSender<T> = SyncSender<Box<dyn Fn() -> T + Send>>;
+
 struct WorkerQueue<T: Send> {
     size: usize,
     current: Cell<usize>,
     queue: Receiver<T>,
-    threads: Vec<(SyncSender<Box<dyn Fn() -> T + Send>>, JoinHandle<()>)>,
+    threads: Vec<(ThreadSender<T>, JoinHandle<()>)>,
 }
 
 impl<T: Send + 'static> WorkerQueue<T> {
@@ -83,7 +85,7 @@ where {
                 tx,
                 thread::spawn(move || {
                     while let Ok(f) = rx.recv() {
-                        main_tx.send(f()).unwrap();
+                        let _ = main_tx.send(f());
                     }
                 }),
             ));
@@ -98,6 +100,7 @@ where {
     }
 
     fn close(self) {
+        drop(self.queue);
         for t in self.threads {
             drop(t.0);
             t.1.join().unwrap()
@@ -302,13 +305,13 @@ mod tests {
 
         // This should fill the queue of each worker
         // 2 in queue + 1 being processed per worker
-        //TODO FIX THIS TEST
         for _ in 0..6 {
             queue.enqueue(|| {
                 std::thread::sleep(Duration::from_secs(1));
                 1
             });
         }
+
         assert_duration(
             || {
                 queue.enqueue(|| 1);
