@@ -97,7 +97,7 @@ mod tests {
     use std::net::{Shutdown, TcpStream};
     use std::sync::atomic::{AtomicUsize, Ordering};
     use std::sync::{Arc, Barrier, Mutex};
-    use std::thread::spawn;
+    
     use std::time::Duration;
 
     // If you're struggling with this test, comment it and implement the rest of the

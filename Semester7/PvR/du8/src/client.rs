@@ -59,13 +59,10 @@ fn client_main(
 
     println!("Sending welcome message");
 
-    match writer.write(ServerToClientMsg::Welcome) {
-        Err(_) => return Err(ClientError::WelcomeFailed),
-        _ => {}
-    }
+    if let Err(_) = writer.write(ServerToClientMsg::Welcome) { return Err(ClientError::WelcomeFailed) }
 
     println!("Entering client loop for user {}", username);
-    if let None = client_loop(reader, writer, username, clients) {
+    if client_loop(reader, writer, username, clients).is_none() {
         return Err(ClientError::LoopError);
     }
 
@@ -96,16 +93,15 @@ fn acquire_username(
         ClientToServerMsg::Join { name } => {
             let clients = clients.lock().unwrap();
             if clients.iter().any(|c| {
-                if let Some(username) = c.username.lock().unwrap().clone() {
-                    if username == name {
+                if let Some(username) = c.username.lock().unwrap().clone()
+                    && username == name {
                         let _ = writer.write(ServerToClientMsg::Error(
                             "Username already taken".to_string(),
                         ));
                         return true;
                     }
-                }
 
-                return false;
+                false
             }) {
                 return Some(Err(UsernameError::Taken));
             }
@@ -139,10 +135,7 @@ fn client_loop(
                     .iter()
                     .filter_map(|c| {
                         let username = c.username.lock().unwrap().clone();
-                        match username {
-                            Some(username) => Some(username),
-                            None => None,
-                        }
+                        username
                     })
                     .collect::<Vec<_>>();
                 ServerToClientMsg::UserList { users: usernames }
@@ -150,7 +143,7 @@ fn client_loop(
             ClientToServerMsg::SendDM { to, message } => {
                 println!("{} sending DM to {}", name, to);
 
-                if &to == &name {
+                if to == name {
                     ServerToClientMsg::Error("Cannot send a DM to yourself".to_string())
                 } else {
                     let mut clients = clients.lock().unwrap();
@@ -187,14 +180,13 @@ fn client_loop(
                 let mut clients = clients.lock().unwrap();
                 for client in clients.iter_mut() {
                     let username = client.username.lock().unwrap();
-                    if let Some(_name) = &*username {
-                        if _name != &name {
+                    if let Some(_name) = &*username
+                        && _name != &name {
                             let _ = client.writer.write(ServerToClientMsg::Message {
                                 from: name.clone(),
                                 message: message.clone(),
                             });
                         }
-                    }
                 }
                 continue;
             }
@@ -259,11 +251,10 @@ impl Client {
                     let username = c.username.lock().unwrap();
                     match &*username {
                         Some(name) => {
-                            if let Some(username) = &my_username {
-                                if name == username {
+                            if let Some(username) = &my_username
+                                && name == username {
                                     return false;
                                 }
-                            }
                             true
                         }
                         None => true,
