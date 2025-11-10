@@ -98,6 +98,7 @@ mod tests {
     use std::sync::atomic::{AtomicUsize, Ordering};
     use std::sync::{Arc, Barrier, Mutex};
     
+    use std::thread::spawn;
     use std::time::Duration;
 
     // If you're struggling with this test, comment it and implement the rest of the
@@ -389,7 +390,7 @@ mod tests {
         });
     }
 
-    /*#[test]
+    #[test]
     fn dm_spam() {
         run_test(opts(2), |server| {
             let mut diana = server.client();
@@ -516,7 +517,7 @@ mod tests {
 
             Ok(())
         });
-    }*/
+    }
 
     #[test]
     fn broadcast_empty() {
