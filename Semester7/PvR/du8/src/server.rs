@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::{
     net::{TcpListener, TcpStream},
     sync::{Arc, Mutex},
@@ -40,25 +42,34 @@ impl RunningServer {
                 println!("New client connected from {}", addr);
 
                 //clean clients
-                let mut _clients = clients.lock().unwrap();
-
-                _clients.retain(|t: &Client| !t.exited());
+                {
+                    clients.lock().unwrap().retain(|t: &Client| !t.exited());
+                }
 
                 let mut client = Client::new(clients.clone(), stream, addr).unwrap();
 
-                if _clients.len() >= opts.max_clients {
-                    println!("Server full, rejecting client {}", addr);
+                let is_full = {
+                    let clients = clients.lock().unwrap();
+
+                    println!(
+                        "Current client count: {}, max allowed: {}",
+                        clients.len(),
+                        opts.max_clients
+                    );
+
+                    clients.len() >= opts.max_clients
+                };
+
+                if is_full {
                     client.send_message(ServerToClientMsg::Error("Server is full".to_string()));
                     client.exit();
                     continue;
                 }
 
-                println!(
-                    "Client {} connected, currently {} clients connected",
-                    addr,
-                    _clients.len() + 1
-                );
-                _clients.push(client);
+                {
+                    let mut clients = clients.lock().unwrap();
+                    clients.push(client);
+                }
             }
         }));
 
@@ -76,14 +87,17 @@ impl RunningServer {
 }
 
 impl Drop for RunningServer {
-    //Wrote this function with help of Gemini (the .take() on Option + .drain(..) part)
     fn drop(&mut self) {
+        println!("DROPPING SERVER");
         *self.exited.lock().unwrap() = true;
         //connect to wake up server thread
+        println!("Waking up server thread");
         let _ = TcpStream::connect(("127.0.0.1", self.port));
         self.main_thread.take().unwrap().join().unwrap();
 
+        println!("Shutting down all clients");
         let mut clients = self.clients.lock().unwrap();
+        println!("Lock acquired on clients, exiting them");
         for client in clients.drain(..) {
             client.exit();
         }

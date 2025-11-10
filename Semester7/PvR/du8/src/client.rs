@@ -1,7 +1,7 @@
+#![allow(dead_code)]
+
 use std::{
-    fmt::write,
-    io::Write,
-    net::{SocketAddr, TcpListener, TcpStream},
+    net::{SocketAddr, TcpStream},
     sync::{Arc, Mutex},
     thread::{self, JoinHandle},
 };
@@ -11,7 +11,6 @@ use anyhow::Context;
 use crate::{
     messages::{ClientToServerMsg, ServerToClientMsg},
     reader::MessageReader,
-    server::RunningServer,
     writer::MessageWriter,
 };
 
@@ -20,62 +19,77 @@ type Writer = MessageWriter<ServerToClientMsg, TcpStream>;
 
 pub struct Client {
     username: Arc<Mutex<Option<String>>>,
-    stream: TcpStream,
     writer: Writer,
     handle: JoinHandle<()>,
+    exited: Arc<Mutex<bool>>,
+}
+
+enum ClientError {
+    UsernameError,
+    UsernameTaken,
+    WelcomeFailed,
+    LoopError,
 }
 
 fn client_main(
-    mut reader: Reader,
-    mut writer: Writer,
-    addr: SocketAddr,
+    reader: &mut Reader,
+    writer: &mut Writer,
     clients: Arc<Mutex<Vec<Client>>>,
     thread_username: Arc<Mutex<Option<String>>>,
-) ->  {
-    let username = match acquire_username(&mut reader, &mut writer, clients.clone()) {
+) -> Result<(), ClientError> {
+    println!("Acquiring username");
+    let username = match acquire_username(reader, writer, clients.clone(), thread_username) {
         Some(res) => match res {
-            Ok(username) => Some(username),
-            _ => None,
+            Ok(username) => username,
+            Err(err) => {
+                return Err(match err {
+                    UsernameError::UnableToRead => ClientError::UsernameError,
+                    UsernameError::Taken => ClientError::UsernameTaken,
+                    UsernameError::Other(_) => ClientError::UsernameError,
+                });
+            }
         },
         None => {
             let _ = writer.write(ServerToClientMsg::Error(
                 "Unexpected message received".into(),
             ));
-            return;
+            return Err(ClientError::UsernameError);
         }
     };
 
-    let username = if let Some(username) = username {
-        *thread_username.lock().unwrap() = Some(username.clone());
-        username
-    } else {
-        println!("Client {} disconnected", addr);
-        return;
-    };
+    println!("Sending welcome message");
 
     match writer.write(ServerToClientMsg::Welcome) {
-        Err(_) => return,
+        Err(_) => return Err(ClientError::WelcomeFailed),
         _ => {}
     }
 
-    if let None = client_loop(reader, &mut writer, addr, username, clients) {
-        let _ = writer.write(ServerToClientMsg::Error(
-            "Unexpected message received".into(),
-        ));
+    println!("Entering client loop for user {}", username);
+    if let None = client_loop(reader, writer, username, clients) {
+        return Err(ClientError::LoopError);
     }
+
+    Ok(())
+}
+
+enum UsernameError {
+    UnableToRead,
+    Taken,
+    Other(anyhow::Error),
 }
 
 fn acquire_username(
     reader: &mut Reader,
     writer: &mut Writer,
     clients: Arc<Mutex<Vec<Client>>>,
-) -> Option<anyhow::Result<String>> {
+    thread_username: Arc<Mutex<Option<String>>>,
+) -> Option<Result<String, UsernameError>> {
     let msg = match reader.read() {
         Some(result) => match result {
             Ok(msg) => msg,
-            Err(err) => return Some(Err(err)),
+            Err(err) => return Some(Err(UsernameError::Other(err))),
         },
-        None => return Some(Err(anyhow::anyhow!("Unable to read message"))),
+        None => return Some(Err(UsernameError::UnableToRead)),
     };
 
     match msg {
@@ -93,9 +107,10 @@ fn acquire_username(
 
                 return false;
             }) {
-                return Some(Err(anyhow::anyhow!("Username already taken")));
+                return Some(Err(UsernameError::Taken));
             }
 
+            *thread_username.lock().unwrap() = Some(name.clone());
             Some(Ok(name))
         }
         _ => None,
@@ -103,9 +118,8 @@ fn acquire_username(
 }
 
 fn client_loop(
-    reader: Reader,
+    reader: &mut Reader,
     writer: &mut Writer,
-    addr: SocketAddr,
     name: String,
     clients: Arc<Mutex<Vec<Client>>>,
 ) -> Option<()> {
@@ -118,6 +132,8 @@ fn client_loop(
         let msg = match msg {
             ClientToServerMsg::Ping => ServerToClientMsg::Pong,
             ClientToServerMsg::ListUsers => {
+                println!("Listing users for {}", name);
+
                 let clients = clients.lock().unwrap();
                 let usernames = clients
                     .iter()
@@ -132,6 +148,8 @@ fn client_loop(
                 ServerToClientMsg::UserList { users: usernames }
             }
             ClientToServerMsg::SendDM { to, message } => {
+                println!("{} sending DM to {}", name, to);
+
                 if &to == &name {
                     ServerToClientMsg::Error("Cannot send a DM to yourself".to_string())
                 } else {
@@ -153,25 +171,26 @@ fn client_loop(
                     match writer {
                         None => ServerToClientMsg::Error(format!("User {} does not exist", to)),
                         Some(writer) => {
-                            writer
-                                .write(ServerToClientMsg::Message {
-                                    from: name.clone(),
-                                    message,
-                                })
-                                .unwrap();
+                            let _ = writer.write(ServerToClientMsg::Message {
+                                from: name.clone(),
+                                message,
+                            });
+
                             continue;
                         }
                     }
                 }
             }
             ClientToServerMsg::Broadcast { message } => {
+                println!("{} broadcasting message", name);
+
                 let mut clients = clients.lock().unwrap();
                 for client in clients.iter_mut() {
                     let username = client.username.lock().unwrap();
                     if let Some(_name) = &*username {
                         if _name != &name {
                             let _ = client.writer.write(ServerToClientMsg::Message {
-                                from: "Broadcast".to_string(),
+                                from: name.clone(),
                                 message: message.clone(),
                             });
                         }
@@ -186,8 +205,6 @@ fn client_loop(
             break;
         }
     }
-
-    println!("Client {} disconnected", addr);
 
     Some(())
 }
@@ -206,14 +223,63 @@ impl Client {
             MessageWriter::new(stream.try_clone().context("Unable to clone tcp stream")?);
         let username = Arc::new(Mutex::new(None));
         let thread_username = username.clone();
+        let cleanup_username = username.clone();
 
-        let handle = thread::spawn(move || {});
+        let exited = Arc::new(Mutex::new(false));
+        let thread_exited = exited.clone();
+
+        let handle = thread::spawn(move || {
+            if let Err(err) =
+                client_main(&mut reader, &mut writer, clients.clone(), thread_username)
+            {
+                match err {
+                    ClientError::UsernameError | ClientError::LoopError => {
+                        let _ = writer.write(ServerToClientMsg::Error(
+                            "Unexpected message received".into(),
+                        ));
+                    }
+                    _ => {}
+                }
+            };
+
+            //Here if we exited, we don't want to remove ourselves from the client list
+            //because Server will do that for us :)
+            if *thread_exited.lock().unwrap() {
+                return;
+            }
+
+            println!("Cleaning up client {}", addr);
+
+            {
+                let my_username = { cleanup_username.lock().unwrap().clone() };
+
+                let mut clients = clients.lock().unwrap();
+                //Remove client from list
+                clients.retain(|c: &Client| {
+                    let username = c.username.lock().unwrap();
+                    match &*username {
+                        Some(name) => {
+                            if let Some(username) = &my_username {
+                                if name == username {
+                                    return false;
+                                }
+                            }
+                            true
+                        }
+                        None => true,
+                    }
+                });
+                println!("CLEANUP DONE");
+            }
+
+            println!("User {} disconnected", addr);
+        });
 
         Ok(Self {
-            stream,
             username,
             writer: main_writer,
             handle,
+            exited,
         })
     }
 
@@ -226,7 +292,19 @@ impl Client {
     }
 
     pub fn exit(self) {
-        let _ = self.stream.shutdown(std::net::Shutdown::Both);
+        println!("Exiting client");
+        {
+            let mut exited = self.exited.lock().unwrap();
+            *exited = true;
+        }
+
+        println!("Shutting down client writer");
+        self.writer
+            .into_inner()
+            .shutdown(std::net::Shutdown::Both)
+            .ok();
+
+        println!("Joining client thread");
         let _ = self.handle.join();
     }
 }

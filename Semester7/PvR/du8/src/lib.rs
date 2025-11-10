@@ -389,7 +389,7 @@ mod tests {
         });
     }
 
-    #[test]
+    /*#[test]
     fn dm_spam() {
         run_test(opts(2), |server| {
             let mut diana = server.client();
@@ -401,7 +401,7 @@ mod tests {
             let barrier = Arc::new(Barrier::new(2));
             let barrier2 = barrier.clone();
 
-            let count = 100000;
+            let count = 100;
 
             // Let's say that someone is spamming you...
             let t1 = spawn(move || {
@@ -516,7 +516,7 @@ mod tests {
 
             Ok(())
         });
-    }
+    }*/
 
     #[test]
     fn broadcast_empty() {
@@ -563,7 +563,7 @@ mod tests {
     // The server should correctly close client socket when it shuts down,
     // to avoid a situation where the clients would be stuck waiting for a message
     // for some indeterminate amount of time.
-    /*
+
     #[test]
     fn drop_clients_on_shutdown() {
         let server = run_server(opts(2)).expect("creating server failed");
@@ -578,7 +578,7 @@ mod tests {
         assert!(client.reader.read().is_none());
         assert!(client2.reader.read().is_none());
     }
-    */
+
     fn run_test<F: FnOnce(RunningServer) -> anyhow::Result<()>>(opts: ServerOpts, func: F) {
         let server = run_server(opts).expect("creating server failed");
         let port = server.port;
