@@ -18,6 +18,7 @@ data RegExpr = Epsilon
 reg1 :: RegExpr
 reg1 = Concat (Concat (Iteration (Alter (Symbol 'a') (Symbol 'b'))) (Symbol 'a')) (Symbol 'b')
 
+
 epsilon :: Char
 epsilon = 'ε'
 
@@ -147,3 +148,6 @@ znkaIntoDfa (znkaStateCount, alphabet, znkaTrans, znkaStart, znkaAccept) =
     in (finalStateCount, alphabet, finalTransitions, 0, finalStateIDs)
 
 -- final: https://upload.patrick115.eu/screenshot/4663f77d2b.png
+
+convert :: RegExpr -> Automaton
+convert reg = znkaIntoDfa $ convertWithEpsilon reg
