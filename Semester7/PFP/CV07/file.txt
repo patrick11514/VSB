@@ -1,0 +1,34 @@
+fdafasfa
+putStr contentslo
+putStr contents
+putStr contents
+putStr contents
+putStr contents
+putStr contents
+putStr contents
+
+ffasfas
+
+fa
+fas
+    fas
+   das
+const fields = [ads
+f] as const;
+type DataType = Record<
+    (typeof fields)[number],
+    {
+        value: string;
+        error?: string;
+    }
+>;
+
+const data = $state(Object.fromEntries(fields.map((item) => [item, { value: '' }])) as DataType);
+
+const handle = async () => {
+    Object.values(data).forEach((item) => (item.error = undefined));
+
+    if (Object.values(data).some((item) => item.error !== undefined)) {
+        return;
+    }
+}; 

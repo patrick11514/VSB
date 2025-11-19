@@ -6,6 +6,7 @@ struct RLDUserData
     cv::Mat &undistorted_8uc3_img;
     int K1;
     int K2;
+    int bili = 0;
 
     RLDUserData(const int K1, const int K2, cv::Mat &src_8uc3_img, cv::Mat &undistorted_8uc3_img) : K1(K1), K2(K2), src_8uc3_img(src_8uc3_img), undistorted_8uc3_img(undistorted_8uc3_img)
     {
@@ -28,7 +29,7 @@ void geom_dist(cv::Mat &src_8uc3_img, cv::Mat &dst_8uc3_img, bool bili, double K
             double y = (y_n - c_v) / R;
 
             double r2 = std::pow(x, 2) + std::pow(y, 2);
-            double scaling = 1 + (-K1) * r2 + (-K2) * std::pow(r2, 2);
+            double scaling = 1.f / (1 + (K1)*r2 + (K2)*std::pow(r2, 2));
 
             double x_dd = (x_n - c_u) * scaling + c_u;
             int x_d = static_cast<int>(std::floor(x_dd));
@@ -95,7 +96,7 @@ void apply_rld(int id, void *user_data)
 {
     RLDUserData *rld_user_data = (RLDUserData *)user_data;
 
-    geom_dist(rld_user_data->src_8uc3_img, rld_user_data->undistorted_8uc3_img, !false, rld_user_data->K1 / 100.0, rld_user_data->K2 / 100.0);
+    geom_dist(rld_user_data->src_8uc3_img, rld_user_data->undistorted_8uc3_img, static_cast<bool>(rld_user_data->bili), rld_user_data->K1 / 100.0, rld_user_data->K2 / 100.0);
     cv::imshow("Geom Dist", rld_user_data->undistorted_8uc3_img);
 }
 
@@ -122,6 +123,8 @@ int ex_rld()
 
     cv::createTrackbar("K1", "Geom Dist", &rld_user_data.K1, 100, apply_rld, &rld_user_data);
     cv::createTrackbar("K2", "Geom Dist", &rld_user_data.K2, 100, apply_rld, &rld_user_data);
+    // checkbox
+    cv::createTrackbar("Bilinear Interp", "Geom Dist", &rld_user_data.bili, 1, apply_rld, &rld_user_data);
 
     // Bacause of hyprland, I need to filter keys :)
     int key;

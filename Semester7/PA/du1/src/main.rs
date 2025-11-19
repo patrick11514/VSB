@@ -1,3 +1,164 @@
-fn main() {
-    println!("Hello, world!");
+use std::{
+    fmt::{Display, Write},
+    fs, thread,
+};
+
+struct Data {
+    weights: Vec<u32>,
+    matrix: Vec<Vec<u32>>,
+}
+
+impl Data {
+    fn new(path: &str) -> anyhow::Result<Self> {
+        let input = fs::read_to_string(path)?;
+        let data = input
+            .lines()
+            .skip(1)
+            .map(|l| {
+                l.split(' ')
+                    .map(|num| num.parse::<u32>().unwrap())
+                    .collect::<Vec<_>>()
+            })
+            .collect::<Vec<_>>();
+
+        let mut matrix = data[1..].to_vec();
+        Data::fix_matrix(&mut matrix);
+
+        Ok(Data {
+            weights: data[0].to_vec(),
+            matrix,
+        })
+    }
+
+    fn fix_matrix(matrix: &mut Vec<Vec<u32>>) {
+        let len = matrix.len();
+
+        for i in 0..len {
+            for j in 0..len {
+                matrix[j][i] = matrix[i][j];
+            }
+        }
+    }
+
+    fn len(&self) -> usize {
+        self.matrix.len()
+    }
+}
+
+impl Display for Data {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("Weights: ")?;
+        for w in &self.weights {
+            f.write_fmt(format_args!("{w} "))?;
+        }
+        f.write_char('\n')?;
+
+        f.write_str("Matrix:\n")?;
+        for row in &self.matrix {
+            for n in row {
+                f.write_fmt(format_args!("{n} "))?;
+            }
+            f.write_char('\n')?;
+        }
+
+        Ok(())
+    }
+}
+
+#[derive(Debug)]
+struct Iteration(Vec<usize>);
+
+impl Iteration {
+    fn new(len: usize) -> Self {
+        Iteration(vec![0; len])
+    }
+
+    fn next(&mut self) -> Option<Iteration> {
+        let mut clone = self.0.clone();
+
+        let mut idx = 0;
+
+        loop {
+            if idx >= clone.len() {
+                return None;
+            }
+
+            clone[idx] += 1;
+            if clone[idx] >= 10 {
+                clone[idx] = 0;
+                idx += 1;
+            } else {
+                self.0 = clone.clone();
+                return Some(Iteration(clone));
+            }
+        }
+    }
+
+    fn get(&self) -> &Vec<usize> {
+        &self.0
+    }
+}
+
+impl Iterator for Iteration {
+    type Item = Iteration;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.next()
+    }
+}
+
+fn d(i: usize, j: usize, it: &Iteration, data: &Data) -> f32 {
+    let it = it.get();
+
+    let mut frac = (data.weights[it[i]] as f32 + data.weights[it[j]] as f32) / 2f32;
+
+    for k in i..=j {
+        frac += data.weights[it[k]] as f32;
+    }
+
+    frac
+}
+
+fn srflp(it: &Iteration, data: &Data) -> f32 {
+    let inner_it = it.get();
+
+    let mut sum = 0f32;
+    for i in 0..data.len() {
+        for j in (i + 1)..data.len() {
+            sum += data.matrix[inner_it[i]][inner_it[j]] as f32 * d(i, j, it, data);
+        }
+    }
+
+    sum
+}
+
+fn solve(data: Data) -> anyhow::Result<()> {
+    let mut best: Option<(Iteration, f32)> = None;
+
+    for it in Iteration::new(data.len()) {
+        println!("{it:?}");
+
+        let res = srflp(&it, &data);
+
+        if let Some(inner) = &best {
+            if res < inner.1 {
+                println!("Found better {it:?} {res}");
+                best = Some((it, res));
+            }
+        } else {
+            best = Some((it, res));
+        }
+    }
+
+    println!("{:?}", best);
+
+    Ok(())
+}
+
+fn main() -> anyhow::Result<()> {
+    let data = Data::new("input.txt")?;
+
+    solve(data)?;
+
+    Ok(())
 }
