@@ -65,7 +65,7 @@ impl Display for Data {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 struct Iteration(Vec<usize>);
 
 impl Iteration {
