@@ -5,3 +5,5 @@ edition = "2024"
 
 [dependencies]
 anyhow = "1.0.100"
+itertools = "0.14.0"
+rayon = "1.11.0"

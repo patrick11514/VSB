@@ -1,6 +1,8 @@
+use itertools::Itertools;
+use rayon::prelude::*;
 use std::{
     fmt::{Display, Write},
-    fs, thread,
+    fs,
 };
 
 struct Data {
@@ -65,51 +67,7 @@ impl Display for Data {
     }
 }
 
-#[derive(Debug, PartialEq)]
-struct Iteration(Vec<usize>);
-
-impl Iteration {
-    fn new(len: usize) -> Self {
-        Iteration(vec![0; len])
-    }
-
-    fn next(&mut self) -> Option<Iteration> {
-        let mut clone = self.0.clone();
-
-        let mut idx = 0;
-
-        loop {
-            if idx >= clone.len() {
-                return None;
-            }
-
-            clone[idx] += 1;
-            if clone[idx] >= 10 {
-                clone[idx] = 0;
-                idx += 1;
-            } else {
-                self.0 = clone.clone();
-                return Some(Iteration(clone));
-            }
-        }
-    }
-
-    fn get(&self) -> &Vec<usize> {
-        &self.0
-    }
-}
-
-impl Iterator for Iteration {
-    type Item = Iteration;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.next()
-    }
-}
-
-fn d(i: usize, j: usize, it: &Iteration, data: &Data) -> f32 {
-    let it = it.get();
-
+fn d(i: usize, j: usize, it: &Vec<usize>, data: &Data) -> f32 {
     let mut frac = (data.weights[it[i]] as f32 + data.weights[it[j]] as f32) / 2f32;
 
     for k in i..=j {
@@ -119,13 +77,11 @@ fn d(i: usize, j: usize, it: &Iteration, data: &Data) -> f32 {
     frac
 }
 
-fn srflp(it: &Iteration, data: &Data) -> f32 {
-    let inner_it = it.get();
-
+fn srflp(it: &Vec<usize>, data: &Data) -> f32 {
     let mut sum = 0f32;
     for i in 0..data.len() {
         for j in (i + 1)..data.len() {
-            sum += data.matrix[inner_it[i]][inner_it[j]] as f32 * d(i, j, it, data);
+            sum += data.matrix[it[i]][it[j]] as f32 * d(i, j, it, data);
         }
     }
 
@@ -133,22 +89,15 @@ fn srflp(it: &Iteration, data: &Data) -> f32 {
 }
 
 fn solve(data: Data) -> anyhow::Result<()> {
-    let mut best: Option<(Iteration, f32)> = None;
+    let size = data.len();
 
-    for it in Iteration::new(data.len()) {
-        println!("{it:?}");
-
-        let res = srflp(&it, &data);
-
-        if let Some(inner) = &best {
-            if res < inner.1 {
-                println!("Found better {it:?} {res}");
-                best = Some((it, res));
-            }
-        } else {
-            best = Some((it, res));
-        }
-    }
+    //TODO BRANCH AND BOUND
+    let best = (0..size)
+        .permutations(size)
+        .into_iter()
+        .par_bridge()
+        .map(|iter| (iter.clone(), srflp(&iter, &data)))
+        .min_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
 
     println!("{:?}", best);
 
