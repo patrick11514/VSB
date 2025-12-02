@@ -3,6 +3,7 @@ use rayon::prelude::*;
 use std::{
     fmt::{Display, Write},
     fs,
+    sync::{Arc, Mutex},
 };
 
 struct Data {
@@ -88,18 +89,23 @@ fn srflp(it: &Vec<usize>, data: &Data) -> f32 {
     sum
 }
 
+fn solve_prefix(previx: &Vec<usize>, data: &Data)
+
 fn solve(data: Data) -> anyhow::Result<()> {
     let size = data.len();
 
-    //TODO BRANCH AND BOUND
-    let best = (0..size)
+    let cores = std::thread::available_parallelism()?;
+
+    println!("{:?}", (0..size).permutations(2).collect::<Vec<_>>());
+
+    /*     let best = (0..size)
         .permutations(size)
         .into_iter()
         .par_bridge()
         .map(|iter| (iter.clone(), srflp(&iter, &data)))
         .min_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
 
-    println!("{:?}", best);
+    println!("{:?}", best);*/
 
     Ok(())
 }
