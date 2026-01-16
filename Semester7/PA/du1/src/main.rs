@@ -10,9 +10,7 @@ use std::{
 
 struct Data {
     weights: Vec<f32>,
-
     matrix: Vec<Vec<f32>>,
-
     n: usize,
 }
 
@@ -87,18 +85,15 @@ struct Solution {
 
 fn calculate_added_cost(data: &Data, current_perm: &[usize], new_elem: usize) -> f32 {
     let mut cost = 0.0;
-
     let width_new = data.weights[new_elem];
 
     for (idx, &prev_elem) in current_perm.iter().enumerate() {
         let weight = data.matrix[prev_elem][new_elem];
-
         if weight.abs() < f32::EPSILON {
             continue;
         }
 
         let mut dist = 1.5 * data.weights[prev_elem] + 1.5 * width_new;
-
         for &k in &current_perm[idx + 1..] {
             dist += data.weights[k];
         }
