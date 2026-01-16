@@ -9,8 +9,9 @@ N = 500
 D = 2
 RADIUS = 10.0
 THRESHOLD = 0.05
-WORKERS = 4
+WORKERS = 12
 MAX_ITER = 100
+SLEEP_TIME = 1
 
 
 def update_chunk(args):
@@ -56,15 +57,32 @@ def main():
     plt.ion()
     fig, ax = plt.subplots(figsize=(8, 8))
 
-    colors = ["yellow" if i % 2 == 0 else "blue" for i in range(N)]
+    worker_colors = [
+        "red",
+        "green",
+        "blue",
+        "orange",
+        "purple",
+        "cyan",
+        "magenta",
+        "lime",
+    ]
+
+    colors = []
+    chunk_size = (N + WORKERS - 1) // WORKERS
+    for i in range(N):
+        worker_id = i // chunk_size
+        if worker_id >= len(worker_colors):
+            worker_id = worker_id % len(worker_colors)
+        colors.append(worker_colors[worker_id])
+
     scat = ax.scatter(
         data[:, 0], data[:, 1], c=colors, edgecolor="black", linewidth=0.5
     )
 
     circles = []
     for i in range(N):
-
-        c = "yellow" if i % 2 == 0 else "blue"
+        c = colors[i]
         circle = plt.Circle(
             (data[i, 0], data[i, 1]), RADIUS, color=c, fill=False, alpha=0.3
         )
@@ -95,7 +113,7 @@ def main():
                 circles[i].center = (data[i, 0], data[i, 1])
 
             fig.canvas.draw_idle()
-            plt.pause(0.5)
+            plt.pause(SLEEP_TIME)
 
             end_time = time.time()
             print(

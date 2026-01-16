@@ -57,9 +57,7 @@ impl Data {
         for i in 0..n {
             for j in 0..n {
                 let v = matrix[i][j].max(matrix[j][i]);
-
                 matrix[i][j] = v;
-
                 matrix[j][i] = v;
             }
         }
@@ -71,9 +69,7 @@ impl Data {
 impl Display for Data {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "N: {}", self.n)?;
-
         writeln!(f, "Weights: {:?}", self.weights)?;
-
         writeln!(f, "Matrix:")?;
 
         for row in &self.matrix {
@@ -86,7 +82,6 @@ impl Display for Data {
 
 struct Solution {
     cost: f32,
-
     perm: Vec<usize>,
 }
 
@@ -116,15 +111,10 @@ fn calculate_added_cost(data: &Data, current_perm: &[usize], new_elem: usize) ->
 
 fn solve_recursive(
     data: &Data,
-
     current_perm: &mut Vec<usize>,
-
     remaining: &mut Vec<usize>,
-
     current_cost: f32,
-
     local_best_cost: &mut f32,
-
     global_best: &Arc<Mutex<Solution>>,
 ) {
     if current_cost >= *local_best_cost {
@@ -134,12 +124,10 @@ fn solve_recursive(
     if remaining.is_empty() {
         if current_cost < *local_best_cost {
             *local_best_cost = current_cost;
-
             let mut g = global_best.lock().unwrap();
 
             if current_cost < g.cost {
                 g.cost = current_cost;
-
                 g.perm = current_perm.clone();
             } else {
                 if g.cost < *local_best_cost {
@@ -153,17 +141,13 @@ fn solve_recursive(
 
     for i in 0..remaining.len() {
         let next_elem = remaining[i];
-
         let added = calculate_added_cost(data, current_perm, next_elem);
-
         let new_cost = current_cost + added;
-
         if new_cost >= *local_best_cost {
             continue;
         }
 
         current_perm.push(next_elem);
-
         remaining.remove(i);
 
         solve_recursive(
@@ -176,24 +160,19 @@ fn solve_recursive(
         );
 
         remaining.insert(i, next_elem);
-
         current_perm.pop();
     }
 }
 
 fn solve(data: Data) -> Result<()> {
     let start = Instant::now();
-
     let n = data.n;
-
     let global_best = Arc::new(Mutex::new(Solution {
         cost: f32::MAX,
-
         perm: Vec::new(),
     }));
 
     let k = if n < 2 { 1 } else { 2 };
-
     let prefixes = (0..n).permutations(k).collect::<Vec<_>>();
 
     println!(
@@ -205,7 +184,6 @@ fn solve(data: Data) -> Result<()> {
 
     prefixes.par_iter().for_each(|prefix| {
         let mut current_perm = Vec::with_capacity(n);
-
         let mut current_cost = 0.0;
 
         for &p in prefix {
@@ -215,7 +193,6 @@ fn solve(data: Data) -> Result<()> {
         }
 
         let mut remaining: Vec<usize> = (0..n).filter(|&x| !prefix.contains(&x)).collect();
-
         let mut local_best_cost = { global_best.lock().unwrap().cost };
 
         solve_recursive(
@@ -229,13 +206,10 @@ fn solve(data: Data) -> Result<()> {
     });
 
     let duration = start.elapsed();
-
     let result = global_best.lock().unwrap();
 
     println!("Best Cost: {}", result.cost);
-
     println!("Best Permutation: {:?}", result.perm);
-
     println!("Time: {:?}", duration);
 
     Ok(())
@@ -243,9 +217,7 @@ fn solve(data: Data) -> Result<()> {
 
 fn main() -> Result<()> {
     let data = Data::new("input.txt")?;
-
     println!("Loaded Data N={}", data.n);
-
     solve(data)?;
 
     Ok(())
