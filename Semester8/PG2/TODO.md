@@ -1,0 +1,5 @@
+- [ ] Remove lights
+- [ ] Remove useless colors, models etc and scenes
+- [ ] Rework camera to move always with mouse
+- [ ] Rework movement, to move on 'ground' not in air
+- [ ] Rework dynamic animations, to have one main class, which will have the abstract function, which gets percentage, and return matrix... Also it should save the time when created, so each animation start at creation time, and not at the same time as all current animations
