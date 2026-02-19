@@ -99,7 +99,6 @@ begin
     PrintPages_unused_space('ORDERITEM', 'MIN0150', 'TABLE');
     PrintPages_space_usage('ORDERITEM', 'MIN0150', 'TABLE');
 end;
-/
 
 select table_name,blocks, empty_blocks,pct_free,pct_used from user_tables
 where table_name='ORDERITEM';

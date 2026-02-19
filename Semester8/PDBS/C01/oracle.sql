@@ -5,7 +5,13 @@
 -- dbedu@cs.vsb.cz, 2023-2026
 -- last update: 2026-02-10
 
-
+-- Drop section
+drop table OrderItem;
+drop table "Order";
+drop table Staff;
+drop table Store;
+drop table Product;
+drop table Customer;
 
 -- Create section
 create table Customer (
