@@ -1,4 +1,4 @@
-#version 330
+#version 430
 #define MAX_LIGHTS 69
 //light types
 #define POINT 0
@@ -22,16 +22,19 @@ struct Light {
     float angle;        // for reflector
 };
 
-struct Material {
-    int type;
-
-    vec3 ra;
-    vec3 rd;
-    vec3 rs;
-    float shininess;
-
-    sampler2D textureUnit;
+struct GPU_Material {
+    vec4 ambient;
+    vec4 diffuse;
+    vec4 specular; // w is shininess
+    vec4 textureInfo; // x=type, y=index
 };
+
+layout(std430, binding = 0) buffer MaterialBuffer {
+    GPU_Material materials[];
+};
+
+uniform int u_MaterialIndex;
+uniform sampler2D u_Textures[16];
 
 in vec2 uv_out;
 in vec4 positionCS;
@@ -41,7 +44,6 @@ in vec3 normalCS;
 uniform int lightCount;
 uniform Light lights[MAX_LIGHTS];
 uniform mat4 viewMatrix;
-uniform Material material;
 
 out vec4 fragColor;
 
@@ -51,12 +53,15 @@ void main () {
     vec3 viewDir = normalize(-(positionCS.xyz / positionCS.w));
 
     vec4 text = vec4(1.0);
+    
+    GPU_Material material = materials[u_MaterialIndex];
 
-    if (material.type == TEXTURE) {
-        text = texture(material.textureUnit, uv_out);
+    if (material.textureInfo.x > 0.5) {
+        int texIndex = int(material.textureInfo.y);
+        text = texture(u_Textures[texIndex], uv_out);
     }
 
-    vec4 ambientColor = vec4(material.ra, 1.0) * text;
+    vec4 ambientColor = vec4(material.ambient.xyz, 1.0) * text;
 
     for (int i = 0; i < lightCount; ++i) {
         Light light = lights[i];
@@ -73,11 +78,11 @@ void main () {
 
         vec3 halfwayDir = normalize(lightDir);
 
-        float spec = pow(max(dot(viewDir, halfwayDir), 0.0), material.shininess);
-        vec4 specular = spec * vec4(light.color, 1.0) * vec4(material.rs, 1.0);
+        float spec = pow(max(dot(viewDir, halfwayDir), 0.0), material.specular.w);
+        vec4 specular = spec * vec4(light.color, 1.0) * vec4(material.specular.xyz, 1.0);
 
         float diff = max(dot(normalCS, lightDir), 0.0);
-        vec4 diffuse = diff * vec4(light.color, 1.0) * vec4(material.rd, 1.0) * text;
+        vec4 diffuse = diff * vec4(light.color, 1.0) * vec4(material.diffuse.xyz, 1.0) * text;
              
         float attenuation = 1;
 

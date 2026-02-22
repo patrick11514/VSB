@@ -1,1 +1,230 @@
-build/compile_commands.json
+[
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/App.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/App.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/App.cpp",
+  "output": "CMakeFiles/main.dir/src/App.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Camera.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Camera.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Camera.cpp",
+  "output": "CMakeFiles/main.dir/src/Camera.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Controller.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Controller.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Controller.cpp",
+  "output": "CMakeFiles/main.dir/src/Controller.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Factories/ObjectFactory.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Factories/ObjectFactory.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Factories/ObjectFactory.cpp",
+  "output": "CMakeFiles/main.dir/src/Factories/ObjectFactory.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Light/BallLight.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Light/BallLight.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Light/BallLight.cpp",
+  "output": "CMakeFiles/main.dir/src/Light/BallLight.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Light/DirectionalLight.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Light/DirectionalLight.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Light/DirectionalLight.cpp",
+  "output": "CMakeFiles/main.dir/src/Light/DirectionalLight.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Light/Flashlight.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Light/Flashlight.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Light/Flashlight.cpp",
+  "output": "CMakeFiles/main.dir/src/Light/Flashlight.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Light/Light.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Light/Light.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Light/Light.cpp",
+  "output": "CMakeFiles/main.dir/src/Light/Light.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Light/ReflectorLight.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Light/ReflectorLight.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Light/ReflectorLight.cpp",
+  "output": "CMakeFiles/main.dir/src/Light/ReflectorLight.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Modifiers/Drawable.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Modifiers/Drawable.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Modifiers/Drawable.cpp",
+  "output": "CMakeFiles/main.dir/src/Modifiers/Drawable.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Object/BaseObject.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Object/BaseObject.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Object/BaseObject.cpp",
+  "output": "CMakeFiles/main.dir/src/Object/BaseObject.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Object/DrawableObject.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Object/DrawableObject.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Object/DrawableObject.cpp",
+  "output": "CMakeFiles/main.dir/src/Object/DrawableObject.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Object/IndexedObjectData.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Object/IndexedObjectData.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Object/IndexedObjectData.cpp",
+  "output": "CMakeFiles/main.dir/src/Object/IndexedObjectData.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Object/Material/Material.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Object/Material/Material.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Object/Material/Material.cpp",
+  "output": "CMakeFiles/main.dir/src/Object/Material/Material.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Object/Model.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Object/Model.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Object/Model.cpp",
+  "output": "CMakeFiles/main.dir/src/Object/Model.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Object/ObjectData.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Object/ObjectData.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Object/ObjectData.cpp",
+  "output": "CMakeFiles/main.dir/src/Object/ObjectData.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Object/ObjectDataStorage.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Object/ObjectDataStorage.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Object/ObjectDataStorage.cpp",
+  "output": "CMakeFiles/main.dir/src/Object/ObjectDataStorage.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Object/Objects.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Object/Objects.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Object/Objects.cpp",
+  "output": "CMakeFiles/main.dir/src/Object/Objects.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Object/SkyBox.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Object/SkyBox.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Object/SkyBox.cpp",
+  "output": "CMakeFiles/main.dir/src/Object/SkyBox.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Object/Texture/BaseTexture.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Object/Texture/BaseTexture.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Object/Texture/BaseTexture.cpp",
+  "output": "CMakeFiles/main.dir/src/Object/Texture/BaseTexture.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Object/Texture/TextureStorage.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Object/Texture/TextureStorage.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Object/Texture/TextureStorage.cpp",
+  "output": "CMakeFiles/main.dir/src/Object/Texture/TextureStorage.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Patterns/Observable.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Patterns/Observable.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Patterns/Observable.cpp",
+  "output": "CMakeFiles/main.dir/src/Patterns/Observable.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Scenes/Forest.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Scenes/Forest.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Scenes/Forest.cpp",
+  "output": "CMakeFiles/main.dir/src/Scenes/Forest.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Scenes/Scene.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Scenes/Scene.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Scenes/Scene.cpp",
+  "output": "CMakeFiles/main.dir/src/Scenes/Scene.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Shader/Shader.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Shader/Shader.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Shader/Shader.cpp",
+  "output": "CMakeFiles/main.dir/src/Shader/Shader.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Shader/ShaderProgram.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Shader/ShaderProgram.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Shader/ShaderProgram.cpp",
+  "output": "CMakeFiles/main.dir/src/Shader/ShaderProgram.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Shader/ShaderStorage.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Shader/ShaderStorage.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Shader/ShaderStorage.cpp",
+  "output": "CMakeFiles/main.dir/src/Shader/ShaderStorage.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/ShaderLoader/ShaderLoader.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/ShaderLoader/ShaderLoader.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/ShaderLoader/ShaderLoader.cpp",
+  "output": "CMakeFiles/main.dir/src/ShaderLoader/ShaderLoader.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Transformation/DynamicRotation.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Transformation/DynamicRotation.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Transformation/DynamicRotation.cpp",
+  "output": "CMakeFiles/main.dir/src/Transformation/DynamicRotation.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Transformation/LineMovement.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Transformation/LineMovement.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Transformation/LineMovement.cpp",
+  "output": "CMakeFiles/main.dir/src/Transformation/LineMovement.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Transformation/RandomTranslate.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Transformation/RandomTranslate.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Transformation/RandomTranslate.cpp",
+  "output": "CMakeFiles/main.dir/src/Transformation/RandomTranslate.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Transformation/Rotation.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Transformation/Rotation.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Transformation/Rotation.cpp",
+  "output": "CMakeFiles/main.dir/src/Transformation/Rotation.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Transformation/Scale.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Transformation/Scale.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Transformation/Scale.cpp",
+  "output": "CMakeFiles/main.dir/src/Transformation/Scale.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Transformation/Transformation.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Transformation/Transformation.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Transformation/Transformation.cpp",
+  "output": "CMakeFiles/main.dir/src/Transformation/Transformation.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Transformation/Translate.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Transformation/Translate.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Transformation/Translate.cpp",
+  "output": "CMakeFiles/main.dir/src/Transformation/Translate.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Transformation/UpdatableTranslate.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Transformation/UpdatableTranslate.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Transformation/UpdatableTranslate.cpp",
+  "output": "CMakeFiles/main.dir/src/Transformation/UpdatableTranslate.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/Window.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/Window.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/Window.cpp",
+  "output": "CMakeFiles/main.dir/src/Window.cpp.o"
+},
+{
+  "directory": "/home/patrick115/Projects/VSB/Semester8/PG2",
+  "command": "/usr/bin/c++    -g  -std=gnu++20 -Wall -Wextra -pedantic -o CMakeFiles/main.dir/src/main.cpp.o -c /home/patrick115/Projects/VSB/Semester8/PG2/src/main.cpp",
+  "file": "/home/patrick115/Projects/VSB/Semester8/PG2/src/main.cpp",
+  "output": "CMakeFiles/main.dir/src/main.cpp.o"
+}
+]

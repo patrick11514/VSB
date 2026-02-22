@@ -1,4 +1,5 @@
-#include "App.hpp"
+#include "Rasterizer.hpp"
+#include <glm/trigonometric.hpp>
 
 /*
  * File: main.hpp
@@ -7,13 +8,14 @@
  */
 
 int main(void) {
-  App app;
-  app.initialize();
-  app.prepareScenes();
-  app.createShaders();
-  app.createModels();
-  app.run();
-  app.destroy();
+  Rasterizer rasterizer(800, 600, "PG2 Framework");
+  rasterizer.InitDevice();
+  rasterizer.InitPrograms();
+  rasterizer.LoadScene("../models/6887_allied_avenger_gi2.obj");
+  rasterizer.CreateAxes();
+  rasterizer.InitBuffers();
+  rasterizer.InitMaterials(0);
+  rasterizer.MainLoop();
 
   return EXIT_SUCCESS;
 }
