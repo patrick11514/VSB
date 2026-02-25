@@ -32,7 +32,7 @@ load_sector:
 
     jmp 0x0000:0x7e00
 
-msg: db "Booting StarOS", 0
+msg: db "Booting PleiadOS", 0
 
 times 510-($-$$) db 0 ; fill gap between end of program to 0xaa55 with 0
 dw 0xaa55
