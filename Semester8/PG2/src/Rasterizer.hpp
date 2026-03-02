@@ -5,13 +5,15 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
+#include <entt/entt.hpp>
 
 // Forward declarations
 class ShaderProgram;
 class Camera;
 class Controller;
 
-struct GPUMaterial {
+struct GPUMaterial
+{
   alignas(16) glm::vec4 ambient;  // w = padding
   alignas(16) glm::vec4 diffuse;  // w = padding
   alignas(16) glm::vec4 specular; // w = shininess
@@ -19,20 +21,23 @@ struct GPUMaterial {
       textureInfo; // x = type (0 = color, 1 = texture), y = textureIndex
 };
 
-struct Transform {
+struct Transform
+{
   glm::vec3 position{0.0f};
   glm::vec3 rotation{0.0f};
   glm::vec3 scale{1.0f};
 };
 
-struct RenderObject {
+struct RenderObject
+{
   std::string name;
   Transform transform;
   std::vector<int>
       meshIndices; // Points to indices in the SceneData.meshes array
 };
 
-struct Mesh {
+struct Mesh
+{
   GLuint vao;
   GLuint vbo;
   GLuint ebo;
@@ -40,14 +45,16 @@ struct Mesh {
   int materialIndex;
 };
 
-struct SceneData {
+struct SceneData
+{
   std::vector<Mesh> meshes;
   std::vector<RenderObject> objects;
   std::vector<GPUMaterial> materials;
   std::vector<GLuint> textureIds;
 };
 
-class Rasterizer {
+class Rasterizer
+{
 private:
   int width;
   int height;
@@ -61,6 +68,7 @@ private:
 
   SceneData scene;
   GLuint materialSSBO;
+  entt::registry registry;
 
 public:
   bool uiMode = false;
@@ -74,7 +82,8 @@ public:
   Rasterizer(int width, int height, const char *title);
   ~Rasterizer();
 
-  void resize(int w, int h) {
+  void resize(int w, int h)
+  {
     width = w;
     height = h;
     glViewport(0, 0, width, height);

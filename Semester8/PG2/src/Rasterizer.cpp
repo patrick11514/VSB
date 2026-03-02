@@ -21,23 +21,28 @@ Rasterizer::Rasterizer(int width, int height, const char *title)
     : width(width), height(height), title(title), window(nullptr),
       camera(nullptr), controller(nullptr), program(nullptr), materialSSBO(0) {}
 
-Rasterizer::~Rasterizer() {
+Rasterizer::~Rasterizer()
+{
   delete camera;
   // Window deletion handled by glfwTerminate usually
-  if (window) {
+  if (window)
+  {
     glfwDestroyWindow(window);
   }
 }
 
 void Rasterizer::error_callback([[maybe_unused]] int error,
-                                const char *description) {
+                                const char *description)
+{
   std::cerr << "GLFW Error: " << description << std::endl;
 }
 
-void Rasterizer::InitDevice() {
+void Rasterizer::InitDevice()
+{
   glfwSetErrorCallback(error_callback);
   glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
-  if (!glfwInit()) {
+  if (!glfwInit())
+  {
     throw std::runtime_error("ERROR: could not start GLFW3");
   }
 
@@ -46,7 +51,8 @@ void Rasterizer::InitDevice() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   window = glfwCreateWindow(width, height, title, NULL, NULL);
-  if (!window) {
+  if (!window)
+  {
     glfwTerminate();
     throw std::runtime_error("ERROR: could not create GLFW3 window");
   }
@@ -58,7 +64,8 @@ void Rasterizer::InitDevice() {
   GLenum err = glewInit();
   if (err != GLEW_OK)
     printf("GLEW Error: %s\n", glewGetErrorString(err));
-  if (err != GLEW_OK) {
+  if (err != GLEW_OK)
+  {
     throw std::runtime_error("ERROR: could not init GLEW");
   }
 
@@ -75,7 +82,8 @@ void Rasterizer::InitDevice() {
   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   glfwSetKeyCallback(window, [](GLFWwindow *window, int key, int scancode,
-                                int action, int mods) {
+                                int action, int mods)
+                     {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
       glfwSetWindowShouldClose(window, true);
 
@@ -94,20 +102,20 @@ void Rasterizer::InitDevice() {
 
     if (!rast->uiMode) {
       ctrl->onKeyPress(window, key, scancode, action, mods);
-    }
-  });
+    } });
 
-  glfwSetCursorPosCallback(window, [](GLFWwindow *window, double x, double y) {
+  glfwSetCursorPosCallback(window, [](GLFWwindow *window, double x, double y)
+                           {
     Rasterizer *rast =
         static_cast<Rasterizer *>(glfwGetWindowUserPointer(window));
     Controller *ctrl = rast->controller;
     if (!rast->uiMode) {
       ctrl->onMouse(window, x, y);
-    }
-  });
+    } });
 
   glfwSetScrollCallback(
-      window, [](GLFWwindow *window, double xoffset, double yoffset) {
+      window, [](GLFWwindow *window, double xoffset, double yoffset)
+      {
         Rasterizer *rast =
             static_cast<Rasterizer *>(glfwGetWindowUserPointer(window));
         if (!rast->uiMode) {
@@ -115,16 +123,15 @@ void Rasterizer::InitDevice() {
           if (rast->controller->cameraSpeed < 0.01f) {
             rast->controller->cameraSpeed = 0.01f;
           }
-        }
-      });
+        } });
 
   glfwSetFramebufferSizeCallback(
-      window, [](GLFWwindow *window, int width, int height) {
+      window, [](GLFWwindow *window, int width, int height)
+      {
         Rasterizer *rast =
             static_cast<Rasterizer *>(glfwGetWindowUserPointer(window));
         if (rast)
-          rast->resize(width, height);
-      });
+          rast->resize(width, height); });
 
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
@@ -135,12 +142,14 @@ void Rasterizer::InitDevice() {
   ImGui_ImplOpenGL3_Init("#version 430");
 }
 
-void Rasterizer::InitPrograms() {
+void Rasterizer::InitPrograms()
+{
   program = new ShaderProgram("../shaders/vertex/Base.vert",
                               "../shaders/fragment/BaseBlinn.frag", controller);
 }
 
-void Rasterizer::LoadScene(const std::string &fileName) {
+void Rasterizer::LoadScene(const std::string &fileName)
+{
   Assimp::Importer importer;
   unsigned int importOptions =
       aiProcess_Triangulate | aiProcess_OptimizeMeshes |
@@ -148,20 +157,23 @@ void Rasterizer::LoadScene(const std::string &fileName) {
   const aiScene *ai_scene = importer.ReadFile(fileName, importOptions);
 
   if (!ai_scene || ai_scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
-      !ai_scene->mRootNode) {
+      !ai_scene->mRootNode)
+  {
     throw std::runtime_error("ERROR: Assimp failed to load scene: " +
                              std::string(importer.GetErrorString()));
   }
 
   std::string basePath = "";
   size_t lastSlash = fileName.find_last_of("/\\");
-  if (lastSlash != std::string::npos) {
+  if (lastSlash != std::string::npos)
+  {
     basePath = fileName.substr(0, lastSlash + 1);
   }
 
   // Load Materials
   scene.materials.reserve(ai_scene->mNumMaterials);
-  for (unsigned int i = 0; i < ai_scene->mNumMaterials; i++) {
+  for (unsigned int i = 0; i < ai_scene->mNumMaterials; i++)
+  {
     aiMaterial *mat = ai_scene->mMaterials[i];
     GPUMaterial gpuMat{};
 
@@ -177,7 +189,8 @@ void Rasterizer::LoadScene(const std::string &fileName) {
     if (AI_SUCCESS == mat->Get(AI_MATKEY_COLOR_SPECULAR, color))
       gpuMat.specular = glm::vec4(color.r, color.g, color.b, shininess);
 
-    if (mat->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
+    if (mat->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+    {
       aiString path;
       mat->GetTexture(aiTextureType_DIFFUSE, 0, &path);
       std::string texPath = basePath + path.C_Str();
@@ -186,18 +199,23 @@ void Rasterizer::LoadScene(const std::string &fileName) {
           texPath.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
           SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB |
               SOIL_FLAG_COMPRESS_TO_DXT);
-      if (textureId == 0) {
+      if (textureId == 0)
+      {
         std::cerr << "SOIL loading error for " << texPath << ": "
                   << SOIL_last_result() << std::endl;
         gpuMat.textureInfo =
             glm::vec4(0.0f, 0.0f, 0.0f, 0.0f); // Fallback to color
-      } else {
+      }
+      else
+      {
         int texIndex = scene.textureIds.size();
         scene.textureIds.push_back(textureId);
         gpuMat.textureInfo = glm::vec4(1.0f, float(texIndex), 0.0f,
                                        0.0f); // Type 1 (Texture), Index
       }
-    } else {
+    }
+    else
+    {
       gpuMat.textureInfo = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f); // Type 0 (Color)
     }
 
@@ -205,7 +223,8 @@ void Rasterizer::LoadScene(const std::string &fileName) {
   }
 
   // Load Meshes
-  for (unsigned int m = 0; m < ai_scene->mNumMeshes; m++) {
+  for (unsigned int m = 0; m < ai_scene->mNumMeshes; m++)
+  {
     aiMesh *mesh = ai_scene->mMeshes[m];
 
     std::vector<float> vertices;
@@ -213,40 +232,51 @@ void Rasterizer::LoadScene(const std::string &fileName) {
 
     int rowCount = 3 + 3 + 2 + 3; // Pos (3), Norm (3), UV (2), Tangent (3)
 
-    for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
+    for (unsigned int i = 0; i < mesh->mNumVertices; i++)
+    {
       // Positions
       vertices.push_back(mesh->mVertices[i].x);
       vertices.push_back(mesh->mVertices[i].y);
       vertices.push_back(mesh->mVertices[i].z);
 
       // Normals
-      if (mesh->HasNormals()) {
+      if (mesh->HasNormals())
+      {
         vertices.push_back(mesh->mNormals[i].x);
         vertices.push_back(mesh->mNormals[i].y);
         vertices.push_back(mesh->mNormals[i].z);
-      } else {
+      }
+      else
+      {
         vertices.insert(vertices.end(), {0.f, 0.f, 0.f});
       }
 
       // UVs
-      if (mesh->HasTextureCoords(0)) {
+      if (mesh->HasTextureCoords(0))
+      {
         vertices.push_back(mesh->mTextureCoords[0][i].x);
         vertices.push_back(mesh->mTextureCoords[0][i].y);
-      } else {
+      }
+      else
+      {
         vertices.insert(vertices.end(), {0.f, 0.f});
       }
 
       // Tangents
-      if (mesh->HasTangentsAndBitangents()) {
+      if (mesh->HasTangentsAndBitangents())
+      {
         vertices.push_back(mesh->mTangents[i].x);
         vertices.push_back(mesh->mTangents[i].y);
         vertices.push_back(mesh->mTangents[i].z);
-      } else {
+      }
+      else
+      {
         vertices.insert(vertices.end(), {0.f, 0.f, 0.f});
       }
     }
 
-    for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
+    for (unsigned int i = 0; i < mesh->mNumFaces; i++)
+    {
       aiFace face = mesh->mFaces[i];
       for (unsigned int j = 0; j < face.mNumIndices; j++)
         indices.push_back(face.mIndices[j]);
@@ -293,7 +323,8 @@ void Rasterizer::LoadScene(const std::string &fileName) {
   RenderObject obj;
   obj.name = fileName;
   for (size_t i = scene.meshes.size() - ai_scene->mNumMeshes;
-       i < scene.meshes.size(); ++i) {
+       i < scene.meshes.size(); ++i)
+  {
     obj.meshIndices.push_back(i);
   }
   obj.transform.scale = glm::vec3(0.005f);
@@ -301,17 +332,19 @@ void Rasterizer::LoadScene(const std::string &fileName) {
   scene.objects.push_back(obj);
 }
 
-void Rasterizer::CreateAxes() {
+void Rasterizer::CreateAxes()
+{
   // We mock a tiny mesh with bounds indicating the X, Y, Z coordinates
   // independently.
 
-  auto addAxis = [&](glm::vec3 color, glm::vec3 scale, std::string name) {
+  auto addAxis = [&](glm::vec3 color, glm::vec3 scale, std::string name)
+  {
     // Very crude line box from [-1, 1] scaled drastically
     std::vector<float> vertices = {
-        -1, -1, -1, 0, 1, 0, 0, 0, 0, 0, 0, 1,  -1, -1, 0, 1, 0, 0, 0, 0, 0, 0,
-        1,  1,  -1, 0, 1, 0, 0, 0, 0, 0, 0, -1, 1,  -1, 0, 1, 0, 0, 0, 0, 0, 0,
-        -1, -1, 1,  0, 1, 0, 0, 0, 0, 0, 0, 1,  -1, 1,  0, 1, 0, 0, 0, 0, 0, 0,
-        1,  1,  1,  0, 1, 0, 0, 0, 0, 0, 0, -1, 1,  1,  0, 1, 0, 0, 0, 0, 0, 0};
+        -1, -1, -1, 0, 1, 0, 0, 0, 0, 0, 0, 1, -1, -1, 0, 1, 0, 0, 0, 0, 0, 0,
+        1, 1, -1, 0, 1, 0, 0, 0, 0, 0, 0, -1, 1, -1, 0, 1, 0, 0, 0, 0, 0, 0,
+        -1, -1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, -1, 1, 0, 1, 0, 0, 0, 0, 0, 0,
+        1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, -1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0};
     // Map to simple triangles
     std::vector<unsigned int> indices = {0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1,
                                          7, 6, 5, 5, 4, 7, 4, 0, 3, 3, 7, 4,
@@ -375,12 +408,14 @@ void Rasterizer::CreateAxes() {
           "Axis: Z (Blue)");
 }
 
-void Rasterizer::InitBuffers() {
+void Rasterizer::InitBuffers()
+{
   // Meshes VBO/VAO naturally instantiated in LoadScene per your requirement.
   // If you need global buffers, they would go here.
 }
 
-void Rasterizer::InitMaterials(int bindingPoint) {
+void Rasterizer::InitMaterials(int bindingPoint)
+{
   if (scene.materials.empty())
     return;
 
@@ -393,10 +428,12 @@ void Rasterizer::InitMaterials(int bindingPoint) {
   glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
-void Rasterizer::MainLoop() {
+void Rasterizer::MainLoop()
+{
   glEnable(GL_DEPTH_TEST);
 
-  while (!glfwWindowShouldClose(window)) {
+  while (!glfwWindowShouldClose(window))
+  {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     controller->onFrame();
@@ -417,7 +454,8 @@ void Rasterizer::MainLoop() {
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, &projection[0][0]);
 
-    for (size_t i = 0; i < scene.textureIds.size(); i++) {
+    for (size_t i = 0; i < scene.textureIds.size(); i++)
+    {
       glActiveTexture(GL_TEXTURE0 + i);
       glBindTexture(GL_TEXTURE_2D, scene.textureIds[i]);
       std::string uniformName = "u_Textures[" + std::to_string(i) + "]";
@@ -447,7 +485,8 @@ void Rasterizer::MainLoop() {
     GLuint uMatIdxLoc =
         glGetUniformLocation(program->getProgramID(), "u_MaterialIndex");
 
-    for (const auto &obj : scene.objects) {
+    for (const auto &obj : scene.objects)
+    {
       glm::mat4 modelMatrix = glm::mat4(1.0f);
       modelMatrix = glm::translate(modelMatrix, obj.transform.position);
       modelMatrix = glm::rotate(modelMatrix, obj.transform.rotation.x,
@@ -460,7 +499,8 @@ void Rasterizer::MainLoop() {
 
       glUniformMatrix4fv(mMatLoc, 1, GL_FALSE, &modelMatrix[0][0]);
 
-      for (int meshIdx : obj.meshIndices) {
+      for (int meshIdx : obj.meshIndices)
+      {
         const auto &mesh = scene.meshes[meshIdx];
         glUniform1i(uMatIdxLoc, mesh.materialIndex);
         glBindVertexArray(mesh.vao);
@@ -483,7 +523,8 @@ void Rasterizer::MainLoop() {
   }
 }
 
-void Rasterizer::DrawUI() {
+void Rasterizer::DrawUI()
+{
   ImGui::Begin("Scene Graph");
 
   ImGui::Text("Application UI Mode: Active");
@@ -497,14 +538,17 @@ void Rasterizer::DrawUI() {
   ImGui::Separator();
 
   ImGui::Text("Objects");
-  for (size_t i = 0; i < scene.objects.size(); ++i) {
+  for (size_t i = 0; i < scene.objects.size(); ++i)
+  {
     auto &obj = scene.objects[i];
-    if (ImGui::TreeNode((void *)(intptr_t)i, "%s", obj.name.c_str())) {
+    if (ImGui::TreeNode((void *)(intptr_t)i, "%s", obj.name.c_str()))
+    {
       ImGui::DragFloat3("Position", glm::value_ptr(obj.transform.position),
                         0.1f);
 
       glm::vec3 rotDegrees = glm::degrees(obj.transform.rotation);
-      if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotDegrees), 1.0f)) {
+      if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotDegrees), 1.0f))
+      {
         obj.transform.rotation = glm::radians(rotDegrees);
       }
 

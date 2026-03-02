@@ -2,11 +2,13 @@
 #include <glm/ext/matrix_clip_space.hpp>
 
 Camera::Camera(float fov, float zNear, float zFar)
-    : fov(fov), zNear(zNear), zFar(zFar) {
+    : fov(fov), zNear(zNear), zFar(zFar)
+{
   this->recalculateTarget();
 }
 
-void Camera::recalculateTarget() {
+void Camera::recalculateTarget()
+{
   double radPitch = glm::radians(this->pitch);
   double radYaw = glm::radians(this->yaw);
 
@@ -18,58 +20,70 @@ void Camera::recalculateTarget() {
   this->calculateViewMatrix();
 }
 
-void Camera::toLeft(float rate) {
+void Camera::toLeft(float rate)
+{
   this->eye -= glm::normalize(glm::cross(this->target, this->up)) * rate;
   this->calculateViewMatrix();
 }
 
-void Camera::toRight(float rate) {
+void Camera::toRight(float rate)
+{
   this->eye += glm::normalize(glm::cross(this->target, this->up)) * rate;
   this->calculateViewMatrix();
 }
 
-void Camera::forward(float rate) {
+void Camera::forward(float rate)
+{
   glm::vec3 planarForward =
       glm::normalize(glm::vec3(this->target.x, 0.0f, this->target.z));
   this->eye += planarForward * rate;
   this->calculateViewMatrix();
 }
 
-void Camera::backward(float rate) {
+void Camera::backward(float rate)
+{
   glm::vec3 planarForward =
       glm::normalize(glm::vec3(this->target.x, 0.0f, this->target.z));
   this->eye -= planarForward * rate;
   this->calculateViewMatrix();
 }
 
-void Camera::upMovement(float rate) {
+void Camera::upMovement(float rate)
+{
   this->eye += this->up * rate;
   this->calculateViewMatrix();
 }
 
-void Camera::downMovement(float rate) {
+void Camera::downMovement(float rate)
+{
   this->eye -= this->up * rate;
   this->calculateViewMatrix();
 }
 
-void Camera::changeYaw(float deg) {
+void Camera::changeYaw(float deg)
+{
   this->yaw += deg;
   this->recalculateTarget();
 }
 
-void Camera::changePitch(float deg) {
+void Camera::changePitch(float deg)
+{
   this->pitch += deg;
 
-  if (this->pitch > 89.0f) {
+  if (this->pitch > 89.0f)
+  {
     this->pitch = 89.0f;
   }
-  if (this->pitch < -89.0f) {
+  if (this->pitch < -89.0f)
+  {
     this->pitch = -89.0f;
   }
   this->recalculateTarget();
 }
 
-void Camera::calculateViewMatrix() {
+void Camera::calculateViewMatrix()
+{
+
   this->viewMatrix = glm::lookAt(this->eye, this->eye + this->target, this->up);
 }
 

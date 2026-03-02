@@ -7,7 +7,9 @@
  * Description: The main file :)
  */
 
-int main(void) {
+int main(void)
+{
+
   Rasterizer rasterizer(800, 600, "PG2 Framework");
   rasterizer.InitDevice();
   rasterizer.InitPrograms();

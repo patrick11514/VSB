@@ -1,0 +1,5 @@
+- Split rendering logic into "attribute" pattern, where you will have Object, which you can add speicfic attirbute, like transformation, mesh etc... This will be made via for example entt
+- Add attribute called 'camera sync' which will somehow integrate with camera, like when camera moves, it will perform something (technically observer pattern)
+- Add attribute called 'togglebla', which will toggle object visibility by some condition, or simply variable (bool)
+- Add attrobute, to render object on top of everything, by disabling the z-buffer
+- Then use this to basically have axes, togglable and basically have them in center of screen, and we only change transformation to be some distance from eye in look at direction
