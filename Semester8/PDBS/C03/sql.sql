@@ -1,0 +1,29 @@
+SELECT * FROM OrderItem WHERE unit_price < 300;
+
+
+SET SHOWPLAN_ALL ON;
+
+SELECT * FROM OrderItem WHERE unit_price < 300;
+
+SET SHOWPLAN_ALL OFF;
+
+exec PrintPagesHeap 'Customer';
+
+
+SET STATISTICS IO ON;
+SELECT * FROM OrderItem WHERE unit_price < 300;
+SET STATISTICS IO OFF;
+
+        PrintPagesHeap 'OrderItem';
+
+SET STATISTICS TIME ON;
+SELECT * FROM OrderItem WHERE unit_price < 300;
+SET STATISTICS TIME OFF;
+
+SET STATISTICS TIME ON;
+SELECT * FROM OrderItem WHERE unit_price < 300 OPTION (MAXDOP 1);
+SET STATISTICS TIME OFF;
+
+DELETE FROM ORDERITEM WHERE IDO % 4 = 0;
+
+alter table OrderItem rebuild;
