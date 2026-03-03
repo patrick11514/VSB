@@ -2,8 +2,11 @@
 #include "Camera.hpp"
 #include "Controller.hpp"
 #include "Shader/ShaderProgram.hpp"
-#include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
+#include "system/CameraSyncSystem.hpp"
+#include "system/RenderSystem.hpp"
+#include "attributes.hpp"
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
 
@@ -16,6 +19,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <stdexcept>
+#include <memory>
 
 Rasterizer::Rasterizer(int width, int height, const char *title)
     : width(width), height(height), title(title), window(nullptr),
@@ -100,6 +104,15 @@ void Rasterizer::InitDevice()
       }
     }
 
+    if (key == GLFW_KEY_LEFT_ALT && action == GLFW_PRESS) {
+      rast->showAxes = !rast->showAxes;
+      auto view = rast->registry.view<attributes::IsAxis, attributes::Togglable>();
+      for (auto entity : view) {
+        auto &tog = view.get<attributes::Togglable>(entity);
+        tog.visible = rast->showAxes;
+      }
+    }
+
     if (!rast->uiMode) {
       ctrl->onKeyPress(window, key, scancode, action, mods);
     } });
@@ -146,6 +159,9 @@ void Rasterizer::InitPrograms()
 {
   program = new ShaderProgram("../shaders/vertex/Base.vert",
                               "../shaders/fragment/BaseBlinn.frag", controller);
+
+  systems.push_back(std::make_unique<CameraSyncSystem>(camera));
+  systems.push_back(std::make_unique<RenderSystem>(this));
 }
 
 void Rasterizer::LoadScene(const std::string &fileName)
@@ -320,16 +336,23 @@ void Rasterizer::LoadScene(const std::string &fileName)
     scene.meshes.push_back(newMesh);
   }
 
-  RenderObject obj;
-  obj.name = fileName;
+  auto entity = registry.create();
+  registry.emplace<attributes::Name>(entity, fileName);
+  
+  std::vector<int> meshIndices;
   for (size_t i = scene.meshes.size() - ai_scene->mNumMeshes;
        i < scene.meshes.size(); ++i)
   {
-    obj.meshIndices.push_back(i);
+    meshIndices.push_back(i);
   }
-  obj.transform.scale = glm::vec3(0.005f);
-  obj.transform.rotation = glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f);
-  scene.objects.push_back(obj);
+  registry.emplace<attributes::RenderMesh>(entity, meshIndices);
+
+  attributes::Transform transform;
+  transform.scale = glm::vec3(0.005f);
+  transform.rot = glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f);
+  transform.pos = glm::vec3(0.0f); // Default to 0
+  registry.emplace<attributes::Transform>(entity, transform);
+  registry.emplace<attributes::Togglable>(entity, true);
 }
 
 void Rasterizer::CreateAxes()
@@ -390,21 +413,39 @@ void Rasterizer::CreateAxes()
 
     scene.meshes.push_back(rect);
 
-    RenderObject obj;
-    obj.name = name;
-    obj.transform.scale = scale;
-    obj.transform.position = scale;
-    obj.meshIndices.push_back(scene.meshes.size() - 1);
-
-    scene.objects.push_back(obj);
+    auto entity = registry.create();
+    registry.emplace<attributes::Name>(entity, name);
+    
+    attributes::Transform transform;
+    transform.scale = scale;
+    transform.pos = scale; // Matches previous behavior where pos=scale
+    transform.rot = glm::vec3(0.0f);
+    registry.emplace<attributes::Transform>(entity, transform);
+    
+    registry.emplace<attributes::RenderMesh>(entity, std::vector<int>{static_cast<int>(scene.meshes.size() - 1)});
+    
+    attributes::CameraSync sync;
+    // Set some default relative position for axes based on their original scale or similar...
+    // The previous implementation relied on the object's transform directly.
+    // For CameraSync, we just place them relative to camera inverse view.
+    glm::mat4 rel = glm::mat4(1.0f);
+    rel = glm::translate(rel, glm::vec3(0.0f, 0.0f, -6.0f)); // placed 6 units in front of camera
+    rel = glm::translate(rel, scale); // match pos=scale
+    rel = glm::scale(rel, scale);
+    sync.relativeMatrix = rel;
+    
+    registry.emplace<attributes::CameraSync>(entity, sync);
+    registry.emplace<attributes::RenderOnTop>(entity);
+    registry.emplace<attributes::IsAxis>(entity);
+    registry.emplace<attributes::Togglable>(entity, this->showAxes); // start with showAxes
   };
 
   // Create 3 thin boxes mapped along X, Y, Z axes
-  addAxis(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(5.0f, 0.1f, 0.1f),
+  addAxis(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.02f, 0.02f),
           "Axis: X (Red)");
-  addAxis(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.1f, 5.0f, 0.1f),
+  addAxis(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.02f, 1.0f, 0.02f),
           "Axis: Y (Green)");
-  addAxis(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.1f, 0.1f, 5.0f),
+  addAxis(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.02f, 0.02f, 1.0f),
           "Axis: Z (Blue)");
 }
 
@@ -482,31 +523,12 @@ void Rasterizer::MainLoop()
     GLuint lightDirLoc =
         glGetUniformLocation(program->getProgramID(), "lights[0].direction");
     glUniform3f(lightDirLoc, -0.2f, -1.0f, -0.3f);
-    GLuint uMatIdxLoc =
-        glGetUniformLocation(program->getProgramID(), "u_MaterialIndex");
 
-    for (const auto &obj : scene.objects)
+    for (auto &sys : systems)
     {
-      glm::mat4 modelMatrix = glm::mat4(1.0f);
-      modelMatrix = glm::translate(modelMatrix, obj.transform.position);
-      modelMatrix = glm::rotate(modelMatrix, obj.transform.rotation.x,
-                                glm::vec3(1, 0, 0));
-      modelMatrix = glm::rotate(modelMatrix, obj.transform.rotation.y,
-                                glm::vec3(0, 1, 0));
-      modelMatrix = glm::rotate(modelMatrix, obj.transform.rotation.z,
-                                glm::vec3(0, 0, 1));
-      modelMatrix = glm::scale(modelMatrix, obj.transform.scale);
-
-      glUniformMatrix4fv(mMatLoc, 1, GL_FALSE, &modelMatrix[0][0]);
-
-      for (int meshIdx : obj.meshIndices)
-      {
-        const auto &mesh = scene.meshes[meshIdx];
-        glUniform1i(uMatIdxLoc, mesh.materialIndex);
-        glBindVertexArray(mesh.vao);
-        glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, 0);
-      }
+        sys->update(registry);
     }
+
     glBindVertexArray(0);
 
     ImGui_ImplOpenGL3_NewFrame();
@@ -538,22 +560,43 @@ void Rasterizer::DrawUI()
   ImGui::Separator();
 
   ImGui::Text("Objects");
-  for (size_t i = 0; i < scene.objects.size(); ++i)
+  auto view = registry.view<attributes::Name, attributes::Transform>();
+  for (auto entity : view)
   {
-    auto &obj = scene.objects[i];
-    if (ImGui::TreeNode((void *)(intptr_t)i, "%s", obj.name.c_str()))
+    auto &nameAttr = view.get<attributes::Name>(entity);
+    auto &transform = view.get<attributes::Transform>(entity);
+    
+    if (ImGui::TreeNode((void *)(intptr_t)entt::to_integral(entity), "%s", nameAttr.name.c_str()))
     {
-      ImGui::DragFloat3("Position", glm::value_ptr(obj.transform.position),
-                        0.1f);
-
-      glm::vec3 rotDegrees = glm::degrees(obj.transform.rotation);
-      if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotDegrees), 1.0f))
+      if (registry.all_of<attributes::Togglable>(entity))
       {
-        obj.transform.rotation = glm::radians(rotDegrees);
+         auto &togglable = registry.get<attributes::Togglable>(entity);
+         ImGui::Checkbox("Visible", &togglable.visible);
       }
 
-      ImGui::DragFloat3("Scale", glm::value_ptr(obj.transform.scale), 0.001f);
-      ImGui::Text("Contained Meshes: %zu", obj.meshIndices.size());
+      if (!transform.useMatrix)
+      {
+        ImGui::DragFloat3("Position", glm::value_ptr(transform.pos), 0.1f);
+
+        glm::vec3 rotDegrees = glm::degrees(transform.rot);
+        if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotDegrees), 1.0f))
+        {
+          transform.rot = glm::radians(rotDegrees);
+        }
+
+        ImGui::DragFloat3("Scale", glm::value_ptr(transform.scale), 0.001f);
+      }
+      else
+      {
+          ImGui::Text("Transform is controlled by matrix externally (e.g. CameraSync).");
+      }
+
+      if (registry.all_of<attributes::RenderMesh>(entity))
+      {
+         auto &renderMesh = registry.get<attributes::RenderMesh>(entity);
+         ImGui::Text("Contained Meshes: %zu", renderMesh.meshIndices.size());
+      }
+      
       ImGui::TreePop();
     }
   }

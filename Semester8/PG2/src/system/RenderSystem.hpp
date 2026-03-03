@@ -1,11 +1,14 @@
 #pragma once
 #include "ISystem.hpp"
-#include "../attributes.hpp"
+
+class Rasterizer;
 
 class RenderSystem : public ISystem
 {
+private:
+    Rasterizer *rasterizer;
+
 public:
-    void update(entt::registry &registry) override
-    {
-    }
+    RenderSystem(Rasterizer *rast) : rasterizer(rast) {}
+    void update(entt::registry &registry) override;
 };

@@ -5,12 +5,15 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
+#include <memory>
 #include <entt/entt.hpp>
 
 // Forward declarations
 class ShaderProgram;
 class Camera;
 class Controller;
+
+#include "system/ISystem.hpp"
 
 struct GPUMaterial
 {
@@ -21,20 +24,7 @@ struct GPUMaterial
       textureInfo; // x = type (0 = color, 1 = texture), y = textureIndex
 };
 
-struct Transform
-{
-  glm::vec3 position{0.0f};
-  glm::vec3 rotation{0.0f};
-  glm::vec3 scale{1.0f};
-};
 
-struct RenderObject
-{
-  std::string name;
-  Transform transform;
-  std::vector<int>
-      meshIndices; // Points to indices in the SceneData.meshes array
-};
 
 struct Mesh
 {
@@ -48,7 +38,6 @@ struct Mesh
 struct SceneData
 {
   std::vector<Mesh> meshes;
-  std::vector<RenderObject> objects;
   std::vector<GPUMaterial> materials;
   std::vector<GLuint> textureIds;
 };
@@ -69,9 +58,13 @@ private:
   SceneData scene;
   GLuint materialSSBO;
   entt::registry registry;
+  std::vector<std::unique_ptr<ISystem>> systems;
+
+  friend class RenderSystem;
 
 public:
   bool uiMode = false;
+  bool showAxes = false;
 
 private:
   void DrawUI();
