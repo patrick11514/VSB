@@ -16,8 +16,9 @@ struct FatFileSystem
     void (*read_partitions)(FatFileSystem *self, PartitionTable *pt);
     void (*select_partition_table)(FatFileSystem *self, PartitionTable *pt);
     void (*read_boot_sector)(FatFileSystem *self);
-    void (*read_directory_entry)(FatFileSystem *self);
-    void (*read_file)(FatFileSystem *self, void *buffer);
+    void (*read_directory_entry)(FatFileSystem *self, uint32_t dir_cluster);
+    void (*read_file)(FatFileSystem *self, Fat16Entry *entry, FILE *out_stream);
+    int (*find_file)(FatFileSystem *self, uint32_t dir_cluster, const char *name, const char *ext, Fat16Entry *out_entry);
 };
 
 void fat_init(FatFileSystem *fs, FILE *data);
