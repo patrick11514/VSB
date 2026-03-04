@@ -12,4 +12,6 @@ int ata_read_sector(FILE *data, uint32_t lba, uint8_t *buffer);
 int get_fat_start_sector(PartitionTable *pt, Fat16BootSector *bs, int idx);
 int get_root_dir_start_sector(PartitionTable *pt, Fat16BootSector *bs);
 
+void prety_print_name(char *name, char *ext);
+
 #endif

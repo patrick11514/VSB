@@ -14,7 +14,6 @@ int ata_read_sector(FILE *data, uint32_t lba, uint8_t *buffer)
     return read == 1;
 }
 
-
 void read_at_byte(FILE *data, int byte, void *buffer, size_t size)
 {
     uint32_t start_sector = byte / 512;
@@ -49,4 +48,38 @@ int get_fat_start_sector(PartitionTable *pt, Fat16BootSector *bs, int idx)
 int get_root_dir_start_sector(PartitionTable *pt, Fat16BootSector *bs)
 {
     return get_fat_start_sector(pt, bs, bs->number_of_fats);
+}
+
+void prety_print_name(char name[8], char ext[3])
+{
+    // print to name.ext if ext is empty, then just print name - skip empty chars in name and ext
+    int has_ext = 0;
+    for (int i = 0; i < 3; i++)
+    {
+        if (ext[i] != ' ')
+        {
+            has_ext = 1;
+            break;
+        }
+    }
+
+    for (int i = 0; i < 8; i++)
+    {
+        if (name[i] != ' ')
+        {
+            putchar(name[i]);
+        }
+    }
+
+    if (has_ext)
+    {
+        putchar('.');
+        for (int i = 0; i < 3; i++)
+        {
+            if (ext[i] != 0)
+            {
+                putchar(ext[i]);
+            }
+        }
+    }
 }
