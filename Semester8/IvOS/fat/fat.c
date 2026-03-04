@@ -176,7 +176,7 @@ int fat_change_dir(FatFileSystem *self, const char *dir_name)
 }
 
 // Print-f only implementation (for now)
-static void _print_tree(FatFileSystem *self, uint16_t start_cluster, uint8_t depth)
+void _print_dir(FatFileSystem *self, uint16_t start_cluster, uint8_t depth, int classic)
 {
     int old_index = self->current_file_index;
     self->current_file_index = -1; // skip the fat name
@@ -207,25 +207,47 @@ static void _print_tree(FatFileSystem *self, uint16_t start_cluster, uint8_t dep
         }
 
         printf("├── ");
-        prety_print_name(sub_entry.filename, sub_entry.ext);
+
+        if (classic)
+        {
+            prety_print_name(sub_entry.filename, sub_entry.ext);
+        }
+        else
+        {
+            fat16entry_to_str(&sub_entry);
+            putchar('\n');
+        }
 
         if (sub_entry.attributes & 0x10)
         {
-            printf("/\n");
+            if (classic)
+            {
+                printf("/\n");
+            }
             // sub-folder
-            _print_tree(self, sub_entry.starting_cluster, depth + 1);
+            _print_dir(self, sub_entry.starting_cluster, depth + 1, classic);
             continue;
         }
 
-        printf("\n");
+        if (classic)
+        {
+            putchar(' ');
+            print_file_stat(&sub_entry, 1, 1);
+            putchar('\n');
+        }
     }
 
     self->current_file_index = old_index;
 }
 
-void fat_print_tree(FatFileSystem *self)
+void fat_print_root_dir(FatFileSystem *self)
 {
-    _print_tree(self, 0, 0);
+    _print_dir(self, 0, 0, 1);
+}
+
+void fat_print_dir(FatFileSystem *self, uint16_t start_cluster)
+{
+    _print_dir(self, start_cluster, 0, 1);
 }
 
 void fat_init(FatFileSystem *fs, FILE *data)

@@ -50,6 +50,45 @@ int get_root_dir_start_sector(PartitionTable *pt, Fat16BootSector *bs)
     return get_fat_start_sector(pt, bs, bs->number_of_fats);
 }
 
+void fat16entry_to_str(Fat16Entry *entry)
+{
+    if (entry->attributes & 0x08)
+    {
+        printf("LABEL");
+    }
+    else
+    {
+
+        if (entry->attributes & 0x10)
+        {
+            putchar('D');
+        }
+        else
+        {
+            putchar('F');
+        }
+
+        putchar(' ');
+
+        if (entry->attributes & 0x01)
+        {
+            printf("RO");
+        }
+        else
+        {
+            printf("RW");
+        }
+    }
+
+    putchar(' ');
+
+    prety_print_name(entry->filename, entry->ext);
+
+    putchar(' ');
+
+    print_file_stat(entry, 1, 1);
+}
+
 void prety_print_name(char name[8], char ext[3])
 {
     // print to name.ext if ext is empty, then just print name - skip empty chars in name and ext
@@ -76,10 +115,34 @@ void prety_print_name(char name[8], char ext[3])
         putchar('.');
         for (int i = 0; i < 3; i++)
         {
-            if (ext[i] != 0)
+            if (ext[i] != ' ')
             {
                 putchar(ext[i]);
             }
         }
+    }
+}
+
+void print_file_stat(Fat16Entry *entry, int time, int date)
+{
+    if (date)
+    {
+        int year = (entry->modify_date >> 9) + 1980;
+        int month = (entry->modify_date >> 5) & 0b1111;
+        int day = (entry->modify_date) & 0b11111;
+        printf("%.4d.%.2d.%.2d", year, month, day);
+    }
+
+    if (time)
+    {
+        if (date)
+        {
+            putchar(' ');
+        }
+        int hours = (entry->modify_time >> 11);
+        int minutes = ((entry->modify_time >> 5) & 0b111111);
+        int seconds = (entry->modify_time & 0b11111) * 2;
+
+        printf("%.2d:%.2d:%.2d", hours, minutes, seconds);
     }
 }

@@ -3,3 +3,6 @@ all:
 
 clean:
 	rm -f fat
+
+reset:
+	cp base.img sd.img

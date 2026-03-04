@@ -93,7 +93,25 @@ int main(int argc, char **argv)
         fprintf(stdout, "\nRecursive read failed to find the file!\n");
     }
 
-    fat_print_tree(&fs);
+    fat_print_root_dir(&fs);
+
+    fat_change_dir(&fs, "ADR1");
+    fat_print_dir(&fs, fs.pwd_cluster);
+
+    Fat16Entry entry;
+    if (fat_find_file(&fs, "VYUKA", "JPG", &entry))
+    {
+        fat16entry_to_str(&entry);
+    }
+
+    fat_change_dir(&fs, "..");
+    fat_change_dir(&fs, "ADR2");
+    fat_print_dir(&fs, fs.pwd_cluster);
+
+    if (fat_find_file(&fs, "KOREN", "TXT", &entry))
+    {
+        fat16entry_to_str(&entry);
+    }
 
     fclose(data);
     return 0;
