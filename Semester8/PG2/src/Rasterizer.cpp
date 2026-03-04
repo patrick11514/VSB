@@ -336,23 +336,42 @@ void Rasterizer::LoadScene(const std::string &fileName)
     scene.meshes.push_back(newMesh);
   }
 
-  auto entity = registry.create();
-  registry.emplace<attributes::Name>(entity, fileName);
-  
-  std::vector<int> meshIndices;
-  for (size_t i = scene.meshes.size() - ai_scene->mNumMeshes;
-       i < scene.meshes.size(); ++i)
-  {
-    meshIndices.push_back(i);
-  }
-  registry.emplace<attributes::RenderMesh>(entity, meshIndices);
+  auto rootEntity = registry.create();
+  registry.emplace<attributes::Name>(rootEntity, fileName);
 
-  attributes::Transform transform;
-  transform.scale = glm::vec3(0.005f);
-  transform.rot = glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f);
-  transform.pos = glm::vec3(0.0f); // Default to 0
-  registry.emplace<attributes::Transform>(entity, transform);
-  registry.emplace<attributes::Togglable>(entity, true);
+  attributes::Transform rootTransform;
+  rootTransform.scale = glm::vec3(0.005f);
+  rootTransform.rot = glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f);
+  rootTransform.pos = glm::vec3(0.0f); // Default to 0
+  registry.emplace<attributes::Transform>(rootEntity, rootTransform);
+  registry.emplace<attributes::Togglable>(rootEntity, true);
+  
+  auto &childrenAttr = registry.emplace<attributes::Children>(rootEntity);
+
+  size_t startMeshIdx = scene.meshes.size() - ai_scene->mNumMeshes;
+  for (unsigned int i = 0; i < ai_scene->mNumMeshes; ++i)
+  {
+      auto childEntity = registry.create();
+      
+      std::string childName = ai_scene->mMeshes[i]->mName.length > 0 ? 
+                              ai_scene->mMeshes[i]->mName.C_Str() : 
+                              "Mesh " + std::to_string(i);
+      registry.emplace<attributes::Name>(childEntity, childName);
+      
+      attributes::Transform childTransform;
+      childTransform.scale = glm::vec3(1.0f); // Relative to parent
+      childTransform.rot = glm::vec3(0.0f);
+      childTransform.pos = glm::vec3(0.0f);
+      registry.emplace<attributes::Transform>(childEntity, childTransform);
+      
+      registry.emplace<attributes::Togglable>(childEntity, true);
+      registry.emplace<attributes::Parent>(childEntity, rootEntity);
+      
+      std::vector<int> meshIndices = { static_cast<int>(startMeshIdx + i) };
+      registry.emplace<attributes::RenderMesh>(childEntity, meshIndices);
+      
+      childrenAttr.entities.push_back(childEntity);
+  }
 }
 
 void Rasterizer::CreateAxes()
@@ -560,45 +579,77 @@ void Rasterizer::DrawUI()
   ImGui::Separator();
 
   ImGui::Text("Objects");
+  
+  auto drawEntity = [&](entt::entity entity, auto& drawEntityRef) -> void {
+      auto &nameAttr = registry.get<attributes::Name>(entity);
+      auto &transform = registry.get<attributes::Transform>(entity);
+      
+      bool hasChildren = registry.all_of<attributes::Children>(entity) && !registry.get<attributes::Children>(entity).entities.empty();
+      
+      ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+      if (!hasChildren)
+      {
+          flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+      }
+      
+      bool nodeOpen = ImGui::TreeNodeEx((void *)(intptr_t)entt::to_integral(entity), flags, "%s", nameAttr.name.c_str());
+      
+      if (nodeOpen || !hasChildren) // If it's a leaf, it doesn't push, so we just draw its controls
+      {
+          ImGui::PushID((int)entt::to_integral(entity));
+          
+          if (registry.all_of<attributes::Togglable>(entity))
+          {
+             auto &togglable = registry.get<attributes::Togglable>(entity);
+             ImGui::Checkbox("Visible", &togglable.visible);
+          }
+
+          if (!transform.useMatrix)
+          {
+            ImGui::DragFloat3("Position", glm::value_ptr(transform.pos), 0.1f);
+
+            glm::vec3 rotDegrees = glm::degrees(transform.rot);
+            if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotDegrees), 1.0f))
+            {
+              transform.rot = glm::radians(rotDegrees);
+            }
+
+            ImGui::DragFloat3("Scale", glm::value_ptr(transform.scale), 0.001f);
+          }
+          else
+          {
+              ImGui::Text("Transform is controlled by matrix externally (e.g. CameraSync).");
+          }
+
+          if (registry.all_of<attributes::RenderMesh>(entity))
+          {
+             auto &renderMesh = registry.get<attributes::RenderMesh>(entity);
+             if (renderMesh.meshIndices.size() > 0)
+                 ImGui::Text("Contained Meshes: %zu", renderMesh.meshIndices.size());
+          }
+          
+          if (hasChildren && nodeOpen)
+          {
+              auto &children = registry.get<attributes::Children>(entity);
+              for (auto child : children.entities)
+              {
+                  drawEntityRef(child, drawEntityRef);
+              }
+              ImGui::TreePop(); // Pop if we are a parent node and opened
+          }
+          
+          ImGui::PopID();
+      }
+  };
+
   auto view = registry.view<attributes::Name, attributes::Transform>();
   for (auto entity : view)
   {
-    auto &nameAttr = view.get<attributes::Name>(entity);
-    auto &transform = view.get<attributes::Transform>(entity);
-    
-    if (ImGui::TreeNode((void *)(intptr_t)entt::to_integral(entity), "%s", nameAttr.name.c_str()))
-    {
-      if (registry.all_of<attributes::Togglable>(entity))
+      // Only draw root entities (no Parents)
+      if (!registry.all_of<attributes::Parent>(entity))
       {
-         auto &togglable = registry.get<attributes::Togglable>(entity);
-         ImGui::Checkbox("Visible", &togglable.visible);
+          drawEntity(entity, drawEntity);
       }
-
-      if (!transform.useMatrix)
-      {
-        ImGui::DragFloat3("Position", glm::value_ptr(transform.pos), 0.1f);
-
-        glm::vec3 rotDegrees = glm::degrees(transform.rot);
-        if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotDegrees), 1.0f))
-        {
-          transform.rot = glm::radians(rotDegrees);
-        }
-
-        ImGui::DragFloat3("Scale", glm::value_ptr(transform.scale), 0.001f);
-      }
-      else
-      {
-          ImGui::Text("Transform is controlled by matrix externally (e.g. CameraSync).");
-      }
-
-      if (registry.all_of<attributes::RenderMesh>(entity))
-      {
-         auto &renderMesh = registry.get<attributes::RenderMesh>(entity);
-         ImGui::Text("Contained Meshes: %zu", renderMesh.meshIndices.size());
-      }
-      
-      ImGui::TreePop();
-    }
   }
 
   ImGui::End();

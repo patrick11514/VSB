@@ -41,6 +41,16 @@ namespace attributes
     {
     };
 
+    struct Parent
+    {
+        entt::entity entity;
+    };
+
+    struct Children
+    {
+        std::vector<entt::entity> entities;
+    };
+
     struct Mesh
     {
         // WIP - https://gemini.google.com/app/1368c6de5e3d1148
