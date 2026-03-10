@@ -12,6 +12,7 @@ struct FatFileSystem
     Fat16BootSector boot_sector;
     int current_file_index;
     Fat16Entry current_file;
+    uint32_t current_entry_offset;
     uint16_t pwd_cluster;
 };
 
@@ -25,5 +26,7 @@ int fat_find_file(FatFileSystem *self, const char *name, const char *ext, Fat16E
 int fat_change_dir(FatFileSystem *self, const char *dir_name);
 void fat_print_dir(FatFileSystem *self, uint16_t start_cluster);
 void fat_print_root_dir(FatFileSystem *self);
+int fat_write(FatFileSystem *self, const char *filename);
+int fat_delete(FatFileSystem *self, const char *filename);
 
 #endif

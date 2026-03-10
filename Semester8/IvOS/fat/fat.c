@@ -52,7 +52,8 @@ void fat_read_directory_entry(FatFileSystem *self, uint32_t dir_cluster)
     {
         /* Root directory is mapped sequentially without a FAT cluster chain */
         int root_dir_start_sector = get_root_dir_start_sector(self->selected_partition_table, &self->boot_sector);
-        read_at_byte(self->data, root_dir_start_sector * 512 + (self->current_file_index * sizeof(Fat16Entry)), &self->current_file, sizeof(Fat16Entry));
+        self->current_entry_offset = root_dir_start_sector * 512 + (self->current_file_index * sizeof(Fat16Entry));
+        read_at_byte(self->data, self->current_entry_offset, &self->current_file, sizeof(Fat16Entry));
     }
     else
     {
@@ -77,7 +78,8 @@ void fat_read_directory_entry(FatFileSystem *self, uint32_t dir_cluster)
                                  (self->boot_sector.root_dir_entries * sizeof(Fat16Entry)) / 512;
 
         int cluster_sector = data_sectors_start + (current_cluster - 2) * self->boot_sector.sectors_per_cluster;
-        read_at_byte(self->data, cluster_sector * 512 + (local_index * sizeof(Fat16Entry)), &self->current_file, sizeof(Fat16Entry));
+        self->current_entry_offset = cluster_sector * 512 + (local_index * sizeof(Fat16Entry));
+        read_at_byte(self->data, self->current_entry_offset, &self->current_file, sizeof(Fat16Entry));
     }
 }
 
@@ -173,6 +175,7 @@ int fat_change_dir(FatFileSystem *self, const char *dir_name)
     }
 
     self->pwd_cluster = entry.starting_cluster;
+    return 1;
 }
 
 // Print-f only implementation (for now)
@@ -210,7 +213,7 @@ void _print_dir(FatFileSystem *self, uint16_t start_cluster, uint8_t depth, int 
 
         if (classic)
         {
-            prety_print_name(sub_entry.filename, sub_entry.ext);
+            prety_print_name((char *)sub_entry.filename, (char *)sub_entry.ext);
         }
         else
         {
@@ -256,4 +259,179 @@ void fat_init(FatFileSystem *fs, FILE *data)
     fs->selected_partition_table = NULL;
     fs->current_file_index = -1;
     fs->pwd_cluster = 0;
+}
+
+static void set_fat_entry(FatFileSystem *self, uint16_t cluster, uint16_t value)
+{
+    for (int i = 0; i < self->boot_sector.number_of_fats; i++)
+    {
+        uint32_t fat_start_sector = get_fat_start_sector(self->selected_partition_table, &self->boot_sector, i);
+        uint32_t offset_bytes = cluster * 2;
+        write_at_byte(self->data, fat_start_sector * 512 + offset_bytes, &value, 2);
+    }
+}
+
+static uint16_t find_free_cluster(FatFileSystem *self)
+{
+    for (uint16_t i = 2; i <= 0xFFEF; i++)
+    {
+        if (get_fat_entry(self, i) == 0x0000)
+        {
+            return i;
+        }
+    }
+    return 0;
+}
+
+static uint32_t find_free_dir_entry(FatFileSystem *self, uint32_t dir_cluster)
+{
+    int old_index = self->current_file_index;
+    self->current_file_index = -1;
+
+    int max_entries = (dir_cluster == 0) ? self->boot_sector.root_dir_entries : 65535;
+
+    for (int i = 0; i < max_entries; i++)
+    {
+        fat_read_directory_entry(self, dir_cluster);
+        
+        if (self->current_file.filename[0] == 0x00 || (unsigned char)self->current_file.filename[0] == 0xE5)
+        {
+            uint32_t offset = self->current_entry_offset;
+            self->current_file_index = old_index;
+            return offset;
+        }
+    }
+    self->current_file_index = old_index;
+    return 0;
+}
+
+int fat_delete(FatFileSystem *self, const char *filename)
+{
+    Fat16Entry entry;
+    char name[9] = {0};
+    char ext[4] = {0};
+    const char *dot = strchr(filename, '.');
+    if (dot)
+    {
+        int name_len = dot - filename;
+        if (name_len > 8) name_len = 8;
+        strncpy(name, filename, name_len);
+        strncpy(ext, dot + 1, 3);
+    }
+    else
+    {
+        strncpy(name, filename, 8);
+    }
+    
+    if (!fat_find_file(self, name, ext, &entry))
+    {
+        return 0; // file not found
+    }
+
+    uint32_t entry_offset = self->current_entry_offset;
+
+    // mark clusters as free
+    uint16_t cluster = entry.starting_cluster;
+    while (cluster >= 2 && cluster <= 0xFFEF)
+    {
+        uint16_t next_cluster = get_fat_entry(self, cluster);
+        set_fat_entry(self, cluster, 0x0000); // mark free
+        cluster = next_cluster;
+    }
+
+    // mark dir entry deleted
+    entry.filename[0] = 0xE5;
+    write_at_byte(self->data, entry_offset, &entry, sizeof(Fat16Entry));
+
+    return 1;
+}
+
+int fat_write(FatFileSystem *self, const char *filename)
+{
+    char name[9] = {0};
+    char ext[4] = {0};
+    const char *dot = strchr(filename, '.');
+    if (dot)
+    {
+        int name_len = dot - filename;
+        if (name_len > 8) name_len = 8;
+        strncpy(name, filename, name_len);
+        strncpy(ext, dot + 1, 3);
+    }
+    else
+    {
+        strncpy(name, filename, 8);
+    }
+
+    uint32_t entry_offset = find_free_dir_entry(self, self->pwd_cluster);
+    if (entry_offset == 0)
+    {
+        printf("No free directory entry found\n");
+        return 0;
+    }
+
+    Fat16Entry new_entry;
+    memset(&new_entry, 0, sizeof(Fat16Entry));
+
+    memset(new_entry.filename, ' ', 8);
+    memset(new_entry.ext, ' ', 3);
+    for (int i = 0; i < 8 && name[i]; i++) new_entry.filename[i] = name[i];
+    for (int i = 0; i < 3 && ext[i]; i++) new_entry.ext[i] = ext[i];
+
+    new_entry.attributes = 0x20; // Archive
+
+    uint16_t first_cluster = 0;
+    uint16_t last_cluster = 0;
+    uint32_t file_size = 0;
+
+    // calculate bytes per cluster
+    uint32_t bytes_per_cluster = self->boot_sector.sectors_per_cluster * 512;
+    uint8_t *cluster_buffer = allocate_memory(bytes_per_cluster);
+    if (!cluster_buffer) return 0;
+
+    uint32_t data_start_sector = get_root_dir_start_sector(self->selected_partition_table, &self->boot_sector) +
+                                 (self->boot_sector.root_dir_entries * sizeof(Fat16Entry)) / 512;
+
+    size_t bytes_read;
+    while ((bytes_read = fread(cluster_buffer, 1, bytes_per_cluster, stdin)) > 0)
+    {
+        uint16_t new_cluster = find_free_cluster(self);
+        if (new_cluster == 0)
+        {
+            printf("Disk full\n");
+            break;
+        }
+
+        set_fat_entry(self, new_cluster, 0xFFFF); // Mark EOC
+
+        if (first_cluster == 0)
+        {
+            first_cluster = new_cluster;
+        }
+        else
+        {
+            set_fat_entry(self, last_cluster, new_cluster); // Link
+        }
+
+        // write data to cluster
+        uint32_t cluster_sector = data_start_sector + (new_cluster - 2) * self->boot_sector.sectors_per_cluster;
+        write_at_byte(self->data, cluster_sector * 512, cluster_buffer, bytes_read); // write only the file data read; we can leave the rest unchanged or zero it out.
+
+        last_cluster = new_cluster;
+        file_size += bytes_read;
+        
+        if (bytes_read < bytes_per_cluster)
+        {
+            break; // EOF reached during fread if less bytes than chunk read
+        }
+    }
+
+    free_memory(cluster_buffer);
+
+    new_entry.starting_cluster = first_cluster;
+    new_entry.file_size = file_size;
+
+    write_at_byte(self->data, entry_offset, &new_entry, sizeof(Fat16Entry));
+
+    return 1;
 }
