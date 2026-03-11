@@ -50,6 +50,8 @@ int main(int argc, char **argv)
     PartitionTable pt[4];
 
     fat_read_partitions(&fs, pt);
+    fat_select_partition_table(&fs, &pt[0]);
+    fat_read_boot_sector(&fs);
 
     if (argc > 1 && strcmp(argv[1], "print") == 0)
     {
@@ -61,8 +63,6 @@ int main(int argc, char **argv)
         }
 
         printf("\nSeeking to first partition by %d sectors\n", pt[0].start_sector);
-        fat_select_partition_table(&fs, &pt[0]);
-        fat_read_boot_sector(&fs);
 
         printf("Volume_label %.11s, %d sectors size\n", fs.boot_sector.volume_label, fs.boot_sector.sector_size);
 
@@ -92,7 +92,7 @@ int main(int argc, char **argv)
             fprintf(stdout, "\nRecursive read failed to find the file!\n");
         }
 
-        //Reset current dir
+        // Reset current dir
         fs.pwd_cluster = 0;
 
         printf("==== Root directory listing ====\n");
@@ -114,7 +114,6 @@ int main(int argc, char **argv)
         printf("==== ADR2 directory listing ====\n");
         fat_print_dir(&fs, fs.pwd_cluster);
 
-
         if (fat_find_file(&fs, "KOREN", "TXT", &entry))
         {
             fat16entry_to_str(&entry);
@@ -123,9 +122,6 @@ int main(int argc, char **argv)
     }
     else if (argc > 1 && strcmp(argv[1], "write") == 0 && argc > 2)
     {
-        fat_select_partition_table(&fs, &pt[0]);
-        fat_read_boot_sector(&fs);
-
         printf("Testing write to %s...\n", argv[2]);
         if (fat_write(&fs, argv[2]))
         {
@@ -134,9 +130,6 @@ int main(int argc, char **argv)
     }
     else if (argc > 1 && strcmp(argv[1], "delete") == 0 && argc > 2)
     {
-        fat_select_partition_table(&fs, &pt[0]);
-        fat_read_boot_sector(&fs);
-
         printf("Testing delete of %s...\n", argv[2]);
         if (fat_delete(&fs, argv[2]))
         {

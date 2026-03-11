@@ -34,4 +34,6 @@ echo "=== Iteration 3: Writing another file to reuse deleted space ==="
 echo "=== Final state of filesystem ==="
 ./fat print
 
-fsck.vfat sd.img
+sudo losetup --offset 1048576 -f --show sd.img
+sudo fsck.vfat -v /dev/loop0
+sudo losetup -d /dev/loop0
