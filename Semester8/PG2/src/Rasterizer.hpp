@@ -2,11 +2,11 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <entt/entt.hpp>
 #include <glm/glm.hpp>
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
-#include <entt/entt.hpp>
 
 // Forward declarations
 class ShaderProgram;
@@ -15,19 +15,20 @@ class Controller;
 
 #include "system/ISystem.hpp"
 
-struct GPUMaterial
-{
+struct GPUMaterial {
   alignas(16) glm::vec4 ambient;  // w = padding
   alignas(16) glm::vec4 diffuse;  // w = padding
   alignas(16) glm::vec4 specular; // w = shininess
   alignas(16) glm::vec4
-      textureInfo; // x = type (0 = color, 1 = texture), y = textureIndex
+      pbrTextureTypes; // x=albedo, y=normal, z=metallic, w=roughness (0 =
+                       // color/default, 1 = texture)
+  alignas(16) glm::vec4
+      pbrTextureIndices; // x=albedo, y=normal, z=metallic, w=roughness
+  alignas(16) glm::vec4 pbrTextureTypes2;   // x=ao (0 = default, 1 = texture)
+  alignas(16) glm::vec4 pbrTextureIndices2; // x=ao
 };
 
-
-
-struct Mesh
-{
+struct Mesh {
   GLuint vao;
   GLuint vbo;
   GLuint ebo;
@@ -35,15 +36,13 @@ struct Mesh
   int materialIndex;
 };
 
-struct SceneData
-{
+struct SceneData {
   std::vector<Mesh> meshes;
   std::vector<GPUMaterial> materials;
   std::vector<GLuint> textureIds;
 };
 
-class Rasterizer
-{
+class Rasterizer {
 private:
   int width;
   int height;
@@ -60,6 +59,10 @@ private:
   entt::registry registry;
   std::vector<std::unique_ptr<ISystem>> systems;
 
+  GLuint irradianceMap = 0;
+  GLuint prefilteredMap = 0;
+  GLuint brdfLUTMap = 0;
+
   friend class RenderSystem;
 
 public:
@@ -75,8 +78,7 @@ public:
   Rasterizer(int width, int height, const char *title);
   ~Rasterizer();
 
-  void resize(int w, int h)
-  {
+  void resize(int w, int h) {
     width = w;
     height = h;
     glViewport(0, 0, width, height);
@@ -88,5 +90,10 @@ public:
   void CreateAxes();
   void InitBuffers();
   void InitMaterials(int bindingPoint);
+  void InitIBLTextures();
+  void LoadEXRTexture(const char *filepath, GLuint &texID, bool isSrgb = false,
+                      bool isMipmap = false);
+  void LoadPrefilteredEnvMap(const std::vector<std::string> &filepaths,
+                             GLuint &texID);
   void MainLoop();
 };
