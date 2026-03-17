@@ -9,5 +9,7 @@
     <file url="file://$PROJECT_DIR$/C02/sqlserver.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/C03/oracle.sql" dialect="OracleSqlPlus" />
     <file url="file://$PROJECT_DIR$/C03/sql.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/C04/oracle.sql" dialect="OracleSqlPlus" />
+    <file url="file://$PROJECT_DIR$/C04/sql.sql" dialect="TSQL" />
   </component>
 </project>
