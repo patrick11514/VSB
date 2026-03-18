@@ -1,3 +1,6 @@
+start: join
+	qemu-system-x86_64 -drive file=disk.img,format=raw
+
 join: build link 
 	cat boot.bin kernel.bin > disk.img
 
