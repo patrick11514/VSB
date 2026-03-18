@@ -293,7 +293,7 @@ static uint32_t find_free_dir_entry(FatFileSystem *self, uint32_t dir_cluster)
     for (int i = 0; i < max_entries; i++)
     {
         fat_read_directory_entry(self, dir_cluster);
-        
+
         if (self->current_file.filename[0] == 0x00 || (unsigned char)self->current_file.filename[0] == 0xE5)
         {
             uint32_t offset = self->current_entry_offset;
@@ -314,7 +314,8 @@ int fat_delete(FatFileSystem *self, const char *filename)
     if (dot)
     {
         int name_len = dot - filename;
-        if (name_len > 8) name_len = 8;
+        if (name_len > 8)
+            name_len = 8;
         strncpy(name, filename, name_len);
         strncpy(ext, dot + 1, 3);
     }
@@ -322,7 +323,7 @@ int fat_delete(FatFileSystem *self, const char *filename)
     {
         strncpy(name, filename, 8);
     }
-    
+
     if (!fat_find_file(self, name, ext, &entry))
     {
         return 0; // file not found
@@ -346,7 +347,7 @@ int fat_delete(FatFileSystem *self, const char *filename)
     return 1;
 }
 
-int fat_write(FatFileSystem *self, const char *filename)
+int fat_write(FatFileSystem *self, const char *filename, FILE *in_stream)
 {
     char name[9] = {0};
     char ext[4] = {0};
@@ -354,7 +355,8 @@ int fat_write(FatFileSystem *self, const char *filename)
     if (dot)
     {
         int name_len = dot - filename;
-        if (name_len > 8) name_len = 8;
+        if (name_len > 8)
+            name_len = 8;
         strncpy(name, filename, name_len);
         strncpy(ext, dot + 1, 3);
     }
@@ -375,8 +377,10 @@ int fat_write(FatFileSystem *self, const char *filename)
 
     memset(new_entry.filename, ' ', 8);
     memset(new_entry.ext, ' ', 3);
-    for (int i = 0; i < 8 && name[i]; i++) new_entry.filename[i] = name[i];
-    for (int i = 0; i < 3 && ext[i]; i++) new_entry.ext[i] = ext[i];
+    for (int i = 0; i < 8 && name[i]; i++)
+        new_entry.filename[i] = name[i];
+    for (int i = 0; i < 3 && ext[i]; i++)
+        new_entry.ext[i] = ext[i];
 
     new_entry.attributes = 0x20; // Archive
 
@@ -387,13 +391,14 @@ int fat_write(FatFileSystem *self, const char *filename)
     // calculate bytes per cluster
     uint32_t bytes_per_cluster = self->boot_sector.sectors_per_cluster * 512;
     uint8_t *cluster_buffer = allocate_memory(bytes_per_cluster);
-    if (!cluster_buffer) return 0;
+    if (!cluster_buffer)
+        return 0;
 
     uint32_t data_start_sector = get_root_dir_start_sector(self->selected_partition_table, &self->boot_sector) +
                                  (self->boot_sector.root_dir_entries * sizeof(Fat16Entry)) / 512;
 
     size_t bytes_read;
-    while ((bytes_read = fread(cluster_buffer, 1, bytes_per_cluster, stdin)) > 0)
+    while ((bytes_read = fread(cluster_buffer, 1, bytes_per_cluster, in_stream)) > 0)
     {
         uint16_t new_cluster = find_free_cluster(self);
         if (new_cluster == 0)
@@ -419,7 +424,7 @@ int fat_write(FatFileSystem *self, const char *filename)
 
         last_cluster = new_cluster;
         file_size += bytes_read;
-        
+
         if (bytes_read < bytes_per_cluster)
         {
             break; // EOF reached during fread if less bytes than chunk read

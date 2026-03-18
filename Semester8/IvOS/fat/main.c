@@ -123,7 +123,7 @@ int main(int argc, char **argv)
     else if (argc > 1 && strcmp(argv[1], "write") == 0 && argc > 2)
     {
         printf("Testing write to %s...\n", argv[2]);
-        if (fat_write(&fs, argv[2]))
+        if (fat_write(&fs, argv[2], stdin))
         {
             printf("Write successful.\n");
         }

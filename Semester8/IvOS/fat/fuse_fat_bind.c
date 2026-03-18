@@ -2,6 +2,8 @@
 #include <errno.h>
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
 
 const char *cd_dir(const char *path, int last_dir)
 {
@@ -254,6 +256,137 @@ int bind_read(const char *path, char *buf, size_t size, off_t offset,
     }
     else
         size = 0;
+
+    return size;
+}
+
+int bind_unlink(const char *path)
+{
+    printf("[LOG] Unlinking file '%s'\n", path);
+
+    path = cd_dir(path, 1);
+    if (path == 0)
+    {
+        return -ENOENT;
+    }
+
+    if (fat_delete(&fs, path) != 1)
+    {
+        return -ENOENT;
+    }
+
+    return 0;
+}
+
+int bind_create(const char *path, mode_t mode, struct fuse_file_info *fi)
+{
+    (void)mode;
+    (void)fi;
+    printf("[LOG] Creating file '%s'\n", path);
+
+    path = cd_dir(path, 1);
+    if (path == 0)
+    {
+        return -ENOENT;
+    }
+
+    // if file already exists, return -EEXIST
+    char name[9] = {0};
+    char ext[4] = {0};
+    const char *dot = strchr(path, '.');
+    if (dot)
+    {
+        int name_len = dot - path;
+        if (name_len > 8)
+            name_len = 8;
+        strncpy(name, path, name_len);
+        strncpy(ext, dot + 1, 3);
+    }
+    else
+    {
+        strncpy(name, path, 8);
+    }
+
+    Fat16Entry entry;
+    if (fat_find_file(&fs, name, ext, &entry))
+    {
+        return -EEXIST;
+    }
+
+    // create empty file
+    FILE *tmp = tmpfile();
+    if (!tmp)
+        return -EIO;
+
+    int res = fat_write(&fs, path, tmp);
+
+    fclose(tmp);
+
+    if (res != 1)
+    {
+        return -EIO;
+    }
+
+    return 0;
+}
+
+int bind_write(const char *path, const char *buf, size_t size, off_t offset,
+               struct fuse_file_info *fi)
+{
+    (void)fi;
+    printf("[LOG] Writing file '%s' with size %zu and offset %zu\n", path, size, offset);
+
+    path = cd_dir(path, 1);
+    if (path == 0)
+    {
+        return -ENOENT;
+    }
+
+    if (open_file(path) != 0)
+    {
+        return -ENOENT;
+    }
+
+    size_t file_size = fs.current_file.file_size;
+    size_t new_size = offset + size > file_size ? offset + size : file_size;
+
+    char *file_buffer = calloc(1, new_size);
+    if (!file_buffer)
+        return -ENOMEM;
+
+    if (file_size > 0)
+    {
+        FILE *stream = fmemopen(file_buffer, file_size, "w");
+        if (stream)
+        {
+            fat_read_file(&fs, &fs.current_file, stream);
+            fclose(stream);
+        }
+    }
+
+    memcpy(file_buffer + offset, buf, size);
+
+    fat_delete(&fs, path);
+
+    FILE *tmp = tmpfile();
+    if (!tmp)
+    {
+        free(file_buffer);
+        return -EIO;
+    }
+
+    fwrite(file_buffer, 1, new_size, tmp);
+    rewind(tmp);
+
+    int res = fat_write(&fs, path, tmp);
+
+    fclose(tmp);
+    free(file_buffer);
+
+    if (res != 1)
+    {
+        return -EIO;
+    }
 
     return size;
 }

@@ -59,6 +59,9 @@ static const struct fuse_operations hello_oper = {
     .readdir = bind_readdir,
     .open = bind_open,
     .read = bind_read,
+    .write = bind_write,
+    .create = bind_create,
+    .unlink = bind_unlink,
 };
 
 static void show_help(const char *progname)
