@@ -27,6 +27,7 @@ class S256Point(Point):
         return super().__rmul__(coef)
 
     def sec(self, compressed=True):
+    #TODO 5: SEC Uncompressed and Compressed SEC Format
         if compressed:
             if self.y.num % 2 == 0:
                 return b'\x02' + self.x.num.to_bytes(32, 'big')
@@ -36,6 +37,7 @@ class S256Point(Point):
             return b'\x04' + self.x.num.to_bytes(32, 'big') + self.y.num.to_bytes(32, 'big')
 
     def address(self, compressed=True, network="mainnet"):
+    # TODO 4: Address
         h160 = hash160(self.sec(compressed))
         if network in ("testnet", "signet"):
             prefix = b'\x6f'

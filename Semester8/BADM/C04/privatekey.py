@@ -23,12 +23,11 @@ class PrivateKey:
         return f"{self.secret:x}".zfill(64)
 
     def sign(self, z):
+        # TODO 1: Sign
         k = randint(1, N - 1)
         r = (k * G).x.num
         k_inv = pow(k, -1, N)
         s = (z + r * self.secret) * k_inv % N
-        if s > N / 2:
-            s = N - s
         return Signature(r, s)
 
 

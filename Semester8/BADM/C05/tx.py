@@ -99,8 +99,21 @@ class Tx:
     def parse(cls, s, testnet=False):
         # return cls(version, inputs, outputs, locktime, testnet=testnet)
         #TODO 3: Parse the transaction data from the stream and return a Tx object
+        version = little_endian_to_int(s.read(4))
 
-        raise NotImplementedError
+        inputs = []
+        num_inputs = read_varint(s)
+        for _ in range(num_inputs):
+            inputs.append(TxIn.parse(s))
+
+        outputs = []
+        num_outputs = read_varint(s)
+        for _ in range(num_outputs):
+            outputs.append(TxOut.parse(s))
+        
+        lock_time = little_endian_to_int(s.read(4))
+
+        return cls(version, inputs, outputs, lock_time, testnet=testnet)
     
     def serialize(self):
         result = int_to_little_endian(self.version, 4)
@@ -115,8 +128,15 @@ class Tx:
 
     def fee(self):
         #TODO 4: Calculate the fee of the transaction
+        ins = 0
+        for txIn in self.tx_ins:
+            ins += txIn.value()
+        
+        outs = 0
+        for txOut in self.tx_outs:
+            outs += txOut.amount
 
-        raise NotImplementedError
+        return ins - outs
 
 
 class TxIn:

@@ -34,6 +34,7 @@ def hash256(s):
     return hashlib.sha256(hashlib.sha256(s).digest()).digest()
 
 def encode_base58(s):
+    #TODO 3: Implement base58 encode (use BASE58_ALPHABET)
     count = 0
     for c in s:
         if c == 0:

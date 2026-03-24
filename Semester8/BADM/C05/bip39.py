@@ -10,8 +10,14 @@ class Bip39:
     
     def generate_seed(self, password=None):
         #TODO 1: Implement the generate_seed method that takes an optional password and returns the seed and the mnemonic phrase.
-        
-        raise NotImplementedError
+
+        phrase = self.mnemo.generate()
+        if password is None:
+            seed = self.mnemo.to_seed(phrase)
+        else:
+            seed = self.mnemo.to_seed(phrase, passphrase=password)
+
+        return seed, phrase
 
     def generate_private_key(self, seed):
         wallet = network.keys.bip32_seed(seed)
@@ -23,8 +29,13 @@ class Bip39:
 
     def backup_from_mnemonic(self, phrase, password=None):
         #TODO 2: Implement the backup_from_mnemonic method that takes a mnemonic phrase and an optional password and returns the seed.
-        
-        raise NotImplementedError
+
+        if password is None:
+            seed = self.mnemo.to_seed(phrase)
+        else:
+            seed = self.mnemo.to_seed(phrase, passphrase=password)
+
+        return seed
 
 class Bip39Test(TestCase):
     def setUp(self):

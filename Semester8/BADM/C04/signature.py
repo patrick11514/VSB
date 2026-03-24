@@ -24,6 +24,7 @@ class Signature:
         return f"Signature({self.r:x},{self.s:x})"
 
     def der(self):
+        #TODO 2: Implement DER signature
         rbin = self.r.to_bytes(32, byteorder='big')
         rbin = rbin.lstrip(b'\x00')
         if rbin[0] & 0x80:
