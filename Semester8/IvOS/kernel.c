@@ -1,3 +1,4 @@
+#include "cli.h"
 #include "drivers/ide.h"
 #include "drivers/keyboard.h"
 #include "drivers/serial.h"
@@ -28,15 +29,5 @@ void kernel_main()
 
   serial_print("PleiadOS booted successfully!\n");
 
-  // Simple keyboard echo loop to test
-  vga_print("Type something (basic ASCII): ");
-  while (1)
-  {
-    char c = keyboard_getchar();
-    if (c)
-    {
-      vga_putchar(c);
-      serial_putchar(c);
-    }
-  }
+  cli_loop();
 }

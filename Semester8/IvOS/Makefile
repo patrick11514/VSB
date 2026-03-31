@@ -1,14 +1,35 @@
 CC = gcc
 CFLAGS = -m32 -ffreestanding -fno-stack-protector -fno-pie -O0
 
-SRCS = kernel.c drivers/vga.c drivers/serial.c drivers/keyboard.c drivers/ide.c
+SRCS = kernel.c cli.c drivers/vga.c drivers/serial.c drivers/keyboard.c drivers/ide.c
 OBJS = $(SRCS:.c=.o)
 
 start: join
 	qemu-system-x86_64 -drive file=disk.img,format=raw -serial stdio
 
-join: build link 
+join: build link apps
 	cat boot.bin kernel.bin > disk.img
+	dd if=/dev/zero of=disk.img bs=1M seek=10 count=1 conv=notrunc
+	dd if=apps/header_hello.bin of=disk.img bs=512 seek=100 conv=notrunc
+	dd if=apps/hello.bin of=disk.img bs=512 seek=101 conv=notrunc
+	dd if=apps/header_factory.bin of=disk.img bs=512 seek=110 conv=notrunc
+	dd if=apps/factory.bin of=disk.img bs=512 seek=111 conv=notrunc
+
+apps: apps/build_header
+# HELLO PROGRAM
+	$(CC) $(CFLAGS) -c apps/hello.c -o apps/hello.o
+	ld -m elf_i386 -T apps/link.ld apps/hello.o -o apps/hello.elf
+	objcopy -O binary apps/hello.elf apps/hello.bin
+	apps/build_header apps/header_hello.bin hello 101 0x2000 1
+# FACTORIO
+	$(CC) $(CFLAGS) -c apps/factory.c -o apps/factory.o
+	ld -m elf_i386 -T apps/link.ld apps/factory.o -o apps/factory.elf
+	objcopy -O binary apps/factory.elf apps/factory.bin
+	apps/build_header apps/header_factory.bin factory 111 0x2000 20
+
+apps/build_header: apps/build_header.c
+	gcc $< -o $@
+
 
 build: boot.asm
 	nasm boot.asm -o boot.bin
@@ -23,4 +44,4 @@ link: switch.o $(OBJS)
 	ld -m elf_i386 -Ttext 0x7e00 --oformat binary switch.o $(OBJS) -o kernel.bin
 
 clean:
-	rm -f *.o drivers/*.o *.bin disk.img
+	rm -f *.o drivers/*.o apps/*.o *.bin disk.img apps/build_header apps/*.elf apps/*.bin

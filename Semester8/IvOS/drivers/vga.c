@@ -49,6 +49,15 @@ void vga_putchar(char c) {
   if (c == '\n') {
     vga_x = 0;
     vga_y++;
+  } else if (c == '\b' || c == 8) {
+    if (vga_x > 0) {
+      vga_x--;
+    } else if (vga_y > 0) {
+      vga_y--;
+      vga_x = VGA_WIDTH - 1;
+    }
+    const size_t index = vga_y * VGA_WIDTH + vga_x;
+    vga_buffer[index] = vga_entry(' ', vga_color);
   } else {
     const size_t index = vga_y * VGA_WIDTH + vga_x;
     vga_buffer[index] = vga_entry(c, vga_color);
