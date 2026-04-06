@@ -25,7 +25,7 @@ apps: apps/build_header
 	$(CC) $(CFLAGS) -c apps/factory.c -o apps/factory.o
 	ld -m elf_i386 -T apps/link.ld apps/factory.o -o apps/factory.elf
 	objcopy -O binary apps/factory.elf apps/factory.bin
-	apps/build_header apps/header_factory.bin factory 111 0x2000 20
+	apps/build_header apps/header_factory.bin factory 111 0x2000 32
 
 apps/build_header: apps/build_header.c
 	gcc $< -o $@
