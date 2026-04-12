@@ -31,5 +31,7 @@ void fat_print_root_dir(FatFileSystem *self);
 int fat_write(FatFileSystem *self, const char *filename, const void *in_buffer,
               uint32_t size);
 int fat_delete(FatFileSystem *self, const char *filename);
+int fat_mkdir(FatFileSystem *self, const char *dirname);
+int fat_rmdir(FatFileSystem *self, const char *dirname);
 
 #endif

@@ -106,9 +106,11 @@ static void print_fat_name(const Fat16Entry *entry) {
 
 #define APP_LOAD_ADDR 0x100000
 #define APP_MAX_SIZE (512 * 1024)
+#define CLI_WRITE_BUFFER_SIZE (64 * 1024)
 
 // --- CLI State ---
 static uint8_t disk_buffer[512];
+static uint8_t write_buffer[CLI_WRITE_BUFFER_SIZE];
 static char cli_current_path[128] = "/";
 
 #define LINE_MAX 128
@@ -458,6 +460,394 @@ static void normalize_path(const char *base, const char *input, char *out,
   out[pos] = '\0';
 }
 
+static int split_parent_leaf(const char *path, char *parent, int parent_len,
+                             char *leaf, int leaf_len) {
+  int last_slash = -1;
+  int len = 0;
+
+  if (!path || !parent || !leaf || parent_len <= 0 || leaf_len <= 0)
+    return 0;
+
+  while (path[len] != '\0') {
+    if (path[len] == '/')
+      last_slash = len;
+    len++;
+  }
+
+  if (len == 0)
+    return 0;
+
+  if (last_slash < 0) {
+    if (len >= leaf_len)
+      return 0;
+    parent[0] = '\0';
+    memcpy(leaf, path, len + 1);
+    return 1;
+  }
+
+  if (last_slash == len - 1)
+    return 0;
+
+  if (last_slash == 0) {
+    if (parent_len < 2)
+      return 0;
+    parent[0] = '/';
+    parent[1] = '\0';
+  } else {
+    if (last_slash >= parent_len)
+      return 0;
+    memcpy(parent, path, (size_t)last_slash);
+    parent[last_slash] = '\0';
+  }
+
+  int leaf_len_value = len - last_slash - 1;
+  if (leaf_len_value >= leaf_len)
+    return 0;
+  memcpy(leaf, path + last_slash + 1, (size_t)leaf_len_value);
+  leaf[leaf_len_value] = '\0';
+  return 1;
+}
+
+static int resolve_parent_cluster(const char *path, uint16_t *out_cluster,
+                                  char *leaf, int leaf_len) {
+  char parent[128];
+
+  if (!split_parent_leaf(path, parent, (int)sizeof(parent), leaf, leaf_len))
+    return 0;
+
+  if (parent[0] == '\0') {
+    if (out_cluster)
+      *out_cluster = g_fat_fs.pwd_cluster;
+    return 1;
+  }
+
+  return resolve_path(parent, 1, out_cluster, NULL, NULL);
+}
+
+static int resolve_existing_file(const char *path, uint16_t *out_parent_cluster,
+                                 char *leaf, int leaf_len,
+                                 Fat16Entry *out_entry) {
+  uint16_t parent_cluster = 0;
+
+  if (!resolve_parent_cluster(path, &parent_cluster, leaf, leaf_len))
+    return 0;
+
+  if (!find_entry_in_dir(&g_fat_fs, parent_cluster, leaf, out_entry))
+    return 0;
+
+  if (out_entry->attributes & 0x10)
+    return 0;
+
+  if (out_parent_cluster)
+    *out_parent_cluster = parent_cluster;
+  return 1;
+}
+
+static int write_bytes_to_dir(uint16_t parent_cluster, const char *leaf,
+                              const void *buffer, uint32_t size) {
+  uint16_t saved_pwd = g_fat_fs.pwd_cluster;
+  Fat16Entry existing;
+  int result;
+
+  g_fat_fs.pwd_cluster = parent_cluster;
+
+  if (find_entry_in_dir(&g_fat_fs, parent_cluster, leaf, &existing)) {
+    if (existing.attributes & 0x10) {
+      g_fat_fs.pwd_cluster = saved_pwd;
+      return 0;
+    }
+    if (!fat_delete(&g_fat_fs, leaf)) {
+      g_fat_fs.pwd_cluster = saved_pwd;
+      return 0;
+    }
+  }
+
+  result = fat_write(&g_fat_fs, leaf, buffer, size);
+  g_fat_fs.pwd_cluster = saved_pwd;
+  return result;
+}
+
+static uint32_t collect_write_input(uint8_t *buffer, uint32_t max_size) {
+  uint32_t size = 0;
+
+  while (1) {
+    char c = keyboard_getchar();
+
+    if (c == 4) {
+      vga_putchar('\n');
+      return size;
+    }
+
+    if (c == '\r') {
+      c = '\n';
+    }
+
+    if (c == '\b' || c == 8) {
+      if (size > 0) {
+        size--;
+        vga_putchar('\b');
+      }
+      continue;
+    }
+
+    if (c == '\n' || c == '\t' || (c >= 32 && c <= 126)) {
+      if (size >= max_size) {
+        vga_print("\nwrite: input too large\n");
+        return 0xFFFFFFFF;
+      }
+
+      buffer[size++] = (uint8_t)c;
+      vga_putchar(c);
+    }
+  }
+}
+
+static void do_write_file(const char *path) {
+  uint16_t parent_cluster = 0;
+  char leaf[128];
+  Fat16Entry existing;
+  uint32_t size;
+
+  if (!resolve_parent_cluster(path, &parent_cluster, leaf, (int)sizeof(leaf))) {
+    vga_print("write: invalid path\n");
+    return;
+  }
+
+  if (!make_fat_83_name(leaf, existing.filename, existing.ext)) {
+    vga_print("write: invalid file name\n");
+    return;
+  }
+
+  if (find_entry_in_dir(&g_fat_fs, parent_cluster, leaf, &existing) &&
+      (existing.attributes & 0x10)) {
+    vga_print("write: target is a directory\n");
+    return;
+  }
+
+  vga_print("Enter content, Ctrl+D to finish.\n");
+  size = collect_write_input(write_buffer, CLI_WRITE_BUFFER_SIZE);
+  if (size == 0xFFFFFFFF)
+    return;
+
+  if (!write_bytes_to_dir(parent_cluster, leaf, write_buffer, size)) {
+    vga_print("write: failed to write file\n");
+  }
+}
+
+static void do_touch(const char *path) {
+  uint16_t parent_cluster = 0;
+  char leaf[128];
+  Fat16Entry existing;
+  static uint8_t empty_buffer;
+
+  if (!resolve_parent_cluster(path, &parent_cluster, leaf, (int)sizeof(leaf))) {
+    vga_print("touch: invalid path\n");
+    return;
+  }
+
+  if (find_entry_in_dir(&g_fat_fs, parent_cluster, leaf, &existing) &&
+      (existing.attributes & 0x10)) {
+    vga_print("touch: target is a directory\n");
+    return;
+  }
+
+  if (!write_bytes_to_dir(parent_cluster, leaf, &empty_buffer, 0)) {
+    vga_print("touch: failed to create file\n");
+  }
+}
+
+static void do_rm(const char *path) {
+  uint16_t parent_cluster = 0;
+  char leaf[128];
+  Fat16Entry existing;
+  uint16_t saved_pwd;
+
+  if (!resolve_existing_file(path, &parent_cluster, leaf, (int)sizeof(leaf),
+                             &existing)) {
+    vga_print("rm: file not found: ");
+    vga_print(path);
+    vga_print("\n");
+    return;
+  }
+
+  saved_pwd = g_fat_fs.pwd_cluster;
+  g_fat_fs.pwd_cluster = parent_cluster;
+  if (!fat_delete(&g_fat_fs, leaf)) {
+    vga_print("rm: failed to delete file\n");
+  }
+  g_fat_fs.pwd_cluster = saved_pwd;
+}
+
+static void do_mkdir(const char *path) {
+  uint16_t parent_cluster = 0;
+  char leaf[128];
+  Fat16Entry existing;
+  uint16_t saved_pwd;
+
+  if (!resolve_parent_cluster(path, &parent_cluster, leaf, (int)sizeof(leaf))) {
+    vga_print("mkdir: invalid path\n");
+    return;
+  }
+
+  if (find_entry_in_dir(&g_fat_fs, parent_cluster, leaf, &existing)) {
+    vga_print("mkdir: target already exists\n");
+    return;
+  }
+
+  saved_pwd = g_fat_fs.pwd_cluster;
+  g_fat_fs.pwd_cluster = parent_cluster;
+  if (!fat_mkdir(&g_fat_fs, leaf)) {
+    vga_print("mkdir: failed to create directory\n");
+  }
+  g_fat_fs.pwd_cluster = saved_pwd;
+}
+
+static void do_rmdir(const char *path) {
+  uint16_t parent_cluster = 0;
+  char leaf[128];
+  Fat16Entry existing;
+  uint16_t saved_pwd;
+
+  if (!resolve_parent_cluster(path, &parent_cluster, leaf, (int)sizeof(leaf))) {
+    vga_print("rmdir: invalid path\n");
+    return;
+  }
+
+  if (!find_entry_in_dir(&g_fat_fs, parent_cluster, leaf, &existing)) {
+    vga_print("rmdir: directory not found: ");
+    vga_print(path);
+    vga_print("\n");
+    return;
+  }
+
+  if (!(existing.attributes & 0x10)) {
+    vga_print("rmdir: target is not a directory\n");
+    return;
+  }
+
+  saved_pwd = g_fat_fs.pwd_cluster;
+  g_fat_fs.pwd_cluster = parent_cluster;
+  if (!fat_rmdir(&g_fat_fs, leaf)) {
+    vga_print("rmdir: directory is not empty or cannot be removed\n");
+  }
+  g_fat_fs.pwd_cluster = saved_pwd;
+}
+
+static void do_cp(const char *src_path, const char *dst_path) {
+  uint16_t src_parent = 0;
+  uint16_t dst_parent = 0;
+  char src_leaf[128];
+  char dst_leaf[128];
+  Fat16Entry src_entry;
+  Fat16Entry dst_entry;
+  void *buffer = NULL;
+  uint32_t size = 0;
+  int synthetic = 0;
+  uint16_t saved_pwd;
+
+  if (!resolve_existing_file(src_path, &src_parent, src_leaf,
+                             (int)sizeof(src_leaf), &src_entry)) {
+    vga_print("cp: source file not found: ");
+    vga_print(src_path);
+    vga_print("\n");
+    return;
+  }
+
+  if (resolve_path(dst_path, 1, &dst_parent, &dst_entry, &synthetic)) {
+    strcpy(dst_leaf, src_leaf);
+  } else {
+    if (!resolve_parent_cluster(dst_path, &dst_parent, dst_leaf,
+                                (int)sizeof(dst_leaf))) {
+      vga_print("cp: invalid destination path\n");
+      return;
+    }
+    if (find_entry_in_dir(&g_fat_fs, dst_parent, dst_leaf, &dst_entry)) {
+      if (dst_entry.attributes & 0x10) {
+        vga_print("cp: destination is a directory\n");
+        return;
+      }
+    }
+  }
+
+  if (src_parent == dst_parent && strcmp(src_leaf, dst_leaf) == 0) {
+    return;
+  }
+
+  if (!fat_read_file(&g_fat_fs, &src_entry, &buffer, &size) || !buffer) {
+    vga_print("cp: failed to read source file\n");
+    return;
+  }
+
+  saved_pwd = g_fat_fs.pwd_cluster;
+  g_fat_fs.pwd_cluster = dst_parent;
+  if (!write_bytes_to_dir(dst_parent, dst_leaf, buffer, size)) {
+    vga_print("cp: failed to write destination file\n");
+  }
+  g_fat_fs.pwd_cluster = saved_pwd;
+}
+
+static void do_mv(const char *src_path, const char *dst_path) {
+  uint16_t src_parent = 0;
+  uint16_t dst_parent = 0;
+  char src_leaf[128];
+  char dst_leaf[128];
+  Fat16Entry src_entry;
+  Fat16Entry dst_entry;
+  void *buffer = NULL;
+  uint32_t size = 0;
+  int synthetic = 0;
+  uint16_t saved_pwd;
+
+  if (!resolve_existing_file(src_path, &src_parent, src_leaf,
+                             (int)sizeof(src_leaf), &src_entry)) {
+    vga_print("mv: source file not found: ");
+    vga_print(src_path);
+    vga_print("\n");
+    return;
+  }
+
+  if (resolve_path(dst_path, 1, &dst_parent, &dst_entry, &synthetic)) {
+    strcpy(dst_leaf, src_leaf);
+  } else {
+    if (!resolve_parent_cluster(dst_path, &dst_parent, dst_leaf,
+                                (int)sizeof(dst_leaf))) {
+      vga_print("mv: invalid destination path\n");
+      return;
+    }
+    if (find_entry_in_dir(&g_fat_fs, dst_parent, dst_leaf, &dst_entry)) {
+      if (dst_entry.attributes & 0x10) {
+        vga_print("mv: destination is a directory\n");
+        return;
+      }
+    }
+  }
+
+  if (src_parent == dst_parent && strcmp(src_leaf, dst_leaf) == 0) {
+    return;
+  }
+
+  if (!fat_read_file(&g_fat_fs, &src_entry, &buffer, &size) || !buffer) {
+    vga_print("mv: failed to read source file\n");
+    return;
+  }
+
+  saved_pwd = g_fat_fs.pwd_cluster;
+  g_fat_fs.pwd_cluster = dst_parent;
+  if (!write_bytes_to_dir(dst_parent, dst_leaf, buffer, size)) {
+    vga_print("mv: failed to write destination file\n");
+    g_fat_fs.pwd_cluster = saved_pwd;
+    return;
+  }
+  g_fat_fs.pwd_cluster = saved_pwd;
+
+  g_fat_fs.pwd_cluster = src_parent;
+  if (!fat_delete(&g_fat_fs, src_leaf)) {
+    vga_print(
+        "mv: warning: destination written, but source could not be removed\n");
+  }
+  g_fat_fs.pwd_cluster = saved_pwd;
+}
+
 static void cli_readline(char *buffer, int max_len) {
   int i = 0;
   while (1) {
@@ -508,8 +898,16 @@ static void do_help() {
   vga_print("  cd <path>            - Change current directory\n");
   vga_print("  tree                 - Recursively list current directory\n");
   vga_print("  stat <path>          - Show file or directory metadata\n");
+  vga_print(
+      "  write <file>         - Overwrite/create file from typed input\n");
+  vga_print("  touch <file>         - Create an empty file\n");
+  vga_print("  rm <file>            - Delete a file\n");
+  vga_print("  mkdir <dir>          - Create a directory\n");
+  vga_print("  rmdir <dir>          - Remove an empty directory\n");
+  vga_print("  cp <src> <dst>       - Copy a file\n");
+  vga_print("  mv <src> <dst>       - Move a file\n");
   vga_print("  read <lba>           - Read sector into internal buffer\n");
-  vga_print("  write <lba>          - Write internal buffer to sector\n");
+  vga_print("  wsect <lba>          - Write internal buffer to sector\n");
   vga_print("  dump <addr>          - Hex dump 128 bytes from addr\n");
   vga_print("  load <lba> <addr>    - Load 1 sector from lba to addr\n");
   vga_print("  list                 - List available programs in /games\n");
@@ -898,6 +1296,48 @@ void cli_loop() {
       } else {
         vga_print("Usage: stat <path>\n");
       }
+    } else if (strcmp(argv[0], "write") == 0) {
+      if (argc >= 2) {
+        do_write_file(argv[1]);
+      } else {
+        vga_print("Usage: write <file>\n");
+      }
+    } else if (strcmp(argv[0], "touch") == 0) {
+      if (argc >= 2) {
+        do_touch(argv[1]);
+      } else {
+        vga_print("Usage: touch <file>\n");
+      }
+    } else if (strcmp(argv[0], "rm") == 0) {
+      if (argc >= 2) {
+        do_rm(argv[1]);
+      } else {
+        vga_print("Usage: rm <file>\n");
+      }
+    } else if (strcmp(argv[0], "mkdir") == 0) {
+      if (argc >= 2) {
+        do_mkdir(argv[1]);
+      } else {
+        vga_print("Usage: mkdir <dir>\n");
+      }
+    } else if (strcmp(argv[0], "rmdir") == 0) {
+      if (argc >= 2) {
+        do_rmdir(argv[1]);
+      } else {
+        vga_print("Usage: rmdir <dir>\n");
+      }
+    } else if (strcmp(argv[0], "cp") == 0) {
+      if (argc >= 3) {
+        do_cp(argv[1], argv[2]);
+      } else {
+        vga_print("Usage: cp <src> <dst>\n");
+      }
+    } else if (strcmp(argv[0], "mv") == 0) {
+      if (argc >= 3) {
+        do_mv(argv[1], argv[2]);
+      } else {
+        vga_print("Usage: mv <src> <dst>\n");
+      }
     } else if (strcmp(argv[0], "read") == 0) {
       if (argc >= 2) {
         uint32_t lba = parse_dec(argv[1]);
@@ -911,7 +1351,7 @@ void cli_loop() {
       } else {
         vga_print("Usage: read <lba>\n");
       }
-    } else if (strcmp(argv[0], "write") == 0) {
+    } else if (strcmp(argv[0], "wsect") == 0) {
       if (argc >= 2) {
         uint32_t lba = parse_dec(argv[1]);
         if (ide_write_sector(lba, disk_buffer) == 0) {
@@ -922,7 +1362,7 @@ void cli_loop() {
           vga_print("Disk write error.\n");
         }
       } else {
-        vga_print("Usage: write <lba>\n");
+        vga_print("Usage: wsect <lba>\n");
       }
     } else if (strcmp(argv[0], "dump") == 0) {
       if (argc >= 2) {

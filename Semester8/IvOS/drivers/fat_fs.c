@@ -297,6 +297,155 @@ static uint32_t find_free_dir_entry(FatFileSystem *self, uint32_t dir_cluster) {
   return 0;
 }
 
+static int directory_is_empty(FatFileSystem *self, uint16_t dir_cluster) {
+  int old_index = self->current_file_index;
+  self->current_file_index = -1;
+
+  int max_entries =
+      (dir_cluster == 0) ? self->boot_sector.root_dir_entries : 65535;
+
+  for (int i = 0; i < max_entries; i++) {
+    fat_read_directory_entry(self, dir_cluster);
+
+    if (self->current_file.filename[0] == 0x00) {
+      break;
+    }
+
+    if ((unsigned char)self->current_file.filename[0] == 0xE5) {
+      continue;
+    }
+
+    if (self->current_file.attributes & 0x08) {
+      continue;
+    }
+
+    if (self->current_file.filename[0] == '.') {
+      continue;
+    }
+
+    self->current_file_index = old_index;
+    return 0;
+  }
+
+  self->current_file_index = old_index;
+  return 1;
+}
+
+int fat_mkdir(FatFileSystem *self, const char *dirname) {
+  char name[9] = {0};
+  char ext[4] = {0};
+  const char *dot = strchr(dirname, '.');
+  if (dot) {
+    int name_len = dot - dirname;
+    if (name_len > 8)
+      name_len = 8;
+    strncpy(name, dirname, name_len);
+    strncpy(ext, dot + 1, 3);
+  } else {
+    strncpy(name, dirname, 8);
+  }
+
+  uint32_t entry_offset = find_free_dir_entry(self, self->pwd_cluster);
+  if (entry_offset == 0) {
+    serial_print("No free directory entry found\n");
+    return 0;
+  }
+
+  uint16_t new_cluster = find_free_cluster(self);
+  if (new_cluster == 0) {
+    serial_print("Disk full\n");
+    return 0;
+  }
+
+  set_fat_entry(self, new_cluster, 0xFFFF);
+
+  uint32_t bytes_per_cluster = self->boot_sector.sectors_per_cluster * 512;
+  fat_memory_reset();
+  uint8_t *cluster_buffer = (uint8_t *)allocate_memory(bytes_per_cluster);
+  if (!cluster_buffer) {
+    set_fat_entry(self, new_cluster, 0x0000);
+    return 0;
+  }
+
+  memset(cluster_buffer, 0, bytes_per_cluster);
+
+  uint32_t data_start_sector =
+      get_root_dir_start_sector(self->selected_partition_table,
+                                &self->boot_sector) +
+      (self->boot_sector.root_dir_entries * sizeof(Fat16Entry)) / 512;
+
+  Fat16Entry dot_entry;
+  memset(&dot_entry, 0, sizeof(Fat16Entry));
+  memset(dot_entry.filename, ' ', 8);
+  memset(dot_entry.ext, ' ', 3);
+  dot_entry.filename[0] = '.';
+  dot_entry.attributes = 0x10;
+  dot_entry.starting_cluster = new_cluster;
+
+  Fat16Entry dotdot_entry;
+  memset(&dotdot_entry, 0, sizeof(Fat16Entry));
+  memset(dotdot_entry.filename, ' ', 8);
+  memset(dotdot_entry.ext, ' ', 3);
+  dotdot_entry.filename[0] = '.';
+  dotdot_entry.filename[1] = '.';
+  dotdot_entry.attributes = 0x10;
+  dotdot_entry.starting_cluster = self->pwd_cluster;
+
+  memcpy(cluster_buffer, &dot_entry, sizeof(Fat16Entry));
+  memcpy(cluster_buffer + sizeof(Fat16Entry), &dotdot_entry,
+         sizeof(Fat16Entry));
+
+  uint32_t cluster_sector =
+      data_start_sector +
+      (new_cluster - 2) * self->boot_sector.sectors_per_cluster;
+  write_at_byte(cluster_sector * 512, cluster_buffer, bytes_per_cluster);
+  free_memory(cluster_buffer);
+
+  Fat16Entry new_entry;
+  memset(&new_entry, 0, sizeof(Fat16Entry));
+  memset(new_entry.filename, ' ', 8);
+  memset(new_entry.ext, ' ', 3);
+  for (int i = 0; i < 8 && name[i]; i++)
+    new_entry.filename[i] = name[i];
+  for (int i = 0; i < 3 && ext[i]; i++)
+    new_entry.ext[i] = ext[i];
+  new_entry.attributes = 0x10;
+  new_entry.starting_cluster = new_cluster;
+
+  write_at_byte(entry_offset, &new_entry, sizeof(Fat16Entry));
+  return 1;
+}
+
+int fat_rmdir(FatFileSystem *self, const char *dirname) {
+  Fat16Entry entry;
+  char name[9] = {0};
+  char ext[4] = {0};
+  const char *dot = strchr(dirname, '.');
+  if (dot) {
+    int name_len = dot - dirname;
+    if (name_len > 8)
+      name_len = 8;
+    strncpy(name, dirname, name_len);
+    strncpy(ext, dot + 1, 3);
+  } else {
+    strncpy(name, dirname, 8);
+  }
+
+  if (!fat_find_file(self, name, ext, &entry)) {
+    return 0;
+  }
+
+  if (!(entry.attributes & 0x10)) {
+    return 0;
+  }
+
+  if (!directory_is_empty(self, entry.starting_cluster)) {
+    return 0;
+  }
+
+  return fat_delete(self, dirname);
+}
+
 int fat_delete(FatFileSystem *self, const char *filename) {
   Fat16Entry entry;
   char name[9] = {0};

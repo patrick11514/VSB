@@ -6,7 +6,7 @@ OBJS = $(SRCS:.c=.o)
 
 .PHONY: start join apps build link clean
 
-start: join
+start: 
 	qemu-system-x86_64 -drive file=disk.img,format=raw -serial stdio
 
 join: build link apps

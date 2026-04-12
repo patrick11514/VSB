@@ -448,6 +448,27 @@ int fat_mkdir(FatFileSystem *self, const char *dirname) {
 
   memset(cluster_buffer, 0, bytes_per_cluster);
 
+  Fat16Entry dot_entry;
+  memset(&dot_entry, 0, sizeof(Fat16Entry));
+  memset(dot_entry.filename, ' ', 8);
+  memset(dot_entry.ext, ' ', 3);
+  dot_entry.filename[0] = '.';
+  dot_entry.attributes = 0x10;
+  dot_entry.starting_cluster = cluster;
+
+  Fat16Entry dotdot_entry;
+  memset(&dotdot_entry, 0, sizeof(Fat16Entry));
+  memset(dotdot_entry.filename, ' ', 8);
+  memset(dotdot_entry.ext, ' ', 3);
+  dotdot_entry.filename[0] = '.';
+  dotdot_entry.filename[1] = '.';
+  dotdot_entry.attributes = 0x10;
+  dotdot_entry.starting_cluster = self->pwd_cluster;
+
+  memcpy(cluster_buffer, &dot_entry, sizeof(Fat16Entry));
+  memcpy(cluster_buffer + sizeof(Fat16Entry), &dotdot_entry,
+         sizeof(Fat16Entry));
+
   uint32_t data_start_sector =
       get_root_dir_start_sector(self->selected_partition_table,
                                 &self->boot_sector) +
