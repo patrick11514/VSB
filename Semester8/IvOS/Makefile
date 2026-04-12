@@ -1,15 +1,16 @@
 CC = gcc
 CFLAGS = -m32 -ffreestanding -fno-stack-protector -fno-pie -O0
 
-SRCS = kernel.c cli.c drivers/vga.c drivers/serial.c drivers/keyboard.c drivers/ide.c
+SRCS = kernel.c cli.c lib/string.c drivers/vga.c drivers/serial.c drivers/keyboard.c drivers/ide.c drivers/fat_fs.c drivers/fat_io.c
 OBJS = $(SRCS:.c=.o)
 
 start: join
 	qemu-system-x86_64 -drive file=disk.img,format=raw -serial stdio
 
 join: build link apps
-	cat boot.bin kernel.bin > disk.img
-	dd if=/dev/zero of=disk.img bs=1M seek=10 count=1 conv=notrunc
+	cp fat/sd.img disk.img
+	dd if=boot.bin of=disk.img bs=1 count=446 conv=notrunc
+	dd if=kernel.bin of=disk.img bs=512 seek=1 conv=notrunc
 	dd if=apps/header_hello.bin of=disk.img bs=512 seek=100 conv=notrunc
 	dd if=apps/hello.bin of=disk.img bs=512 seek=101 conv=notrunc
 	dd if=apps/header_factory.bin of=disk.img bs=512 seek=110 conv=notrunc

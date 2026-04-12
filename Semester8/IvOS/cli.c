@@ -3,33 +3,7 @@
 #include "drivers/keyboard.h"
 #include "drivers/serial.h"
 #include "drivers/vga.h"
-
-// --- Basic lib ---
-static int strcmp(const char *s1, const char *s2) {
-  while (*s1 && (*s1 == *s2)) {
-    s1++;
-    s2++;
-  }
-  return *(unsigned char *)s1 - *(unsigned char *)s2;
-}
-
-static int strncmp(const char *s1, const char *s2, int n) {
-  while (n && *s1 && (*s1 == *s2)) {
-    s1++;
-    s2++;
-    n--;
-  }
-  if (n == 0)
-    return 0;
-  return *(unsigned char *)s1 - *(unsigned char *)s2;
-}
-
-static int strlen(const char *s) {
-  int i = 0;
-  while (s[i])
-    i++;
-  return i;
-}
+#include "lib/string.h"
 
 static uint32_t parse_hex(const char *str) {
   uint32_t val = 0;

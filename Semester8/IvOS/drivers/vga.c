@@ -1,6 +1,6 @@
 #include "vga.h"
 #include "../arch/io.h"
-#include <stddef.h>
+#include "../lib/types.h"
 
 static int vga_x = 0;
 static int vga_y = 0;
