@@ -29,7 +29,7 @@ load_sector:
     mov es, ax     ; es cannot be directly assigned
 
     mov bx, 0x7e00 ; load to memory after 512 bytes which bios loaded
-    mov al, 40     ; load 40 sectors
+    mov al, 80     ; load 80 sectors
 
     mov ch, 0 ; CHS cylinder 0
     mov cl, 2 ; CHS CC SSSSSS -> sector 2

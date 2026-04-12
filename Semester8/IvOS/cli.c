@@ -3,6 +3,7 @@
 #include "drivers/keyboard.h"
 #include "drivers/serial.h"
 #include "drivers/vga.h"
+#include "fs_state.h"
 #include "lib/string.h"
 
 static uint32_t parse_hex(const char *str) {
@@ -75,6 +76,33 @@ static void print_dec(uint32_t val) {
   }
 }
 
+static void print_fat_name(const Fat16Entry *entry) {
+  int has_ext = 0;
+
+  for (int i = 0; i < 3; i++) {
+    if (entry->ext[i] != ' ') {
+      has_ext = 1;
+      break;
+    }
+  }
+
+  for (int i = 0; i < 8; i++) {
+    if (entry->filename[i] == ' ') {
+      continue;
+    }
+    vga_putchar(entry->filename[i]);
+  }
+
+  if (has_ext) {
+    vga_putchar('.');
+    for (int i = 0; i < 3; i++) {
+      if (entry->ext[i] != ' ') {
+        vga_putchar(entry->ext[i]);
+      }
+    }
+  }
+}
+
 // --- App header for dynamic run ---
 struct AppHeader {
   uint32_t magic;
@@ -139,6 +167,7 @@ static void do_help() {
   vga_print("Available commands:\n");
   vga_print("  help                 - Show this help\n");
   vga_print("  clear                - Clear the screen\n");
+  vga_print("  ls                   - List files in current directory\n");
   vga_print("  read <lba>           - Read sector into internal buffer\n");
   vga_print("  write <lba>          - Write internal buffer to sector\n");
   vga_print("  dump <addr>          - Hex dump 128 bytes from addr\n");
@@ -197,6 +226,66 @@ static void do_list() {
       }
     }
   }
+}
+
+static void do_ls() {
+  FatFileSystem *fs = &g_fat_fs;
+  int old_index = fs->current_file_index;
+  uint32_t max_entries;
+
+  if (fs->selected_partition_table == NULL) {
+    vga_print("FAT16 filesystem is not mounted.\n");
+    fs->current_file_index = old_index;
+    return;
+  }
+
+  vga_print("Current directory:\n");
+  serial_print("Current directory:\n");
+  fs->current_file_index = -1;
+
+  if (fs->pwd_cluster == 0) {
+    max_entries = fs->boot_sector.root_dir_entries;
+  } else {
+    max_entries = 4096;
+  }
+
+  serial_print("entries:\n");
+  print_dec(max_entries);
+  serial_print("\n");
+
+  for (uint32_t entry_index = 0; entry_index < max_entries; entry_index++) {
+    fat_read_directory_entry(fs, fs->pwd_cluster);
+    Fat16Entry entry = fs->current_file;
+
+    if (entry.filename[0] == 0x00) {
+      break;
+    }
+
+    if ((unsigned char)entry.filename[0] == 0xE5) {
+      continue;
+    }
+
+    if (entry.filename[0] == '.') {
+      continue;
+    }
+
+    if (entry.attributes == 0x0F || (entry.attributes & 0x08)) {
+      continue;
+    }
+
+    vga_print(entry.attributes & 0x10 ? "<DIR>  " : "FILE   ");
+    print_fat_name(&entry);
+
+    if (!(entry.attributes & 0x10)) {
+      vga_print("  ");
+      print_dec(entry.file_size);
+      vga_print(" B");
+    }
+
+    vga_print("\n");
+  }
+
+  fs->current_file_index = old_index;
 }
 
 static void do_exec(const char *target_name) {
@@ -267,6 +356,8 @@ void cli_loop() {
       do_help();
     } else if (strcmp(argv[0], "clear") == 0) {
       vga_clear_screen();
+    } else if (strcmp(argv[0], "ls") == 0) {
+      do_ls();
     } else if (strcmp(argv[0], "read") == 0) {
       if (argc >= 2) {
         uint32_t lba = parse_dec(argv[1]);
