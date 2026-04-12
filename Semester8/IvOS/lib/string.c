@@ -92,3 +92,10 @@ char *strncpy(char *destination, const char *source, size_t size) {
 
   return destination;
 }
+
+void strcpy(char *destination, const char *source) {
+  while (*source) {
+    *destination++ = *source++;
+  }
+  *destination = '\0';
+}
