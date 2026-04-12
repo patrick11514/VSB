@@ -2,6 +2,7 @@
 
 switch_to_pm:
     cli                     ; 1. Disable interrupts
+    call enable_a20         ; Ensure addresses above 1MB are accessible
 
     lgdt [gdt_descriptor]   ; 2. Load the GDT
 
@@ -10,6 +11,16 @@ switch_to_pm:
     mov cr0, eax            ; Move it back to cr0
 
     jmp CODE_SEG:init_pm    ; 4. Far jump using our new code segment selector
+
+enable_a20:
+    in al, 0x92
+    test al, 0x02
+    jnz .done
+    or al, 0x02
+    and al, 0xFE
+    out 0x92, al
+.done:
+    ret
 
 [BITS 32]
 init_pm:

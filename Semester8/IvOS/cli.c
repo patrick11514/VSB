@@ -77,6 +77,32 @@ static void print_dec(uint32_t val) {
   }
 }
 
+static void serial_print_dec_u32(uint32_t val) {
+  char buf[16];
+  int pos = 0;
+
+  if (val == 0) {
+    serial_putchar('0');
+    return;
+  }
+
+  while (val > 0) {
+    buf[pos++] = (char)('0' + (val % 10));
+    val /= 10;
+  }
+
+  for (int i = pos - 1; i >= 0; i--) {
+    serial_putchar(buf[i]);
+  }
+}
+
+static void serial_print_hex_u32(uint32_t val) {
+  for (int shift = 28; shift >= 0; shift -= 4) {
+    uint32_t nibble = (val >> shift) & 0xF;
+    serial_putchar((char)(nibble < 10 ? ('0' + nibble) : ('A' + nibble - 10)));
+  }
+}
+
 static void print_fat_name(const Fat16Entry *entry) {
   int has_ext = 0;
 
@@ -104,18 +130,8 @@ static void print_fat_name(const Fat16Entry *entry) {
   }
 }
 
-// --- App header for dynamic run ---
-struct AppHeader {
-  uint32_t magic;
-  char name[16];
-  uint32_t start_lba;
-  uint32_t load_addr;
-  uint32_t size_sectors;
-} __attribute__((packed));
-
-#define APP_MAGIC 0xDEADBEEF
-static const uint32_t app_slots[] = {100, 110, 120}; // Slots at LBAs
-#define NUM_SLOTS (sizeof(app_slots) / sizeof(app_slots[0]))
+#define APP_LOAD_ADDR 0x100000
+#define APP_MAX_SIZE (512 * 1024)
 
 // --- CLI State ---
 static uint8_t disk_buffer[512];
@@ -523,8 +539,8 @@ static void do_help() {
   vga_print("  dump <addr>          - Hex dump 128 bytes from addr\n");
   vga_print("  load <lba> <addr>    - Load 1 sector from lba to addr\n");
   vga_print("  run <addr>           - Jump to addr\n");
-  vga_print("  list                 - List available programs in slots\n");
-  vga_print("  exec <name>          - Load and run a program by name\n");
+  vga_print("  list                 - List available programs in /games\n");
+  vga_print("  exec <filename>      - Load and run /games/<filename>\n");
 }
 
 static void do_dump(uint32_t addr) {
@@ -549,33 +565,47 @@ static void do_dump(uint32_t addr) {
 }
 
 static void do_list() {
-  vga_print("Scanning slots...\n");
-  for (int i = 0; i < NUM_SLOTS; i++) {
-    uint32_t lba = app_slots[i];
-    if (ide_read_sector(lba, disk_buffer) == 0) {
-      struct AppHeader *hdr = (struct AppHeader *)disk_buffer;
-      if (hdr->magic == APP_MAGIC) {
-        vga_print("Slot ");
-        print_dec(i);
-        vga_print(" (LBA ");
-        print_dec(lba);
-        vga_print("): ");
+  FatFileSystem *fs = &g_fat_fs;
+  uint16_t games_cluster = 0;
+  int old_index = fs->current_file_index;
+  uint32_t max_entries;
 
-        // Copy name safely to print
-        char name[17];
-        for (int k = 0; k < 16; k++)
-          name[k] = hdr->name[k];
-        name[16] = 0;
-
-        vga_print(name);
-        vga_print(" [Load Addr: 0x");
-        print_hex(hdr->load_addr, 8);
-        vga_print(" Size: ");
-        print_dec(hdr->size_sectors);
-        vga_print(" sectors]\n");
-      }
-    }
+  if (!resolve_path("/games", 1, &games_cluster, NULL, NULL)) {
+    vga_print("/games directory not found.\n");
+    return;
   }
+
+  vga_print("Programs in /games:\n");
+  fs->current_file_index = -1;
+  max_entries = (games_cluster == 0) ? fs->boot_sector.root_dir_entries : 65535;
+
+  for (uint32_t i = 0; i < max_entries; i++) {
+    fat_read_directory_entry(fs, games_cluster);
+    Fat16Entry *entry = &fs->current_file;
+
+    if (entry->filename[0] == 0x00)
+      break;
+
+    if ((unsigned char)entry->filename[0] == 0xE5)
+      continue;
+
+    if (entry->filename[0] == '.')
+      continue;
+
+    if (entry->attributes == 0x0F || (entry->attributes & 0x08))
+      continue;
+
+    if (entry->attributes & 0x10)
+      continue;
+
+    vga_print("  ");
+    print_fat_name(entry);
+    vga_print("  ");
+    print_dec(entry->file_size);
+    vga_print(" B\n");
+  }
+
+  fs->current_file_index = old_index;
 }
 
 static void do_ls() {
@@ -788,51 +818,142 @@ static void do_stat(const char *path) {
   vga_print("\n");
 }
 
+static void exec_probe(void) { serial_print("[exec] probe\n"); }
+
 static void do_exec(const char *target_name) {
-  for (int i = 0; i < NUM_SLOTS; i++) {
-    uint32_t lba = app_slots[i];
-    if (ide_read_sector(lba, disk_buffer) == 0) {
-      struct AppHeader *hdr = (struct AppHeader *)disk_buffer;
-      if (hdr->magic == APP_MAGIC) {
-        char name[17];
-        for (int k = 0; k < 16; k++)
-          name[k] = hdr->name[k];
-        name[16] = 0;
+  static char full_path[160];
+  static Fat16Entry entry;
+  void *buffer = NULL;
+  uint32_t size = 0;
 
-        if (strcmp(name, target_name) == 0) {
-          vga_print("Loading '");
-          vga_print(name);
-          vga_print("'...\n");
+  serial_print("[exec] A\n");
 
-          uint8_t *ptr = (uint8_t *)hdr->load_addr;
-          uint32_t current_lba = hdr->start_lba;
-
-          for (uint32_t s = 0; s < hdr->size_sectors; s++) {
-            if (ide_read_sector(current_lba, ptr) != 0) {
-              vga_print("Error reading sector ");
-              print_dec(current_lba);
-              vga_print("\n");
-              return;
-            }
-            ptr += 512;
-            current_lba++;
-          }
-
-          vga_print("Running '");
-          vga_print(name);
-          vga_print("'...\n");
-
-          void (*func)() = (void (*)())hdr->load_addr;
-          func();
-
-          return;
-        }
-      }
-    }
+  if (target_name == NULL) {
+    serial_print("[exec] null target\n");
+    vga_print("Usage: exec <filename>\n");
+    return;
   }
-  vga_print("Program not found: ");
-  vga_print(target_name);
-  vga_print("\n");
+
+  serial_print("[exec] begin target=");
+  serial_print(target_name);
+  serial_print("\n");
+
+  serial_print("[exec] B\n");
+
+  if (strlen(target_name) == 0) {
+    vga_print("Usage: exec <filename>\n");
+    return;
+  }
+
+  serial_print("[exec] C\n");
+
+  strcpy(full_path, "/games/");
+
+  serial_print("[exec] base path=");
+  serial_print(full_path);
+  serial_print("\n");
+
+  if (strlen(full_path) + strlen(target_name) + 1 >= sizeof(full_path)) {
+    vga_print("exec: filename too long\n");
+    return;
+  }
+
+  serial_print("[exec] D\n");
+
+  strcat(full_path, target_name);
+
+  serial_print("[exec] E\n");
+
+  serial_print("[exec] resolving path=");
+  serial_print(full_path);
+  serial_print("\n");
+
+  if (!resolve_path(full_path, 2, NULL, &entry, NULL)) {
+    vga_print("Program not found in /games: ");
+    vga_print(target_name);
+    vga_print("\n");
+    return;
+  }
+
+  serial_print("[exec] F\n");
+
+  serial_print("[exec] found entry name=");
+  serial_print(target_name);
+  serial_print(" size=");
+  serial_print_dec_u32(entry.file_size);
+  serial_print(" cluster=");
+  serial_print_dec_u32(entry.starting_cluster);
+  serial_print(" attr=0x");
+  serial_print_hex_u32((uint32_t)entry.attributes);
+  serial_print("\n");
+
+  if (!fat_read_file(&g_fat_fs, &entry, &buffer, &size) || !buffer) {
+    vga_print("exec: failed to read app file\n");
+    serial_print("[exec] fat_read_file failed\n");
+    return;
+  }
+
+  serial_print("[exec] G\n");
+
+  serial_print("[exec] read ok buffer=0x");
+  serial_print_hex_u32((uint32_t)buffer);
+  serial_print(" size=");
+  serial_print_dec_u32(size);
+  serial_print(" bytes\n");
+
+  if (size == 0 || size > APP_MAX_SIZE) {
+    vga_print("exec: invalid app size\n");
+    serial_print("[exec] invalid size, max=");
+    serial_print_dec_u32(APP_MAX_SIZE);
+    serial_print("\n");
+    return;
+  }
+
+  serial_print("[exec] H\n");
+
+  serial_print("[exec] memcpy dst=0x");
+  serial_print_hex_u32(APP_LOAD_ADDR);
+  serial_print("\n");
+
+  memcpy((void *)APP_LOAD_ADDR, buffer, size);
+
+  serial_print("[exec] I\n");
+
+  serial_print("[exec] first bytes src=");
+  serial_print_hex_u32(((uint8_t *)buffer)[0]);
+  serial_putchar(' ');
+  serial_print_hex_u32(((uint8_t *)buffer)[1]);
+  serial_putchar(' ');
+  serial_print_hex_u32(((uint8_t *)buffer)[2]);
+  serial_putchar(' ');
+  serial_print_hex_u32(((uint8_t *)buffer)[3]);
+  serial_print("\n");
+
+  serial_print("[exec] first bytes dst=");
+  serial_print_hex_u32(((uint8_t *)APP_LOAD_ADDR)[0]);
+  serial_putchar(' ');
+  serial_print_hex_u32(((uint8_t *)APP_LOAD_ADDR)[1]);
+  serial_putchar(' ');
+  serial_print_hex_u32(((uint8_t *)APP_LOAD_ADDR)[2]);
+  serial_putchar(' ');
+  serial_print_hex_u32(((uint8_t *)APP_LOAD_ADDR)[3]);
+  serial_print("\n");
+
+  serial_print("[exec] jump addr=0x");
+  serial_print_hex_u32(APP_LOAD_ADDR);
+  serial_print("\n");
+
+  serial_print("[exec] running '");
+  serial_print(target_name);
+  serial_print("'\n");
+
+  void (*func)() = (void (*)())APP_LOAD_ADDR;
+  serial_print("[exec] J\n");
+  func();
+
+  serial_print("[exec] returned from app\n");
+
+  vga_print("Program finished.\n");
 }
 
 void cli_loop() {
@@ -853,33 +974,48 @@ void cli_loop() {
     if (argc == 0)
       continue;
 
+    serial_print("[cli] argc=");
+    serial_print_dec_u32((uint32_t)argc);
+    serial_print(" cmd='");
+    serial_print(argv[0]);
+    serial_print("'\n");
+
     if (strcmp(argv[0], "help") == 0) {
+      serial_print("[cli] dispatch help\n");
       do_help();
     } else if (strcmp(argv[0], "clear") == 0) {
+      serial_print("[cli] dispatch clear\n");
       vga_clear_screen();
     } else if (strcmp(argv[0], "ls") == 0) {
+      serial_print("[cli] dispatch ls\n");
       do_ls();
     } else if (strcmp(argv[0], "cat") == 0) {
+      serial_print("[cli] dispatch cat\n");
       if (argc >= 2) {
         do_cat(argv[1]);
       } else {
         vga_print("Usage: cat <filename>\n");
       }
     } else if (strcmp(argv[0], "cd") == 0) {
+      serial_print("[cli] dispatch cd\n");
       if (argc >= 2) {
         do_cd(argv[1]);
       } else {
         vga_print("Usage: cd <path>\n");
       }
     } else if (strcmp(argv[0], "tree") == 0) {
+      serial_print("[cli] dispatch tree\n");
       do_tree();
     } else if (strcmp(argv[0], "stat") == 0) {
+      serial_print("[cli] dispatch stat\n");
       if (argc >= 2) {
+        exec_probe();
         do_stat(argv[1]);
       } else {
         vga_print("Usage: stat <path>\n");
       }
     } else if (strcmp(argv[0], "read") == 0) {
+      serial_print("[cli] dispatch read\n");
       if (argc >= 2) {
         uint32_t lba = parse_dec(argv[1]);
         if (ide_read_sector(lba, disk_buffer) == 0) {
@@ -893,6 +1029,7 @@ void cli_loop() {
         vga_print("Usage: read <lba>\n");
       }
     } else if (strcmp(argv[0], "write") == 0) {
+      serial_print("[cli] dispatch write\n");
       if (argc >= 2) {
         uint32_t lba = parse_dec(argv[1]);
         if (ide_write_sector(lba, disk_buffer) == 0) {
@@ -906,6 +1043,7 @@ void cli_loop() {
         vga_print("Usage: write <lba>\n");
       }
     } else if (strcmp(argv[0], "dump") == 0) {
+      serial_print("[cli] dispatch dump\n");
       if (argc >= 2) {
         uint32_t addr = parse_hex(argv[1]);
         do_dump(addr);
@@ -913,6 +1051,7 @@ void cli_loop() {
         vga_print("Usage: dump <addr>\n");
       }
     } else if (strcmp(argv[0], "load") == 0) {
+      serial_print("[cli] dispatch load\n");
       if (argc >= 3) {
         uint32_t lba = parse_dec(argv[1]);
         uint32_t addr = parse_hex(argv[2]);
@@ -929,9 +1068,10 @@ void cli_loop() {
         vga_print("Usage: load <lba> <addr>\n");
       }
     } else if (strcmp(argv[0], "run") == 0) {
+      serial_print("[cli] dispatch run\n");
       if (argc >= 2) {
         if (strcmp(argv[1], "hello") == 0) {
-          vga_print("Did you mean 'exec hello'? 'run' is only for raw hex "
+          vga_print("Did you mean 'exec HELLO.BIN'? 'run' is only for raw hex "
                     "addresses (e.g., run 2000).\n");
           continue;
         }
@@ -949,14 +1089,21 @@ void cli_loop() {
         vga_print("Usage: run <addr>\n");
       }
     } else if (strcmp(argv[0], "list") == 0) {
+      serial_print("[cli] dispatch list\n");
       do_list();
     } else if (strcmp(argv[0], "exec") == 0) {
+      serial_print("[cli] dispatch exec\n");
       if (argc >= 2) {
+        serial_print("[cli] exec target=");
+        serial_print(argv[1]);
+        serial_print("\n");
         do_exec(argv[1]);
       } else {
-        vga_print("Usage: exec <name>\n");
+        serial_print("[cli] exec missing filename\n");
+        vga_print("Usage: exec <filename>\n");
       }
     } else {
+      serial_print("[cli] dispatch unknown\n");
       vga_print("Unknown command: ");
       vga_print(argv[0]);
       vga_print("\n");

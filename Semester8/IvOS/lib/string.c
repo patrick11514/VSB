@@ -99,3 +99,18 @@ void strcpy(char *destination, const char *source) {
   }
   *destination = '\0';
 }
+
+char *strcat(char *destination, const char *source) {
+  char *start = destination;
+
+  while (*destination) {
+    destination++;
+  }
+
+  while (*source) {
+    *destination++ = *source++;
+  }
+
+  *destination = '\0';
+  return start;
+}

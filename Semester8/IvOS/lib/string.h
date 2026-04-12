@@ -13,5 +13,6 @@ int strncmp(const char *left, const char *right, size_t size);
 char *strchr(const char *str, int value);
 char *strncpy(char *destination, const char *source, size_t size);
 void strcpy(char *destination, const char *source);
+char *strcat(char *destination, const char *source);
 
 #endif // LIB_STRING_H
