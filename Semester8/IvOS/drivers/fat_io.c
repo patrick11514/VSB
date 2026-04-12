@@ -80,28 +80,36 @@ void read_at_byte(uint32_t byte, void *buffer, size_t size) {
 }
 
 void write_at_byte(uint32_t byte, const void *buffer, size_t size) {
+  serial_print("[fat_io/write_at_byte] enter\n");
   uint32_t start_sector = byte / 512;
   uint32_t offset = byte % 512;
   const uint8_t *in = (const uint8_t *)buffer;
   size_t remaining = size;
 
   while (remaining > 0) {
+    serial_print("[fat_io/write_at_byte] loop start\n");
     if (cached_sector != start_sector) {
+      serial_print("[fat_io/write_at_byte] read sector\n");
       ata_read_sector(start_sector, sector_buffer); // Read-modify-write
       cached_sector = start_sector;
+      serial_print("[fat_io/write_at_byte] read done\n");
     }
 
     size_t available = 512 - offset;
     size_t to_copy = (remaining < available) ? remaining : available;
+    serial_print("[fat_io/write_at_byte] memcpy\n");
     memcpy(sector_buffer + offset, in, to_copy);
 
+    serial_print("[fat_io/write_at_byte] write sector\n");
     ata_write_sector(start_sector, sector_buffer); // write back
+    serial_print("[fat_io/write_at_byte] write done\n");
 
     in += to_copy;
     remaining -= to_copy;
     start_sector++;
     offset = 0;
   }
+  serial_print("[fat_io/write_at_byte] exit\n");
 }
 
 int get_fat_start_sector(PartitionTable *pt, Fat16BootSector *bs, int idx) {

@@ -3,6 +3,13 @@
 #include "../drivers/serial.h"
 #include "../lib/string.h"
 
+static char fat_to_upper(char c) {
+  if (c >= 'a' && c <= 'z') {
+    return (char)(c - ('a' - 'A'));
+  }
+  return c;
+}
+
 void fat_read_partitions(FatFileSystem *self, PartitionTable *pt) {
   (void)self;
   read_at_byte(0x1BE, pt, sizeof(PartitionTable) * 4);
@@ -37,6 +44,8 @@ static uint16_t get_fat_entry(FatFileSystem *self, uint16_t cluster) {
 }
 
 void fat_read_directory_entry(FatFileSystem *self, uint32_t dir_cluster) {
+  serial_print("[fat/read_dir_entry] enter\n");
+
   if (!self->selected_partition_table) {
     serial_print("No partition table selected\n");
     return;
@@ -44,20 +53,26 @@ void fat_read_directory_entry(FatFileSystem *self, uint32_t dir_cluster) {
 
   self->current_file_index++;
 
+  serial_print("[fat/read_dir_entry] incremented index\n");
+
   int entries_per_sector = 512 / sizeof(Fat16Entry);
   int entries_per_cluster =
       entries_per_sector * self->boot_sector.sectors_per_cluster;
 
   if (dir_cluster == 0) {
+    serial_print("[fat/read_dir_entry] root dir branch\n");
     int root_dir_start_sector = get_root_dir_start_sector(
         self->selected_partition_table, &self->boot_sector);
     self->current_entry_offset =
         root_dir_start_sector * 512 +
         (self->current_file_index * sizeof(Fat16Entry));
 
+    serial_print("[fat/read_dir_entry] calling read_at_byte\n");
     read_at_byte(self->current_entry_offset, &self->current_file,
                  sizeof(Fat16Entry));
+    serial_print("[fat/read_dir_entry] read_at_byte done\n");
   } else {
+    serial_print("[fat/read_dir_entry] subdir branch\n");
     uint16_t current_cluster = dir_cluster;
     int local_index = self->current_file_index;
 
@@ -89,42 +104,54 @@ void fat_read_directory_entry(FatFileSystem *self, uint32_t dir_cluster) {
 
 int fat_find_file(FatFileSystem *self, const char *name, const char *ext,
                   Fat16Entry *out_entry) {
+  serial_print("[fat/find_file] enter\n");
+
   char target_name[8] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
   char target_ext[3] = {' ', ' ', ' '};
 
   for (int i = 0; i < 8 && name[i] != '\0'; i++)
-    target_name[i] = name[i];
+    target_name[i] = fat_to_upper(name[i]);
   for (int i = 0; i < 3 && ext[i] != '\0'; i++)
-    target_ext[i] = ext[i];
+    target_ext[i] = fat_to_upper(ext[i]);
+
+  serial_print("[fat/find_file] uppercased names\n");
 
   self->current_file_index = -1;
 
   int max_entries =
       (self->pwd_cluster == 0) ? self->boot_sector.root_dir_entries : 65535;
 
+  serial_print("[fat/find_file] starting loop\n");
+
   for (int i = 0; i < max_entries; i++) {
+    serial_print("[fat/find_file] loop iter\n");
     fat_read_directory_entry(self, self->pwd_cluster);
+    serial_print("[fat/find_file] read entry\n");
     Fat16Entry entry = self->current_file;
 
-    if (entry.filename[0] == 0x00)
+    if (entry.filename[0] == 0x00) {
+      serial_print("[fat/find_file] hit end marker\n");
       break;
+    }
 
     if ((unsigned char)entry.filename[0] == 0xE5)
       continue;
 
     int match = 1;
     for (int j = 0; j < 8; j++)
-      if (entry.filename[j] != target_name[j])
+      if (fat_to_upper(entry.filename[j]) != target_name[j])
         match = 0;
     for (int j = 0; j < 3; j++)
-      if (entry.ext[j] != target_ext[j])
+      if (fat_to_upper(entry.ext[j]) != target_ext[j])
         match = 0;
 
     if (match) {
       *out_entry = entry;
+      serial_print("[fat/find_file] found match\n");
       return 1;
     }
   }
+  serial_print("[fat/find_file] not found\n");
   return 0;
 }
 
@@ -268,11 +295,16 @@ static void set_fat_entry(FatFileSystem *self, uint16_t cluster,
 }
 
 static uint16_t find_free_cluster(FatFileSystem *self) {
-  for (uint16_t i = 2; i <= 0xFFEF; i++) {
+  serial_print("[fat/find_free_cluster] enter\n");
+  /* Safety limit: scan up to 1000 clusters (should be plenty for our use case)
+   */
+  for (uint16_t i = 2; i <= 1000; i++) {
     if (get_fat_entry(self, i) == 0x0000) {
+      serial_print("[fat/find_free_cluster] found\n");
       return i;
     }
   }
+  serial_print("[fat/find_free_cluster] none\n");
   return 0;
 }
 
@@ -280,8 +312,14 @@ static uint32_t find_free_dir_entry(FatFileSystem *self, uint32_t dir_cluster) {
   int old_index = self->current_file_index;
   self->current_file_index = -1;
 
+  serial_print("[fat/find_free_dir_entry] enter\n");
+
   int max_entries =
       (dir_cluster == 0) ? self->boot_sector.root_dir_entries : 65535;
+
+  /* Safety limit: don't scan more than actually possible */
+  if (max_entries > 512)
+    max_entries = 512;
 
   for (int i = 0; i < max_entries; i++) {
     fat_read_directory_entry(self, dir_cluster);
@@ -290,16 +328,20 @@ static uint32_t find_free_dir_entry(FatFileSystem *self, uint32_t dir_cluster) {
         (unsigned char)self->current_file.filename[0] == 0xE5) {
       uint32_t offset = self->current_entry_offset;
       self->current_file_index = old_index;
+      serial_print("[fat/find_free_dir_entry] found\n");
       return offset;
     }
   }
   self->current_file_index = old_index;
+  serial_print("[fat/find_free_dir_entry] none\n");
   return 0;
 }
 
 static int directory_is_empty(FatFileSystem *self, uint16_t dir_cluster) {
   int old_index = self->current_file_index;
   self->current_file_index = -1;
+
+  serial_print("[fat/directory_is_empty] enter\n");
 
   int max_entries =
       (dir_cluster == 0) ? self->boot_sector.root_dir_entries : 65535;
@@ -324,10 +366,12 @@ static int directory_is_empty(FatFileSystem *self, uint16_t dir_cluster) {
     }
 
     self->current_file_index = old_index;
+    serial_print("[fat/directory_is_empty] not empty\n");
     return 0;
   }
 
   self->current_file_index = old_index;
+  serial_print("[fat/directory_is_empty] empty\n");
   return 1;
 }
 
@@ -345,15 +389,19 @@ int fat_mkdir(FatFileSystem *self, const char *dirname) {
     strncpy(name, dirname, 8);
   }
 
+  serial_print("[fat/mkdir] enter\n");
+
   uint32_t entry_offset = find_free_dir_entry(self, self->pwd_cluster);
   if (entry_offset == 0) {
     serial_print("No free directory entry found\n");
+    serial_print("[fat/mkdir] no dir entry\n");
     return 0;
   }
 
   uint16_t new_cluster = find_free_cluster(self);
   if (new_cluster == 0) {
     serial_print("Disk full\n");
+    serial_print("[fat/mkdir] no cluster\n");
     return 0;
   }
 
@@ -364,6 +412,7 @@ int fat_mkdir(FatFileSystem *self, const char *dirname) {
   uint8_t *cluster_buffer = (uint8_t *)allocate_memory(bytes_per_cluster);
   if (!cluster_buffer) {
     set_fat_entry(self, new_cluster, 0x0000);
+    serial_print("[fat/mkdir] alloc failed\n");
     return 0;
   }
 
@@ -406,13 +455,14 @@ int fat_mkdir(FatFileSystem *self, const char *dirname) {
   memset(new_entry.filename, ' ', 8);
   memset(new_entry.ext, ' ', 3);
   for (int i = 0; i < 8 && name[i]; i++)
-    new_entry.filename[i] = name[i];
+    new_entry.filename[i] = fat_to_upper(name[i]);
   for (int i = 0; i < 3 && ext[i]; i++)
-    new_entry.ext[i] = ext[i];
+    new_entry.ext[i] = fat_to_upper(ext[i]);
   new_entry.attributes = 0x10;
   new_entry.starting_cluster = new_cluster;
 
   write_at_byte(entry_offset, &new_entry, sizeof(Fat16Entry));
+  serial_print("[fat/mkdir] exit\n");
   return 1;
 }
 
@@ -431,26 +481,37 @@ int fat_rmdir(FatFileSystem *self, const char *dirname) {
     strncpy(name, dirname, 8);
   }
 
+  serial_print("[fat/rmdir] enter\n");
+
   if (!fat_find_file(self, name, ext, &entry)) {
+    serial_print("[fat/rmdir] not found\n");
     return 0;
   }
 
   if (!(entry.attributes & 0x10)) {
+    serial_print("[fat/rmdir] not dir\n");
     return 0;
   }
 
   if (!directory_is_empty(self, entry.starting_cluster)) {
+    serial_print("[fat/rmdir] not empty\n");
     return 0;
   }
 
+  serial_print("[fat/rmdir] deleting\n");
   return fat_delete(self, dirname);
 }
 
 int fat_delete(FatFileSystem *self, const char *filename) {
+  serial_print("[fat/delete] enter\n");
+
   Fat16Entry entry;
   char name[9] = {0};
   char ext[4] = {0};
   const char *dot = strchr(filename, '.');
+
+  serial_print("[fat/delete] after strchr\n");
+
   if (dot) {
     int name_len = dot - filename;
     if (name_len > 8)
@@ -461,22 +522,49 @@ int fat_delete(FatFileSystem *self, const char *filename) {
     strncpy(name, filename, 8);
   }
 
+  serial_print("[fat/delete] parsed name/ext\n");
+
   if (!fat_find_file(self, name, ext, &entry)) {
+    serial_print("[fat/delete] not found\n");
     return 0;
   }
 
-  uint32_t entry_offset = self->current_entry_offset;
+  serial_print("[fat/delete] found entry\n");
 
-  uint16_t cluster = entry.starting_cluster;
+  fat_delete_entry(self, &entry, self->current_entry_offset);
+
+  serial_print("[fat/delete] exit\n");
+
+  return 1;
+}
+
+int fat_delete_entry(FatFileSystem *self, const Fat16Entry *entry,
+                     uint32_t entry_offset) {
+  Fat16Entry deleted_entry;
+  uint16_t cluster;
+
+  serial_print("[fat/delete_entry] enter\n");
+
+  if (!entry) {
+    return 0;
+  }
+
+  serial_print("[fat/delete_entry] got entry\n");
+
+  cluster = entry->starting_cluster;
+  serial_print("[fat/delete_entry] cluster loaded\n");
+
   while (cluster >= 2 && cluster <= 0xFFEF) {
+    serial_print("[fat/delete_entry] marking cluster free\n");
     uint16_t next_cluster = get_fat_entry(self, cluster);
     set_fat_entry(self, cluster, 0x0000);
     cluster = next_cluster;
   }
 
-  entry.filename[0] = 0xE5;
-  write_at_byte(entry_offset, &entry, sizeof(Fat16Entry));
-
+  read_at_byte(entry_offset, &deleted_entry, sizeof(Fat16Entry));
+  deleted_entry.filename[0] = 0xE5;
+  write_at_byte(entry_offset, &deleted_entry, sizeof(Fat16Entry));
+  serial_print("[fat/delete_entry] entry deleted\n");
   return 1;
 }
 
@@ -495,9 +583,14 @@ int fat_write(FatFileSystem *self, const char *filename, const void *in_buffer,
     strncpy(name, filename, 8);
   }
 
+  serial_print("[fat/write] enter\n");
+  int old_index = self->current_file_index;
+
   uint32_t entry_offset = find_free_dir_entry(self, self->pwd_cluster);
   if (entry_offset == 0) {
     serial_print("No free directory entry found\n");
+    serial_print("[fat/write] no dir entry\n");
+    self->current_file_index = old_index;
     return 0;
   }
 
@@ -507,9 +600,9 @@ int fat_write(FatFileSystem *self, const char *filename, const void *in_buffer,
   memset(new_entry.filename, ' ', 8);
   memset(new_entry.ext, ' ', 3);
   for (int i = 0; i < 8 && name[i]; i++)
-    new_entry.filename[i] = name[i];
+    new_entry.filename[i] = fat_to_upper(name[i]);
   for (int i = 0; i < 3 && ext[i]; i++)
-    new_entry.ext[i] = ext[i];
+    new_entry.ext[i] = fat_to_upper(ext[i]);
 
   new_entry.attributes = 0x20;
 
@@ -519,9 +612,9 @@ int fat_write(FatFileSystem *self, const char *filename, const void *in_buffer,
 
   uint32_t bytes_per_cluster = self->boot_sector.sectors_per_cluster * 512;
 
-  fat_memory_reset();
   uint8_t *cluster_buffer = (uint8_t *)allocate_memory(bytes_per_cluster);
   if (!cluster_buffer) {
+    serial_print("[fat/write] alloc failed\n");
     return 0;
   }
 
@@ -533,35 +626,49 @@ int fat_write(FatFileSystem *self, const char *filename, const void *in_buffer,
   const uint8_t *input_cursor = (const uint8_t *)in_buffer;
   uint32_t bytes_remaining = size;
 
+  serial_print("[fat/write] starting write loop\n");
+
   while (bytes_remaining > 0) {
+    serial_print("[fat/write] write loop iteration\n");
     uint32_t bytes_to_stage = (bytes_remaining > bytes_per_cluster)
                                   ? bytes_per_cluster
                                   : bytes_remaining;
     memcpy(cluster_buffer, input_cursor, bytes_to_stage);
 
+    serial_print("[fat/write] calling find_free_cluster\n");
     uint16_t new_cluster = find_free_cluster(self);
+    serial_print("[fat/write] find_free_cluster done\n");
     if (new_cluster == 0) {
       serial_print("Disk full\n");
+      serial_print("[fat/write] no cluster\n");
       break;
     }
 
+    serial_print("[fat/write] calling set_fat_entry\n");
     set_fat_entry(self, new_cluster, 0xFFFF);
+    serial_print("[fat/write] set_fat_entry done\n");
 
     if (first_cluster == 0) {
       first_cluster = new_cluster;
     } else {
+      serial_print("[fat/write] linking clusters\n");
       set_fat_entry(self, last_cluster, new_cluster);
+      serial_print("[fat/write] link done\n");
     }
 
+    serial_print("[fat/write] writing cluster data\n");
     uint32_t cluster_sector =
         data_start_sector +
         (new_cluster - 2) * self->boot_sector.sectors_per_cluster;
     write_at_byte(cluster_sector * 512, cluster_buffer, bytes_to_stage);
+    serial_print("[fat/write] cluster data written\n");
 
     last_cluster = new_cluster;
     file_size += bytes_to_stage;
     input_cursor += bytes_to_stage;
     bytes_remaining -= bytes_to_stage;
+
+    serial_print("[fat/write] loop end\n");
 
     if (bytes_to_stage < bytes_per_cluster) {
       break;
@@ -571,7 +678,13 @@ int fat_write(FatFileSystem *self, const char *filename, const void *in_buffer,
   new_entry.starting_cluster = first_cluster;
   new_entry.file_size = file_size;
 
+  serial_print("[fat/write] writing dir entry\n");
   write_at_byte(entry_offset, &new_entry, sizeof(Fat16Entry));
+  serial_print("[fat/write] dir entry written\n");
+  free_memory(cluster_buffer);
+
+  self->current_file_index = old_index;
+  serial_print("[fat/write] exit\n");
 
   return 1;
 }

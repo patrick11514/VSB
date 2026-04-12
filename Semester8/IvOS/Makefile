@@ -9,6 +9,8 @@ OBJS = $(SRCS:.c=.o)
 start: 
 	qemu-system-x86_64 -drive file=disk.img,format=raw -serial stdio
 
+all: join 
+
 join: build link apps
 	$(MAKE) -C fat populate-games
 	cp fat/sd.img disk.img

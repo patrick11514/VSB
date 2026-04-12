@@ -46,8 +46,10 @@ int keyboard_getchar() {
         char c = scancode_to_ascii[scancode];
         if (c) {
           if (ctrl_held && c == 'd') {
+            ctrl_held = 0;
             return 4;
           }
+          ctrl_held = 0;
           return c;
         }
       }

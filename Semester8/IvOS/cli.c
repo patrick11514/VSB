@@ -266,7 +266,7 @@ static int find_entry_in_dir(FatFileSystem *fs, uint16_t dir_cluster,
 
     int match = 1;
     for (int j = 0; j < 8; j++) {
-      if (entry->filename[j] != target_name[j]) {
+      if (to_upper_ascii(entry->filename[j]) != target_name[j]) {
         match = 0;
         break;
       }
@@ -274,7 +274,7 @@ static int find_entry_in_dir(FatFileSystem *fs, uint16_t dir_cluster,
 
     if (match) {
       for (int j = 0; j < 3; j++) {
-        if (entry->ext[j] != target_ext[j]) {
+        if (to_upper_ascii(entry->ext[j]) != target_ext[j]) {
           match = 0;
           break;
         }
@@ -286,6 +286,45 @@ static int find_entry_in_dir(FatFileSystem *fs, uint16_t dir_cluster,
       fs->current_file_index = old_index;
       return 1;
     }
+  }
+
+  fs->current_file_index = old_index;
+  return 0;
+}
+
+static int dir_has_non_dot_entries(FatFileSystem *fs, uint16_t dir_cluster) {
+  int old_index = fs->current_file_index;
+  uint32_t max_entries =
+      (dir_cluster == 0) ? fs->boot_sector.root_dir_entries : 65535;
+
+  fs->current_file_index = -1;
+
+  for (uint32_t i = 0; i < max_entries; i++) {
+    Fat16Entry *entry;
+
+    fat_read_directory_entry(fs, dir_cluster);
+    entry = &fs->current_file;
+
+    if (entry->filename[0] == 0x00)
+      break;
+
+    if ((unsigned char)entry->filename[0] == 0xE5)
+      continue;
+
+    if (entry->attributes == 0x0F)
+      continue;
+
+    if (entry->attributes & 0x08)
+      continue;
+
+    if (entry->filename[0] == '.' && entry->filename[1] == ' ')
+      continue;
+
+    if (entry->filename[0] == '.' && entry->filename[1] == '.')
+      continue;
+
+    fs->current_file_index = old_index;
+    return 1;
   }
 
   fs->current_file_index = old_index;
@@ -546,34 +585,56 @@ static int resolve_existing_file(const char *path, uint16_t *out_parent_cluster,
 static int write_bytes_to_dir(uint16_t parent_cluster, const char *leaf,
                               const void *buffer, uint32_t size) {
   uint16_t saved_pwd = g_fat_fs.pwd_cluster;
+  int saved_index = g_fat_fs.current_file_index;
   Fat16Entry existing;
+  uint32_t existing_offset = 0;
   int result;
 
+  serial_print("[cli/write_bytes] enter\n");
+
   g_fat_fs.pwd_cluster = parent_cluster;
+  g_fat_fs.current_file_index = -1;
 
   if (find_entry_in_dir(&g_fat_fs, parent_cluster, leaf, &existing)) {
+    serial_print("[cli/write_bytes] existing entry found\n");
     if (existing.attributes & 0x10) {
+      serial_print("[cli/write_bytes] existing is dir, abort\n");
       g_fat_fs.pwd_cluster = saved_pwd;
+      g_fat_fs.current_file_index = saved_index;
       return 0;
     }
-    if (!fat_delete(&g_fat_fs, leaf)) {
+
+    existing_offset = g_fat_fs.current_entry_offset;
+    if (!fat_delete_entry(&g_fat_fs, &existing, existing_offset)) {
+      serial_print("[cli/write_bytes] delete existing failed\n");
       g_fat_fs.pwd_cluster = saved_pwd;
+      g_fat_fs.current_file_index = saved_index;
       return 0;
     }
+    serial_print("[cli/write_bytes] existing deleted\n");
   }
 
+  g_fat_fs.current_file_index = -1;
+
+  serial_print("[cli/write_bytes] calling fat_write\n");
   result = fat_write(&g_fat_fs, leaf, buffer, size);
+  serial_print("[cli/write_bytes] fat_write done\n");
+
   g_fat_fs.pwd_cluster = saved_pwd;
+  g_fat_fs.current_file_index = saved_index;
+  serial_print("[cli/write_bytes] exit\n");
   return result;
 }
 
 static uint32_t collect_write_input(uint8_t *buffer, uint32_t max_size) {
   uint32_t size = 0;
+  serial_print("[cli/write] input loop start\n");
 
   while (1) {
     char c = keyboard_getchar();
 
     if (c == 4) {
+      serial_print("[cli/write] got Ctrl+D\n");
       vga_putchar('\n');
       return size;
     }
@@ -592,6 +653,7 @@ static uint32_t collect_write_input(uint8_t *buffer, uint32_t max_size) {
 
     if (c == '\n' || c == '\t' || (c >= 32 && c <= 126)) {
       if (size >= max_size) {
+        serial_print("[cli/write] input too large\n");
         vga_print("\nwrite: input too large\n");
         return 0xFFFFFFFF;
       }
@@ -608,30 +670,40 @@ static void do_write_file(const char *path) {
   Fat16Entry existing;
   uint32_t size;
 
+  serial_print("[cli/write] enter\n");
+
   if (!resolve_parent_cluster(path, &parent_cluster, leaf, (int)sizeof(leaf))) {
+    serial_print("[cli/write] resolve_parent_cluster failed\n");
     vga_print("write: invalid path\n");
     return;
   }
+  serial_print("[cli/write] parent resolved\n");
 
   if (!make_fat_83_name(leaf, existing.filename, existing.ext)) {
+    serial_print("[cli/write] invalid 8.3 leaf\n");
     vga_print("write: invalid file name\n");
     return;
   }
 
   if (find_entry_in_dir(&g_fat_fs, parent_cluster, leaf, &existing) &&
       (existing.attributes & 0x10)) {
+    serial_print("[cli/write] target is directory\n");
     vga_print("write: target is a directory\n");
     return;
   }
 
+  serial_print("[cli/write] collecting input\n");
   vga_print("Enter content, Ctrl+D to finish.\n");
   size = collect_write_input(write_buffer, CLI_WRITE_BUFFER_SIZE);
   if (size == 0xFFFFFFFF)
     return;
+  serial_print("[cli/write] input collected\n");
 
   if (!write_bytes_to_dir(parent_cluster, leaf, write_buffer, size)) {
+    serial_print("[cli/write] write_bytes_to_dir failed\n");
     vga_print("write: failed to write file\n");
   }
+  serial_print("[cli/write] exit\n");
 }
 
 static void do_touch(const char *path) {
@@ -661,9 +733,13 @@ static void do_rm(const char *path) {
   char leaf[128];
   Fat16Entry existing;
   uint16_t saved_pwd;
+  int saved_index;
+
+  serial_print("[cli/rm] enter\n");
 
   if (!resolve_existing_file(path, &parent_cluster, leaf, (int)sizeof(leaf),
                              &existing)) {
+    serial_print("[cli/rm] resolve_existing_file failed\n");
     vga_print("rm: file not found: ");
     vga_print(path);
     vga_print("\n");
@@ -671,11 +747,25 @@ static void do_rm(const char *path) {
   }
 
   saved_pwd = g_fat_fs.pwd_cluster;
+  saved_index = g_fat_fs.current_file_index;
   g_fat_fs.pwd_cluster = parent_cluster;
-  if (!fat_delete(&g_fat_fs, leaf)) {
+  g_fat_fs.current_file_index = -1;
+  if (!find_entry_in_dir(&g_fat_fs, parent_cluster, leaf, &existing)) {
+    serial_print("[cli/rm] re-find failed\n");
+    vga_print("rm: failed to find file for delete\n");
+    g_fat_fs.pwd_cluster = saved_pwd;
+    g_fat_fs.current_file_index = saved_index;
+    return;
+  }
+
+  serial_print("[cli/rm] calling fat_delete_entry\n");
+  if (!fat_delete_entry(&g_fat_fs, &existing, g_fat_fs.current_entry_offset)) {
+    serial_print("[cli/rm] fat_delete_entry failed\n");
     vga_print("rm: failed to delete file\n");
   }
   g_fat_fs.pwd_cluster = saved_pwd;
+  g_fat_fs.current_file_index = saved_index;
+  serial_print("[cli/rm] exit\n");
 }
 
 static void do_mkdir(const char *path) {
@@ -683,54 +773,98 @@ static void do_mkdir(const char *path) {
   char leaf[128];
   Fat16Entry existing;
   uint16_t saved_pwd;
+  int saved_index;
+
+  serial_print("[cli/mkdir] enter\n");
 
   if (!resolve_parent_cluster(path, &parent_cluster, leaf, (int)sizeof(leaf))) {
+    serial_print("[cli/mkdir] resolve_parent_cluster failed\n");
     vga_print("mkdir: invalid path\n");
     return;
   }
 
+  saved_pwd = g_fat_fs.pwd_cluster;
+  saved_index = g_fat_fs.current_file_index;
+  g_fat_fs.pwd_cluster = parent_cluster;
+  g_fat_fs.current_file_index = -1;
+
   if (find_entry_in_dir(&g_fat_fs, parent_cluster, leaf, &existing)) {
+    serial_print("[cli/mkdir] target already exists\n");
     vga_print("mkdir: target already exists\n");
+    g_fat_fs.pwd_cluster = saved_pwd;
+    g_fat_fs.current_file_index = saved_index;
     return;
   }
 
-  saved_pwd = g_fat_fs.pwd_cluster;
-  g_fat_fs.pwd_cluster = parent_cluster;
+  g_fat_fs.current_file_index = -1;
+  serial_print("[cli/mkdir] calling fat_mkdir\n");
   if (!fat_mkdir(&g_fat_fs, leaf)) {
+    serial_print("[cli/mkdir] fat_mkdir failed\n");
     vga_print("mkdir: failed to create directory\n");
   }
   g_fat_fs.pwd_cluster = saved_pwd;
+  g_fat_fs.current_file_index = saved_index;
+  serial_print("[cli/mkdir] exit\n");
 }
 
 static void do_rmdir(const char *path) {
   uint16_t parent_cluster = 0;
   char leaf[128];
   Fat16Entry existing;
+  uint32_t existing_offset;
   uint16_t saved_pwd;
+  int saved_index;
+
+  serial_print("[cli/rmdir] enter\n");
 
   if (!resolve_parent_cluster(path, &parent_cluster, leaf, (int)sizeof(leaf))) {
+    serial_print("[cli/rmdir] resolve_parent_cluster failed\n");
     vga_print("rmdir: invalid path\n");
     return;
   }
 
+  saved_pwd = g_fat_fs.pwd_cluster;
+  saved_index = g_fat_fs.current_file_index;
+  g_fat_fs.pwd_cluster = parent_cluster;
+  g_fat_fs.current_file_index = -1;
+
   if (!find_entry_in_dir(&g_fat_fs, parent_cluster, leaf, &existing)) {
+    serial_print("[cli/rmdir] target not found\n");
     vga_print("rmdir: directory not found: ");
     vga_print(path);
     vga_print("\n");
+    g_fat_fs.pwd_cluster = saved_pwd;
+    g_fat_fs.current_file_index = saved_index;
     return;
   }
 
   if (!(existing.attributes & 0x10)) {
+    serial_print("[cli/rmdir] target is not directory\n");
     vga_print("rmdir: target is not a directory\n");
+    g_fat_fs.pwd_cluster = saved_pwd;
+    g_fat_fs.current_file_index = saved_index;
     return;
   }
 
-  saved_pwd = g_fat_fs.pwd_cluster;
-  g_fat_fs.pwd_cluster = parent_cluster;
-  if (!fat_rmdir(&g_fat_fs, leaf)) {
-    vga_print("rmdir: directory is not empty or cannot be removed\n");
+  existing_offset = g_fat_fs.current_entry_offset;
+
+  if (dir_has_non_dot_entries(&g_fat_fs, existing.starting_cluster)) {
+    serial_print("[cli/rmdir] directory not empty\n");
+    vga_print("rmdir: directory is not empty\n");
+    g_fat_fs.pwd_cluster = saved_pwd;
+    g_fat_fs.current_file_index = saved_index;
+    return;
+  }
+
+  g_fat_fs.current_file_index = -1;
+  serial_print("[cli/rmdir] calling fat_delete_entry\n");
+  if (!fat_delete_entry(&g_fat_fs, &existing, existing_offset)) {
+    serial_print("[cli/rmdir] fat_delete_entry failed\n");
+    vga_print("rmdir: failed to remove directory\n");
   }
   g_fat_fs.pwd_cluster = saved_pwd;
+  g_fat_fs.current_file_index = saved_index;
+  serial_print("[cli/rmdir] exit\n");
 }
 
 static void do_cp(const char *src_path, const char *dst_path) {
@@ -793,10 +927,13 @@ static void do_mv(const char *src_path, const char *dst_path) {
   char dst_leaf[128];
   Fat16Entry src_entry;
   Fat16Entry dst_entry;
+  Fat16Entry src_entry_for_delete;
   void *buffer = NULL;
   uint32_t size = 0;
   int synthetic = 0;
   uint16_t saved_pwd;
+  int saved_index;
+  uint32_t src_entry_offset = 0;
 
   if (!resolve_existing_file(src_path, &src_parent, src_leaf,
                              (int)sizeof(src_leaf), &src_entry)) {
@@ -832,20 +969,34 @@ static void do_mv(const char *src_path, const char *dst_path) {
   }
 
   saved_pwd = g_fat_fs.pwd_cluster;
+  saved_index = g_fat_fs.current_file_index;
   g_fat_fs.pwd_cluster = dst_parent;
   if (!write_bytes_to_dir(dst_parent, dst_leaf, buffer, size)) {
     vga_print("mv: failed to write destination file\n");
     g_fat_fs.pwd_cluster = saved_pwd;
+    g_fat_fs.current_file_index = saved_index;
     return;
   }
   g_fat_fs.pwd_cluster = saved_pwd;
 
   g_fat_fs.pwd_cluster = src_parent;
-  if (!fat_delete(&g_fat_fs, src_leaf)) {
+  g_fat_fs.current_file_index = -1;
+  if (!find_entry_in_dir(&g_fat_fs, src_parent, src_leaf,
+                         &src_entry_for_delete)) {
+    vga_print(
+        "mv: warning: destination written, but source could not be found\n");
+    g_fat_fs.pwd_cluster = saved_pwd;
+    g_fat_fs.current_file_index = saved_index;
+    return;
+  }
+
+  src_entry_offset = g_fat_fs.current_entry_offset;
+  if (!fat_delete_entry(&g_fat_fs, &src_entry_for_delete, src_entry_offset)) {
     vga_print(
         "mv: warning: destination written, but source could not be removed\n");
   }
   g_fat_fs.pwd_cluster = saved_pwd;
+  g_fat_fs.current_file_index = saved_index;
 }
 
 static void cli_readline(char *buffer, int max_len) {
@@ -910,7 +1061,6 @@ static void do_help() {
   vga_print("  wsect <lba>          - Write internal buffer to sector\n");
   vga_print("  dump <addr>          - Hex dump 128 bytes from addr\n");
   vga_print("  load <lba> <addr>    - Load 1 sector from lba to addr\n");
-  vga_print("  list                 - List available programs in /games\n");
   vga_print(
       "  exec <path>          - Load and run program from current path\n");
 }
@@ -934,50 +1084,6 @@ static void do_dump(uint32_t addr) {
     }
     vga_print("|\n");
   }
-}
-
-static void do_list() {
-  FatFileSystem *fs = &g_fat_fs;
-  uint16_t games_cluster = 0;
-  int old_index = fs->current_file_index;
-  uint32_t max_entries;
-
-  if (!resolve_path("/games", 1, &games_cluster, NULL, NULL)) {
-    vga_print("/games directory not found.\n");
-    return;
-  }
-
-  vga_print("Programs in /games:\n");
-  fs->current_file_index = -1;
-  max_entries = (games_cluster == 0) ? fs->boot_sector.root_dir_entries : 65535;
-
-  for (uint32_t i = 0; i < max_entries; i++) {
-    fat_read_directory_entry(fs, games_cluster);
-    Fat16Entry *entry = &fs->current_file;
-
-    if (entry->filename[0] == 0x00)
-      break;
-
-    if ((unsigned char)entry->filename[0] == 0xE5)
-      continue;
-
-    if (entry->filename[0] == '.')
-      continue;
-
-    if (entry->attributes == 0x0F || (entry->attributes & 0x08))
-      continue;
-
-    if (entry->attributes & 0x10)
-      continue;
-
-    vga_print("  ");
-    print_fat_name(entry);
-    vga_print("  ");
-    print_dec(entry->file_size);
-    vga_print(" B\n");
-  }
-
-  fs->current_file_index = old_index;
 }
 
 static void do_ls() {
@@ -1387,8 +1493,6 @@ void cli_loop() {
       } else {
         vga_print("Usage: load <lba> <addr>\n");
       }
-    } else if (strcmp(argv[0], "list") == 0) {
-      do_list();
     } else if (strcmp(argv[0], "exec") == 0) {
       if (argc >= 2) {
         do_exec(argv[1]);
