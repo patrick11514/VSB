@@ -41,4 +41,4 @@ link: switch.o $(OBJS)
 	ld -m elf_i386 -Ttext 0x7e00 --oformat binary switch.o $(OBJS) -o kernel.bin
 
 clean:
-	rm -f *.o drivers/*.o apps/*.o *.bin disk.img apps/*.elf apps/*.bin
+	rm -f *.o drivers/*.o apps/*.o *.bin disk.img apps/*.elf apps/*.bin lib/*.o
