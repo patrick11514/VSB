@@ -54,6 +54,7 @@ void fat_read_directory_entry(FatFileSystem *self, uint32_t dir_cluster) {
     self->current_entry_offset =
         root_dir_start_sector * 512 +
         (self->current_file_index * sizeof(Fat16Entry));
+
     read_at_byte(self->current_entry_offset, &self->current_file,
                  sizeof(Fat16Entry));
   } else {
@@ -80,6 +81,7 @@ void fat_read_directory_entry(FatFileSystem *self, uint32_t dir_cluster) {
         (current_cluster - 2) * self->boot_sector.sectors_per_cluster;
     self->current_entry_offset =
         cluster_sector * 512 + (local_index * sizeof(Fat16Entry));
+
     read_at_byte(self->current_entry_offset, &self->current_file,
                  sizeof(Fat16Entry));
   }

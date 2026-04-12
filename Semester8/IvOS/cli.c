@@ -4,6 +4,7 @@
 #include "drivers/serial.h"
 #include "drivers/vga.h"
 #include "fs_state.h"
+#include "lib/convert.h"
 #include "lib/string.h"
 
 static uint32_t parse_hex(const char *str) {
@@ -240,7 +241,6 @@ static void do_ls() {
   }
 
   vga_print("Current directory:\n");
-  serial_print("Current directory:\n");
   fs->current_file_index = -1;
 
   if (fs->pwd_cluster == 0) {
@@ -250,35 +250,43 @@ static void do_ls() {
   }
 
   serial_print("entries:\n");
-  print_dec(max_entries);
+
+  char hex_buf[9];
+  uitohex(max_entries, hex_buf);
+  serial_print(hex_buf);
   serial_print("\n");
 
   for (uint32_t entry_index = 0; entry_index < max_entries; entry_index++) {
-    fat_read_directory_entry(fs, fs->pwd_cluster);
-    Fat16Entry entry = fs->current_file;
+    uitohex(entry_index, hex_buf);
+    serial_print("Current entry: ");
+    serial_print(hex_buf);
+    serial_print("\n");
 
-    if (entry.filename[0] == 0x00) {
+    fat_read_directory_entry(fs, fs->pwd_cluster);
+    Fat16Entry *entry = &fs->current_file;
+
+    if (entry->filename[0] == 0x00) {
       break;
     }
 
-    if ((unsigned char)entry.filename[0] == 0xE5) {
+    if ((unsigned char)entry->filename[0] == 0xE5) {
       continue;
     }
 
-    if (entry.filename[0] == '.') {
+    if (entry->filename[0] == '.') {
       continue;
     }
 
-    if (entry.attributes == 0x0F || (entry.attributes & 0x08)) {
+    if (entry->attributes == 0x0F || (entry->attributes & 0x08)) {
       continue;
     }
 
-    vga_print(entry.attributes & 0x10 ? "<DIR>  " : "FILE   ");
-    print_fat_name(&entry);
+    vga_print(entry->attributes & 0x10 ? "<DIR>  " : "FILE   ");
+    print_fat_name(entry);
 
-    if (!(entry.attributes & 0x10)) {
+    if (!(entry->attributes & 0x10)) {
       vga_print("  ");
-      print_dec(entry.file_size);
+      print_dec(entry->file_size);
       vga_print(" B");
     }
 

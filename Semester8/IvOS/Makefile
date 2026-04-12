@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -m32 -ffreestanding -fno-stack-protector -fno-pie -O0
 
-SRCS = kernel.c cli.c lib/string.c drivers/vga.c drivers/serial.c drivers/keyboard.c drivers/ide.c drivers/fat_fs.c drivers/fat_io.c
+SRCS = kernel.c cli.c lib/string.c lib/convert.c drivers/vga.c drivers/serial.c drivers/keyboard.c drivers/ide.c drivers/fat_fs.c drivers/fat_io.c
 OBJS = $(SRCS:.c=.o)
 
 start: join
