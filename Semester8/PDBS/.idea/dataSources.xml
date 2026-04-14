@@ -7,6 +7,10 @@
       <jdbc-driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbc-driver>
       <jdbc-url>jdbc:sqlserver://bayer.cs.vsb.cz\SQLDB:52070</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
+      <driver-properties>
+        <property name="profileSQL" value="true" />
+        <property name="gatherPerfMetrics" value="true" />
+      </driver-properties>
     </data-source>
     <data-source source="LOCAL" name="@bayer.cs.vsb.cz" uuid="5b715ba6-3d5e-4e59-acad-fea520b75073">
       <driver-ref>oracle.19</driver-ref>
