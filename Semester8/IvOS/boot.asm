@@ -25,25 +25,22 @@ boot_message:
     int 0x10
 
 load_sector:
-    mov ax, 0x0000 ; AX used as temporary storage for es
-    mov es, ax     ; es cannot be directly assigned
+    mov ah, 0x42    ; BIOS Extended Read Sector function
+    mov dl, 0x80    ; Drive number (0x80 for first HDD. Usually best to use the DL value passed by BIOS at boot)
+    mov si, dap     ; Point SI to our Disk Address Packet
+    
+    int 0x13        ; Call BIOS disk interrupt
+    jc disk_error   ; Jump if carry flag is set (error occurred)
 
-    mov bx, 0x7e00 ; load to memory after 512 bytes which bios loaded
-    mov al, 80     ; load 80 sectors
+    jmp 0x0000:0x7e00 ; Jump to the newly loaded code
 
-    mov ch, 0 ; CHS cylinder 0
-    mov cl, 2 ; CHS CC SSSSSS -> sector 2
-    mov dl, 0x80 ; CHS drive number
-    mov dh, 0 ; CHS head 0
-
-    ; let's read sector by sector instead of 40 at once to be safe, or just read 40.
-    ; wait, maybe just 40 works, but if it fails, let's catch it.
-    mov ah, 0x02 ; read desired sectors into memory
-
-    int 0x13
-    jc disk_error
-
-    jmp 0x0000:0x7e00
+dap:
+    db 0x10         ; Size of DAP (16 bytes)
+    db 0            ; Reserved (always 0)
+    dw 60           ; Number of sectors to read
+    dw 0x7E00       ; Target Offset (Load to 0x7E00)
+    dw 0x0000       ; Target Segment (0x0000)
+    dq 1            ; LBA address (Start at sector 1, right after the boot sector) 
 
 disk_error:
     mov ah, 0x0e
