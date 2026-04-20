@@ -20,20 +20,82 @@
 #include <iostream>
 #include <memory>
 #include <stdexcept>
+#include <unordered_map>
 
 #define TINYEXR_IMPLEMENTATION
 #include "tinyexr.h"
 
+namespace {
+struct EdgeKey {
+  unsigned int a;
+  unsigned int b;
+
+  bool operator==(const EdgeKey &other) const {
+    return a == other.a && b == other.b;
+  }
+};
+
+struct EdgeKeyHash {
+  size_t operator()(const EdgeKey &key) const {
+    return (static_cast<size_t>(key.a) << 32) ^ static_cast<size_t>(key.b);
+  }
+};
+
+std::vector<unsigned int>
+BuildAdjacencyIndices(const std::vector<unsigned int> &indices) {
+  std::unordered_map<EdgeKey, unsigned int, EdgeKeyHash> opposite;
+  opposite.reserve(indices.size());
+
+  for (size_t i = 0; i + 2 < indices.size(); i += 3) {
+    const unsigned int a = indices[i + 0];
+    const unsigned int b = indices[i + 1];
+    const unsigned int c = indices[i + 2];
+    opposite[{a, b}] = c;
+    opposite[{b, c}] = a;
+    opposite[{c, a}] = b;
+  }
+
+  std::vector<unsigned int> adjacency;
+  adjacency.reserve((indices.size() / 3) * 6);
+
+  for (size_t i = 0; i + 2 < indices.size(); i += 3) {
+    const unsigned int a = indices[i + 0];
+    const unsigned int b = indices[i + 1];
+    const unsigned int c = indices[i + 2];
+
+    const auto it0 = opposite.find({b, a});
+    const auto it1 = opposite.find({c, b});
+    const auto it2 = opposite.find({a, c});
+
+    const unsigned int adj0 = (it0 != opposite.end()) ? it0->second : c;
+    const unsigned int adj1 = (it1 != opposite.end()) ? it1->second : a;
+    const unsigned int adj2 = (it2 != opposite.end()) ? it2->second : b;
+
+    adjacency.push_back(a);
+    adjacency.push_back(adj0);
+    adjacency.push_back(b);
+    adjacency.push_back(adj1);
+    adjacency.push_back(c);
+    adjacency.push_back(adj2);
+  }
+
+  return adjacency;
+}
+} // namespace
+
 Rasterizer::Rasterizer(int width, int height, const char *title)
     : width(width), height(height), title(title), window(nullptr),
       camera(nullptr), controller(nullptr), program(nullptr),
-      depthProgram(nullptr), materialSSBO(0) {}
+      depthProgram(nullptr), shadowVolumeProgram(nullptr),
+      shadowDarkenProgram(nullptr), materialSSBO(0) {}
 
 Rasterizer::~Rasterizer()
 {
   delete camera;
   delete program;
   delete depthProgram;
+  delete shadowVolumeProgram;
+  delete shadowDarkenProgram;
 
   if (shadowDepthMap != 0)
   {
@@ -42,6 +104,19 @@ Rasterizer::~Rasterizer()
   if (shadowFBO != 0)
   {
     glDeleteFramebuffers(1, &shadowFBO);
+  }
+  if (fullscreenVao != 0)
+  {
+    glDeleteVertexArrays(1, &fullscreenVao);
+  }
+
+  for (auto &mesh : scene.meshes)
+  {
+    if (mesh.adjacencyEbo != 0)
+    {
+      glDeleteBuffers(1, &mesh.adjacencyEbo);
+      mesh.adjacencyEbo = 0;
+    }
   }
   // Window deletion handled by glfwTerminate usually
   if (window)
@@ -177,6 +252,14 @@ void Rasterizer::InitPrograms()
                               "../shaders/fragment/BasePBR.frag", controller);
   depthProgram = new ShaderProgram("../shaders/vertex/DepthOnly.vert",
                                    "../shaders/fragment/DepthOnly.frag");
+  shadowVolumeProgram = new ShaderProgram(
+      "../shaders/vertex/ShadowVolume.vert",
+      "../shaders/geometry/ShadowVolume.geom",
+      "../shaders/fragment/ShadowVolume.frag");
+  shadowDarkenProgram = new ShaderProgram("../shaders/vertex/ShadowDarken.vert",
+                                          "../shaders/fragment/ShadowDarken.frag");
+
+  glGenVertexArrays(1, &fullscreenVao);
 
   systems.push_back(std::make_unique<CameraSyncSystem>(camera));
   systems.push_back(std::make_unique<RenderSystem>(this));
@@ -386,6 +469,16 @@ void Rasterizer::LoadScene(const std::string &fileName)
     glEnableVertexAttribArray(3);
 
     glBindVertexArray(0);
+
+    std::vector<unsigned int> adjacencyIndices = BuildAdjacencyIndices(indices);
+    glGenBuffers(1, &newMesh.adjacencyEbo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, newMesh.adjacencyEbo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                 adjacencyIndices.size() * sizeof(unsigned int),
+                 adjacencyIndices.data(), GL_STATIC_DRAW);
+    newMesh.adjacencyIndexCount = static_cast<int>(adjacencyIndices.size());
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, newMesh.ebo);
 
     scene.meshes.push_back(newMesh);
   }
@@ -785,15 +878,188 @@ void Rasterizer::RenderDepthPass()
   glViewport(0, 0, width, height);
 }
 
+void Rasterizer::RenderStencilShadowPass(const glm::mat4 &viewProjection)
+{
+  if (!useStencilShadows || !shadowVolumeProgram)
+  {
+    return;
+  }
+
+  glEnable(GL_STENCIL_TEST);
+  glStencilMask(0xFF);
+  glClear(GL_STENCIL_BUFFER_BIT);
+
+  glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+  glDepthMask(GL_FALSE);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LEQUAL);
+  glEnable(GL_DEPTH_CLAMP);
+
+  glDisable(GL_CULL_FACE);
+  glFrontFace(GL_CCW);
+
+  glStencilFunc(GL_ALWAYS, 0, 0xFF);
+  glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
+  glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
+
+  shadowVolumeProgram->activate();
+  glUniformMatrix4fv(
+      glGetUniformLocation(shadowVolumeProgram->getProgramID(), "viewProjection"),
+      1, GL_FALSE, &viewProjection[0][0]);
+  glUniform3f(
+      glGetUniformLocation(shadowVolumeProgram->getProgramID(), "lightDirection"),
+      animatedLightDirection.x, animatedLightDirection.y, animatedLightDirection.z);
+  glUniform1f(
+      glGetUniformLocation(shadowVolumeProgram->getProgramID(), "extrusionDistance"),
+      shadowVolumeExtrusion);
+
+  auto view = registry.view<attributes::Transform, attributes::RenderMesh>();
+  auto isVisibleWithParents = [&](entt::entity entity)
+  {
+    entt::entity current = entity;
+    while (registry.valid(current))
+    {
+      if (registry.all_of<attributes::Togglable>(current) &&
+          !registry.get<attributes::Togglable>(current).visible)
+      {
+        return false;
+      }
+      if (registry.all_of<attributes::Parent>(current))
+      {
+        current = registry.get<attributes::Parent>(current).entity;
+      }
+      else
+      {
+        break;
+      }
+    }
+    return true;
+  };
+
+  auto computeModelMatrix = [&](entt::entity entity)
+  {
+    glm::mat4 modelMatrix(1.0f);
+    entt::entity current = entity;
+    while (registry.valid(current))
+    {
+      if (registry.all_of<attributes::Transform>(current))
+      {
+        auto &tr = registry.get<attributes::Transform>(current);
+        glm::mat4 localMatrix(1.0f);
+        if (tr.useMatrix)
+        {
+          localMatrix = tr.modelMatrix;
+        }
+        else
+        {
+          localMatrix = glm::translate(localMatrix, tr.pos);
+          localMatrix =
+              glm::rotate(localMatrix, tr.rot.x, glm::vec3(1.0f, 0.0f, 0.0f));
+          localMatrix =
+              glm::rotate(localMatrix, tr.rot.y, glm::vec3(0.0f, 1.0f, 0.0f));
+          localMatrix =
+              glm::rotate(localMatrix, tr.rot.z, glm::vec3(0.0f, 0.0f, 1.0f));
+          localMatrix = glm::scale(localMatrix, tr.scale);
+        }
+        modelMatrix = localMatrix * modelMatrix;
+      }
+      if (registry.all_of<attributes::Parent>(current))
+      {
+        current = registry.get<attributes::Parent>(current).entity;
+      }
+      else
+      {
+        break;
+      }
+    }
+    return modelMatrix;
+  };
+
+  for (auto entity : view)
+  {
+    if (registry.all_of<attributes::RenderOnTop>(entity) ||
+        !isVisibleWithParents(entity))
+    {
+      continue;
+    }
+
+    glm::mat4 modelMatrix = computeModelMatrix(entity);
+    glUniformMatrix4fv(
+        glGetUniformLocation(shadowVolumeProgram->getProgramID(), "modelMatrix"),
+        1, GL_FALSE, &modelMatrix[0][0]);
+
+    auto &renderMesh = view.get<attributes::RenderMesh>(entity);
+    for (int meshIdx : renderMesh.meshIndices)
+    {
+      const auto &mesh = scene.meshes[meshIdx];
+      if (mesh.adjacencyEbo == 0 || mesh.adjacencyIndexCount <= 0)
+      {
+        continue;
+      }
+
+      glBindVertexArray(mesh.vao);
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.adjacencyEbo);
+      glDrawElements(GL_TRIANGLES_ADJACENCY, mesh.adjacencyIndexCount,
+                     GL_UNSIGNED_INT, 0);
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ebo);
+    }
+  }
+
+  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+  glDepthMask(GL_TRUE);
+  glDisable(GL_DEPTH_CLAMP);
+}
+
+void Rasterizer::RenderShadowDarkenPass()
+{
+  if (!useStencilShadows || !shadowDarkenProgram)
+  {
+    return;
+  }
+
+  glEnable(GL_STENCIL_TEST);
+  glStencilMask(0x00);
+  glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
+  glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+  glDisable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  shadowDarkenProgram->activate();
+  glUniform1f(
+      glGetUniformLocation(shadowDarkenProgram->getProgramID(), "shadowOpacity"),
+      glm::clamp(shadowDarkness, 0.0f, 1.0f));
+
+  glBindVertexArray(fullscreenVao);
+  glDrawArrays(GL_TRIANGLES, 0, 3);
+  glBindVertexArray(0);
+
+  glDisable(GL_BLEND);
+  glEnable(GL_DEPTH_TEST);
+}
+
 void Rasterizer::MainLoop()
 {
   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
 
   while (!glfwWindowShouldClose(window))
   {
-    RenderDepthPass();
+    const float t = static_cast<float>(glfwGetTime());
+    const float a = t * lightAnimationSpeed;
+    animatedLightDirection =
+        glm::normalize(glm::vec3(cos(a), -1.0f, sin(a)));
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if (useShadowMapping && !useStencilShadows)
+    {
+      RenderDepthPass();
+    }
+
+    glStencilMask(0xFF);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glDisable(GL_STENCIL_TEST);
 
     controller->onFrame();
 
@@ -843,6 +1109,8 @@ void Rasterizer::MainLoop()
     glBindTexture(GL_TEXTURE_2D, shadowDepthMap);
     glUniform1i(glGetUniformLocation(program->getProgramID(), "shadowMap"),
                 16);
+    glUniform1i(glGetUniformLocation(program->getProgramID(), "useShadowMap"),
+          (useShadowMapping && !useStencilShadows) ? 1 : 0);
 
     glUniform1f(glGetUniformLocation(program->getProgramID(), "shadowBiasMin"),
                 shadowBiasMin);
@@ -874,6 +1142,9 @@ void Rasterizer::MainLoop()
     {
       sys->update(registry);
     }
+
+    RenderStencilShadowPass(projection * view);
+    RenderShadowDarkenPass();
 
     glBindVertexArray(0);
 
@@ -909,6 +1180,11 @@ void Rasterizer::DrawUI()
                      "%.5f", ImGuiSliderFlags_Logarithmic);
   ImGui::SliderFloat("Shadow Bias Max", &shadowBiasMax, 0.0005f, 0.05f,
                      "%.5f", ImGuiSliderFlags_Logarithmic);
+  ImGui::Checkbox("Use Shadow Mapping", &useShadowMapping);
+  ImGui::Checkbox("Use Stencil Shadows", &useStencilShadows);
+  ImGui::SliderFloat("Stencil Shadow Darkness", &shadowDarkness, 0.05f, 1.0f);
+  ImGui::SliderFloat("Stencil Extrusion", &shadowVolumeExtrusion, 20.0f,
+                     400.0f);
   if (shadowBiasMin > shadowBiasMax)
   {
     shadowBiasMin = shadowBiasMax;

@@ -65,6 +65,35 @@ public:
       glDeleteShader(fragmentShader);
   }
 
+  ShaderProgram(const std::string &vertexShaderPath, const std::string &geometryShaderPath,
+                const std::string &fragmentShaderPath, Controller *controller = nullptr) {
+      std::string vertexSource = readFile(vertexShaderPath);
+      std::string geometrySource = readFile(geometryShaderPath);
+      std::string fragmentSource = readFile(fragmentShaderPath);
+
+      GLuint vertexShader = compileShader(GL_VERTEX_SHADER, vertexSource);
+      GLuint geometryShader = compileShader(GL_GEOMETRY_SHADER, geometrySource);
+      GLuint fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentSource);
+
+      programId = glCreateProgram();
+      glAttachShader(programId, vertexShader);
+      glAttachShader(programId, geometryShader);
+      glAttachShader(programId, fragmentShader);
+      glLinkProgram(programId);
+
+      int success;
+      glGetProgramiv(programId, GL_LINK_STATUS, &success);
+      if (!success) {
+          char infoLog[512];
+          glGetProgramInfoLog(programId, 512, nullptr, infoLog);
+          throw std::runtime_error("Shader linking failed: " + std::string(infoLog));
+      }
+
+      glDeleteShader(vertexShader);
+      glDeleteShader(geometryShader);
+      glDeleteShader(fragmentShader);
+  }
+
   void activate() const {
       glUseProgram(programId);
   }

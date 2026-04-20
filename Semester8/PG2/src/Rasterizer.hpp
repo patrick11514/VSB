@@ -34,7 +34,9 @@ struct Mesh
   GLuint vao;
   GLuint vbo;
   GLuint ebo;
+  GLuint adjacencyEbo = 0;
   int indexCount;
+  int adjacencyIndexCount = 0;
   int materialIndex;
 };
 
@@ -58,6 +60,8 @@ private:
 
   ShaderProgram *program;
   ShaderProgram *depthProgram;
+  ShaderProgram *shadowVolumeProgram;
+  ShaderProgram *shadowDarkenProgram;
 
   SceneData scene;
   GLuint materialSSBO;
@@ -74,6 +78,11 @@ private:
   float lightAnimationSpeed = 0.65f;
   float shadowBiasMin = 0.0015f;
   float shadowBiasMax = 0.01f;
+  float shadowDarkness = 0.7f;
+  float shadowVolumeExtrusion = 120.0f;
+  bool useShadowMapping = true;
+  bool useStencilShadows = false;
+  GLuint fullscreenVao = 0;
 
   static constexpr int SHADOW_WIDTH = 2048;
   static constexpr int SHADOW_HEIGHT = 2048;
@@ -113,5 +122,7 @@ public:
   void LoadPrefilteredEnvMap(const std::vector<std::string> &filepaths,
                              GLuint &texID);
   void RenderDepthPass();
+  void RenderStencilShadowPass(const glm::mat4 &viewProjection);
+  void RenderShadowDarkenPass();
   void MainLoop();
 };

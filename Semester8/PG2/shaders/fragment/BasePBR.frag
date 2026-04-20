@@ -50,6 +50,7 @@ uniform Light lights[MAX_LIGHTS];
 uniform mat4 viewMatrix;
 uniform float shadowBiasMin;
 uniform float shadowBiasMax;
+uniform int useShadowMap;
 
 out vec4 fragColor;
 
@@ -109,6 +110,10 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
 }
 
 float SampleShadow(vec3 fragPosWS, vec3 N, vec3 L, mat4 lightMatrix) {
+    if (useShadowMap == 0) {
+        return 1.0;
+    }
+
     vec4 fragPosLightSpace = lightMatrix * vec4(fragPosWS, 1.0);
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
