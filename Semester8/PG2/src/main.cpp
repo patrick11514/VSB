@@ -13,7 +13,7 @@ int main(void)
   Rasterizer rasterizer(800, 600, "PG2 Framework");
   rasterizer.InitDevice();
   rasterizer.InitPrograms();
-  rasterizer.LoadScene("../models/6887_allied_avenger_gi2.obj");
+  rasterizer.LoadScene("../models/shadow_volume_test.obj");
   rasterizer.CreateAxes();
   rasterizer.InitBuffers();
   rasterizer.InitMaterials(0);

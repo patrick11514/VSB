@@ -10,4 +10,6 @@ out VS_OUT {
 
 void main() {
     vs_out.worldPos = (modelMatrix * vec4(vp, 1.0)).xyz;
+    // Required for robust GS pipeline behavior across drivers.
+    gl_Position = vec4(vs_out.worldPos, 1.0);
 }

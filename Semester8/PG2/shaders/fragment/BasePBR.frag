@@ -51,6 +51,8 @@ uniform mat4 viewMatrix;
 uniform float shadowBiasMin;
 uniform float shadowBiasMax;
 uniform int useShadowMap;
+uniform float uAmbientScale;
+uniform float uDirectScale;
 
 out vec4 fragColor;
 
@@ -239,7 +241,7 @@ void main() {
 
         float NdotL = max(dot(N, L), 0.0);
         float shadowFactor = SampleShadow(positionWS, N, L, light.lightMatrix);
-        Lo += shadowFactor * (kD * albedo / PI + specular) * radiance * NdotL;
+        Lo += uDirectScale * shadowFactor * (kD * albedo / PI + specular) * radiance * NdotL;
     }
 
     // ==== IBL Ambient ====
@@ -263,7 +265,7 @@ void main() {
     vec2 brdf  = texture(brdfLUTMap, vec2(max(dot(N, V), 0.0), roughness)).rg;
     vec3 specularIBL = prefilteredColor * (F * brdf.x + brdf.y);
 
-    vec3 ambient = (kD * diffuse + specularIBL) * ao;
+    vec3 ambient = uAmbientScale * (kD * diffuse + specularIBL) * ao;
     vec3 color = ambient + Lo;
 
     // HDR tonemapping & gamma correction

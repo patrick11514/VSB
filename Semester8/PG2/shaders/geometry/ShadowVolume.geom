@@ -10,6 +10,7 @@ in VS_OUT {
 uniform mat4 viewProjection;
 uniform vec3 lightDirection;
 uniform float extrusionDistance;
+uniform int invertFacing;
 
 float FaceFacing(vec3 a, vec3 b, vec3 c) {
     vec3 n = normalize(cross(b - a, c - a));
@@ -43,11 +44,10 @@ void main() {
     vec3 p1 = gs_in[2].worldPos;
     vec3 p2 = gs_in[4].worldPos;
 
-    vec3 a0 = gs_in[1].worldPos;
-    vec3 a1 = gs_in[3].worldPos;
-    vec3 a2 = gs_in[5].worldPos;
-
     float fMain = FaceFacing(p0, p1, p2);
+    if (invertFacing != 0) {
+        fMain = -fMain;
+    }
 
     if (fMain <= 0.0) {
         return;
@@ -62,19 +62,8 @@ void main() {
     EmitTriangle(p0, p1, p2);
     EmitTriangle(e2, e1, e0);
 
-    float fAdj0 = FaceFacing(p1, p0, a0);
-    float fAdj1 = FaceFacing(p2, p1, a1);
-    float fAdj2 = FaceFacing(p0, p2, a2);
-
-    if ((fMain > 0.0 && fAdj0 <= 0.0) || (fMain <= 0.0 && fAdj0 > 0.0)) {
-        EmitQuad(p0, p1, e0, e1);
-    }
-
-    if ((fMain > 0.0 && fAdj1 <= 0.0) || (fMain <= 0.0 && fAdj1 > 0.0)) {
-        EmitQuad(p1, p2, e1, e2);
-    }
-
-    if ((fMain > 0.0 && fAdj2 <= 0.0) || (fMain <= 0.0 && fAdj2 > 0.0)) {
-        EmitQuad(p2, p0, e2, e0);
-    }
+    // Emit all side quads for better robustness with imperfect adjacency/winding.
+    EmitQuad(p0, p1, e0, e1);
+    EmitQuad(p1, p2, e1, e2);
+    EmitQuad(p2, p0, e2, e0);
 }

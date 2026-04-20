@@ -62,6 +62,7 @@ private:
   ShaderProgram *depthProgram;
   ShaderProgram *shadowVolumeProgram;
   ShaderProgram *shadowDarkenProgram;
+  ShaderProgram *stencilDebugProgram;
 
   SceneData scene;
   GLuint materialSSBO;
@@ -80,8 +81,17 @@ private:
   float shadowBiasMax = 0.01f;
   float shadowDarkness = 0.7f;
   float shadowVolumeExtrusion = 120.0f;
+  bool shadowVolumeInvertFacing = false;
   bool useShadowMapping = true;
   bool useStencilShadows = false;
+  bool showStencilDebug = false;
+  float stencilDebugOpacity = 0.85f;
+  int stencilBits = 0;
+  int activeStencilBits = 0;
+  bool usingOffscreenStencilFallback = false;
+  GLuint offscreenFbo = 0;
+  GLuint offscreenColorTex = 0;
+  GLuint offscreenDepthStencilRbo = 0;
   GLuint fullscreenVao = 0;
 
   static constexpr int SHADOW_WIDTH = 2048;
@@ -95,6 +105,7 @@ public:
 
 private:
   void DrawUI();
+  void RecreateOffscreenFramebuffer();
 
   static void error_callback(int error, const char *description);
 
@@ -102,12 +113,7 @@ public:
   Rasterizer(int width, int height, const char *title);
   ~Rasterizer();
 
-  void resize(int w, int h)
-  {
-    width = w;
-    height = h;
-    glViewport(0, 0, width, height);
-  }
+  void resize(int w, int h);
 
   void InitDevice();
   void InitPrograms();
@@ -124,5 +130,6 @@ public:
   void RenderDepthPass();
   void RenderStencilShadowPass(const glm::mat4 &viewProjection);
   void RenderShadowDarkenPass();
+  void RenderStencilDebugPass();
   void MainLoop();
 };

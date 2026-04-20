@@ -25,69 +25,78 @@
 #define TINYEXR_IMPLEMENTATION
 #include "tinyexr.h"
 
-namespace {
-struct EdgeKey {
-  unsigned int a;
-  unsigned int b;
+namespace
+{
+  struct EdgeKey
+  {
+    unsigned int a;
+    unsigned int b;
 
-  bool operator==(const EdgeKey &other) const {
-    return a == other.a && b == other.b;
+    bool operator==(const EdgeKey &other) const
+    {
+      return a == other.a && b == other.b;
+    }
+  };
+
+  struct EdgeKeyHash
+  {
+    size_t operator()(const EdgeKey &key) const
+    {
+      return (static_cast<size_t>(key.a) << 32) ^ static_cast<size_t>(key.b);
+    }
+  };
+
+  std::vector<unsigned int>
+  BuildAdjacencyIndices(const std::vector<unsigned int> &indices)
+  {
+    std::unordered_map<EdgeKey, unsigned int, EdgeKeyHash> opposite;
+    opposite.reserve(indices.size());
+
+    for (size_t i = 0; i + 2 < indices.size(); i += 3)
+    {
+      const unsigned int a = indices[i + 0];
+      const unsigned int b = indices[i + 1];
+      const unsigned int c = indices[i + 2];
+      opposite[{a, b}] = c;
+      opposite[{b, c}] = a;
+      opposite[{c, a}] = b;
+    }
+
+    std::vector<unsigned int> adjacency;
+    adjacency.reserve((indices.size() / 3) * 6);
+
+    for (size_t i = 0; i + 2 < indices.size(); i += 3)
+    {
+      const unsigned int a = indices[i + 0];
+      const unsigned int b = indices[i + 1];
+      const unsigned int c = indices[i + 2];
+
+      const auto it0 = opposite.find({b, a});
+      const auto it1 = opposite.find({c, b});
+      const auto it2 = opposite.find({a, c});
+
+      const unsigned int adj0 = (it0 != opposite.end()) ? it0->second : c;
+      const unsigned int adj1 = (it1 != opposite.end()) ? it1->second : a;
+      const unsigned int adj2 = (it2 != opposite.end()) ? it2->second : b;
+
+      adjacency.push_back(a);
+      adjacency.push_back(adj0);
+      adjacency.push_back(b);
+      adjacency.push_back(adj1);
+      adjacency.push_back(c);
+      adjacency.push_back(adj2);
+    }
+
+    return adjacency;
   }
-};
-
-struct EdgeKeyHash {
-  size_t operator()(const EdgeKey &key) const {
-    return (static_cast<size_t>(key.a) << 32) ^ static_cast<size_t>(key.b);
-  }
-};
-
-std::vector<unsigned int>
-BuildAdjacencyIndices(const std::vector<unsigned int> &indices) {
-  std::unordered_map<EdgeKey, unsigned int, EdgeKeyHash> opposite;
-  opposite.reserve(indices.size());
-
-  for (size_t i = 0; i + 2 < indices.size(); i += 3) {
-    const unsigned int a = indices[i + 0];
-    const unsigned int b = indices[i + 1];
-    const unsigned int c = indices[i + 2];
-    opposite[{a, b}] = c;
-    opposite[{b, c}] = a;
-    opposite[{c, a}] = b;
-  }
-
-  std::vector<unsigned int> adjacency;
-  adjacency.reserve((indices.size() / 3) * 6);
-
-  for (size_t i = 0; i + 2 < indices.size(); i += 3) {
-    const unsigned int a = indices[i + 0];
-    const unsigned int b = indices[i + 1];
-    const unsigned int c = indices[i + 2];
-
-    const auto it0 = opposite.find({b, a});
-    const auto it1 = opposite.find({c, b});
-    const auto it2 = opposite.find({a, c});
-
-    const unsigned int adj0 = (it0 != opposite.end()) ? it0->second : c;
-    const unsigned int adj1 = (it1 != opposite.end()) ? it1->second : a;
-    const unsigned int adj2 = (it2 != opposite.end()) ? it2->second : b;
-
-    adjacency.push_back(a);
-    adjacency.push_back(adj0);
-    adjacency.push_back(b);
-    adjacency.push_back(adj1);
-    adjacency.push_back(c);
-    adjacency.push_back(adj2);
-  }
-
-  return adjacency;
-}
 } // namespace
 
 Rasterizer::Rasterizer(int width, int height, const char *title)
     : width(width), height(height), title(title), window(nullptr),
       camera(nullptr), controller(nullptr), program(nullptr),
       depthProgram(nullptr), shadowVolumeProgram(nullptr),
-      shadowDarkenProgram(nullptr), materialSSBO(0) {}
+  shadowDarkenProgram(nullptr), stencilDebugProgram(nullptr),
+  materialSSBO(0) {}
 
 Rasterizer::~Rasterizer()
 {
@@ -96,6 +105,7 @@ Rasterizer::~Rasterizer()
   delete depthProgram;
   delete shadowVolumeProgram;
   delete shadowDarkenProgram;
+  delete stencilDebugProgram;
 
   if (shadowDepthMap != 0)
   {
@@ -108,6 +118,18 @@ Rasterizer::~Rasterizer()
   if (fullscreenVao != 0)
   {
     glDeleteVertexArrays(1, &fullscreenVao);
+  }
+  if (offscreenColorTex != 0)
+  {
+    glDeleteTextures(1, &offscreenColorTex);
+  }
+  if (offscreenDepthStencilRbo != 0)
+  {
+    glDeleteRenderbuffers(1, &offscreenDepthStencilRbo);
+  }
+  if (offscreenFbo != 0)
+  {
+    glDeleteFramebuffers(1, &offscreenFbo);
   }
 
   for (auto &mesh : scene.meshes)
@@ -123,6 +145,60 @@ Rasterizer::~Rasterizer()
   {
     glfwDestroyWindow(window);
   }
+}
+
+void Rasterizer::resize(int w, int h)
+{
+  width = w;
+  height = h;
+  glViewport(0, 0, width, height);
+  RecreateOffscreenFramebuffer();
+}
+
+void Rasterizer::RecreateOffscreenFramebuffer()
+{
+  if (offscreenColorTex != 0)
+  {
+    glDeleteTextures(1, &offscreenColorTex);
+    offscreenColorTex = 0;
+  }
+  if (offscreenDepthStencilRbo != 0)
+  {
+    glDeleteRenderbuffers(1, &offscreenDepthStencilRbo);
+    offscreenDepthStencilRbo = 0;
+  }
+  if (offscreenFbo != 0)
+  {
+    glDeleteFramebuffers(1, &offscreenFbo);
+    offscreenFbo = 0;
+  }
+
+  glGenFramebuffers(1, &offscreenFbo);
+  glBindFramebuffer(GL_FRAMEBUFFER, offscreenFbo);
+
+  glGenTextures(1, &offscreenColorTex);
+  glBindTexture(GL_TEXTURE_2D, offscreenColorTex);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA,
+               GL_UNSIGNED_BYTE, nullptr);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                         offscreenColorTex, 0);
+
+  glGenRenderbuffers(1, &offscreenDepthStencilRbo);
+  glBindRenderbuffer(GL_RENDERBUFFER, offscreenDepthStencilRbo);
+  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                            GL_RENDERBUFFER, offscreenDepthStencilRbo);
+
+  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+  {
+    throw std::runtime_error("ERROR: Offscreen framebuffer for stencil fallback is incomplete");
+  }
+
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Rasterizer::error_callback([[maybe_unused]] int error,
@@ -143,6 +219,7 @@ void Rasterizer::InitDevice()
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwWindowHint(GLFW_STENCIL_BITS, 8);
 
   window = glfwCreateWindow(width, height, title, NULL, NULL);
   if (!window)
@@ -162,6 +239,10 @@ void Rasterizer::InitDevice()
   {
     throw std::runtime_error("ERROR: could not init GLEW");
   }
+
+  glGetIntegerv(GL_STENCIL_BITS, &stencilBits);
+  activeStencilBits = stencilBits;
+  RecreateOffscreenFramebuffer();
 
   // Set up viewport and camera (Using defaults here instead of full scene
   // configuration for now) You should integrate proper Camera parameters here,
@@ -198,10 +279,9 @@ void Rasterizer::InitDevice()
       rast->showAxes = !rast->showAxes;
       auto view =
           rast->registry.view<attributes::IsAxis, attributes::Togglable>();
-      for (auto entity : view) {
-        auto &tog = view.get<attributes::Togglable>(entity);
+      view.each([&](entt::entity, attributes::Togglable &tog) {
         tog.visible = rast->showAxes;
-      }
+      });
     }
 
     if (!rast->uiMode) {
@@ -258,6 +338,8 @@ void Rasterizer::InitPrograms()
       "../shaders/fragment/ShadowVolume.frag");
   shadowDarkenProgram = new ShaderProgram("../shaders/vertex/ShadowDarken.vert",
                                           "../shaders/fragment/ShadowDarken.frag");
+  stencilDebugProgram = new ShaderProgram("../shaders/vertex/ShadowDarken.vert",
+                                          "../shaders/fragment/StencilDebug.frag");
 
   glGenVertexArrays(1, &fullscreenVao);
 
@@ -851,28 +933,26 @@ void Rasterizer::RenderDepthPass()
     return modelMatrix;
   };
 
-  for (auto entity : view)
-  {
+  view.each([&](entt::entity entity, attributes::Transform &, attributes::RenderMesh &renderMesh)
+            {
     if (registry.all_of<attributes::RenderOnTop>(entity))
     {
-      continue;
+      return;
     }
     if (!isVisibleWithParents(entity))
     {
-      continue;
+      return;
     }
 
     glm::mat4 modelMatrix = computeModelMatrix(entity);
     glUniformMatrix4fv(mMatLoc, 1, GL_FALSE, &modelMatrix[0][0]);
 
-    auto &renderMesh = view.get<attributes::RenderMesh>(entity);
     for (int meshIdx : renderMesh.meshIndices)
     {
       const auto &mesh = scene.meshes[meshIdx];
       glBindVertexArray(mesh.vao);
       glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, 0);
-    }
-  }
+    } });
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glViewport(0, 0, width, height);
@@ -880,7 +960,7 @@ void Rasterizer::RenderDepthPass()
 
 void Rasterizer::RenderStencilShadowPass(const glm::mat4 &viewProjection)
 {
-  if (!useStencilShadows || !shadowVolumeProgram)
+  if (!useStencilShadows || !shadowVolumeProgram || activeStencilBits <= 0)
   {
     return;
   }
@@ -898,9 +978,19 @@ void Rasterizer::RenderStencilShadowPass(const glm::mat4 &viewProjection)
   glDisable(GL_CULL_FACE);
   glFrontFace(GL_CCW);
 
-  glStencilFunc(GL_ALWAYS, 0, 0xFF);
-  glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
-  glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
+  if (showStencilDebug)
+  {
+    // Debug mode: mark any rasterized shadow volume fragment.
+    glStencilFunc(GL_ALWAYS, 1, 0xFF);
+    glStencilOpSeparate(GL_FRONT_AND_BACK, GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    glDisable(GL_DEPTH_TEST);
+  }
+  else
+  {
+    glStencilFunc(GL_ALWAYS, 0, 0xFF);
+    glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
+    glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
+  }
 
   shadowVolumeProgram->activate();
   glUniformMatrix4fv(
@@ -912,6 +1002,10 @@ void Rasterizer::RenderStencilShadowPass(const glm::mat4 &viewProjection)
   glUniform1f(
       glGetUniformLocation(shadowVolumeProgram->getProgramID(), "extrusionDistance"),
       shadowVolumeExtrusion);
+    glUniform1i(
+      glGetUniformLocation(shadowVolumeProgram->getProgramID(),
+                 "invertFacing"),
+      shadowVolumeInvertFacing ? 1 : 0);
 
   auto view = registry.view<attributes::Transform, attributes::RenderMesh>();
   auto isVisibleWithParents = [&](entt::entity entity)
@@ -975,12 +1069,12 @@ void Rasterizer::RenderStencilShadowPass(const glm::mat4 &viewProjection)
     return modelMatrix;
   };
 
-  for (auto entity : view)
-  {
+  view.each([&](entt::entity entity, attributes::Transform &, attributes::RenderMesh &renderMesh)
+            {
     if (registry.all_of<attributes::RenderOnTop>(entity) ||
         !isVisibleWithParents(entity))
     {
-      continue;
+      return;
     }
 
     glm::mat4 modelMatrix = computeModelMatrix(entity);
@@ -988,7 +1082,6 @@ void Rasterizer::RenderStencilShadowPass(const glm::mat4 &viewProjection)
         glGetUniformLocation(shadowVolumeProgram->getProgramID(), "modelMatrix"),
         1, GL_FALSE, &modelMatrix[0][0]);
 
-    auto &renderMesh = view.get<attributes::RenderMesh>(entity);
     for (int meshIdx : renderMesh.meshIndices)
     {
       const auto &mesh = scene.meshes[meshIdx];
@@ -1002,17 +1095,19 @@ void Rasterizer::RenderStencilShadowPass(const glm::mat4 &viewProjection)
       glDrawElements(GL_TRIANGLES_ADJACENCY, mesh.adjacencyIndexCount,
                      GL_UNSIGNED_INT, 0);
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ebo);
-    }
-  }
+    } });
 
   glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
   glDepthMask(GL_TRUE);
+  glEnable(GL_DEPTH_TEST);
   glDisable(GL_DEPTH_CLAMP);
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
 }
 
 void Rasterizer::RenderShadowDarkenPass()
 {
-  if (!useStencilShadows || !shadowDarkenProgram)
+  if (!useStencilShadows || !shadowDarkenProgram || activeStencilBits <= 0)
   {
     return;
   }
@@ -1039,6 +1134,37 @@ void Rasterizer::RenderShadowDarkenPass()
   glEnable(GL_DEPTH_TEST);
 }
 
+void Rasterizer::RenderStencilDebugPass()
+{
+  if (!useStencilShadows || !showStencilDebug || !stencilDebugProgram ||
+      activeStencilBits <= 0)
+  {
+    return;
+  }
+
+  glEnable(GL_STENCIL_TEST);
+  glStencilMask(0x00);
+  glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
+  glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+  glDisable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  stencilDebugProgram->activate();
+  glUniform1f(
+      glGetUniformLocation(stencilDebugProgram->getProgramID(),
+                           "debugOpacity"),
+      glm::clamp(stencilDebugOpacity, 0.0f, 1.0f));
+
+  glBindVertexArray(fullscreenVao);
+  glDrawArrays(GL_TRIANGLES, 0, 3);
+  glBindVertexArray(0);
+
+  glDisable(GL_BLEND);
+  glEnable(GL_DEPTH_TEST);
+}
+
 void Rasterizer::MainLoop()
 {
   glEnable(GL_DEPTH_TEST);
@@ -1047,12 +1173,26 @@ void Rasterizer::MainLoop()
 
   while (!glfwWindowShouldClose(window))
   {
+    usingOffscreenStencilFallback =
+        (useStencilShadows && stencilBits <= 0 && offscreenFbo != 0);
+    activeStencilBits = usingOffscreenStencilFallback ? 8 : stencilBits;
+
+    if (usingOffscreenStencilFallback)
+    {
+      glBindFramebuffer(GL_FRAMEBUFFER, offscreenFbo);
+    }
+    else
+    {
+      glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+    glViewport(0, 0, width, height);
+
     const float t = static_cast<float>(glfwGetTime());
     const float a = t * lightAnimationSpeed;
     animatedLightDirection =
         glm::normalize(glm::vec3(cos(a), -1.0f, sin(a)));
 
-    if (useShadowMapping && !useStencilShadows)
+    if (useShadowMapping)
     {
       RenderDepthPass();
     }
@@ -1069,82 +1209,110 @@ void Rasterizer::MainLoop()
                          camera->getZNear(), camera->getZFar());
     glm::mat4 view = camera->getViewMatrix();
 
-    program->activate();
-
-    // Pass view / projection manually
-    GLuint viewLoc =
-        glGetUniformLocation(program->getProgramID(), "viewMatrix");
-    GLuint projLoc =
-        glGetUniformLocation(program->getProgramID(), "projectionMatrix");
-    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
-    glUniformMatrix4fv(projLoc, 1, GL_FALSE, &projection[0][0]);
-
-    for (size_t i = 0; i < scene.textureIds.size(); i++)
+    auto setupMainProgram = [&](bool enableShadowMap, int lightCount,
+                                float ambientScale, float directScale)
     {
-      glActiveTexture(GL_TEXTURE0 + i);
-      glBindTexture(GL_TEXTURE_2D, scene.textureIds[i]);
-      std::string uniformName = "u_Textures[" + std::to_string(i) + "]";
-      GLuint loc =
-          glGetUniformLocation(program->getProgramID(), uniformName.c_str());
-      glUniform1i(loc, i);
-    }
+      program->activate();
 
-    // Bind IBL maps
-    glActiveTexture(GL_TEXTURE13);
-    glBindTexture(GL_TEXTURE_2D, brdfLUTMap);
-    glUniform1i(glGetUniformLocation(program->getProgramID(), "brdfLUTMap"),
-                13);
+      GLuint viewLoc =
+          glGetUniformLocation(program->getProgramID(), "viewMatrix");
+      GLuint projLoc =
+          glGetUniformLocation(program->getProgramID(), "projectionMatrix");
+      glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+      glUniformMatrix4fv(projLoc, 1, GL_FALSE, &projection[0][0]);
 
-    glActiveTexture(GL_TEXTURE14);
-    glBindTexture(GL_TEXTURE_2D, irradianceMap);
-    glUniform1i(glGetUniformLocation(program->getProgramID(), "irradianceMap"),
-                14);
+      for (size_t i = 0; i < scene.textureIds.size(); i++)
+      {
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, scene.textureIds[i]);
+        std::string uniformName = "u_Textures[" + std::to_string(i) + "]";
+        GLuint loc =
+            glGetUniformLocation(program->getProgramID(), uniformName.c_str());
+        glUniform1i(loc, i);
+      }
 
-    glActiveTexture(GL_TEXTURE15);
-    glBindTexture(GL_TEXTURE_2D, prefilteredMap);
-    glUniform1i(glGetUniformLocation(program->getProgramID(), "prefilteredMap"),
-                15);
+      glActiveTexture(GL_TEXTURE13);
+      glBindTexture(GL_TEXTURE_2D, brdfLUTMap);
+      glUniform1i(glGetUniformLocation(program->getProgramID(), "brdfLUTMap"),
+                  13);
 
-    glActiveTexture(GL_TEXTURE16);
-    glBindTexture(GL_TEXTURE_2D, shadowDepthMap);
-    glUniform1i(glGetUniformLocation(program->getProgramID(), "shadowMap"),
-                16);
-    glUniform1i(glGetUniformLocation(program->getProgramID(), "useShadowMap"),
-          (useShadowMapping && !useStencilShadows) ? 1 : 0);
+      glActiveTexture(GL_TEXTURE14);
+      glBindTexture(GL_TEXTURE_2D, irradianceMap);
+      glUniform1i(glGetUniformLocation(program->getProgramID(), "irradianceMap"),
+                  14);
 
-    glUniform1f(glGetUniformLocation(program->getProgramID(), "shadowBiasMin"),
-                shadowBiasMin);
-    glUniform1f(glGetUniformLocation(program->getProgramID(), "shadowBiasMax"),
-                shadowBiasMax);
+      glActiveTexture(GL_TEXTURE15);
+      glBindTexture(GL_TEXTURE_2D, prefilteredMap);
+      glUniform1i(glGetUniformLocation(program->getProgramID(), "prefilteredMap"),
+                  15);
 
-    glUniformMatrix4fv(glGetUniformLocation(program->getProgramID(),
-                                            "lights[0].lightMatrix"),
-                       1, GL_FALSE, &lightSpaceMatrix[0][0]);
+      glActiveTexture(GL_TEXTURE16);
+      glBindTexture(GL_TEXTURE_2D, shadowDepthMap);
+      glUniform1i(glGetUniformLocation(program->getProgramID(), "shadowMap"),
+                  16);
+      glUniform1i(glGetUniformLocation(program->getProgramID(), "useShadowMap"),
+                  enableShadowMap ? 1 : 0);
 
-    GLuint lightCountLoc =
-        glGetUniformLocation(program->getProgramID(), "lightCount");
-    glUniform1i(lightCountLoc, 1);
+      glUniform1f(glGetUniformLocation(program->getProgramID(), "shadowBiasMin"),
+                  shadowBiasMin);
+      glUniform1f(glGetUniformLocation(program->getProgramID(), "shadowBiasMax"),
+                  shadowBiasMax);
+      glUniform1f(glGetUniformLocation(program->getProgramID(), "uAmbientScale"),
+                  ambientScale);
+      glUniform1f(glGetUniformLocation(program->getProgramID(), "uDirectScale"),
+                  directScale);
 
-    GLuint lightTypeLoc =
-        glGetUniformLocation(program->getProgramID(), "lights[0].type");
-    glUniform1i(lightTypeLoc, 1); // DIRECTIONAL
+      glUniformMatrix4fv(glGetUniformLocation(program->getProgramID(),
+                                              "lights[0].lightMatrix"),
+                         1, GL_FALSE, &lightSpaceMatrix[0][0]);
 
-    GLuint lightColorLoc =
-        glGetUniformLocation(program->getProgramID(), "lights[0].color");
-    glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
+      GLuint lightCountLoc =
+          glGetUniformLocation(program->getProgramID(), "lightCount");
+      glUniform1i(lightCountLoc, lightCount);
 
-    GLuint lightDirLoc =
-        glGetUniformLocation(program->getProgramID(), "lights[0].direction");
-    glUniform3f(lightDirLoc, animatedLightDirection.x, animatedLightDirection.y,
-                animatedLightDirection.z);
+      GLuint lightTypeLoc =
+          glGetUniformLocation(program->getProgramID(), "lights[0].type");
+      glUniform1i(lightTypeLoc, 1);
 
-    for (auto &sys : systems)
+      GLuint lightColorLoc =
+          glGetUniformLocation(program->getProgramID(), "lights[0].color");
+      glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
+
+      GLuint lightDirLoc =
+          glGetUniformLocation(program->getProgramID(), "lights[0].direction");
+      glUniform3f(lightDirLoc, animatedLightDirection.x,
+                  animatedLightDirection.y, animatedLightDirection.z);
+    };
+
+    auto renderScene = [&]()
     {
-      sys->update(registry);
-    }
+      for (auto &sys : systems)
+      {
+        sys->update(registry);
+      }
+    };
 
-    RenderStencilShadowPass(projection * view);
-    RenderShadowDarkenPass();
+    if (useStencilShadows)
+    {
+      // Pass 1: normal shading baseline (no shadow map sampling)
+      glDisable(GL_STENCIL_TEST);
+      setupMainProgram(useShadowMapping, 1, 1.0f, 1.0f);
+      renderScene();
+
+      // Pass 2: stencil shadow volumes (z-fail)
+      RenderStencilShadowPass(projection * view);
+
+      // Pass 3: darken only shadowed pixels using stencil mask
+      RenderShadowDarkenPass();
+      RenderStencilDebugPass();
+
+      glDisable(GL_STENCIL_TEST);
+    }
+    else
+    {
+      setupMainProgram(useShadowMapping, 1, 1.0f, 1.0f);
+      renderScene();
+    }
 
     glBindVertexArray(0);
 
@@ -1155,6 +1323,17 @@ void Rasterizer::MainLoop()
     DrawUI();
 
     ImGui::Render();
+
+    if (usingOffscreenStencilFallback)
+    {
+      glBindFramebuffer(GL_READ_FRAMEBUFFER, offscreenFbo);
+      glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+      glBlitFramebuffer(0, 0, width, height, 0, 0, width, height,
+                        GL_COLOR_BUFFER_BIT, GL_NEAREST);
+      glBindFramebuffer(GL_FRAMEBUFFER, 0);
+      glViewport(0, 0, width, height);
+    }
+
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     glfwSwapBuffers(window);
@@ -1180,9 +1359,30 @@ void Rasterizer::DrawUI()
                      "%.5f", ImGuiSliderFlags_Logarithmic);
   ImGui::SliderFloat("Shadow Bias Max", &shadowBiasMax, 0.0005f, 0.05f,
                      "%.5f", ImGuiSliderFlags_Logarithmic);
+  if (activeStencilBits > 0)
+  {
+    if (usingOffscreenStencilFallback)
+    {
+      ImGui::TextColored(ImVec4(0.45f, 0.85f, 1.0f, 1.0f),
+                         "Stencil fallback active (offscreen 8-bit stencil)");
+    }
+    else
+    {
+      ImGui::Text("Stencil buffer bits: %d", stencilBits);
+    }
+  }
+  else
+  {
+    ImGui::TextColored(ImVec4(1.0f, 0.45f, 0.2f, 1.0f),
+                       "Stencil buffer unavailable (GL_STENCIL_BITS = 0)");
+  }
   ImGui::Checkbox("Use Shadow Mapping", &useShadowMapping);
   ImGui::Checkbox("Use Stencil Shadows", &useStencilShadows);
+  ImGui::Checkbox("Stencil Invert Facing", &shadowVolumeInvertFacing);
   ImGui::SliderFloat("Stencil Shadow Darkness", &shadowDarkness, 0.05f, 1.0f);
+  ImGui::Checkbox("Show Stencil Debug", &showStencilDebug);
+  ImGui::SliderFloat("Stencil Debug Opacity", &stencilDebugOpacity, 0.05f,
+                     1.0f);
   ImGui::SliderFloat("Stencil Extrusion", &shadowVolumeExtrusion, 20.0f,
                      400.0f);
   if (shadowBiasMin > shadowBiasMax)
@@ -1264,14 +1464,13 @@ void Rasterizer::DrawUI()
   };
 
   auto view = registry.view<attributes::Name, attributes::Transform>();
-  for (auto entity : view)
-  {
+  view.each([&](entt::entity entity, attributes::Name &, attributes::Transform &)
+            {
     // Only draw root entities (no Parents)
     if (!registry.all_of<attributes::Parent>(entity))
     {
       drawEntity(entity, drawEntity);
-    }
-  }
+    } });
 
   ImGui::End();
 }
