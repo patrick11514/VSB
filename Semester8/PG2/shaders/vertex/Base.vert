@@ -10,10 +10,12 @@ uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 
 out vec4 positionCS;
+out vec3 positionWS;
 out vec2 uv_out;
 out mat3 TBN;
 
 void main () {
+    positionWS = (modelMatrix * vec4(vp, 1.0)).xyz;
     positionCS = (viewMatrix * modelMatrix) * vec4(vp, 1.0);
     gl_Position = projectionMatrix * positionCS;
     

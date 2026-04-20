@@ -26,25 +26,42 @@
 
 Rasterizer::Rasterizer(int width, int height, const char *title)
     : width(width), height(height), title(title), window(nullptr),
-      camera(nullptr), controller(nullptr), program(nullptr), materialSSBO(0) {}
+      camera(nullptr), controller(nullptr), program(nullptr),
+      depthProgram(nullptr), materialSSBO(0) {}
 
-Rasterizer::~Rasterizer() {
+Rasterizer::~Rasterizer()
+{
   delete camera;
+  delete program;
+  delete depthProgram;
+
+  if (shadowDepthMap != 0)
+  {
+    glDeleteTextures(1, &shadowDepthMap);
+  }
+  if (shadowFBO != 0)
+  {
+    glDeleteFramebuffers(1, &shadowFBO);
+  }
   // Window deletion handled by glfwTerminate usually
-  if (window) {
+  if (window)
+  {
     glfwDestroyWindow(window);
   }
 }
 
 void Rasterizer::error_callback([[maybe_unused]] int error,
-                                const char *description) {
+                                const char *description)
+{
   std::cerr << "GLFW Error: " << description << std::endl;
 }
 
-void Rasterizer::InitDevice() {
+void Rasterizer::InitDevice()
+{
   glfwSetErrorCallback(error_callback);
   glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
-  if (!glfwInit()) {
+  if (!glfwInit())
+  {
     throw std::runtime_error("ERROR: could not start GLFW3");
   }
 
@@ -53,7 +70,8 @@ void Rasterizer::InitDevice() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   window = glfwCreateWindow(width, height, title, NULL, NULL);
-  if (!window) {
+  if (!window)
+  {
     glfwTerminate();
     throw std::runtime_error("ERROR: could not create GLFW3 window");
   }
@@ -65,7 +83,8 @@ void Rasterizer::InitDevice() {
   GLenum err = glewInit();
   if (err != GLEW_OK)
     printf("GLEW Error: %s\n", glewGetErrorString(err));
-  if (err != GLEW_OK) {
+  if (err != GLEW_OK)
+  {
     throw std::runtime_error("ERROR: could not init GLEW");
   }
 
@@ -82,7 +101,8 @@ void Rasterizer::InitDevice() {
   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   glfwSetKeyCallback(window, [](GLFWwindow *window, int key, int scancode,
-                                int action, int mods) {
+                                int action, int mods)
+                     {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
       glfwSetWindowShouldClose(window, true);
 
@@ -111,20 +131,20 @@ void Rasterizer::InitDevice() {
 
     if (!rast->uiMode) {
       ctrl->onKeyPress(window, key, scancode, action, mods);
-    }
-  });
+    } });
 
-  glfwSetCursorPosCallback(window, [](GLFWwindow *window, double x, double y) {
+  glfwSetCursorPosCallback(window, [](GLFWwindow *window, double x, double y)
+                           {
     Rasterizer *rast =
         static_cast<Rasterizer *>(glfwGetWindowUserPointer(window));
     Controller *ctrl = rast->controller;
     if (!rast->uiMode) {
       ctrl->onMouse(window, x, y);
-    }
-  });
+    } });
 
   glfwSetScrollCallback(
-      window, [](GLFWwindow *window, double xoffset, double yoffset) {
+      window, [](GLFWwindow *window, double xoffset, double yoffset)
+      {
         Rasterizer *rast =
             static_cast<Rasterizer *>(glfwGetWindowUserPointer(window));
         if (!rast->uiMode) {
@@ -132,16 +152,15 @@ void Rasterizer::InitDevice() {
           if (rast->controller->cameraSpeed < 0.01f) {
             rast->controller->cameraSpeed = 0.01f;
           }
-        }
-      });
+        } });
 
   glfwSetFramebufferSizeCallback(
-      window, [](GLFWwindow *window, int width, int height) {
+      window, [](GLFWwindow *window, int width, int height)
+      {
         Rasterizer *rast =
             static_cast<Rasterizer *>(glfwGetWindowUserPointer(window));
         if (rast)
-          rast->resize(width, height);
-      });
+          rast->resize(width, height); });
 
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
@@ -152,15 +171,19 @@ void Rasterizer::InitDevice() {
   ImGui_ImplOpenGL3_Init("#version 430");
 }
 
-void Rasterizer::InitPrograms() {
+void Rasterizer::InitPrograms()
+{
   program = new ShaderProgram("../shaders/vertex/Base.vert",
                               "../shaders/fragment/BasePBR.frag", controller);
+  depthProgram = new ShaderProgram("../shaders/vertex/DepthOnly.vert",
+                                   "../shaders/fragment/DepthOnly.frag");
 
   systems.push_back(std::make_unique<CameraSyncSystem>(camera));
   systems.push_back(std::make_unique<RenderSystem>(this));
 }
 
-void Rasterizer::LoadScene(const std::string &fileName) {
+void Rasterizer::LoadScene(const std::string &fileName)
+{
   Assimp::Importer importer;
   unsigned int importOptions =
       aiProcess_Triangulate | aiProcess_OptimizeMeshes |
@@ -168,20 +191,23 @@ void Rasterizer::LoadScene(const std::string &fileName) {
   const aiScene *ai_scene = importer.ReadFile(fileName, importOptions);
 
   if (!ai_scene || ai_scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
-      !ai_scene->mRootNode) {
+      !ai_scene->mRootNode)
+  {
     throw std::runtime_error("ERROR: Assimp failed to load scene: " +
                              std::string(importer.GetErrorString()));
   }
 
   std::string basePath = "";
   size_t lastSlash = fileName.find_last_of("/\\");
-  if (lastSlash != std::string::npos) {
+  if (lastSlash != std::string::npos)
+  {
     basePath = fileName.substr(0, lastSlash + 1);
   }
 
   // Load Materials
   scene.materials.reserve(ai_scene->mNumMaterials);
-  for (unsigned int i = 0; i < ai_scene->mNumMaterials; i++) {
+  for (unsigned int i = 0; i < ai_scene->mNumMaterials; i++)
+  {
     aiMaterial *mat = ai_scene->mMaterials[i];
     GPUMaterial gpuMat{};
 
@@ -198,8 +224,10 @@ void Rasterizer::LoadScene(const std::string &fileName) {
       gpuMat.specular = glm::vec4(color.r, color.g, color.b, shininess);
 
     auto loadTexture = [&](aiTextureType type, float &typeVar,
-                           float &indexVar) {
-      if (mat->GetTextureCount(type) > 0) {
+                           float &indexVar)
+    {
+      if (mat->GetTextureCount(type) > 0)
+      {
         aiString path;
         mat->GetTexture(type, 0, &path);
         std::string texPath = basePath + path.C_Str();
@@ -208,18 +236,23 @@ void Rasterizer::LoadScene(const std::string &fileName) {
             texPath.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
             SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB |
                 SOIL_FLAG_COMPRESS_TO_DXT);
-        if (textureId == 0) {
+        if (textureId == 0)
+        {
           std::cerr << "SOIL loading error for " << texPath << ": "
                     << SOIL_last_result() << std::endl;
           typeVar = 0.0f;
           indexVar = -1.0f;
-        } else {
+        }
+        else
+        {
           int texIndex = scene.textureIds.size();
           scene.textureIds.push_back(textureId);
           typeVar = 1.0f;
           indexVar = float(texIndex);
         }
-      } else {
+      }
+      else
+      {
         typeVar = 0.0f;
         indexVar = -1.0f;
       }
@@ -232,7 +265,8 @@ void Rasterizer::LoadScene(const std::string &fileName) {
 
     loadTexture(aiTextureType_DIFFUSE, gpuMat.pbrTextureTypes.x,
                 gpuMat.pbrTextureIndices.x);
-    if (gpuMat.pbrTextureTypes.x == 0.0f) {
+    if (gpuMat.pbrTextureTypes.x == 0.0f)
+    {
       loadTexture(aiTextureType_BASE_COLOR, gpuMat.pbrTextureTypes.x,
                   gpuMat.pbrTextureIndices.x);
     }
@@ -248,7 +282,8 @@ void Rasterizer::LoadScene(const std::string &fileName) {
 
     loadTexture(aiTextureType_LIGHTMAP, gpuMat.pbrTextureTypes2.x,
                 gpuMat.pbrTextureIndices2.x);
-    if (gpuMat.pbrTextureTypes2.x == 0.0f) {
+    if (gpuMat.pbrTextureTypes2.x == 0.0f)
+    {
       loadTexture(aiTextureType_AMBIENT, gpuMat.pbrTextureTypes2.x,
                   gpuMat.pbrTextureIndices2.x);
     }
@@ -258,7 +293,8 @@ void Rasterizer::LoadScene(const std::string &fileName) {
 
   // Load Meshes
 
-  for (unsigned int m = 0; m < ai_scene->mNumMeshes; m++) {
+  for (unsigned int m = 0; m < ai_scene->mNumMeshes; m++)
+  {
     aiMesh *mesh = ai_scene->mMeshes[m];
 
     std::vector<float> vertices;
@@ -266,40 +302,51 @@ void Rasterizer::LoadScene(const std::string &fileName) {
 
     int rowCount = 3 + 3 + 2 + 3; // Pos (3), Norm (3), UV (2), Tangent (3)
 
-    for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
+    for (unsigned int i = 0; i < mesh->mNumVertices; i++)
+    {
       // Positions
       vertices.push_back(mesh->mVertices[i].x);
       vertices.push_back(mesh->mVertices[i].y);
       vertices.push_back(mesh->mVertices[i].z);
 
       // Normals
-      if (mesh->HasNormals()) {
+      if (mesh->HasNormals())
+      {
         vertices.push_back(mesh->mNormals[i].x);
         vertices.push_back(mesh->mNormals[i].y);
         vertices.push_back(mesh->mNormals[i].z);
-      } else {
+      }
+      else
+      {
         vertices.insert(vertices.end(), {0.f, 0.f, 0.f});
       }
 
       // UVs
-      if (mesh->HasTextureCoords(0)) {
+      if (mesh->HasTextureCoords(0))
+      {
         vertices.push_back(mesh->mTextureCoords[0][i].x);
         vertices.push_back(mesh->mTextureCoords[0][i].y);
-      } else {
+      }
+      else
+      {
         vertices.insert(vertices.end(), {0.f, 0.f});
       }
 
       // Tangents
-      if (mesh->HasTangentsAndBitangents()) {
+      if (mesh->HasTangentsAndBitangents())
+      {
         vertices.push_back(mesh->mTangents[i].x);
         vertices.push_back(mesh->mTangents[i].y);
         vertices.push_back(mesh->mTangents[i].z);
-      } else {
+      }
+      else
+      {
         vertices.insert(vertices.end(), {0.f, 0.f, 0.f});
       }
     }
 
-    for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
+    for (unsigned int i = 0; i < mesh->mNumFaces; i++)
+    {
       aiFace face = mesh->mFaces[i];
       for (unsigned int j = 0; j < face.mNumIndices; j++)
         indices.push_back(face.mIndices[j]);
@@ -356,7 +403,8 @@ void Rasterizer::LoadScene(const std::string &fileName) {
   auto &childrenAttr = registry.emplace<attributes::Children>(rootEntity);
 
   size_t startMeshIdx = scene.meshes.size() - ai_scene->mNumMeshes;
-  for (unsigned int i = 0; i < ai_scene->mNumMeshes; ++i) {
+  for (unsigned int i = 0; i < ai_scene->mNumMeshes; ++i)
+  {
     auto childEntity = registry.create();
 
     std::string childName = ai_scene->mMeshes[i]->mName.length > 0
@@ -380,17 +428,19 @@ void Rasterizer::LoadScene(const std::string &fileName) {
   }
 }
 
-void Rasterizer::CreateAxes() {
+void Rasterizer::CreateAxes()
+{
   // We mock a tiny mesh with bounds indicating the X, Y, Z coordinates
   // independently.
 
-  auto addAxis = [&](glm::vec3 color, glm::vec3 scale, std::string name) {
+  auto addAxis = [&](glm::vec3 color, glm::vec3 scale, std::string name)
+  {
     // Very crude line box from [-1, 1] scaled drastically
     std::vector<float> vertices = {
-        -1, -1, -1, 0, 1, 0, 0, 0, 0, 0, 0, 1,  -1, -1, 0, 1, 0, 0, 0, 0, 0, 0,
-        1,  1,  -1, 0, 1, 0, 0, 0, 0, 0, 0, -1, 1,  -1, 0, 1, 0, 0, 0, 0, 0, 0,
-        -1, -1, 1,  0, 1, 0, 0, 0, 0, 0, 0, 1,  -1, 1,  0, 1, 0, 0, 0, 0, 0, 0,
-        1,  1,  1,  0, 1, 0, 0, 0, 0, 0, 0, -1, 1,  1,  0, 1, 0, 0, 0, 0, 0, 0};
+        -1, -1, -1, 0, 1, 0, 0, 0, 0, 0, 0, 1, -1, -1, 0, 1, 0, 0, 0, 0, 0, 0,
+        1, 1, -1, 0, 1, 0, 0, 0, 0, 0, 0, -1, 1, -1, 0, 1, 0, 0, 0, 0, 0, 0,
+        -1, -1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, -1, 1, 0, 1, 0, 0, 0, 0, 0, 0,
+        1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, -1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0};
     // Map to simple triangles
     std::vector<unsigned int> indices = {0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1,
                                          7, 6, 5, 5, 4, 7, 4, 0, 3, 3, 7, 4,
@@ -479,12 +529,14 @@ void Rasterizer::CreateAxes() {
           "Axis: Z (Blue)");
 }
 
-void Rasterizer::InitBuffers() {
+void Rasterizer::InitBuffers()
+{
   // Meshes VBO/VAO naturally instantiated in LoadScene per your requirement.
   // If you need global buffers, they would go here.
 }
 
-void Rasterizer::InitMaterials(int bindingPoint) {
+void Rasterizer::InitMaterials(int bindingPoint)
+{
   if (scene.materials.empty())
     return;
 
@@ -497,7 +549,8 @@ void Rasterizer::InitMaterials(int bindingPoint) {
   glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
-void Rasterizer::InitIBLTextures() {
+void Rasterizer::InitIBLTextures()
+{
   LoadEXRTexture("../models/brdf_integration_map_ct_ggx.exr", brdfLUTMap);
   LoadEXRTexture("../models/lebombo_irradiance_map.exr", irradianceMap);
 
@@ -513,16 +566,48 @@ void Rasterizer::InitIBLTextures() {
                         prefilteredMap);
 }
 
+void Rasterizer::InitShadowMap()
+{
+  glGenFramebuffers(1, &shadowFBO);
+
+  glGenTextures(1, &shadowDepthMap);
+  glBindTexture(GL_TEXTURE_2D, shadowDepthMap);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, SHADOW_WIDTH,
+               SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+  const GLfloat borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
+  glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+  glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
+                         shadowDepthMap, 0);
+  glDrawBuffer(GL_NONE);
+  glReadBuffer(GL_NONE);
+
+  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+  {
+    throw std::runtime_error("ERROR: Shadow framebuffer is incomplete");
+  }
+
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 void Rasterizer::LoadEXRTexture(const char *filepath, GLuint &texID,
-                                bool isSrgb, bool isMipmap) {
+                                bool isSrgb, bool isMipmap)
+{
   float *out;
   int width;
   int height;
   const char *err = nullptr;
   int ret = LoadEXR(&out, &width, &height, filepath, &err);
 
-  if (ret != TINYEXR_SUCCESS) {
-    if (err) {
+  if (ret != TINYEXR_SUCCESS)
+  {
+    if (err)
+    {
       std::cerr << "ERR (" << filepath << "): " << err << std::endl;
       free((void *)err);
     }
@@ -544,7 +629,8 @@ void Rasterizer::LoadEXRTexture(const char *filepath, GLuint &texID,
 }
 
 void Rasterizer::LoadPrefilteredEnvMap(
-    const std::vector<std::string> &filepaths, GLuint &texID) {
+    const std::vector<std::string> &filepaths, GLuint &texID)
+{
   glGenTextures(1, &texID);
   glBindTexture(GL_TEXTURE_2D, texID);
 
@@ -554,15 +640,18 @@ void Rasterizer::LoadPrefilteredEnvMap(
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-  for (size_t i = 0; i < filepaths.size(); ++i) {
+  for (size_t i = 0; i < filepaths.size(); ++i)
+  {
     float *out;
     int width;
     int height;
     const char *err = nullptr;
     int ret = LoadEXR(&out, &width, &height, filepaths[i].c_str(), &err);
 
-    if (ret != TINYEXR_SUCCESS) {
-      if (err) {
+    if (ret != TINYEXR_SUCCESS)
+    {
+      if (err)
+      {
         std::cerr << "ERR (" << filepaths[i] << "): " << err << std::endl;
         free((void *)err);
       }
@@ -575,10 +664,135 @@ void Rasterizer::LoadPrefilteredEnvMap(
   }
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, filepaths.size() - 1);
 }
-void Rasterizer::MainLoop() {
+
+void Rasterizer::RenderDepthPass()
+{
+  if (!depthProgram || shadowFBO == 0 || shadowDepthMap == 0)
+  {
+    return;
+  }
+
+  const float t = static_cast<float>(glfwGetTime());
+  const float a = t * lightAnimationSpeed;
+  animatedLightDirection =
+      glm::normalize(glm::vec3(cos(a), -1.0f, sin(a)));
+
+  glm::vec3 sceneCenter(0.0f);
+  glm::vec3 lightPos = sceneCenter - animatedLightDirection * 18.0f;
+  glm::mat4 lightView =
+      glm::lookAt(lightPos, sceneCenter, glm::vec3(0.0f, 1.0f, 0.0f));
+  glm::mat4 lightProj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 60.0f);
+  lightSpaceMatrix = lightProj * lightView;
+
+  glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+  glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
+  glClear(GL_DEPTH_BUFFER_BIT);
   glEnable(GL_DEPTH_TEST);
 
-  while (!glfwWindowShouldClose(window)) {
+  depthProgram->activate();
+  GLuint lsLoc =
+      glGetUniformLocation(depthProgram->getProgramID(), "lightSpaceMatrix");
+  GLuint mMatLoc =
+      glGetUniformLocation(depthProgram->getProgramID(), "modelMatrix");
+  glUniformMatrix4fv(lsLoc, 1, GL_FALSE, &lightSpaceMatrix[0][0]);
+
+  auto view = registry.view<attributes::Transform, attributes::RenderMesh>();
+  auto isVisibleWithParents = [&](entt::entity entity)
+  {
+    entt::entity current = entity;
+    while (registry.valid(current))
+    {
+      if (registry.all_of<attributes::Togglable>(current) &&
+          !registry.get<attributes::Togglable>(current).visible)
+      {
+        return false;
+      }
+      if (registry.all_of<attributes::Parent>(current))
+      {
+        current = registry.get<attributes::Parent>(current).entity;
+      }
+      else
+      {
+        break;
+      }
+    }
+    return true;
+  };
+
+  auto computeModelMatrix = [&](entt::entity entity)
+  {
+    glm::mat4 modelMatrix(1.0f);
+    entt::entity current = entity;
+    while (registry.valid(current))
+    {
+      if (registry.all_of<attributes::Transform>(current))
+      {
+        auto &tr = registry.get<attributes::Transform>(current);
+        glm::mat4 localMatrix(1.0f);
+        if (tr.useMatrix)
+        {
+          localMatrix = tr.modelMatrix;
+        }
+        else
+        {
+          localMatrix = glm::translate(localMatrix, tr.pos);
+          localMatrix =
+              glm::rotate(localMatrix, tr.rot.x, glm::vec3(1.0f, 0.0f, 0.0f));
+          localMatrix =
+              glm::rotate(localMatrix, tr.rot.y, glm::vec3(0.0f, 1.0f, 0.0f));
+          localMatrix =
+              glm::rotate(localMatrix, tr.rot.z, glm::vec3(0.0f, 0.0f, 1.0f));
+          localMatrix = glm::scale(localMatrix, tr.scale);
+        }
+        modelMatrix = localMatrix * modelMatrix;
+      }
+      if (registry.all_of<attributes::Parent>(current))
+      {
+        current = registry.get<attributes::Parent>(current).entity;
+      }
+      else
+      {
+        break;
+      }
+    }
+    return modelMatrix;
+  };
+
+  for (auto entity : view)
+  {
+    if (registry.all_of<attributes::RenderOnTop>(entity))
+    {
+      continue;
+    }
+    if (!isVisibleWithParents(entity))
+    {
+      continue;
+    }
+
+    glm::mat4 modelMatrix = computeModelMatrix(entity);
+    glUniformMatrix4fv(mMatLoc, 1, GL_FALSE, &modelMatrix[0][0]);
+
+    auto &renderMesh = view.get<attributes::RenderMesh>(entity);
+    for (int meshIdx : renderMesh.meshIndices)
+    {
+      const auto &mesh = scene.meshes[meshIdx];
+      glBindVertexArray(mesh.vao);
+      glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, 0);
+    }
+  }
+
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glViewport(0, 0, width, height);
+}
+
+void Rasterizer::MainLoop()
+{
+  glEnable(GL_DEPTH_TEST);
+
+  while (!glfwWindowShouldClose(window))
+  {
+    RenderDepthPass();
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     controller->onFrame();
@@ -599,7 +813,8 @@ void Rasterizer::MainLoop() {
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, &projection[0][0]);
 
-    for (size_t i = 0; i < scene.textureIds.size(); i++) {
+    for (size_t i = 0; i < scene.textureIds.size(); i++)
+    {
       glActiveTexture(GL_TEXTURE0 + i);
       glBindTexture(GL_TEXTURE_2D, scene.textureIds[i]);
       std::string uniformName = "u_Textures[" + std::to_string(i) + "]";
@@ -624,8 +839,19 @@ void Rasterizer::MainLoop() {
     glUniform1i(glGetUniformLocation(program->getProgramID(), "prefilteredMap"),
                 15);
 
-    GLuint mMatLoc =
-        glGetUniformLocation(program->getProgramID(), "modelMatrix");
+    glActiveTexture(GL_TEXTURE16);
+    glBindTexture(GL_TEXTURE_2D, shadowDepthMap);
+    glUniform1i(glGetUniformLocation(program->getProgramID(), "shadowMap"),
+                16);
+
+    glUniform1f(glGetUniformLocation(program->getProgramID(), "shadowBiasMin"),
+                shadowBiasMin);
+    glUniform1f(glGetUniformLocation(program->getProgramID(), "shadowBiasMax"),
+                shadowBiasMax);
+
+    glUniformMatrix4fv(glGetUniformLocation(program->getProgramID(),
+                                            "lights[0].lightMatrix"),
+                       1, GL_FALSE, &lightSpaceMatrix[0][0]);
 
     GLuint lightCountLoc =
         glGetUniformLocation(program->getProgramID(), "lightCount");
@@ -641,9 +867,11 @@ void Rasterizer::MainLoop() {
 
     GLuint lightDirLoc =
         glGetUniformLocation(program->getProgramID(), "lights[0].direction");
-    glUniform3f(lightDirLoc, -0.2f, -1.0f, -0.3f);
+    glUniform3f(lightDirLoc, animatedLightDirection.x, animatedLightDirection.y,
+                animatedLightDirection.z);
 
-    for (auto &sys : systems) {
+    for (auto &sys : systems)
+    {
       sys->update(registry);
     }
 
@@ -663,7 +891,8 @@ void Rasterizer::MainLoop() {
   }
 }
 
-void Rasterizer::DrawUI() {
+void Rasterizer::DrawUI()
+{
   ImGui::Begin("Scene Graph");
 
   ImGui::Text("Application UI Mode: Active");
@@ -674,11 +903,22 @@ void Rasterizer::DrawUI() {
   glm::vec3 camPos = camera->getPosition();
   ImGui::Text("Player Pos: (%.2f, %.2f, %.2f)", camPos.x, camPos.y, camPos.z);
   ImGui::SliderFloat("Camera Speed", &controller->cameraSpeed, 0.01f, 5.0f);
+  ImGui::SliderFloat("Light Animation Speed", &lightAnimationSpeed, 0.0f,
+                     2.0f);
+  ImGui::SliderFloat("Shadow Bias Min", &shadowBiasMin, 0.0001f, 0.02f,
+                     "%.5f", ImGuiSliderFlags_Logarithmic);
+  ImGui::SliderFloat("Shadow Bias Max", &shadowBiasMax, 0.0005f, 0.05f,
+                     "%.5f", ImGuiSliderFlags_Logarithmic);
+  if (shadowBiasMin > shadowBiasMax)
+  {
+    shadowBiasMin = shadowBiasMax;
+  }
   ImGui::Separator();
 
   ImGui::Text("Objects");
 
-  auto drawEntity = [&](entt::entity entity, auto &drawEntityRef) -> void {
+  auto drawEntity = [&](entt::entity entity, auto &drawEntityRef) -> void
+  {
     auto &nameAttr = registry.get<attributes::Name>(entity);
     auto &transform = registry.get<attributes::Transform>(entity);
 
@@ -688,7 +928,8 @@ void Rasterizer::DrawUI() {
 
     ImGuiTreeNodeFlags flags =
         ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
-    if (!hasChildren) {
+    if (!hasChildren)
+    {
       flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
     }
 
@@ -701,34 +942,42 @@ void Rasterizer::DrawUI() {
     {
       ImGui::PushID((int)entt::to_integral(entity));
 
-      if (registry.all_of<attributes::Togglable>(entity)) {
+      if (registry.all_of<attributes::Togglable>(entity))
+      {
         auto &togglable = registry.get<attributes::Togglable>(entity);
         ImGui::Checkbox("Visible", &togglable.visible);
       }
 
-      if (!transform.useMatrix) {
+      if (!transform.useMatrix)
+      {
         ImGui::DragFloat3("Position", glm::value_ptr(transform.pos), 0.1f);
 
         glm::vec3 rotDegrees = glm::degrees(transform.rot);
-        if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotDegrees), 1.0f)) {
+        if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotDegrees), 1.0f))
+        {
           transform.rot = glm::radians(rotDegrees);
         }
 
         ImGui::DragFloat3("Scale", glm::value_ptr(transform.scale), 0.001f);
-      } else {
+      }
+      else
+      {
         ImGui::Text(
             "Transform is controlled by matrix externally (e.g. CameraSync).");
       }
 
-      if (registry.all_of<attributes::RenderMesh>(entity)) {
+      if (registry.all_of<attributes::RenderMesh>(entity))
+      {
         auto &renderMesh = registry.get<attributes::RenderMesh>(entity);
         if (renderMesh.meshIndices.size() > 0)
           ImGui::Text("Contained Meshes: %zu", renderMesh.meshIndices.size());
       }
 
-      if (hasChildren && nodeOpen) {
+      if (hasChildren && nodeOpen)
+      {
         auto &children = registry.get<attributes::Children>(entity);
-        for (auto child : children.entities) {
+        for (auto child : children.entities)
+        {
           drawEntityRef(child, drawEntityRef);
         }
         ImGui::TreePop(); // Pop if we are a parent node and opened
@@ -739,9 +988,11 @@ void Rasterizer::DrawUI() {
   };
 
   auto view = registry.view<attributes::Name, attributes::Transform>();
-  for (auto entity : view) {
+  for (auto entity : view)
+  {
     // Only draw root entities (no Parents)
-    if (!registry.all_of<attributes::Parent>(entity)) {
+    if (!registry.all_of<attributes::Parent>(entity))
+    {
       drawEntity(entity, drawEntity);
     }
   }

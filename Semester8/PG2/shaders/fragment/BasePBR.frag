@@ -38,14 +38,18 @@ uniform sampler2D u_Textures[16]; // Increase limit if needed, 16 is fine too
 uniform sampler2D irradianceMap;
 uniform sampler2D prefilteredMap;
 uniform sampler2D brdfLUTMap;
+uniform sampler2D shadowMap;
 
 in vec2 uv_out;
 in vec4 positionCS;
+in vec3 positionWS;
 in mat3 TBN;
 
 uniform int lightCount;
 uniform Light lights[MAX_LIGHTS];
 uniform mat4 viewMatrix;
+uniform float shadowBiasMin;
+uniform float shadowBiasMax;
 
 out vec4 fragColor;
 
@@ -102,6 +106,35 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
     float ggx1 = GeometrySchlickGGX(NdotL, roughness);
     
     return ggx1 * ggx2;
+}
+
+float SampleShadow(vec3 fragPosWS, vec3 N, vec3 L, mat4 lightMatrix) {
+    vec4 fragPosLightSpace = lightMatrix * vec4(fragPosWS, 1.0);
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords = projCoords * 0.5 + 0.5;
+
+    if (projCoords.z > 1.0) {
+        return 1.0;
+    }
+
+    if (projCoords.x < 0.0 || projCoords.x > 1.0 ||
+        projCoords.y < 0.0 || projCoords.y > 1.0) {
+        return 1.0;
+    }
+
+    float bias = max(shadowBiasMax * (1.0 - max(dot(N, L), 0.0)), shadowBiasMin);
+    vec2 texelSize = 1.0 / vec2(textureSize(shadowMap, 0));
+    float visibility = 0.0;
+
+    for (int x = -1; x <= 1; ++x) {
+        for (int y = -1; y <= 1; ++y) {
+            float closestDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+            float currentDepth = projCoords.z;
+            visibility += (currentDepth - bias) <= closestDepth ? 1.0 : 0.0;
+        }
+    }
+
+    return visibility / 9.0;
 }
 
 void main() {
@@ -199,8 +232,9 @@ void main() {
         vec3 kD = vec3(1.0) - kS;
         kD *= 1.0 - metallic;
 
-        float NdotL = max(dot(N, L), 0.0);        
-        Lo += (kD * albedo / PI + specular) * radiance * NdotL;
+        float NdotL = max(dot(N, L), 0.0);
+        float shadowFactor = SampleShadow(positionWS, N, L, light.lightMatrix);
+        Lo += shadowFactor * (kD * albedo / PI + specular) * radiance * NdotL;
     }
 
     // ==== IBL Ambient ====

@@ -7,7 +7,8 @@
  * Description: The main file :)
  */
 
-int main(void) {
+int main(void)
+{
 
   Rasterizer rasterizer(800, 600, "PG2 Framework");
   rasterizer.InitDevice();
@@ -17,6 +18,7 @@ int main(void) {
   rasterizer.InitBuffers();
   rasterizer.InitMaterials(0);
   rasterizer.InitIBLTextures();
+  rasterizer.InitShadowMap();
   rasterizer.MainLoop();
 
   return EXIT_SUCCESS;
