@@ -95,8 +95,8 @@ Rasterizer::Rasterizer(int width, int height, const char *title)
     : width(width), height(height), title(title), window(nullptr),
       camera(nullptr), controller(nullptr), program(nullptr),
       depthProgram(nullptr), shadowVolumeProgram(nullptr),
-  shadowDarkenProgram(nullptr), stencilDebugProgram(nullptr),
-  materialSSBO(0) {}
+      shadowDarkenProgram(nullptr), stencilDebugProgram(nullptr),
+      materialSSBO(0) {}
 
 Rasterizer::~Rasterizer()
 {
@@ -1002,9 +1002,9 @@ void Rasterizer::RenderStencilShadowPass(const glm::mat4 &viewProjection)
   glUniform1f(
       glGetUniformLocation(shadowVolumeProgram->getProgramID(), "extrusionDistance"),
       shadowVolumeExtrusion);
-    glUniform1i(
+  glUniform1i(
       glGetUniformLocation(shadowVolumeProgram->getProgramID(),
-                 "invertFacing"),
+                           "invertFacing"),
       shadowVolumeInvertFacing ? 1 : 0);
 
   auto view = registry.view<attributes::Transform, attributes::RenderMesh>();
