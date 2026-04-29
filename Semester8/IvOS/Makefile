@@ -42,3 +42,4 @@ link: switch.o $(OBJS)
 
 clean:
 	rm -f *.o drivers/*.o apps/*.o *.bin disk.img apps/*.elf apps/*.bin lib/*.o
+	cd fat && make clean

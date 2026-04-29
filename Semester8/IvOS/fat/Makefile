@@ -9,9 +9,7 @@ populate-games: all ../apps/hello.bin ../apps/factory.bin
 
 clean:
 	rm -f fat
+	rm -f sd.img
 
 reset:
 	cp base.img sd.img
-
-fuse: fuse_fat_bind.c fat.c utils.c fuse.c
-	gcc -Wall fuse_fat_bind.c fat.c utils.c fuse.c  `pkg-config fuse3 --cflags --libs` -o fuse

@@ -37,7 +37,7 @@ load_sector:
 dap:
     db 0x10         ; Size of DAP (16 bytes)
     db 0            ; Reserved (always 0)
-    dw 60           ; Number of sectors to read
+    dw 80           ; Number of sectors to read
     dw 0x7E00       ; Target Offset (Load to 0x7E00)
     dw 0x0000       ; Target Segment (0x0000)
     dq 1            ; LBA address (Start at sector 1, right after the boot sector) 
