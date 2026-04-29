@@ -1,2 +1,6 @@
 build
 .cache
+*ipynb
+c07/data
+c07/loss.txt
+c07/model.pth
