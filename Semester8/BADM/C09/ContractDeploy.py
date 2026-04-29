@@ -48,7 +48,7 @@ class ContractDeploy:
         })
 
         signed_txn = self.w3.eth.account.sign_transaction(constructor_txn, self.account._private_key)
-        tx_receipt = self.w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+        tx_receipt = self.w3.eth.send_raw_transaction(signed_txn.raw_transaction)
         tx_receipt = self.w3.eth.wait_for_transaction_receipt(tx_receipt)
         self.contract_instance = self.w3.eth.contract(
             address=tx_receipt.contractAddress,
@@ -58,23 +58,34 @@ class ContractDeploy:
 
     def call_function(self, function_name, *args, gas, gas_price):
         # TODO: Implement call_function method for calling a function of the contract
+        func = self.contract_instance.functions[function_name](*args)
 
-        raise NotImplementedError("Method call_function not implemented yet")
+        transaction = func.build_transaction({
+            'from': self.account.address,
+            'nonce': self.w3.eth.get_transaction_count(self.account.address),
+            'gas': gas,
+            'gasPrice': self.w3.to_wei(gas_price, 'gwei')
+        })
+
+        signed_transaction = self.w3.eth.account.sign_transaction(transaction, self.account._private_key)
+
+        transaction_hash = self.w3.eth.send_raw_transaction(signed_transaction.raw_transaction)
+
+        return self.w3.eth.wait_for_transaction_receipt(transaction_hash)
 
     def get_value(self, function_name):
         return self.contract_instance.functions[function_name]().call()
     
     def load_contract(self, contract_address, abi):
         # TODO: Implement load_contract method for loading a contract from an address and ABI
-
-        raise NotImplementedError("Method load_contract not implemented yet")
+        self.contract_instance = self.w3.eth.contract(address=contract_address, abi=abi)
 
 if __name__ == "__main__":
-    cd = ContractDeploy('https://eth-sepolia.g.alchemy.com/v2/<api_key>', '0x<private_key>')
+    cd = ContractDeploy('https://eth-sepolia.g.alchemy.com/v2/grgfWJgJx2nEGTqha9Kgc', '0xade341c2d9b7e76c96a33186c059d4195080a4128606121b529d388560af5074')
     cd.compile_contract('py_sol.sol')
 
     contract_address = cd.deploy_contract('py_sol.sol', 2000000, '50')
-    tx_receipt = cd.call_function('set', 123, gas=2000000, gas_price='50')
+    tx_receipt = cd.call_function('set', 123, gas=2000000, gas_price='1')
     print("Transaction receipt:", tx_receipt)
     
     value = cd.get_value('get')
