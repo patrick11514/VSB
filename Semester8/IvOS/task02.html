@@ -1,0 +1,52 @@
+<div class="tab-content">
+            <div class="tab-pane active" id="tab_assignment">
+                <div>
+<h2>Priority Scheduling</h2>
+<p>Stávající plánovač rozděluje procesorový čas mezi jednotlivá vlákna rovnoměrně a je z tohoto hlediska spravedlivý. Často ale vzniká požadavek, aby nějaký proces měl prioritu vyšší než jiné procesy, které jsou v daném okamžiku méně důležité. Dnešním úkolem bude doplnit náš plánovač o podporu priorit.</p>
+<p>V prvním kroku musíme modifikovat strukturu popisující vlákno (<code>struct gt</code>) a přidat informace o prioritě (<code>int</code>). Priority budeme mít definované podobně jako v UNIXu a to v rozmezí 0 (nejvyšší) do 10 (nejnižší)(v běžných UNIXech, je více úrovní priorit, od -20 (nejvyšší priorita) do 19 (nejnižší priorita)).  Dále pak modifikujeme algoritmus hledání vlákna (v <i>gtyield()</i>), které má být spuštěno. Nejdříve procházíme vlákna s nejvyšší prioritou a stavem Ready, pokud v naší tabulce nenalezneme žádné s touto prioritou, tak opakujeme průchod, ale tentokrát hledáme vlákna s prioritou o jeden stupeň nižší a opět ve stavu Ready a takto pokračujeme až k těm s nejmenší prioritou.</p>
+<p>Pokud ovšem takto implementujeme náš plánovač, zjistíme, že se nám spouštějí jen vlákna s nejvyšší prioritou a všechna ostatní hladoví (nedostává se jim procesorový čas). To je dáno tím, že v našem jednoduchém příkladu nedochází k blokujícím voláním (tak, aby se vlákno dostalo do jiného stavu než Ready/Running/Unused). Nový stav Blocked nebudeme implementovat, ale místo něho zkusíme doimplementovat mechanismus prevence hladovění. Princip je jednoduchý, při každém kompletní průchodu tabulky vláken zvýšíme prioritu těm vláknům, která nebyla spuštěna (existuje více možností implementace, dodatečná pomocná priorita, čítač hladových průchodů, časovač hladovění apod.) V určitou chvíli dojde k tomu, že díky čekání se hladovějícím vláknům zvýší priorita natolik, že se dostanou na úroveň těch vláken s nejvyšší prioritou a budou spuštěna. Jakmile se však spustí, tak potom jim musíme vrátit původní prioritu.</p>
+<p>Pokud máte implementovaný algoritmus správně, tak si vytvořte více vláken (ideálně více než pět), nastavte jim různé priority a potom ve výpisu sledujte (do výpisu si doplňte i informaci o prioritě vlákna), zda-li opravdu se dostává vláknům s vyšší prioritou více procesorového času než vláknům s nízkou prioritou. Zároveň se nesmí stát, aby vlákna s nejnižší prioritou nebyla spuštěna vůbec. </p>
+<h3>Postup</h3>
+<p>
+Navazujeme na předchozí úkol díky kterému po stisku kláves CTRL+C (SIGINT) získáte tabulku se statistikou běžících vláken. V případě úspěšné implementace by mělo být vidět, že procesy s nižší prioritou déle čekají na procesorový čas a také celkově mají kratší celkový čas běhu. 
+</p>
+<ul>
+<li>Do struktury popisující vlákno přidejte nové položky týkající se priority a pomocných proměnných spojených s prevencí hladovění. </li>
+<li>Modifikujte argumenty metody <i>gt_create</i> a přidejte parametr priorita.</li>
+<li>Implementujte v metodě <i>gt_schedule</i> rozšíření plánovače RR o priority.</li>
+<li>Přidejte implementaci prevence hladovění (v opačném případě se vlákna s nízkou prioritou nebudou nikdy spouštět)</li>  
+</ul>
+
+<hr>
+
+<h2>Lottery Scheduling</h2>
+<p>Lottery scheduling je typem pravděpodobnostního plánovacího algoritmu. Každé vlákno dostane jeden nebo více tiketů (ty je třeba nějak evidovat) a plánovač periodicky losuje náhodný tiket. Podle vylosovaného tiketu se spouští odpovídající vlákno. Priorita se řeší přidáváním tiketů danému vláknu. Čím více tiketů vlákno vlastní, tím je vyšší pravděpodobnost, že bude vylosováno. Implementace lottery schedulingu je prostá a sama o sobě řeší i problém hladovění. Pokud vlákno má alespoň jeden tiket, tak má nenulovou šanci být vylosováno a spuštěno. Pokročilejší varianty umožňují procesům kooperovat mezi sebou předáváním tiketů (rodič může předat tikety potomku a tak mu navýšit prioritu).</p>
+<p>V implementaci myslete na to, že tiketů může být velký počet. Procházení obřích polí tiketů tak nemusí být nejefektivnější cesta. Nápovědou Vám může být <a href="http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched-lottery.pdf">tento dokument</a>.</p>
+<h3>Postup</h3>
+<p>
+</p>
+<ul>  
+<li>Při spuštění lze zvolit parametrem příkazového řádku, který z plánovačů se použije – RR (round robin), PRI (round robin s prioritami) a LS (lottery scheduling).</li>
+<li>Metoda pro vytváření vláken musí být stejná pro všechny typy použitých plánovačů. V případě, že pro daný plánovač nemá priorita smysl, hodnota bude ignorována.</li>
+<li>Implementujte lottery scheduling a porovnejte jeho chování s předešlou implementací priorit</li>
+</ul>
+
+
+<hr>
+
+<h3>Odkazy</h3>
+<p><a href="https://www.geeksforgeeks.org/lottery-process-scheduling-in-operating-system/">https://www.geeksforgeeks.org/lottery-process-scheduling-in-operating-system/</a><br>
+<a href="https://www.usenix.org/legacy/publications/library/proceedings/osdi/full_papers/waldspurger.pdf">https://www.usenix.org/legacy/publications/library/proceedings/osdi/full_papers/waldspurger.pdf</a><br>
+<a href="https://www.usenix.org/legacy/events/usenix99/full_papers/petrou/petrou.pdf">https://www.usenix.org/legacy/events/usenix99/full_papers/petrou/petrou.pdf</a><br></p>
+</div>
+
+                
+            </div>
+            <div class="tab-pane" id="tab_tests">
+                <a href="/task/IvOS/2025S/KRU13/implementace_planovacu_-_priority_+_lottery_scheduling.tar.gz" class="float-end">Download all tests</a>
+
+                
+            </div>
+
+            
+        </div>

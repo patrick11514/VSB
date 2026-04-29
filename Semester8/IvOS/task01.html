@@ -1,0 +1,107 @@
+<div class="tab-content">
+            <div class="tab-pane active" id="tab_assignment">
+                <div>
+<h2>Zadání</h2>
+<p>Stáhněte si základní funkční implementaci plánovače Round-Robin (RR) z <a href="http://ivos.mrl.cz/download/gthreads.tgz">http://ivos.mrl.cz/download/gthreads.tgz</a> (Stahujte z VPN pokud jste mimo TUO-NET)</p>
+<p>Archiv obsahuje Makefile a po rozbalení byste měli být schopni přiložený projekt přeložit a spustit. Následuje ukázkový výpis se stažení, překladem a spuštěním v Linuxu:</p>
+<h3>Překlad</h3>
+<pre>[kru13@localhost ivos]$ make
+cc -g -Wall   -c -o gthr.o gthr.c
+as -o gthr_switch.o gthr_switch.S
+cc -g -Wall   -c -o main.o main.c
+cc -o gthr_demo gthr.o gthr_switch.o main.o
+
+</pre>
+<h3>Spuštění</h3>
+<pre>[kru13@localhost ivos]$ ./gttest  
+F Thread id = 1, val = 1 BEGINNING
+F Thread id = 2, val = 1 BEGINNING
+G Thread id = 1, val = 1 BEGINNING
+G Thread id = 2, val = 1 BEGINNING
+G Thread id = 1, val = 2 END
+F Thread id = 1, val = 2 END
+F Thread id = 2, val = 2 END
+G Thread id = 2, val = 2 END
+F Thread id = 1, val = 3 BEGINNING
+F Thread id = 2, val = 3 BEGINNING
+G Thread id = 1, val = 3 BEGINNING
+G Thread id = 2, val = 3 BEGINNING
+^C
+</pre>
+<p>
+Projděme si nyní komentované zdrojové soubory. V souboru <b>main.c</b> se nalézají dvě ukázkové funkce <i>f()</i> a <i>g()</i>, které nám poslouží jako těla našich testovacích vláken. Obsahují testovací nekonečné smyčky s výpisy indikujícími o jaké vlákno a kolikátou iteraci běhu se jedná. V hlavní metodě <i>main()</i> máme inicializaci našeho plánovače skrz <i>gt_init()</i> a následné vytvoření čtyř vláken pomocí metody <i>gt_create()</i>, které se jako parametr předává funkce, která má být spuštěna jako tělo vlákna (analogie k metodě run v Javě). Poslední volání <i>gt_return()</i> nám zajišťuje, že se <i>main()</i> okamžitě neukončí, ale bude čekat až na doběhnutí všech aktivních vláken.
+</p>
+<p>
+  V hlavičkovém souboru <b>gthr.h</b>, naleznete strukturu <code>gt</code> popisující stav (kontext) každého vlákna. Ve struktuře jsou aktuálně uloženy hodnoty registrů procesoru a stav vlákna (Unused, Running, Ready). Tato struktura pak tvoří jednotlivé položky v tabulce vláken (obdoba process table a process control block, jak jej znáte z přednášky o procesech). Tabulka <code>gt_table[]</code> (v soubor <b>gthr_struct.h</b>) je staticky alokována a hodnota <code>MaxGThreads</code> definuje jaký je maximální počet podporovaných vláken.
+</p>
+<p>
+  V <b>gthr.c</b> najdeme veškerou implementaci našeho jednoduchého plánovače a pomocných funkcí pro manipulaci s vlákny. V metodě <i>gt_init()</i> najdeme inicializaci prvního vlákna a nastavení alarmu, signálu, který nám pravidelně bude přerušovat tok zpracovávání vláken a umožní nám přepínat mezi vlákny. Při vytváření nového vlákna se volá metoda <i>gt_create()</i> která najde postupným procházením v tabulce <code>gt_table[]</code> první volné místo pro nově vytvářené vlákno, alokuje paměť pro stack tohoto vlákna a inicializuje návratové adresy na vrchol takto vytvořeného stacku (tím zajistíme, že při zavolání return v rámci vlákna se dostaneme do řízeného ukončení skrz metodu <i>gt_stop()</i>). Klíčovou metodou našeho plánovače je metoda, která rozhoduje, jaké vlákno poběží jako další po přepnutí kontextu. Jedná se o <i>gt_schedule()</i>, která implementuje jednoduchý plánovač typu Round-Robin. V kódu nalezneme kruhové procházení tabulky <code>gt_table[]</code>, kde hledáme další vlákno, které je schopno běhu (je ve stavu Ready) a poté samotné přepnutí kontextu, které je jednak realizováno aktualizací hodnot v tabulce <code>gt_table[]</code> tak i samotné přepnutí přepsáním hodnot registru procesoru (funkce <i>gt_switch()</i>, která je jako jediná implementována v assembleru v souboru <b>gt_switch.S</b>).
+</p>
+
+<h3>Postup</h3>
+<p>
+Prvním úkolem je seznámit se s tímto projektem, vyzkoušet si, jak se chová a poté modifikovat stávající kód tak, aby reagoval na stisk kláves CTRL+C (SIGINT) a vypsal tabulku se statistikou běžících vláken. 
+</p>
+<ul>
+<li>Do struktury <code>gt</code> (gthr.h) přidejte nové položky, které Vám umožní sledovat dobu běhu daného vlákna, dobu čekání na procesor, minimální, maximální a průměrnou hodnotu a jejich rozptyl. Pro měření času je vhodné použít např. <a href="https://man7.org/linux/man-pages/man2/gettimeofday.2.html"><code>gettimeofday</code></a>
+</li>
+<li>Dodejte obsluhu signálu SIGINT a odpovídající výpis statistik jednotlivých vláken.</li>
+</ul>
+
+<hr>
+<h2>Příprava plánovače pro integraci do vlastního operačního systému</h2>
+<p>Cílem této úlohy není pouze vytvořit funkční implementaci plánovače vláken v prostředí Linuxu, ale především navrhnout takové řešení, které bude možné později přímo integrovat do vašeho vlastního operačního systému. Při implementaci proto berte v úvahu následující požadavky a omezení cílového prostředí.</p>
+<h2>Nezávislost na operačním systému a knihovnách</h2>
+<p>Vaše výsledná implementace musí být přenositelná do prostředí bez standardní knihovny jazyka C (freestanding). To znamená, že:</p>
+<ul>
+<li>nelze spoléhat na funkce jako <code>malloc</code>, <code>free</code>, <code>printf</code>, <code>signal</code>, <code>alarm</code> apod.,</li>
+<li>veškeré I/O operace musí být realizovatelné přímo (např. zápisem do paměti nebo přes porty),</li>
+<li>kód musí být kompilovatelný jako „freestanding binary“.</li>
+</ul>
+<p>Doporučení: Oddělte části závislé na platformě (např. časovač, výpisy, správa paměti) do samostatné vrstvy.</p>
+<h2>Správa zásobníků (stacků)</h2>
+<p>V cílovém OS nebude dostupný dynamický alokátor paměti (v aktuální fázi vývoje). Proto:</p>
+<ul>
+<li>nepoužívejte malloc pro alokaci stacku,</li>
+<li>implementujte statickou alokaci zásobníků, např.:
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-cpp"><span class="hljs-meta">#<span class="hljs-keyword">define</span> STACK_SIZE 4096</span>
+<span class="hljs-type">uint8_t</span> stacks[MAX_THREADS][STACK_SIZE];
+</code></pre></div>
+</li>
+</ul>
+<h2>Ukončení vláken</h2>
+<p>Vlákna nesmí končit „nekontrolovaně“ návratem z funkce. Zajistěte:</p>
+<ul>
+<li>řízené ukončení pomocí <code>gt_exit()</code>,</li>
+<li>uvolnění slotu v tabulce vláken,</li>
+<li>možnost opětovného využití vlákna.</li>
+</ul>
+<h2>Rozhraní plánovače (API)</h2>
+<p>Navrhněte rozhraní tak, aby bylo použitelné i v kernelu. Doporučené funkce:</p>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-csharp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">gt_init</span>()</span>;
+<span class="hljs-function"><span class="hljs-built_in">int</span>  <span class="hljs-title">gt_create</span>(<span class="hljs-params"><span class="hljs-keyword">void</span> (*entry</span>)(<span class="hljs-params"><span class="hljs-keyword">void</span>*</span>), <span class="hljs-keyword">void</span>* arg)</span>;
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">gt_yield</span>()</span>;
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">gt_exit</span>(<span class="hljs-params"><span class="hljs-built_in">int</span> code</span>)</span>;
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">gt_schedule</span>()</span>;
+</code></pre></div>
+<p>Pro budoucí integraci dále připravte:
+</p>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-csharp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">scheduler_init</span>()</span>;
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">scheduler_tick</span>()</span>;   <span class="hljs-comment">// voláno z časovače (IRQ)  </span>
+</code></pre></div>
+<hr>
+
+<h3>Odkazy</h3>
+<p><a href="http://man7.org/linux/man-pages/man7/signal.7.html">Popis signálů (manuálové stránky)</a></p>
+</div>
+
+                
+            </div>
+            <div class="tab-pane" id="tab_tests">
+                <a href="/task/IvOS/2025S/KRU13/priprava_planovace_-_green_threads_a_vypis_statistik_bezicich_vlaken_procesu.tar.gz" class="float-end">Download all tests</a>
+
+                
+            </div>
+
+            
+        </div>
