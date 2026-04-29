@@ -18,14 +18,7 @@ join: build link apps
 	dd if=kernel.bin of=disk.img bs=512 seek=1 conv=notrunc
 
 apps:
-# HELLO PROGRAM
-	$(CC) $(CFLAGS) -c apps/hello.c -o apps/hello.o
-	ld -m elf_i386 -T apps/link.ld apps/hello.o -o apps/hello.elf
-	objcopy -O binary apps/hello.elf apps/hello.bin
-# FACTORIO
-	$(CC) $(CFLAGS) -c apps/factory.c -o apps/factory.o
-	ld -m elf_i386 -T apps/link.ld apps/factory.o -o apps/factory.elf
-	objcopy -O binary apps/factory.elf apps/factory.bin
+	$(MAKE) -C apps
 
 
 build: boot.asm
