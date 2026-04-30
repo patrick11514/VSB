@@ -1,0 +1,10 @@
+--- gthr.c
++++ gthr.c
+@@ -155,6 +155,7 @@
+   int i;
+ 
+   gt_platform_print("\nScheduler: %s\n", gt_scheduler_name(gt_scheduler_mode));
++  gt_platform_print("PRNG state: %u\n", g_prng_state);
+   gt_platform_print(
+       "id state    prio base tickets run_us wait_us run[min/max] wait[min/max] "
+       "run_avg run_var wait_avg wait_var switches\n");

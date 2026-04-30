@@ -65,11 +65,6 @@ void gt_platform_install_sigint(void (*handler)(int)) {
 }
 
 void gt_platform_rearm_alarm(void) {
-  sigset_t set;
-  sigemptyset(&set);
-  sigaddset(&set, SIGALRM);
-  sigprocmask(SIG_UNBLOCK, &set, NULL);
-
   alarm(0);
   ualarm(500, 500);
 }
@@ -80,7 +75,6 @@ void gt_platform_sleep_ns(time_t sec, long nanosec) {
   req.tv_sec = sec;
   req.tv_nsec = nanosec;
   while (nanosleep(&req, &req) != 0) {
-    // gt_platform_print("rem: %ld\n", req.tv_nsec);
     if (errno != EINTR)
       break;
     gt_yield();
