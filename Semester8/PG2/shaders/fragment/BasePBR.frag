@@ -1,4 +1,5 @@
 #version 430
+#extension GL_ARB_bindless_texture : require
 #define MAX_LIGHTS 69
 // light types
 #define POINT 0
@@ -23,9 +24,15 @@ struct GPU_Material {
     vec4 diffuse;
     vec4 specular; // w is shininess
     vec4 pbrTextureTypes; // x=albedo, y=normal, z=metallic, w=roughness
-    vec4 pbrTextureIndices;
-    vec4 pbrTextureTypes2; // x=ao
-    vec4 pbrTextureIndices2;
+    sampler2D albedoMap;
+    sampler2D normalMap;
+    sampler2D metallicMap;
+    sampler2D roughnessMap;
+    vec4 pbrTextureTypes2; // x=ao, y=rma_present
+    sampler2D aoMap;
+    sampler2D rmaMap;
+    sampler2D padding2;
+    sampler2D padding3;
 };
 
 layout(std430, binding = 0) buffer MaterialBuffer {
@@ -33,7 +40,6 @@ layout(std430, binding = 0) buffer MaterialBuffer {
 };
 
 uniform int u_MaterialIndex;
-uniform sampler2D u_Textures[16]; // Increase limit if needed, 16 is fine too
 
 uniform sampler2D irradianceMap;
 uniform sampler2D prefilteredMap;
@@ -150,14 +156,12 @@ void main() {
     // Fetch PBR Maps
     vec3 albedo = material.diffuse.xyz;
     if (material.pbrTextureTypes.x > 0.5) {
-        int texIndex = int(material.pbrTextureIndices.x);
-        albedo = pow(texture(u_Textures[texIndex], uv_out).rgb, vec3(2.2)); // sRGB to Linear
+        albedo = pow(texture(material.albedoMap, uv_out).rgb, vec3(2.2)); // sRGB to Linear
     }
 
     vec3 normal = vec3(0.0, 0.0, 1.0);
     if (material.pbrTextureTypes.y > 0.5) {
-        int texIndex = int(material.pbrTextureIndices.y);
-        normal = texture(u_Textures[texIndex], uv_out).rgb;
+        normal = texture(material.normalMap, uv_out).rgb;
         normal = normal * 2.0 - 1.0; 
         normal = normalize(TBN * normal); 
     } else {
@@ -170,21 +174,26 @@ void main() {
     }
 
     float metallic = 0.0;
-    if (material.pbrTextureTypes.z > 0.5) {
-        int texIndex = int(material.pbrTextureIndices.z);
-        metallic = texture(u_Textures[texIndex], uv_out).r;
-    }
-
     float roughness = 0.5; // Default roughness
-    if (material.pbrTextureTypes.w > 0.5) {
-        int texIndex = int(material.pbrTextureIndices.w);
-        roughness = texture(u_Textures[texIndex], uv_out).r;
-    }
-
     float ao = 1.0;
-    if (material.pbrTextureTypes2.x > 0.5) {
-        int texIndex = int(material.pbrTextureIndices2.x);
-        ao = texture(u_Textures[texIndex], uv_out).r;
+
+    if (material.pbrTextureTypes2.y > 0.5) {
+        // Unpack from RMA map
+        vec3 rma = texture(material.rmaMap, uv_out).rgb;
+        roughness = rma.r;
+        metallic = rma.g;
+        ao = rma.b;
+    } else {
+        // Individual maps
+        if (material.pbrTextureTypes.z > 0.5) {
+            metallic = texture(material.metallicMap, uv_out).r;
+        }
+        if (material.pbrTextureTypes.w > 0.5) {
+            roughness = texture(material.roughnessMap, uv_out).r;
+        }
+        if (material.pbrTextureTypes2.x > 0.5) {
+            ao = texture(material.aoMap, uv_out).r;
+        }
     }
 
     vec3 N = normal;

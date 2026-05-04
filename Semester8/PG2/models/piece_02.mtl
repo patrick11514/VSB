@@ -1,0 +1,14 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 11.03.2020 19:31:46
+
+newmtl white_plastic
+	Ns 1.0
+	Pr 0.005
+	Ni 1.5
+	Kd 1.0 1.0 1.0
+	map_Kd scuffed-plastic6-alb.png
+	Ks 1.0 1.0 1.0
+	Ke 0 0 0
+	map_RMA plastic_02_rma.png
+	norm scuffed-plastic-normal.png
+	shader 5

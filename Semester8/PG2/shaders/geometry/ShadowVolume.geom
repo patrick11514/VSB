@@ -44,6 +44,10 @@ void main() {
     vec3 p1 = gs_in[2].worldPos;
     vec3 p2 = gs_in[4].worldPos;
 
+    vec3 adj0 = gs_in[1].worldPos;
+    vec3 adj1 = gs_in[3].worldPos;
+    vec3 adj2 = gs_in[5].worldPos;
+
     float fMain = FaceFacing(p0, p1, p2);
     if (invertFacing != 0) {
         fMain = -fMain;
@@ -62,8 +66,17 @@ void main() {
     EmitTriangle(p0, p1, p2);
     EmitTriangle(e2, e1, e0);
 
-    // Emit all side quads for better robustness with imperfect adjacency/winding.
-    EmitQuad(p0, p1, e0, e1);
-    EmitQuad(p1, p2, e1, e2);
-    EmitQuad(p2, p0, e2, e0);
+    float f0 = FaceFacing(p1, p0, adj0);
+    float f1 = FaceFacing(p2, p1, adj1);
+    float f2 = FaceFacing(p0, p2, adj2);
+    if (invertFacing != 0) {
+        f0 = -f0;
+        f1 = -f1;
+        f2 = -f2;
+    }
+
+    // Emit side quads only for silhouette edges
+    if (f0 <= 0.0) EmitQuad(p0, e0, p1, e1);
+    if (f1 <= 0.0) EmitQuad(p1, e1, p2, e2);
+    if (f2 <= 0.0) EmitQuad(p2, e2, p0, e0);
 }

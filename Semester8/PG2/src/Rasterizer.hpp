@@ -23,10 +23,15 @@ struct GPUMaterial
   alignas(16) glm::vec4
       pbrTextureTypes; // x=albedo, y=normal, z=metallic, w=roughness (0 =
                        // color/default, 1 = texture)
-  alignas(16) glm::vec4
-      pbrTextureIndices;                    // x=albedo, y=normal, z=metallic, w=roughness
+  alignas(16) GLuint64 albedoMap = 0;
+  GLuint64 normalMap = 0;
+  GLuint64 metallicMap = 0;
+  GLuint64 roughnessMap = 0;
   alignas(16) glm::vec4 pbrTextureTypes2;   // x=ao (0 = default, 1 = texture)
-  alignas(16) glm::vec4 pbrTextureIndices2; // x=ao
+  alignas(16) GLuint64 aoMap = 0;
+  GLuint64 rmaMap = 0;
+  GLuint64 padding2 = 0;
+  GLuint64 padding3 = 0;
 };
 
 struct Mesh
@@ -80,7 +85,7 @@ private:
   float shadowBiasMin = 0.0015f;
   float shadowBiasMax = 0.01f;
   float shadowDarkness = 0.7f;
-  float shadowVolumeExtrusion = 120.0f;
+  float shadowVolumeExtrusion = 1000.0f;
   bool shadowVolumeInvertFacing = false;
   bool useShadowMapping = true;
   bool useStencilShadows = false;

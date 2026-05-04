@@ -83,11 +83,34 @@ void Camera::changePitch(float deg)
 
 void Camera::calculateViewMatrix()
 {
+  glm::vec3 e = this->eye;
+  glm::vec3 t = this->eye + this->target;
+  glm::vec3 upVec = this->up;
 
-  this->viewMatrix = glm::lookAt(this->eye, this->eye + this->target, this->up);
+  glm::vec3 ze = glm::normalize(e - t);
+  glm::vec3 xe = glm::normalize(glm::cross(upVec, ze));
+  glm::vec3 ye = glm::cross(ze, xe);
+
+  this->viewMatrix = glm::mat4(
+      xe.x, ye.x, ze.x, 0.0f,
+      xe.y, ye.y, ze.y, 0.0f,
+      xe.z, ye.z, ze.z, 0.0f,
+      -glm::dot(xe, e), -glm::dot(ye, e), -glm::dot(ze, e), 1.0f
+  );
 }
 
 glm::mat4 Camera::getViewMatrix() const { return this->viewMatrix; }
+
+glm::mat4 Camera::getProjectionMatrix(float ratio) const {
+  float tanHalfFovy = std::tan(glm::radians(this->fov) / 2.0f);
+  glm::mat4 projection(0.0f);
+  projection[0][0] = 1.0f / (ratio * tanHalfFovy);
+  projection[1][1] = 1.0f / (tanHalfFovy);
+  projection[2][2] = (this->zNear + this->zFar) / (this->zNear - this->zFar);
+  projection[3][2] = (2.0f * this->zNear * this->zFar) / (this->zNear - this->zFar);
+  projection[2][3] = -1.0f;
+  return projection;
+}
 
 glm::vec3 Camera::getPosition() const { return this->eye; }
 

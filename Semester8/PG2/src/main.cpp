@@ -13,7 +13,7 @@ int main(void)
   Rasterizer rasterizer(800, 600, "PG2 Framework");
   rasterizer.InitDevice();
   rasterizer.InitPrograms();
-  rasterizer.LoadScene("../models/shadow_volume_test.obj");
+  rasterizer.LoadScene("../models/piece_02.obj");
   rasterizer.CreateAxes();
   rasterizer.InitBuffers();
   rasterizer.InitMaterials(0);

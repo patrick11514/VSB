@@ -369,6 +369,30 @@ void Rasterizer::LoadScene(const std::string &fileName)
     basePath = fileName.substr(0, lastSlash + 1);
   }
 
+  // Manually parse .mtl for map_RMA
+  std::unordered_map<std::string, std::string> rmaMaps;
+  std::string mtlFileName = fileName;
+  size_t lastDot = mtlFileName.find_last_of(".");
+  if (lastDot != std::string::npos) {
+    mtlFileName = mtlFileName.substr(0, lastDot) + ".mtl";
+    std::ifstream mtlFile(mtlFileName);
+    if (mtlFile.is_open()) {
+      std::string line, currentMtl;
+      while (std::getline(mtlFile, line)) {
+        if (line.rfind("newmtl ", 0) == 0) {
+          currentMtl = line.substr(7);
+          // Trim whitespace
+          currentMtl.erase(currentMtl.find_last_not_of(" \n\r\t") + 1);
+        } else if (line.find("map_RMA ") != std::string::npos) {
+          std::string rmaPath = line.substr(line.find("map_RMA ") + 8);
+          rmaPath.erase(0, rmaPath.find_first_not_of(" \n\r\t"));
+          rmaPath.erase(rmaPath.find_last_not_of(" \n\r\t") + 1);
+          rmaMaps[currentMtl] = rmaPath;
+        }
+      }
+    }
+  }
+
   // Load Materials
   scene.materials.reserve(ai_scene->mNumMaterials);
   for (unsigned int i = 0; i < ai_scene->mNumMaterials; i++)
@@ -389,7 +413,7 @@ void Rasterizer::LoadScene(const std::string &fileName)
       gpuMat.specular = glm::vec4(color.r, color.g, color.b, shininess);
 
     auto loadTexture = [&](aiTextureType type, float &typeVar,
-                           float &indexVar)
+                           GLuint64 &handleVar)
     {
       if (mat->GetTextureCount(type) > 0)
       {
@@ -406,51 +430,72 @@ void Rasterizer::LoadScene(const std::string &fileName)
           std::cerr << "SOIL loading error for " << texPath << ": "
                     << SOIL_last_result() << std::endl;
           typeVar = 0.0f;
-          indexVar = -1.0f;
+          handleVar = 0;
         }
         else
         {
-          int texIndex = scene.textureIds.size();
           scene.textureIds.push_back(textureId);
           typeVar = 1.0f;
-          indexVar = float(texIndex);
+          
+          GLuint64 texHandle = glGetTextureHandleARB(textureId);
+          glMakeTextureHandleResidentARB(texHandle);
+          handleVar = texHandle;
         }
       }
       else
       {
         typeVar = 0.0f;
-        indexVar = -1.0f;
+        handleVar = 0;
       }
     };
 
     gpuMat.pbrTextureTypes = glm::vec4(0.0f);
-    gpuMat.pbrTextureIndices = glm::vec4(-1.0f);
     gpuMat.pbrTextureTypes2 = glm::vec4(0.0f);
-    gpuMat.pbrTextureIndices2 = glm::vec4(-1.0f);
 
     loadTexture(aiTextureType_DIFFUSE, gpuMat.pbrTextureTypes.x,
-                gpuMat.pbrTextureIndices.x);
+                gpuMat.albedoMap);
     if (gpuMat.pbrTextureTypes.x == 0.0f)
     {
       loadTexture(aiTextureType_BASE_COLOR, gpuMat.pbrTextureTypes.x,
-                  gpuMat.pbrTextureIndices.x);
+                  gpuMat.albedoMap);
     }
 
     loadTexture(aiTextureType_NORMALS, gpuMat.pbrTextureTypes.y,
-                gpuMat.pbrTextureIndices.y);
+                gpuMat.normalMap);
 
     loadTexture(aiTextureType_METALNESS, gpuMat.pbrTextureTypes.z,
-                gpuMat.pbrTextureIndices.z);
+                gpuMat.metallicMap);
 
     loadTexture(aiTextureType_DIFFUSE_ROUGHNESS, gpuMat.pbrTextureTypes.w,
-                gpuMat.pbrTextureIndices.w);
+                gpuMat.roughnessMap);
 
     loadTexture(aiTextureType_LIGHTMAP, gpuMat.pbrTextureTypes2.x,
-                gpuMat.pbrTextureIndices2.x);
+                gpuMat.aoMap);
     if (gpuMat.pbrTextureTypes2.x == 0.0f)
     {
       loadTexture(aiTextureType_AMBIENT, gpuMat.pbrTextureTypes2.x,
-                  gpuMat.pbrTextureIndices2.x);
+                  gpuMat.aoMap);
+    }
+
+    aiString matName;
+    mat->Get(AI_MATKEY_NAME, matName);
+    std::string currentMatName = matName.C_Str();
+    if (rmaMaps.find(currentMatName) != rmaMaps.end()) {
+      std::string rmaPath = basePath + rmaMaps[currentMatName];
+      GLuint textureId = SOIL_load_OGL_texture(
+            rmaPath.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
+            SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB |
+                SOIL_FLAG_COMPRESS_TO_DXT);
+      if (textureId != 0) {
+        scene.textureIds.push_back(textureId);
+        GLuint64 texHandle = glGetTextureHandleARB(textureId);
+        glMakeTextureHandleResidentARB(texHandle);
+        gpuMat.rmaMap = texHandle;
+        gpuMat.pbrTextureTypes2.y = 1.0f; // Flag that RMA map is present
+      } else {
+        std::cerr << "SOIL loading error for RMA map " << rmaPath << ": "
+                  << SOIL_last_result() << std::endl;
+      }
     }
 
     scene.materials.push_back(gpuMat);
@@ -626,9 +671,7 @@ void Rasterizer::CreateAxes()
     mat.diffuse = glm::vec4(color, 1.0f);
     mat.specular = glm::vec4(0.0f);
     mat.pbrTextureTypes = glm::vec4(0.0f);
-    mat.pbrTextureIndices = glm::vec4(-1.0f);
     mat.pbrTextureTypes2 = glm::vec4(0.0f);
-    mat.pbrTextureIndices2 = glm::vec4(-1.0f);
 
     scene.materials.push_back(mat);
     int matIndex = scene.materials.size() - 1;
@@ -1204,9 +1247,7 @@ void Rasterizer::MainLoop()
     controller->onFrame();
 
     float ratio = width / (float)height;
-    glm::mat4 projection =
-        glm::perspective(glm::radians(camera->getFov()), ratio,
-                         camera->getZNear(), camera->getZFar());
+    glm::mat4 projection = camera->getProjectionMatrix(ratio);
     glm::mat4 view = camera->getViewMatrix();
 
     auto setupMainProgram = [&](bool enableShadowMap, int lightCount,
@@ -1221,15 +1262,7 @@ void Rasterizer::MainLoop()
       glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
       glUniformMatrix4fv(projLoc, 1, GL_FALSE, &projection[0][0]);
 
-      for (size_t i = 0; i < scene.textureIds.size(); i++)
-      {
-        glActiveTexture(GL_TEXTURE0 + i);
-        glBindTexture(GL_TEXTURE_2D, scene.textureIds[i]);
-        std::string uniformName = "u_Textures[" + std::to_string(i) + "]";
-        GLuint loc =
-            glGetUniformLocation(program->getProgramID(), uniformName.c_str());
-        glUniform1i(loc, i);
-      }
+      // Scene textures are now bindless and accessed via handles in the material SSBO.
 
       glActiveTexture(GL_TEXTURE13);
       glBindTexture(GL_TEXTURE_2D, brdfLUTMap);
@@ -1384,7 +1417,7 @@ void Rasterizer::DrawUI()
   ImGui::SliderFloat("Stencil Debug Opacity", &stencilDebugOpacity, 0.05f,
                      1.0f);
   ImGui::SliderFloat("Stencil Extrusion", &shadowVolumeExtrusion, 20.0f,
-                     400.0f);
+                     2000.0f);
   if (shadowBiasMin > shadowBiasMax)
   {
     shadowBiasMin = shadowBiasMax;

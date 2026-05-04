@@ -1,4 +1,5 @@
 #version 430
+#extension GL_ARB_bindless_texture : require
 #define MAX_LIGHTS 69
 //light types
 #define POINT 0
@@ -26,7 +27,16 @@ struct GPU_Material {
     vec4 ambient;
     vec4 diffuse;
     vec4 specular; // w is shininess
-    vec4 textureInfo; // x=type, y=index
+    vec4 pbrTextureTypes; // x=albedo, y=normal, z=metallic, w=roughness
+    sampler2D albedoMap;
+    sampler2D normalMap;
+    sampler2D metallicMap;
+    sampler2D roughnessMap;
+    vec4 pbrTextureTypes2; // x=ao, y=rma_present
+    sampler2D aoMap;
+    sampler2D rmaMap;
+    sampler2D padding2;
+    sampler2D padding3;
 };
 
 layout(std430, binding = 0) buffer MaterialBuffer {
@@ -34,7 +44,6 @@ layout(std430, binding = 0) buffer MaterialBuffer {
 };
 
 uniform int u_MaterialIndex;
-uniform sampler2D u_Textures[16];
 
 in vec2 uv_out;
 in vec4 positionCS;
@@ -56,9 +65,8 @@ void main () {
     
     GPU_Material material = materials[u_MaterialIndex];
 
-    if (material.textureInfo.x > 0.5) {
-        int texIndex = int(material.textureInfo.y);
-        text = texture(u_Textures[texIndex], uv_out);
+    if (material.pbrTextureTypes.x > 0.5) {
+        text = texture(material.albedoMap, uv_out);
     }
 
     vec4 ambientColor = vec4(material.ambient.xyz, 1.0) * text;

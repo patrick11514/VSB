@@ -33,6 +33,7 @@ public:
 
   void calculateViewMatrix();
   glm::mat4 getViewMatrix() const;
+  glm::mat4 getProjectionMatrix(float ratio) const;
 
   glm::vec3 getPosition() const;
   glm::vec3 getTarget() const;
