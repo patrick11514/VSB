@@ -25,8 +25,8 @@ export async function deriveKey(passphrase: string, salt?: Uint8Array) {
 		['deriveKey']
 	);
 	const s = salt ?? crypto.getRandomValues(new Uint8Array(16));
-	const key = await crypto.subtle.deriveKey(
-		{ name: 'PBKDF2', salt: s, iterations: 100000, hash: 'SHA-256' },
+	const key = await (crypto.subtle.deriveKey as unknown as typeof crypto.subtle.deriveKey)(
+		{ name: 'PBKDF2', salt: s.buffer as ArrayBuffer, iterations: 100000, hash: 'SHA-256' },
 		passKey,
 		{ name: 'AES-GCM', length: 256 },
 		true,
@@ -56,14 +56,18 @@ export async function decryptWithPassphrase(
 		false,
 		['deriveKey']
 	);
-	const key = await crypto.subtle.deriveKey(
-		{ name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+	const key = await (crypto.subtle.deriveKey as unknown as typeof crypto.subtle.deriveKey)(
+		{ name: 'PBKDF2', salt: salt.buffer as ArrayBuffer, iterations: 100000, hash: 'SHA-256' },
 		passKey,
 		{ name: 'AES-GCM', length: 256 },
 		true,
 		['decrypt']
 	);
-	const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, cipher);
+	const decrypted = await (crypto.subtle.decrypt as unknown as typeof crypto.subtle.decrypt)(
+		{ name: 'AES-GCM', iv: iv as BufferSource },
+		key,
+		cipher as BufferSource
+	);
 	return new Uint8Array(decrypted);
 }
 

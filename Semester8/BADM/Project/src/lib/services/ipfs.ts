@@ -1,4 +1,5 @@
-import { create, IPFSHTTPClient } from 'ipfs-http-client';
+import type { IPFSHTTPClient } from 'ipfs-http-client';
+import { create } from 'ipfs-http-client';
 
 const IPFS_URL = import.meta.env.VITE_IPFS_URL || 'https://ipfs.io';
 
