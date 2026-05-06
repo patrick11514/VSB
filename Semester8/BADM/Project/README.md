@@ -105,3 +105,50 @@ Notes:
 ---
 
 If you'd like, I can also add a short `Getting Started` section with local dev steps and example env vars, or scaffold contract templates and tests next.
+
+## Packages & Installation
+
+Recommended packages for this project (installed in the workspace):
+
+- Runtime / Core:
+  - `ethers` — Ethereum library for RPC, signing, and contract interaction
+  - `@metamask/sdk` — MetaMask integration helper (wallet connection)
+  - `ipfs-http-client` — IPFS HTTP client for uploading/downloading file data
+  - `tweetnacl` — cryptographic helpers (alternative: libsodium)
+  - `zod` — runtime validation for request/contract payloads
+  - `date-fns` — date/time utilities for auction timestamps
+  - `uuid` — generate IDs
+  - `axios` — HTTP client
+  - `dotenv` — environment variable management
+
+- Dev / Testing:
+  - `vitest`, `@vitest/ui` — unit & integration tests
+  - `@testing-library/svelte` — component tests
+  - `playwright` — E2E tests
+  - `msw` — API mocking for tests
+
+Install commands used (run in project root):
+
+```bash
+pnpm add ethers @metamask/sdk ipfs-http-client tweetnacl zod date-fns uuid axios dotenv
+pnpm add -D vitest @vitest/ui @testing-library/svelte playwright msw
+```
+
+Notes:
+
+- We chose `ipfs-http-client` to keep the client lightweight and use public gateways or remote IPFS providers rather than embedding a full node.
+- `@metamask/sdk` is included for convenience but there are newer MetaMask Connect flows available; we can switch later if desired.
+
+Scaffolded files (core helpers):
+
+- `src/lib/services/web3.ts` — MetaMask + ethers helper functions
+- `src/lib/services/ipfs.ts` — IPFS upload / download wrapper (uses `ipfs-http-client`)
+- `src/lib/services/crypto.ts` — client-side hashing, key derivation, AES-GCM encrypt/decrypt helpers
+- `src/lib/stores/session.ts` — simple Svelte stores for wallet/provider state
+- `src/lib/contracts/Auction.sol` — Solidity contract template matching the README spec
+
+Next actions I can take for you:
+
+- Run a local build and dev server to verify installs (`pnpm build` / `pnpm dev`).
+- Scaffold SvelteKit pages for auction listing and `/auction/[address]` pages that use the services above.
+- Add unit tests for the crypto and IPFS wrappers.
