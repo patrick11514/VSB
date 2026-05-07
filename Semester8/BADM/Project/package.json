@@ -11,7 +11,8 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"compile-contract": "node scripts/compile-auction.js"
 	},
 	"devDependencies": {
 		"@eslint/compat": "latest",
@@ -40,6 +41,7 @@
 		"prettier-plugin-svelte": "^3.5.1",
 		"prettier-plugin-tailwindcss": "^0.7.2",
 		"shadcn-svelte": "^1.2.7",
+		"solc": "^0.8.35",
 		"svelte": "^5.55.2",
 		"svelte-check": "^4.4.6",
 		"tailwind-merge": "^3.5.0",

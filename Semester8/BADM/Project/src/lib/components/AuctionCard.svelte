@@ -15,6 +15,8 @@
 
 	const isEnded = $derived(Date.now() > auction.endAt);
 	const timeRemaining = $derived(Math.max(auction.endAt, Date.now()));
+	const auctionAddress = $derived(auction.address ?? auction.id);
+	const detailHref = $derived(`/auction/${auctionAddress}`);
 </script>
 
 <Card class="transition-shadow hover:shadow-lg">
@@ -49,6 +51,6 @@
 			</div>
 		</div>
 
-		<Button class="w-full">View Auction</Button>
+		<Button class="w-full" href={detailHref} variant="outline">View Auction</Button>
 	</CardContent>
 </Card>

@@ -58,7 +58,7 @@ importers:
         specifier: ^2.57.0
         version: 2.59.1(@sveltejs/vite-plugin-svelte@5.0.0(svelte@5.55.5(@typescript-eslint/types@8.59.2))(vite@8.0.10(@types/node@24.12.2)(jiti@2.6.1)))(svelte@5.55.5(@typescript-eslint/types@8.59.2))(typescript@6.0.3)(vite@8.0.10(@types/node@24.12.2)(jiti@2.6.1))
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^5.0.0
+        specifier: 5.0.0
         version: 5.0.0(svelte@5.55.5(@typescript-eslint/types@8.59.2))(vite@8.0.10(@types/node@24.12.2)(jiti@2.6.1))
       '@tailwindcss/typography':
         specifier: ^0.5.19
@@ -114,6 +114,9 @@ importers:
       shadcn-svelte:
         specifier: ^1.2.7
         version: 1.2.7(svelte@5.55.5(@typescript-eslint/types@8.59.2))
+      solc:
+        specifier: ^0.8.35
+        version: 0.8.35
       svelte:
         specifier: ^5.55.2
         version: 5.55.5(@typescript-eslint/types@8.59.2)
@@ -1313,9 +1316,16 @@ packages:
     resolution: {integrity: sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==}
     engines: {node: '>= 0.8'}
 
+  command-exists@1.2.9:
+    resolution: {integrity: sha512-LTQ/SGc+s0Xc0Fu5WaKnR0YiygZkm9eKFvyS+fRsU7/ZWFF8ykFM6Pc9aCVf1+xasOOZpO3BAVgVrKvsqKHV7w==}
+
   commander@14.0.3:
     resolution: {integrity: sha512-H+y0Jo/T1RZ9qPP4Eh1pkcQcLRglraJaSLoyOtHxu6AapkjWVCy2Sit1QQ4x3Dng8qDlSsZEet7g5Pq06MvTgw==}
     engines: {node: '>=20'}
+
+  commander@8.3.0:
+    resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
+    engines: {node: '>= 12'}
 
   commondir@1.0.1:
     resolution: {integrity: sha512-W9pAhw0ja1Edb5GVdIF1mjZw/ASI0AlShXM83UUGe2DVr5TdAPEA1OA8m/g8zWp9x6On7gqufY+FatDbC3MDQg==}
@@ -1909,6 +1919,9 @@ packages:
     resolution: {integrity: sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ==}
     hasBin: true
 
+  js-sha3@0.8.0:
+    resolution: {integrity: sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q==}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -2042,6 +2055,10 @@ packages:
     resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
     engines: {node: '>= 0.4'}
 
+  memorystream@0.3.1:
+    resolution: {integrity: sha512-S3UwM3yj5mtUSEfP41UZmt/0SCoVYUcU1rkXv+BQ5Ig8ndL4sPoJNBUJERafdPb5jjHJGuMgytgKvKIf58XNBw==}
+    engines: {node: '>= 0.10.0'}
+
   merge-options@3.0.4:
     resolution: {integrity: sha512-2Sug1+knBjkaMsMgf1ctR1Ujx+Ayku4EdJN4Z+C2+JzoeF7A3OZ9KM2GY0CpQS51NR61LTurMJrRKPhSs3ZRTQ==}
     engines: {node: '>=10'}
@@ -2160,6 +2177,10 @@ packages:
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
     engines: {node: '>= 0.8.0'}
+
+  os-tmpdir@1.0.2:
+    resolution: {integrity: sha512-D2FR03Vir7FIu45XBY20mTb+/ZSWB00sjU9jdQXt83gDrI4Ztz5Fs7/yy74g2N5SVQY4xY1qDr4rNddwYRVX0g==}
+    engines: {node: '>=0.10.0'}
 
   outvariant@1.4.3:
     resolution: {integrity: sha512-+Sl2UErvtsoajRDKCE5/dBz4DIvHXQQnAxtQTF04OJxY0+DyZXSo5P5Bb7XYWOh81syohlYL24hbDwxedPUJCA==}
@@ -2438,6 +2459,10 @@ packages:
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
+  semver@5.7.2:
+    resolution: {integrity: sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g==}
+    hasBin: true
+
   semver@7.7.4:
     resolution: {integrity: sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA==}
     engines: {node: '>=10'}
@@ -2482,6 +2507,11 @@ packages:
   socket.io-parser@4.2.6:
     resolution: {integrity: sha512-asJqbVBDsBCJx0pTqw3WfesSY0iRX+2xzWEWzrpcH7L6fLzrhyF8WPI8UaeM4YCuDfpwA/cgsdugMsmtz8EJeg==}
     engines: {node: '>=10.0.0'}
+
+  solc@0.8.35:
+    resolution: {integrity: sha512-OaP/4zyoKRo2CjqZDxbtkeRlEo6MxP4FLCxntw1Agf9OSoecmwYKoFBSB34UcSKBFBucrTh3Mb0nRoJou62ibw==}
+    engines: {node: '>=12.0.0'}
+    hasBin: true
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -2602,6 +2632,10 @@ packages:
   tldts@7.0.30:
     resolution: {integrity: sha512-ELrFxuqsDdHUwoh0XxDbxuLD3Wnz49Z57IFvTtvWy1hJdcMZjXLIuonjilCiWHlT2GbE4Wlv1wKVTzDFnXH1aw==}
     hasBin: true
+
+  tmp@0.0.33:
+    resolution: {integrity: sha512-jRCJlojKnZ3addtTOjdIqoRuPEKBvNXcGYqzO6zWZX8KfKEpnGY5jfggJQ3EjKuu8D4bJRr0y+cYJFmYbImXGw==}
+    engines: {node: '>=0.6.0'}
 
   totalist@3.0.1:
     resolution: {integrity: sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ==}
@@ -4083,7 +4117,11 @@ snapshots:
     dependencies:
       delayed-stream: 1.0.0
 
+  command-exists@1.2.9: {}
+
   commander@14.0.3: {}
+
+  commander@8.3.0: {}
 
   commondir@1.0.1: {}
 
@@ -4726,6 +4764,8 @@ snapshots:
 
   jiti@2.6.1: {}
 
+  js-sha3@0.8.0: {}
+
   js-tokens@4.0.0: {}
 
   json-buffer@3.0.1: {}
@@ -4819,6 +4859,8 @@ snapshots:
   main-event@1.0.4: {}
 
   math-intrinsics@1.1.0: {}
+
+  memorystream@0.3.1: {}
 
   merge-options@3.0.4:
     dependencies:
@@ -4931,6 +4973,8 @@ snapshots:
       prelude-ls: 1.2.1
       type-check: 0.4.0
       word-wrap: 1.2.5
+
+  os-tmpdir@1.0.2: {}
 
   outvariant@1.4.3: {}
 
@@ -5184,6 +5228,8 @@ snapshots:
 
   safer-buffer@2.1.2: {}
 
+  semver@5.7.2: {}
+
   semver@7.7.4: {}
 
   set-cookie-parser@3.1.0: {}
@@ -5238,6 +5284,18 @@ snapshots:
       debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
+
+  solc@0.8.35:
+    dependencies:
+      command-exists: 1.2.9
+      commander: 8.3.0
+      follow-redirects: 1.16.0
+      js-sha3: 0.8.0
+      memorystream: 0.3.1
+      semver: 5.7.2
+      tmp: 0.0.33
+    transitivePeerDependencies:
+      - debug
 
   source-map-js@1.2.1: {}
 
@@ -5367,6 +5425,10 @@ snapshots:
   tldts@7.0.30:
     dependencies:
       tldts-core: 7.0.30
+
+  tmp@0.0.33:
+    dependencies:
+      os-tmpdir: 1.0.2
 
   totalist@3.0.1: {}
 

@@ -9,7 +9,8 @@
 
 	const placeholderAuctions: Auction[] = [
 		{
-			id: '1',
+			id: '0x742d35Cc6634C0532925a3b844Bc92d426B0A93d',
+			address: '0x742d35Cc6634C0532925a3b844Bc92d426B0A93d',
 			name: 'Digital Art NFT Collection',
 			description: 'Rare digital art collection with 10 unique pieces',
 			endAt: Math.floor(Date.now() / 1000) + 86400 * 2,
@@ -17,15 +18,17 @@
 			owner: '0x742d35Cc6634C0532925a3b844Bc92d426B0A93d'
 		},
 		{
-			id: '2',
+			id: '0x2222222222222222222222222222222222222222',
+			address: '0x2222222222222222222222222222222222222222',
 			name: 'Trading Bot Source Code',
 			description: 'Algorithmic trading bot for Uniswap swaps',
 			endAt: Math.floor(Date.now() / 1000) + 3600,
 			maxBid: 2.1,
-			owner: '0xaBfD4E58d4FA50e3Ea8a8F5f8d4A8B8b8b8b8b8b'
+			owner: '0x2222222222222222222222222222222222222222'
 		},
 		{
-			id: '3',
+			id: '0x1234567890123456789012345678901234567890',
+			address: '0x1234567890123456789012345678901234567890',
 			name: 'ML Model for Price Prediction',
 			description: 'Trained ML model for crypto price forecasting',
 			endAt: Math.floor(Date.now() / 1000) + 86400 * 7,
