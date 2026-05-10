@@ -123,7 +123,6 @@ Rasterizer::~Rasterizer() {
       mesh.adjacencyEbo = 0;
     }
   }
-  // Window deletion handled by glfwTerminate usually
   if (window) {
     glfwDestroyWindow(window);
   }
@@ -183,6 +182,8 @@ void Rasterizer::error_callback([[maybe_unused]] int error,
   std::cerr << "GLFW Error: " << description << std::endl;
 }
 
+// Task 1, 6, and 7: create the OpenGL context, camera, and stencil-capable
+// framebuffers.
 void Rasterizer::InitDevice() {
   glfwSetErrorCallback(error_callback);
   glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
@@ -216,14 +217,9 @@ void Rasterizer::InitDevice() {
   activeStencilBits = stencilBits;
   RecreateOffscreenFramebuffer();
 
-  // Set up viewport and camera (Using defaults here instead of full scene
-  // configuration for now) You should integrate proper Camera parameters here,
-  // per your original app.
-  camera = new Camera(60.f, 0.1f, 250.f);
+  camera = new Camera(60.f, 0.0001f, 250.f);
   controller = Controller::getInstance(this, camera);
 
-  // We actually need *both* in callbacks, so let's pass the Rasterizer as the
-  // root, and we can access Controller from it.
   glfwSetWindowUserPointer(window, this);
 
   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -275,8 +271,8 @@ void Rasterizer::InitDevice() {
             static_cast<Rasterizer *>(glfwGetWindowUserPointer(window));
         if (!rast->uiMode) {
           rast->controller->cameraSpeed += static_cast<float>(yoffset) * 0.05f;
-          if (rast->controller->cameraSpeed < 0.01f) {
-            rast->controller->cameraSpeed = 0.01f;
+          if (rast->controller->cameraSpeed < 0.001f) {
+            rast->controller->cameraSpeed = 0.001f;
           }
         }
       });
@@ -298,6 +294,7 @@ void Rasterizer::InitDevice() {
   ImGui_ImplOpenGL3_Init("#version 430");
 }
 
+// Task 1-8: load the shaders used by the implemented PG2 tasks.
 void Rasterizer::InitPrograms() {
   program = new ShaderProgram("../shaders/vertex/Base.vert",
                               "../shaders/fragment/BasePBR.frag", controller);
@@ -320,6 +317,7 @@ void Rasterizer::InitPrograms() {
   systems.push_back(std::make_unique<RenderSystem>(this));
 }
 
+// Task 2: load the OBJ/MTL scene and upload mesh/material data.
 void Rasterizer::LoadScene(const std::string &fileName) {
   Assimp::Importer importer;
   unsigned int importOptions =
@@ -339,7 +337,6 @@ void Rasterizer::LoadScene(const std::string &fileName) {
     basePath = fileName.substr(0, lastSlash + 1);
   }
 
-  // Manually parse .mtl for map_RMA
   std::unordered_map<std::string, std::string> rmaMaps;
   std::string mtlFileName = fileName;
   size_t lastDot = mtlFileName.find_last_of(".");
@@ -351,7 +348,6 @@ void Rasterizer::LoadScene(const std::string &fileName) {
       while (std::getline(mtlFile, line)) {
         if (line.rfind("newmtl ", 0) == 0) {
           currentMtl = line.substr(7);
-          // Trim whitespace
           currentMtl.erase(currentMtl.find_last_not_of(" \n\r\t") + 1);
         } else if (line.find("map_RMA ") != std::string::npos) {
           std::string rmaPath = line.substr(line.find("map_RMA ") + 8);
@@ -363,7 +359,6 @@ void Rasterizer::LoadScene(const std::string &fileName) {
     }
   }
 
-  // Load Materials
   scene.materials.reserve(ai_scene->mNumMaterials);
   for (unsigned int i = 0; i < ai_scene->mNumMaterials; i++) {
     aiMaterial *mat = ai_scene->mMaterials[i];
@@ -451,7 +446,7 @@ void Rasterizer::LoadScene(const std::string &fileName) {
         GLuint64 texHandle = glGetTextureHandleARB(textureId);
         glMakeTextureHandleResidentARB(texHandle);
         gpuMat.rmaMap = texHandle;
-        gpuMat.pbrTextureTypes2.y = 1.0f; // Flag that RMA map is present
+        gpuMat.pbrTextureTypes2.y = 1.0f;
       } else {
         std::cerr << "SOIL loading error for RMA map " << rmaPath << ": "
                   << SOIL_last_result() << std::endl;
@@ -461,23 +456,19 @@ void Rasterizer::LoadScene(const std::string &fileName) {
     scene.materials.push_back(gpuMat);
   }
 
-  // Load Meshes
-
   for (unsigned int m = 0; m < ai_scene->mNumMeshes; m++) {
     aiMesh *mesh = ai_scene->mMeshes[m];
 
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
 
-    int rowCount = 3 + 3 + 2 + 3; // Pos (3), Norm (3), UV (2), Tangent (3)
+    int rowCount = 3 + 3 + 2 + 3;
 
     for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
-      // Positions
       vertices.push_back(mesh->mVertices[i].x);
       vertices.push_back(mesh->mVertices[i].y);
       vertices.push_back(mesh->mVertices[i].z);
 
-      // Normals
       if (mesh->HasNormals()) {
         vertices.push_back(mesh->mNormals[i].x);
         vertices.push_back(mesh->mNormals[i].y);
@@ -486,7 +477,6 @@ void Rasterizer::LoadScene(const std::string &fileName) {
         vertices.insert(vertices.end(), {0.f, 0.f, 0.f});
       }
 
-      // UVs
       if (mesh->HasTextureCoords(0)) {
         vertices.push_back(mesh->mTextureCoords[0][i].x);
         vertices.push_back(mesh->mTextureCoords[0][i].y);
@@ -494,7 +484,6 @@ void Rasterizer::LoadScene(const std::string &fileName) {
         vertices.insert(vertices.end(), {0.f, 0.f});
       }
 
-      // Tangents
       if (mesh->HasTangentsAndBitangents()) {
         vertices.push_back(mesh->mTangents[i].x);
         vertices.push_back(mesh->mTangents[i].y);
@@ -510,7 +499,6 @@ void Rasterizer::LoadScene(const std::string &fileName) {
         indices.push_back(face.mIndices[j]);
     }
 
-    // Generate OpenGL buffers for this mesh
     Mesh newMesh;
     newMesh.indexCount = indices.size();
     newMesh.materialIndex = mesh->mMaterialIndex;
@@ -528,19 +516,17 @@ void Rasterizer::LoadScene(const std::string &fileName) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int),
                  indices.data(), GL_STATIC_DRAW);
 
-    // Attributes
     auto numBytes = rowCount * sizeof(float);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, numBytes,
-                          (GLvoid *)0); // Pos
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, numBytes, (GLvoid *)0);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, numBytes,
-                          (GLvoid *)(3 * sizeof(float))); // Norm
+                          (GLvoid *)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, numBytes,
-                          (GLvoid *)(6 * sizeof(float))); // UV
+                          (GLvoid *)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, numBytes,
-                          (GLvoid *)(8 * sizeof(float))); // Tangent
+                          (GLvoid *)(8 * sizeof(float)));
     glEnableVertexAttribArray(3);
 
     glBindVertexArray(0);
@@ -564,7 +550,7 @@ void Rasterizer::LoadScene(const std::string &fileName) {
   attributes::Transform rootTransform;
   rootTransform.scale = glm::vec3(0.005f);
   rootTransform.rot = glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f);
-  rootTransform.pos = glm::vec3(0.0f); // Default to 0
+  rootTransform.pos = glm::vec3(0.0f);
   registry.emplace<attributes::Transform>(rootEntity, rootTransform);
   registry.emplace<attributes::Togglable>(rootEntity, true);
 
@@ -580,7 +566,7 @@ void Rasterizer::LoadScene(const std::string &fileName) {
     registry.emplace<attributes::Name>(childEntity, childName);
 
     attributes::Transform childTransform;
-    childTransform.scale = glm::vec3(1.0f); // Relative to parent
+    childTransform.scale = glm::vec3(1.0f);
     childTransform.rot = glm::vec3(0.0f);
     childTransform.pos = glm::vec3(0.0f);
     registry.emplace<attributes::Transform>(childEntity, childTransform);
@@ -595,18 +581,14 @@ void Rasterizer::LoadScene(const std::string &fileName) {
   }
 }
 
+// Task 1: create camera-reference axes for movement and orientation checks.
 void Rasterizer::CreateAxes() {
-  // We mock a tiny mesh with bounds indicating the X, Y, Z coordinates
-  // independently.
-
   auto addAxis = [&](glm::vec3 color, glm::vec3 scale, std::string name) {
-    // Very crude line box from [-1, 1] scaled drastically
     std::vector<float> vertices = {
         -1, -1, -1, 0, 1, 0, 0, 0, 0, 0, 0, 1,  -1, -1, 0, 1, 0, 0, 0, 0, 0, 0,
         1,  1,  -1, 0, 1, 0, 0, 0, 0, 0, 0, -1, 1,  -1, 0, 1, 0, 0, 0, 0, 0, 0,
         -1, -1, 1,  0, 1, 0, 0, 0, 0, 0, 0, 1,  -1, 1,  0, 1, 0, 0, 0, 0, 0, 0,
         1,  1,  1,  0, 1, 0, 0, 0, 0, 0, 0, -1, 1,  1,  0, 1, 0, 0, 0, 0, 0, 0};
-    // Map to simple triangles
     std::vector<unsigned int> indices = {0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1,
                                          7, 6, 5, 5, 4, 7, 4, 0, 3, 3, 7, 4,
                                          4, 5, 1, 1, 0, 4, 3, 2, 6, 6, 7, 3};
@@ -657,7 +639,7 @@ void Rasterizer::CreateAxes() {
 
     attributes::Transform transform;
     transform.scale = scale;
-    transform.pos = scale; // Matches previous behavior where pos=scale
+    transform.pos = scale;
     transform.rot = glm::vec3(0.0f);
     registry.emplace<attributes::Transform>(entity, transform);
 
@@ -665,25 +647,18 @@ void Rasterizer::CreateAxes() {
         entity, std::vector<int>{static_cast<int>(scene.meshes.size() - 1)});
 
     attributes::CameraSync sync;
-    // Set some default relative position for axes based on their original scale
-    // or similar... The previous implementation relied on the object's
-    // transform directly. For CameraSync, we just place them relative to camera
-    // inverse view.
     glm::mat4 rel = glm::mat4(1.0f);
-    rel = glm::translate(
-        rel, glm::vec3(0.0f, 0.0f, -6.0f)); // placed 6 units in front of camera
-    rel = glm::translate(rel, scale);       // match pos=scale
+    rel = glm::translate(rel, glm::vec3(0.0f, 0.0f, -6.0f));
+    rel = glm::translate(rel, scale);
     rel = glm::scale(rel, scale);
     sync.relativeMatrix = rel;
 
     registry.emplace<attributes::CameraSync>(entity, sync);
     registry.emplace<attributes::RenderOnTop>(entity);
     registry.emplace<attributes::IsAxis>(entity);
-    registry.emplace<attributes::Togglable>(
-        entity, this->showAxes); // start with showAxes
+    registry.emplace<attributes::Togglable>(entity, this->showAxes);
   };
 
-  // Create 3 thin boxes mapped along X, Y, Z axes
   addAxis(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.02f, 0.02f),
           "Axis: X (Red)");
   addAxis(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.02f, 1.0f, 0.02f),
@@ -692,11 +667,9 @@ void Rasterizer::CreateAxes() {
           "Axis: Z (Blue)");
 }
 
-void Rasterizer::InitBuffers() {
-  // Meshes VBO/VAO naturally instantiated in LoadScene per your requirement.
-  // If you need global buffers, they would go here.
-}
+void Rasterizer::InitBuffers() {}
 
+// Task 3: upload PBR materials, including bindless texture handles, to the GPU.
 void Rasterizer::InitMaterials(int bindingPoint) {
   if (scene.materials.empty())
     return;
@@ -710,6 +683,7 @@ void Rasterizer::InitMaterials(int bindingPoint) {
   glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
+// Task 3: load the irradiance map, prefiltered environment map, and BRDF LUT.
 void Rasterizer::InitIBLTextures() {
   LoadEXRTexture("../models/brdf_integration_map_ct_ggx.exr", brdfLUTMap);
   LoadEXRTexture("../models/lebombo_irradiance_map.exr", irradianceMap);
@@ -726,6 +700,7 @@ void Rasterizer::InitIBLTextures() {
                         prefilteredMap);
 }
 
+// Task 6: prepare the shadow-depth framebuffer used by shadow mapping.
 void Rasterizer::InitShadowMap() {
   glGenFramebuffers(1, &shadowFBO);
 
@@ -820,6 +795,7 @@ void Rasterizer::LoadPrefilteredEnvMap(
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, filepaths.size() - 1);
 }
 
+// Task 6: render the scene from the light into the shadow map.
 void Rasterizer::RenderDepthPass() {
   if (!depthProgram || shadowFBO == 0 || shadowDepthMap == 0) {
     return;
@@ -913,6 +889,7 @@ void Rasterizer::RenderDepthPass() {
   glViewport(0, 0, width, height);
 }
 
+// Task 7: extrude shadow volumes and update the stencil buffer.
 void Rasterizer::RenderStencilShadowPass(const glm::mat4 &viewProjection) {
   if (!useStencilShadows || !shadowVolumeProgram || activeStencilBits <= 0) {
     return;
@@ -932,7 +909,6 @@ void Rasterizer::RenderStencilShadowPass(const glm::mat4 &viewProjection) {
   glFrontFace(GL_CCW);
 
   if (showStencilDebug) {
-    // Debug mode: mark any rasterized shadow volume fragment.
     glStencilFunc(GL_ALWAYS, 1, 0xFF);
     glStencilOpSeparate(GL_FRONT_AND_BACK, GL_REPLACE, GL_REPLACE, GL_REPLACE);
     glDisable(GL_DEPTH_TEST);
@@ -1038,6 +1014,7 @@ void Rasterizer::RenderStencilShadowPass(const glm::mat4 &viewProjection) {
   glCullFace(GL_BACK);
 }
 
+// Task 7: darken pixels that are marked by the stencil shadow volume pass.
 void Rasterizer::RenderShadowDarkenPass() {
   if (!useStencilShadows || !shadowDarkenProgram || activeStencilBits <= 0) {
     return;
@@ -1065,6 +1042,7 @@ void Rasterizer::RenderShadowDarkenPass() {
   glEnable(GL_DEPTH_TEST);
 }
 
+// Task 7: visualize the stencil shadow mask for debugging.
 void Rasterizer::RenderStencilDebugPass() {
   if (!useStencilShadows || !showStencilDebug || !stencilDebugProgram ||
       activeStencilBits <= 0) {
@@ -1093,6 +1071,8 @@ void Rasterizer::RenderStencilDebugPass() {
   glEnable(GL_DEPTH_TEST);
 }
 
+// Task 1-8: orchestrate camera input, lighting, shadows, background, and UI
+// each frame.
 void Rasterizer::MainLoop() {
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
@@ -1138,9 +1118,6 @@ void Rasterizer::MainLoop() {
           glGetUniformLocation(program->getProgramID(), "projectionMatrix");
       glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
       glUniformMatrix4fv(projLoc, 1, GL_FALSE, &projection[0][0]);
-
-      // Scene textures are now bindless and accessed via handles in the
-      // material SSBO.
 
       glActiveTexture(GL_TEXTURE13);
       glBindTexture(GL_TEXTURE_2D, brdfLUTMap);
@@ -1198,6 +1175,27 @@ void Rasterizer::MainLoop() {
                   animatedLightDirection.y, animatedLightDirection.z);
     };
 
+    glDepthFunc(GL_LEQUAL);
+
+    skySphereProgram->activate();
+    glUniformMatrix4fv(
+        glGetUniformLocation(skySphereProgram->getProgramID(), "viewMatrix"), 1,
+        GL_FALSE, &view[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(skySphereProgram->getProgramID(),
+                                            "projectionMatrix"),
+                       1, GL_FALSE, &projection[0][0]);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, environmentMap);
+    glUniform1i(
+        glGetUniformLocation(skySphereProgram->getProgramID(), "envMap"), 0);
+
+    glBindVertexArray(skySphereVao);
+    glDrawElements(GL_TRIANGLES, skySphereIndexCount, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+
+    glDepthFunc(GL_LESS);
+
     auto renderScene = [&]() {
       for (auto &sys : systems) {
         sys->update(registry);
@@ -1205,15 +1203,12 @@ void Rasterizer::MainLoop() {
     };
 
     if (useStencilShadows) {
-      // Pass 1: normal shading baseline (no shadow map sampling)
       glDisable(GL_STENCIL_TEST);
       setupMainProgram(useShadowMapping, 1, 1.0f, 1.0f);
       renderScene();
 
-      // Pass 2: stencil shadow volumes (z-fail)
       RenderStencilShadowPass(projection * view);
 
-      // Pass 3: darken only shadowed pixels using stencil mask
       RenderShadowDarkenPass();
       RenderStencilDebugPass();
 
@@ -1256,10 +1251,9 @@ void Rasterizer::DrawUI() {
   ImGui::Text("Press TAB to toggle camera mode");
   ImGui::Separator();
 
-  // Player Position
   glm::vec3 camPos = camera->getPosition();
   ImGui::Text("Player Pos: (%.2f, %.2f, %.2f)", camPos.x, camPos.y, camPos.z);
-  ImGui::SliderFloat("Camera Speed", &controller->cameraSpeed, 0.01f, 5.0f);
+  ImGui::SliderFloat("Camera Speed", &controller->cameraSpeed, 0.001f, 5.0f);
   ImGui::SliderFloat("Light Animation Speed", &lightAnimationSpeed, 0.0f, 2.0f);
   ImGui::SliderFloat("Shadow Bias Min", &shadowBiasMin, 0.0001f, 0.02f, "%.5f",
                      ImGuiSliderFlags_Logarithmic);
@@ -1291,7 +1285,6 @@ void Rasterizer::DrawUI() {
   ImGui::Separator();
 
   ImGui::Begin("Shadow Map Debug");
-  // Cast the GLuint texture ID to ImTextureID
   ImGui::Image((ImTextureID)(intptr_t)shadowDepthMap, ImVec2(256, 256));
   ImGui::End();
 
@@ -1315,9 +1308,7 @@ void Rasterizer::DrawUI() {
         ImGui::TreeNodeEx((void *)(intptr_t)entt::to_integral(entity), flags,
                           "%s", nameAttr.name.c_str());
 
-    if (nodeOpen || !hasChildren) // If it's a leaf, it doesn't push, so we just
-                                  // draw its controls
-    {
+    if (nodeOpen || !hasChildren) {
       ImGui::PushID((int)entt::to_integral(entity));
 
       if (registry.all_of<attributes::Togglable>(entity)) {
@@ -1339,6 +1330,15 @@ void Rasterizer::DrawUI() {
             "Transform is controlled by matrix externally (e.g. CameraSync).");
       }
 
+      ImGui::Spacing();
+      if (ImGui::Button("Teleport Camera Here")) {
+        glm::vec3 targetPos = transform.pos;
+
+        camera->setPosition(targetPos);
+        camera->calculateViewMatrix();
+      }
+      ImGui::Spacing();
+
       if (registry.all_of<attributes::RenderMesh>(entity)) {
         auto &renderMesh = registry.get<attributes::RenderMesh>(entity);
         if (renderMesh.meshIndices.size() > 0)
@@ -1350,7 +1350,7 @@ void Rasterizer::DrawUI() {
         for (auto child : children.entities) {
           drawEntityRef(child, drawEntityRef);
         }
-        ImGui::TreePop(); // Pop if we are a parent node and opened
+        ImGui::TreePop();
       }
 
       ImGui::PopID();
@@ -1360,7 +1360,6 @@ void Rasterizer::DrawUI() {
   auto view = registry.view<attributes::Name, attributes::Transform>();
   view.each(
       [&](entt::entity entity, attributes::Name &, attributes::Transform &) {
-        // Only draw root entities (no Parents)
         if (!registry.all_of<attributes::Parent>(entity)) {
           drawEntity(entity, drawEntity);
         }
@@ -1369,6 +1368,7 @@ void Rasterizer::DrawUI() {
   ImGui::End();
 }
 
+// Task 6: fit the light-space projection to the current camera frustum.
 glm::mat4 Rasterizer::CalculateTightLightSpaceMatrix() {
   float ratio = width / static_cast<float>(height);
 
@@ -1431,4 +1431,72 @@ glm::mat4 Rasterizer::CalculateTightLightSpaceMatrix() {
   glm::mat4 lightProj = glm::ortho(minX, maxX, minY, maxY, zNear, zFar);
 
   return lightProj * lightView;
+}
+
+// Task 8: create the background sphere and load the environment texture.
+void Rasterizer::InitSkySphere() {
+  skySphereProgram = new ShaderProgram("../shaders/vertex/SkySphere.vert",
+                                       "../shaders/fragment/SkySphere.frag");
+
+  LoadEXRTexture("../models/lebombo_env_map.exr", environmentMap);
+
+  std::vector<float> vertices;
+  std::vector<unsigned int> indices;
+
+  const int stacks = 40;
+  const int slices = 40;
+  const float radius = 1.0f;
+
+  for (int i = 0; i <= stacks; ++i) {
+    float V = i / (float)stacks;
+    float phi = V * glm::pi<float>();
+
+    for (int j = 0; j <= slices; ++j) {
+      float U = j / (float)slices;
+      float theta = U * (glm::pi<float>() * 2.0f);
+      float x = radius * std::cos(theta) * std::sin(phi);
+      float y = radius * std::cos(phi);
+      float z = radius * std::sin(theta) * std::sin(phi);
+
+      vertices.push_back(x);
+      vertices.push_back(y);
+      vertices.push_back(z);
+    }
+  }
+
+  for (int i = 0; i < stacks; ++i) {
+    for (int j = 0; j < slices; ++j) {
+      int p1 = i * (slices + 1) + j;
+      int p2 = p1 + (slices + 1);
+
+      indices.push_back(p1);
+      indices.push_back(p2);
+      indices.push_back(p1 + 1);
+
+      indices.push_back(p1 + 1);
+      indices.push_back(p2);
+      indices.push_back(p2 + 1);
+    }
+  }
+
+  skySphereIndexCount = indices.size();
+
+  glGenVertexArrays(1, &skySphereVao);
+  glGenBuffers(1, &skySphereVbo);
+  glGenBuffers(1, &skySphereEbo);
+
+  glBindVertexArray(skySphereVao);
+
+  glBindBuffer(GL_ARRAY_BUFFER, skySphereVbo);
+  glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float),
+               vertices.data(), GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, skySphereEbo);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int),
+               indices.data(), GL_STATIC_DRAW);
+
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+
+  glBindVertexArray(0);
 }

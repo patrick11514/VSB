@@ -36,6 +36,7 @@ public:
   glm::mat4 getProjectionMatrix(float ratio) const;
 
   glm::vec3 getPosition() const;
+  void setPosition(const glm::vec3 &pos) { this->eye = pos; }
   glm::vec3 getTarget() const;
 
   float getFov() const { return fov; }

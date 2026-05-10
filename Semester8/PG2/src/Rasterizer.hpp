@@ -96,6 +96,13 @@ private:
   GLuint offscreenDepthStencilRbo = 0;
   GLuint fullscreenVao = 0;
 
+  ShaderProgram *skySphereProgram = nullptr;
+  GLuint skySphereVao = 0;
+  GLuint skySphereVbo = 0;
+  GLuint skySphereEbo = 0;
+  int skySphereIndexCount = 0;
+  GLuint environmentMap = 0;
+
   static constexpr int SHADOW_WIDTH = 2048;
   static constexpr int SHADOW_HEIGHT = 2048;
 
@@ -135,4 +142,6 @@ public:
   void RenderStencilDebugPass();
   void MainLoop();
   glm::mat4 CalculateTightLightSpaceMatrix();
+
+  void InitSkySphere();
 };
