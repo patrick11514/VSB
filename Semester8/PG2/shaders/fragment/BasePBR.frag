@@ -116,8 +116,8 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
     
     return ggx1 * ggx2;
 }
-
-float SampleShadow(vec3 fragPosWS, vec3 N, vec3 L, mat4 lightMatrix) {
+//3x3
+/*float SampleShadow(vec3 fragPosWS, vec3 N, vec3 L, mat4 lightMatrix) {
     if (useShadowMap == 0) {
         return 1.0;
     }
@@ -148,6 +148,45 @@ float SampleShadow(vec3 fragPosWS, vec3 N, vec3 L, mat4 lightMatrix) {
     }
 
     return visibility / 9.0;
+}*/
+
+//5x5
+float SampleShadow(vec3 fragPosWS, vec3 N, vec3 L, mat4 lightMatrix) {
+    if (useShadowMap == 0) {
+        return 1.0;
+    }
+
+    vec4 fragPosLightSpace = lightMatrix * vec4(fragPosWS, 1.0);
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords = projCoords * 0.5 + 0.5;
+
+    if (projCoords.z > 1.0) return 1.0;
+    if (projCoords.x < 0.0 || projCoords.x > 1.0 ||
+        projCoords.y < 0.0 || projCoords.y > 1.0) {
+        return 1.0;
+    }
+
+    float bias = max(shadowBiasMax * (1.0 - max(dot(N, L), 0.0)), shadowBiasMin);
+    vec2 texelSize = 1.0 / vec2(textureSize(shadowMap, 0));
+    
+    float visibility = 0.0;
+    float samples = 0.0;
+    
+    int halfKernelSize = 2; 
+    
+    float spread = 1.5; 
+
+    for (int x = -halfKernelSize; x <= halfKernelSize; ++x) {
+        for (int y = -halfKernelSize; y <= halfKernelSize; ++y) {
+            vec2 offset = vec2(x, y) * texelSize * spread;
+            float pcfDepth = texture(shadowMap, projCoords.xy + offset).r; 
+            
+            visibility += (projCoords.z - bias) <= pcfDepth ? 1.0 : 0.0;
+            samples += 1.0;
+        }
+    }
+
+    return visibility / samples;
 }
 
 void main() {

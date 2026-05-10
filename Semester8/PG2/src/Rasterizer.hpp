@@ -15,8 +15,7 @@ class Controller;
 
 #include "system/ISystem.hpp"
 
-struct GPUMaterial
-{
+struct GPUMaterial {
   alignas(16) glm::vec4 ambient;  // w = padding
   alignas(16) glm::vec4 diffuse;  // w = padding
   alignas(16) glm::vec4 specular; // w = shininess
@@ -27,15 +26,14 @@ struct GPUMaterial
   GLuint64 normalMap = 0;
   GLuint64 metallicMap = 0;
   GLuint64 roughnessMap = 0;
-  alignas(16) glm::vec4 pbrTextureTypes2;   // x=ao (0 = default, 1 = texture)
+  alignas(16) glm::vec4 pbrTextureTypes2; // x=ao (0 = default, 1 = texture)
   alignas(16) GLuint64 aoMap = 0;
   GLuint64 rmaMap = 0;
   GLuint64 padding2 = 0;
   GLuint64 padding3 = 0;
 };
 
-struct Mesh
-{
+struct Mesh {
   GLuint vao;
   GLuint vbo;
   GLuint ebo;
@@ -45,15 +43,13 @@ struct Mesh
   int materialIndex;
 };
 
-struct SceneData
-{
+struct SceneData {
   std::vector<Mesh> meshes;
   std::vector<GPUMaterial> materials;
   std::vector<GLuint> textureIds;
 };
 
-class Rasterizer
-{
+class Rasterizer {
 private:
   int width;
   int height;
@@ -80,7 +76,8 @@ private:
   GLuint shadowFBO = 0;
   GLuint shadowDepthMap = 0;
   glm::mat4 lightSpaceMatrix = glm::mat4(1.0f);
-  glm::vec3 animatedLightDirection = glm::normalize(glm::vec3(-0.2f, -1.0f, -0.3f));
+  glm::vec3 animatedLightDirection =
+      glm::normalize(glm::vec3(-0.2f, -1.0f, -0.3f));
   float lightAnimationSpeed = 0.65f;
   float shadowBiasMin = 0.0015f;
   float shadowBiasMax = 0.01f;
@@ -137,4 +134,5 @@ public:
   void RenderShadowDarkenPass();
   void RenderStencilDebugPass();
   void MainLoop();
+  glm::mat4 CalculateTightLightSpaceMatrix();
 };

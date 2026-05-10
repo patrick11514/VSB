@@ -7,13 +7,12 @@
  * Description: The main file :)
  */
 
-int main(void)
-{
+int main(void) {
 
   Rasterizer rasterizer(800, 600, "PG2 Framework");
   rasterizer.InitDevice();
   rasterizer.InitPrograms();
-  rasterizer.LoadScene("../models/piece_02.obj");
+  rasterizer.LoadScene("../models/6887_allied_avenger_gi2.obj");
   rasterizer.CreateAxes();
   rasterizer.InitBuffers();
   rasterizer.InitMaterials(0);

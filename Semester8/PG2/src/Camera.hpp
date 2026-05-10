@@ -9,7 +9,7 @@ private:
   glm::vec3 up{0, 1, 0};           ///< Vector defining where is up
 
   float pitch = 0; ///< Pitch (-90, 90)
-  float yaw = -90;   ///< Yaw (0, 360)
+  float yaw = -90; ///< Yaw (0, 360)
 
   float fov;
   float zNear;
@@ -40,5 +40,6 @@ public:
 
   float getFov() const { return fov; }
   float getZNear() const { return zNear; }
+  void setZFar(float zFar) { this->zFar = zFar; }
   float getZFar() const { return zFar; }
 };
