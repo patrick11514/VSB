@@ -39,6 +39,7 @@ void EmitQuad(vec3 a, vec3 b, vec3 c, vec3 d) {
     EndPrimitive();
 }
 
+// Task 7: extrude silhouette edges into stencil shadow volumes.
 void main() {
     vec3 p0 = gs_in[0].worldPos;
     vec3 p1 = gs_in[2].worldPos;
@@ -62,7 +63,6 @@ void main() {
     vec3 e1 = p1 + extrude;
     vec3 e2 = p2 + extrude;
 
-    // Front and back caps keep volume closed for z-fail.
     EmitTriangle(p0, p1, p2);
     EmitTriangle(e2, e1, e0);
 
@@ -75,7 +75,6 @@ void main() {
         f2 = -f2;
     }
 
-    // Emit side quads only for silhouette edges
     if (f0 <= 0.0) EmitQuad(p0, e0, p1, e1);
     if (f1 <= 0.0) EmitQuad(p1, e1, p2, e2);
     if (f2 <= 0.0) EmitQuad(p2, e2, p0, e0);

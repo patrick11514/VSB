@@ -1,7 +1,6 @@
 #version 430
 #extension GL_ARB_bindless_texture : require
 #define MAX_LIGHTS 69
-// light types
 #define POINT 0
 #define DIRECTIONAL 1
 #define REFLECTOR 2
@@ -22,13 +21,13 @@ struct Light {
 struct GPU_Material {
     vec4 ambient;
     vec4 diffuse;
-    vec4 specular; // w is shininess
-    vec4 pbrTextureTypes; // x=albedo, y=normal, z=metallic, w=roughness
+    vec4 specular;
+    vec4 pbrTextureTypes;
     sampler2D albedoMap;
     sampler2D normalMap;
     sampler2D metallicMap;
     sampler2D roughnessMap;
-    vec4 pbrTextureTypes2; // x=ao, y=rma_present
+    vec4 pbrTextureTypes2;
     sampler2D aoMap;
     sampler2D rmaMap;
     sampler2D padding2;
@@ -64,17 +63,17 @@ out vec4 fragColor;
 
 const float PI = 3.14159265359;
 
-// Spherical Map sampling
 const vec2 invAtan = vec2(0.15915494309, 0.31830988618);
 vec2 SampleSphericalMap(vec3 v)
 {
     vec2 uv = vec2(atan(v.z, v.x), asin(v.y));
     uv *= invAtan;
     uv += 0.5;
+
+    uv.y = 1.0 - uv.y;
     return uv;
 }
 
-// Fresnel
 vec3 fresnelSchlick(float cosTheta, vec3 F0) {
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
@@ -83,7 +82,6 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness) {
     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
-// Distribution
 float DistributionGGX(vec3 N, vec3 H, float roughness) {
     float a = roughness * roughness;
     float a2 = a * a;
@@ -97,7 +95,6 @@ float DistributionGGX(vec3 N, vec3 H, float roughness) {
     return nom / denom;
 }
 
-// Geometry
 float GeometrySchlickGGX(float NdotV, float roughness) {
     float r = (roughness + 1.0);
     float k = (r * r) / 8.0;
@@ -116,41 +113,7 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
     
     return ggx1 * ggx2;
 }
-//3x3
-/*float SampleShadow(vec3 fragPosWS, vec3 N, vec3 L, mat4 lightMatrix) {
-    if (useShadowMap == 0) {
-        return 1.0;
-    }
-
-    vec4 fragPosLightSpace = lightMatrix * vec4(fragPosWS, 1.0);
-    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-    projCoords = projCoords * 0.5 + 0.5;
-
-    if (projCoords.z > 1.0) {
-        return 1.0;
-    }
-
-    if (projCoords.x < 0.0 || projCoords.x > 1.0 ||
-        projCoords.y < 0.0 || projCoords.y > 1.0) {
-        return 1.0;
-    }
-
-    float bias = max(shadowBiasMax * (1.0 - max(dot(N, L), 0.0)), shadowBiasMin);
-    vec2 texelSize = 1.0 / vec2(textureSize(shadowMap, 0));
-    float visibility = 0.0;
-
-    for (int x = -1; x <= 1; ++x) {
-        for (int y = -1; y <= 1; ++y) {
-            float closestDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
-            float currentDepth = projCoords.z;
-            visibility += (currentDepth - bias) <= closestDepth ? 1.0 : 0.0;
-        }
-    }
-
-    return visibility / 9.0;
-}*/
-
-//5x5
+// Task 6: compare the fragment against the shadow map with PCF filtering.
 float SampleShadow(vec3 fragPosWS, vec3 N, vec3 L, mat4 lightMatrix) {
     if (useShadowMap == 0) {
         return 1.0;
@@ -168,19 +131,19 @@ float SampleShadow(vec3 fragPosWS, vec3 N, vec3 L, mat4 lightMatrix) {
 
     float bias = max(shadowBiasMax * (1.0 - max(dot(N, L), 0.0)), shadowBiasMin);
     vec2 texelSize = 1.0 / vec2(textureSize(shadowMap, 0));
-    
+
     float visibility = 0.0;
     float samples = 0.0;
-    
-    int halfKernelSize = 2; 
-    
-    float spread = 1.5; 
+
+    int halfKernelSize = 2;
+
+    float spread = 1.5;
 
     for (int x = -halfKernelSize; x <= halfKernelSize; ++x) {
         for (int y = -halfKernelSize; y <= halfKernelSize; ++y) {
             vec2 offset = vec2(x, y) * texelSize * spread;
-            float pcfDepth = texture(shadowMap, projCoords.xy + offset).r; 
-            
+            float pcfDepth = texture(shadowMap, projCoords.xy + offset).r;
+
             visibility += (projCoords.z - bias) <= pcfDepth ? 1.0 : 0.0;
             samples += 1.0;
         }
@@ -189,41 +152,41 @@ float SampleShadow(vec3 fragPosWS, vec3 N, vec3 L, mat4 lightMatrix) {
     return visibility / samples;
 }
 
+// Task 3 and 5: evaluate Cook-Torrance PBR with normal mapping and IBL.
 void main() {
     GPU_Material material = materials[u_MaterialIndex];
 
-    // Fetch PBR Maps
     vec3 albedo = material.diffuse.xyz;
     if (material.pbrTextureTypes.x > 0.5) {
-        albedo = pow(texture(material.albedoMap, uv_out).rgb, vec3(2.2)); // sRGB to Linear
+        vec4 albedoTex = texture(material.albedoMap, uv_out);
+        albedo = pow(albedoTex.rgb, vec3(2.2));
     }
 
     vec3 normal = vec3(0.0, 0.0, 1.0);
     if (material.pbrTextureTypes.y > 0.5) {
         normal = texture(material.normalMap, uv_out).rgb;
-        normal = normal * 2.0 - 1.0; 
-        normal = normalize(TBN * normal); 
+        normal = normal * 2.0 - 1.0;
+        normal = normalize(TBN * normal);
     } else {
-        // If no normal map, just use interpolated vertex normal (N from TBN)
         normal = normalize(TBN[2]);
     }
 
-    if (!gl_FrontFacing) {
-        normal = -normal;
-    }
-
     float metallic = 0.0;
-    float roughness = 0.5; // Default roughness
+    float roughness = 0.5;
     float ao = 1.0;
 
+    float Ns = material.specular.w; 
+    
+    if (Ns > 0.0) {
+        roughness = sqrt(2.0 / (Ns + 2.0));
+    }
+
     if (material.pbrTextureTypes2.y > 0.5) {
-        // Unpack from RMA map
         vec3 rma = texture(material.rmaMap, uv_out).rgb;
         roughness = rma.r;
         metallic = rma.g;
         ao = rma.b;
     } else {
-        // Individual maps
         if (material.pbrTextureTypes.z > 0.5) {
             metallic = texture(material.metallicMap, uv_out).r;
         }
@@ -264,7 +227,7 @@ void main() {
                 float spot = dot(normalize(cameraLightDir.xyz), -L);
                 float alpha = cos(radians(light.angle));
                 if (spot < alpha) {
-                    continue; // outside cone
+                    continue;
                 }
                 attenuation = (spot - alpha) / (1.0 - alpha);
             }
@@ -274,7 +237,6 @@ void main() {
         vec3 H = normalize(V + L);
         vec3 radiance = light.color * attenuation;
 
-        // Cook-Torrance BRDF
         float NDF = DistributionGGX(N, H, roughness);
         float G   = GeometrySmith(N, V, L, roughness);
         vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);
@@ -292,13 +254,11 @@ void main() {
         Lo += uDirectScale * shadowFactor * (kD * albedo / PI + specular) * radiance * NdotL;
     }
 
-    // ==== IBL Ambient ====
     mat3 invView = transpose(mat3(viewMatrix));
     vec3 world_N = normalize(invView * N);
     vec3 R = reflect(-V, N);
     vec3 world_R = normalize(invView * R);
 
-    // Diffuse Irradiance IBL
     vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
     vec3 kS = F;
     vec3 kD = 1.0 - kS;
@@ -307,8 +267,7 @@ void main() {
     vec3 irradiance = texture(irradianceMap, SampleSphericalMap(world_N)).rgb;
     vec3 diffuse    = irradiance * albedo;
 
-    // Specular IBL
-    const float MAX_REFLECTION_LOD = 8.0; // because we load levels 0 to 8
+    const float MAX_REFLECTION_LOD = 8.0;
     vec3 prefilteredColor = textureLod(prefilteredMap, SampleSphericalMap(world_R), roughness * MAX_REFLECTION_LOD).rgb;
     vec2 brdf  = texture(brdfLUTMap, vec2(max(dot(N, V), 0.0), roughness)).rg;
     vec3 specularIBL = prefilteredColor * (F * brdf.x + brdf.y);
@@ -316,7 +275,6 @@ void main() {
     vec3 ambient = uAmbientScale * (kD * diffuse + specularIBL) * ao;
     vec3 color = ambient + Lo;
 
-    // HDR tonemapping & gamma correction
     color = color / (color + vec3(1.0));
     color = pow(color, vec3(1.0/2.2));
 

@@ -1,5 +1,6 @@
 #version 430
 
+// Task 7: emit a fullscreen triangle for the stencil shadow darkening pass.
 void main() {
     vec2 p;
     if (gl_VertexID == 0) {

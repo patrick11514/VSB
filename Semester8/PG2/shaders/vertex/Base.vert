@@ -14,6 +14,7 @@ out vec3 positionWS;
 out vec2 uv_out;
 out mat3 TBN;
 
+// Task 1, 4, and 5: transform vertices and build TBN data for normal mapping.
 void main () {
     positionWS = (modelMatrix * vec4(vp, 1.0)).xyz;
     positionCS = (viewMatrix * modelMatrix) * vec4(vp, 1.0);
@@ -22,9 +23,7 @@ void main () {
     mat3 normalMatrix = mat3(transpose(inverse(viewMatrix * modelMatrix)));
     vec3 T = normalize(normalMatrix * tangent);
     vec3 N = normalize(normalMatrix * norm);
-    // re-orthogonalize T with respect to N
     T = normalize(T - dot(T, N) * N);
-    // then retrieve perpendicular vector B with the cross product of T and N
     vec3 B = cross(N, T);
 
     TBN = mat3(T, B, N);
