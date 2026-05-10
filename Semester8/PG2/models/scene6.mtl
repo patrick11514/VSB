@@ -1,0 +1,25 @@
+# Blender 3.6.2 MTL File: 'None'
+# www.blender.org
+
+newmtl white_light  
+  	Ke 10.0 10.0 10.0
+	Kd 1.0 0.0 0.0
+	illum 1
+
+
+newmtl white_lambert
+	Kd 0.95 0.95 0.95
+	Pr 0.1	
+	Ke 0.0 0.0 0.0
+	illum 5
+
+
+newmtl slab_tiles
+	Kd 1.0 1.0 1.0
+	#map_Kd square_tiles_03_diff_4k.png
+	Pr 1.0
+	#map_Pr square_tiles_03_rough_4k.png
+	#map_Kn square_tiles_03_nor_gl_4k.png
+	Ke 0.0 0.0 0.0
+	illum 5
+
