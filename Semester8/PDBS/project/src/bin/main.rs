@@ -8,6 +8,7 @@ use crossterm::execute;
 use crossterm::terminal::{
     disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen,
 };
+use mongodb::{Client, Collection};
 use ratatui::backend::CrosstermBackend;
 use ratatui::prelude::*;
 use ratatui::widgets::{Block, Borders, Clear, List, ListItem, ListState, Paragraph};
@@ -15,14 +16,20 @@ use reqwest::header::USER_AGENT;
 use serde::Deserialize;
 use tokio::task::JoinHandle;
 
+use project::{search_objects, SkyObject};
+
 const NOMINATIM_USER_AGENT: &str = "StellaDB-CLI (patrik.mintel.st@vsb.cz)";
+const DEFAULT_MONGO_URI: &str = "mongodb://10.10.10.232:27017";
+const DEFAULT_DATABASE: &str = "celestial_data";
+const DEFAULT_COLLECTION: &str = "objects";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum AppState {
     SetupLocation,
     TownInput,
     Resolving,
-    Ready,
+    SearchByName,
+    ObjectDetails,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -63,10 +70,16 @@ struct App {
     location: Option<ObserverLocation>,
     status: String,
     lookup_task: Option<JoinHandle<Result<ObserverLocation, String>>>,
+    collection: Collection<SkyObject>,
+    search_query: String,
+    search_results: Vec<SkyObject>,
+    search_selected: usize,
+    search_task: Option<JoinHandle<Result<Vec<SkyObject>, String>>>,
+    active_target: Option<SkyObject>,
 }
 
 impl App {
-    fn new() -> Self {
+    fn new(collection: Collection<SkyObject>) -> Self {
         Self {
             state: AppState::SetupLocation,
             selected_choice: LocationChoice::Ip,
@@ -74,6 +87,12 @@ impl App {
             location: None,
             status: String::from("Choose how to resolve the observer location."),
             lookup_task: None,
+            collection,
+            search_query: String::new(),
+            search_results: Vec::new(),
+            search_selected: 0,
+            search_task: None,
+            active_target: None,
         }
     }
 
@@ -85,6 +104,29 @@ impl App {
     fn reset_to_setup(&mut self) {
         self.state = AppState::SetupLocation;
         self.lookup_task = None;
+    }
+
+    fn start_search(&mut self) {
+        if let Some(task) = self.search_task.take() {
+            task.abort();
+        }
+
+        let query = self.search_query.trim().to_string();
+        if query.is_empty() {
+            self.search_results.clear();
+            self.search_selected = 0;
+            self.status = String::from("Type to search the MongoDB object collection.");
+            return;
+        }
+
+        self.status = format!("Searching for '{query}'...");
+        let collection = self.collection.clone();
+        self.search_task = Some(tokio::spawn(async move {
+            let results = search_objects(&collection, &query, None, 50)
+                .await
+                .map_err(|error| error.to_string())?;
+            Ok(results)
+        }));
     }
 
     async fn poll_lookup(&mut self) {
@@ -102,12 +144,9 @@ impl App {
 
         match task.await {
             Ok(Ok(location)) => {
-                self.status = format!(
-                    "Resolved {} at lat {:.4}, lon {:.4}.",
-                    location.label, location.latitude, location.longitude
-                );
                 self.location = Some(location);
-                self.state = AppState::Ready;
+                self.state = AppState::SearchByName;
+                self.status = String::from("Type to search the MongoDB object collection.");
             }
             Ok(Err(error)) => {
                 self.status = error;
@@ -116,6 +155,42 @@ impl App {
             Err(error) => {
                 self.status = format!("Lookup task failed: {error}");
                 self.state = AppState::SetupLocation;
+            }
+        }
+    }
+
+    async fn poll_search(&mut self) {
+        let Some(task) = self.search_task.as_ref() else {
+            return;
+        };
+
+        if !task.is_finished() {
+            return;
+        }
+
+        let Some(task) = self.search_task.take() else {
+            return;
+        };
+
+        match task.await {
+            Ok(Ok(results)) => {
+                self.search_results = results;
+                self.search_selected = 0;
+                self.status = format!(
+                    "Found {} object(s) for '{}'.",
+                    self.search_results.len(),
+                    self.search_query.trim()
+                );
+            }
+            Ok(Err(error)) => {
+                self.search_results.clear();
+                self.search_selected = 0;
+                self.status = error;
+            }
+            Err(error) => {
+                self.search_results.clear();
+                self.search_selected = 0;
+                self.status = format!("Search task failed: {error}");
             }
         }
     }
@@ -155,12 +230,18 @@ impl Drop for TerminalGuard {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
+    let client = Client::with_uri_str(DEFAULT_MONGO_URI).await?;
+    let collection = client
+        .database(DEFAULT_DATABASE)
+        .collection::<SkyObject>(DEFAULT_COLLECTION);
+
     let _guard = setup_terminal()?;
     let mut terminal = create_terminal()?;
-    let mut app = App::new();
+    let mut app = App::new(collection);
 
     loop {
         app.poll_lookup().await;
+        app.poll_search().await;
 
         terminal.draw(|frame| render(frame, &app))?;
 
@@ -195,7 +276,8 @@ fn render(frame: &mut Frame<'_>, app: &App) {
         AppState::SetupLocation => render_setup_location(frame, area, app),
         AppState::TownInput => render_town_input(frame, area, app),
         AppState::Resolving => render_resolving(frame, area, app),
-        AppState::Ready => render_ready(frame, area, app),
+        AppState::SearchByName => render_search_by_name(frame, area, app),
+        AppState::ObjectDetails => render_object_details(frame, area, app),
     }
 }
 
@@ -204,7 +286,8 @@ fn render_setup_location(frame: &mut Frame<'_>, area: Rect, app: &App) {
     frame.render_widget(Clear, popup);
 
     let inner = Block::default()
-        .title("Observer Location")
+        .title(Span::styled("Observer Location", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)))
+        .border_style(Style::default().fg(Color::Cyan))
         .borders(Borders::ALL);
     frame.render_widget(inner, popup);
 
@@ -220,7 +303,8 @@ fn render_setup_location(frame: &mut Frame<'_>, area: Rect, app: &App) {
 
     frame.render_widget(
         Paragraph::new("Choose how to resolve the observer location.")
-            .alignment(Alignment::Center),
+            .alignment(Alignment::Center)
+            .style(Style::default().fg(Color::White).add_modifier(Modifier::BOLD)),
         chunks[0],
     );
 
@@ -232,13 +316,26 @@ fn render_setup_location(frame: &mut Frame<'_>, area: Rect, app: &App) {
     list_state.select(Some(app.selected_choice.index()));
 
     let list = List::new(items)
-        .block(Block::default().borders(Borders::ALL).title("Lookup mode"))
-        .highlight_style(Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(Span::styled(
+                    "Lookup mode",
+                    Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD),
+                ))
+                .border_style(Style::default().fg(Color::Blue)),
+        )
+        .highlight_style(
+            Style::default()
+                .fg(Color::Black)
+                .bg(Color::Yellow)
+                .add_modifier(Modifier::BOLD),
+        )
         .highlight_symbol("> ");
     frame.render_stateful_widget(list, chunks[1], &mut list_state);
 
     let help = Line::from(vec![
-        Span::styled("Enter ", Style::default().fg(Color::Green)),
+        Span::styled("Enter ", Style::default().fg(Color::Green).add_modifier(Modifier::BOLD)),
         Span::raw("to confirm, arrows/tab to switch, q to quit"),
     ]);
     frame.render_widget(Paragraph::new(help).alignment(Alignment::Center), chunks[2]);
@@ -264,7 +361,8 @@ fn render_town_input(frame: &mut Frame<'_>, area: Rect, app: &App) {
     frame.render_widget(Clear, popup);
 
     let block = Block::default()
-        .title("Town Lookup")
+        .title(Span::styled("Town Lookup", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)))
+        .border_style(Style::default().fg(Color::Cyan))
         .borders(Borders::ALL);
     frame.render_widget(block, popup);
 
@@ -280,12 +378,22 @@ fn render_town_input(frame: &mut Frame<'_>, area: Rect, app: &App) {
 
     frame.render_widget(
         Paragraph::new("Type a town or city name, then press Enter.")
-            .alignment(Alignment::Center),
+            .alignment(Alignment::Center)
+            .style(Style::default().fg(Color::White)),
         chunks[0],
     );
 
     let input = Paragraph::new(app.town_input.as_str())
-        .block(Block::default().borders(Borders::ALL).title("City / town"));
+        .style(Style::default().fg(Color::Cyan))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(Span::styled(
+                    "City / town",
+                    Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD),
+                ))
+                .border_style(Style::default().fg(Color::Blue)),
+        );
     frame.render_widget(input, chunks[1]);
 
     let help = Paragraph::new("Enter to search, Esc to go back, Backspace to edit")
@@ -299,7 +407,8 @@ fn render_resolving(frame: &mut Frame<'_>, area: Rect, app: &App) {
     frame.render_widget(Clear, popup);
 
     let block = Block::default()
-        .title("Resolving Location")
+        .title(Span::styled("Resolving Location", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)))
+        .border_style(Style::default().fg(Color::Green))
         .borders(Borders::ALL);
     frame.render_widget(block, popup);
 
@@ -311,51 +420,148 @@ fn render_resolving(frame: &mut Frame<'_>, area: Rect, app: &App) {
     frame.render_widget(
         Paragraph::new(text)
             .alignment(Alignment::Center)
+            .style(Style::default().fg(Color::Green).add_modifier(Modifier::BOLD))
             .block(Block::default()),
         popup.inner(Margin::new(1, 1)),
     );
 }
 
-fn render_ready(frame: &mut Frame<'_>, area: Rect, app: &App) {
+fn render_search_by_name(frame: &mut Frame<'_>, area: Rect, app: &App) {
     let block = Block::default()
-        .title("Location Ready")
+        .title(Span::styled("Search by Name", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)))
+        .border_style(Style::default().fg(Color::Cyan))
         .borders(Borders::ALL);
     frame.render_widget(block, area);
 
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
-            Constraint::Length(5),
-            Constraint::Length(5),
-            Constraint::Min(2),
+            Constraint::Percentage(10),
+            Constraint::Percentage(90),
         ])
         .margin(2)
         .split(area);
 
-    if let Some(location) = &app.location {
-        let details = vec![
-            Line::from(format!("Label: {}", location.label)),
-            Line::from(format!("Latitude: {:.6}", location.latitude)),
-            Line::from(format!("Longitude: {:.6}", location.longitude)),
-            Line::from(format!("Source: {}", location.source)),
-        ];
-        frame.render_widget(
-            Paragraph::new(details).block(Block::default().title("Stored coordinates").borders(Borders::ALL)),
-            chunks[0],
-        );
+    let observer_line = if let Some(location) = &app.location {
+        format!(
+            "Observer: {} | {:.4}, {:.4} | {}",
+            location.label, location.latitude, location.longitude, location.source
+        )
+    } else {
+        String::from("Observer location unavailable")
+    };
+
+    let search_bar = Paragraph::new(vec![
+        Line::from(Span::styled(observer_line, Style::default().fg(Color::Cyan))),
+        Line::from(vec![
+            Span::styled("Search: ", Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD)),
+            Span::styled(app.search_query.as_str(), Style::default().fg(Color::White)),
+        ]),
+    ])
+    .block(
+        Block::default()
+            .title(Span::styled(
+                "Search objects",
+                Style::default().fg(Color::Green).add_modifier(Modifier::BOLD),
+            ))
+            .border_style(Style::default().fg(Color::Blue))
+            .borders(Borders::ALL),
+    );
+    frame.render_widget(search_bar, chunks[0]);
+
+    let mut list_state = ListState::default();
+    if !app.search_results.is_empty() {
+        let selected = app.search_selected.min(app.search_results.len() - 1);
+        list_state.select(Some(selected));
     }
 
+    let items: Vec<ListItem<'_>> = if app.search_results.is_empty() {
+        vec![ListItem::new(Span::styled(
+            "Type a few letters to search the database.",
+            Style::default().fg(Color::DarkGray),
+        ))]
+    } else {
+        app.search_results
+            .iter()
+            .map(|object| {
+                let label = if object.aliases.is_empty() {
+                    object.designation.clone()
+                } else {
+                    format!("{}  [{}]", object.designation, object.aliases.join(", "))
+                };
+                ListItem::new(Span::styled(label, Style::default().fg(Color::White)))
+            })
+            .collect()
+    };
+
+    let list = List::new(items)
+        .block(
+            Block::default()
+                .title(Span::styled(
+                    "Matching objects",
+                    Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD),
+                ))
+                .border_style(Style::default().fg(Color::Cyan))
+                .borders(Borders::ALL),
+        )
+        .highlight_style(
+            Style::default()
+                .fg(Color::Black)
+                .bg(Color::Cyan)
+                .add_modifier(Modifier::BOLD),
+        )
+        .highlight_symbol("> ");
+    frame.render_stateful_widget(list, chunks[1], &mut list_state);
+
     frame.render_widget(
-        Paragraph::new(app.status.as_str())
-            .block(Block::default().title("Status").borders(Borders::ALL)),
-        chunks[1],
+        Paragraph::new(app.status.as_str()).alignment(Alignment::Center),
+        Rect {
+            x: area.x,
+            y: area.bottom().saturating_sub(1),
+            width: area.width,
+            height: 1,
+        },
+    );
+
+}
+
+fn render_object_details(frame: &mut Frame<'_>, area: Rect, app: &App) {
+    let block = Block::default()
+        .title(Span::styled("Object Details", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)))
+        .border_style(Style::default().fg(Color::Magenta))
+        .borders(Borders::ALL);
+    frame.render_widget(block, area);
+
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Length(8), Constraint::Min(2)])
+        .margin(2)
+        .split(area);
+
+    let content = if let Some(target) = &app.active_target {
+        vec![
+            Line::from(format!("Designation: {}", target.designation)),
+            Line::from(format!("Aliases: {}", if target.aliases.is_empty() { String::from("-") } else { target.aliases.join(", ") })),
+            Line::from(format!("Magnitude: {}", target.magnitude.map(|value| value.to_string()).unwrap_or_else(|| String::from("n/a")))),
+            Line::from(format!("RA: {:.6}", target.ra_deg)),
+            Line::from(format!("Dec: {:.6}", target.dec_deg)),
+            Line::from(format!("Source: {}", target.source.as_deref().unwrap_or("unknown"))),
+        ]
+    } else {
+        vec![Line::from("No object selected yet.")]
+    };
+
+    frame.render_widget(
+        Paragraph::new(content)
+            .block(Block::default().title("Selected target").borders(Borders::ALL)),
+        chunks[0],
     );
 
     frame.render_widget(
         Paragraph::new("Press r to choose a different location lookup or q to quit.")
             .alignment(Alignment::Center)
             .style(Style::default().fg(Color::DarkGray)),
-        chunks[2],
+        chunks[1],
     );
 }
 
@@ -424,14 +630,40 @@ async fn handle_key_event(key: KeyEvent, app: &mut App) -> Result<bool, Box<dyn 
             KeyCode::Char('q') | KeyCode::Esc => return Ok(true),
             _ => {}
         },
-        AppState::Ready => match key.code {
+        AppState::SearchByName => match key.code {
+            KeyCode::Char('q') | KeyCode::Esc => return Ok(true),
+            KeyCode::Up => {
+                if !app.search_results.is_empty() {
+                    app.search_selected = app.search_selected.saturating_sub(1);
+                }
+            }
+            KeyCode::Down => {
+                if !app.search_results.is_empty() {
+                    app.search_selected = (app.search_selected + 1).min(app.search_results.len() - 1);
+                }
+            }
+            KeyCode::Backspace => {
+                app.search_query.pop();
+                app.start_search();
+            }
+            KeyCode::Enter => {
+                if let Some(target) = app.search_results.get(app.search_selected).cloned() {
+                    app.active_target = Some(target);
+                    app.state = AppState::ObjectDetails;
+                    app.status = String::from("Object selected.");
+                }
+            }
+            KeyCode::Char(c) if !c.is_control() => {
+                app.search_query.push(c);
+                app.start_search();
+            }
+            _ => {}
+        },
+        AppState::ObjectDetails => match key.code {
             KeyCode::Char('q') | KeyCode::Esc => return Ok(true),
             KeyCode::Char('r') | KeyCode::Char('R') => {
-                app.location = None;
-                app.town_input.clear();
-                app.selected_choice = LocationChoice::Ip;
-                app.reset_to_setup();
-                app.status = String::from("Choose how to resolve the observer location.");
+                app.state = AppState::SearchByName;
+                app.status = String::from("Type to search the MongoDB object collection.");
             }
             _ => {}
         },
