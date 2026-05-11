@@ -2,7 +2,7 @@ use std::error::Error;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use mongodb::Collection;
-use mongodb::bson::{Bson, Document, doc};
+use mongodb::bson::{Bson, Document, RawBsonRef, doc};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -160,6 +160,68 @@ pub async fn visible_objects(
     let visible_filter = build_visible_filter(lst_deg, horizon_limit_deg);
     let filter = combine_filters(vec![visible_filter, build_magnitude_filter(max_magnitude)]);
     collect_find_results(collection, filter, limit).await
+}
+
+pub async fn geonear_objects(
+    collection: &Collection<SkyObject>,
+    center_lon: f64,
+    center_lat: f64,
+    radius_deg: f64,
+    max_magnitude: Option<f64>,
+    limit: usize,
+    exclude_designation: Option<&str>,
+    catalog_filter: Option<&str>,
+) -> Result<Vec<(SkyObject, f64)>, Box<dyn Error + Send + Sync>> {
+    use mongodb::bson::raw::RawBsonRef;
+
+    // Create the exclusion query
+    let mut query_doc = doc! {};
+    if let Some(exclude) = exclude_designation {
+        query_doc.insert("designation", doc! { "$ne": exclude });
+    }
+    if let Some(catalog) = catalog_filter {
+        // Filter by the source field (e.g., "NGC", "Messier") ignoring case
+        query_doc.insert("source", doc! { "$regex": catalog, "$options": "i" });
+    }
+
+    let mut pipeline = vec![doc! {
+        "$geoNear": {
+            "near": {
+                "type": "Point",
+                "coordinates": [center_lon, center_lat]
+            },
+            "distanceField": "distance_degrees",
+            "distanceMultiplier": 1.0 / 111_000.0,
+            "spherical": true,
+            "maxDistance": radius_deg * 111_000.0,
+            "query": query_doc
+        }
+    }];
+
+    if let Some(max_mag) = max_magnitude {
+        pipeline.push(doc! { "$match": { "magnitude": { "$lte": max_mag } } });
+    }
+
+    pipeline.push(doc! { "$limit": limit as i32 });
+
+    let mut cursor = collection.aggregate(pipeline).await?;
+    let mut results = Vec::new();
+
+    while cursor.advance().await? {
+        let raw_doc = cursor.current();
+        let obj: SkyObject = mongodb::bson::from_slice(raw_doc.as_bytes())?;
+
+        let distance_degrees = match raw_doc.get("distance_degrees") {
+            Ok(Some(RawBsonRef::Double(d))) => d,
+            Ok(Some(RawBsonRef::Int32(i))) => i as f64,
+            Ok(Some(RawBsonRef::Int64(i))) => i as f64,
+            _ => 0.0,
+        };
+
+        results.push((obj, distance_degrees));
+    }
+
+    Ok(results)
 }
 
 fn build_name_filter(query: &str) -> Document {
