@@ -2,6 +2,7 @@ use std::error::Error;
 use std::io::{self, Stdout};
 use std::time::Duration;
 
+use chrono::{DateTime, Duration as ChronoDuration, Utc};
 use crossterm::cursor::{Hide, Show};
 use crossterm::event::{self, Event, KeyCode, KeyEvent};
 use crossterm::execute;
@@ -11,12 +12,13 @@ use crossterm::terminal::{
 use mongodb::{Client, Collection};
 use ratatui::backend::CrosstermBackend;
 use ratatui::prelude::*;
-use ratatui::widgets::{Block, Borders, Clear, List, ListItem, ListState, Paragraph};
+use ratatui::symbols::Marker;
+use ratatui::widgets::{Axis, Block, Borders, Chart, Clear, Dataset, GraphType, List, ListItem, ListState, Paragraph};
 use reqwest::header::USER_AGENT;
 use serde::Deserialize;
 use tokio::task::JoinHandle;
 
-use project::{search_objects, SkyObject};
+use project::{altitude_deg, lst_deg_at_unix_seconds, search_objects, SkyObject};
 
 const NOMINATIM_USER_AGENT: &str = "StellaDB-CLI (patrik.mintel.st@vsb.cz)";
 const DEFAULT_MONGO_URI: &str = "mongodb://10.10.10.232:27017";
@@ -76,6 +78,7 @@ struct App {
     search_selected: usize,
     search_task: Option<JoinHandle<Result<Vec<SkyObject>, String>>>,
     active_target: Option<SkyObject>,
+    simulated_time: DateTime<Utc>,
 }
 
 impl App {
@@ -93,6 +96,7 @@ impl App {
             search_selected: 0,
             search_task: None,
             active_target: None,
+            simulated_time: Utc::now(),
         }
     }
 
@@ -104,6 +108,13 @@ impl App {
     fn reset_to_setup(&mut self) {
         self.state = AppState::SetupLocation;
         self.lookup_task = None;
+    }
+
+    fn set_active_target(&mut self, target: SkyObject) {
+        self.active_target = Some(target);
+        self.simulated_time = Utc::now();
+        self.state = AppState::ObjectDetails;
+        self.status = String::from("Object selected.");
     }
 
     fn start_search(&mut self) {
@@ -193,6 +204,18 @@ impl App {
                 self.status = format!("Search task failed: {error}");
             }
         }
+    }
+
+    fn selected_observer_longitude(&self) -> f64 {
+        self.location.as_ref().map(|location| location.longitude).unwrap_or(0.0)
+    }
+
+    fn selected_observer_latitude(&self) -> f64 {
+        self.location.as_ref().map(|location| location.latitude).unwrap_or(0.0)
+    }
+
+    fn current_lst_deg(&self) -> f64 {
+        lst_deg_at_unix_seconds(self.selected_observer_longitude(), datetime_to_unix_seconds(self.simulated_time))
     }
 }
 
@@ -522,46 +545,186 @@ fn render_search_by_name(frame: &mut Frame<'_>, area: Rect, app: &App) {
             height: 1,
         },
     );
-
 }
 
 fn render_object_details(frame: &mut Frame<'_>, area: Rect, app: &App) {
-    let block = Block::default()
-        .title(Span::styled("Object Details", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)))
-        .border_style(Style::default().fg(Color::Magenta))
-        .borders(Borders::ALL);
-    frame.render_widget(block, area);
-
-    let chunks = Layout::default()
+    let outer = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Length(8), Constraint::Min(2)])
-        .margin(2)
+        .constraints([Constraint::Min(10), Constraint::Length(3)])
+        .margin(1)
         .split(area);
 
-    let content = if let Some(target) = &app.active_target {
-        vec![
-            Line::from(format!("Designation: {}", target.designation)),
-            Line::from(format!("Aliases: {}", if target.aliases.is_empty() { String::from("-") } else { target.aliases.join(", ") })),
-            Line::from(format!("Magnitude: {}", target.magnitude.map(|value| value.to_string()).unwrap_or_else(|| String::from("n/a")))),
-            Line::from(format!("RA: {:.6}", target.ra_deg)),
-            Line::from(format!("Dec: {:.6}", target.dec_deg)),
-            Line::from(format!("Source: {}", target.source.as_deref().unwrap_or("unknown"))),
-        ]
-    } else {
-        vec![Line::from("No object selected yet.")]
+    let body = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(30), Constraint::Percentage(70)])
+        .split(outer[0]);
+
+    let target = match app.active_target.as_ref() {
+        Some(target) => target,
+        None => {
+            frame.render_widget(
+                Paragraph::new("No object selected yet.")
+                    .alignment(Alignment::Center)
+                    .style(Style::default().fg(Color::DarkGray)),
+                outer[0],
+            );
+            frame.render_widget(
+                Paragraph::new("Press q to quit or r to return to search.")
+                    .alignment(Alignment::Center)
+                    .style(Style::default().fg(Color::DarkGray)),
+                outer[1],
+            );
+            return;
+        }
     };
 
+    let object_kind = object_type_label(target);
+    let detail_lines = vec![
+        Line::from(vec![
+            Span::styled("Name: ", Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD)),
+            Span::styled(target.designation.as_str(), Style::default().fg(Color::White)),
+        ]),
+        Line::from(vec![
+            Span::styled("Designation: ", Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD)),
+            Span::styled(target.designation.as_str(), Style::default().fg(Color::White)),
+        ]),
+        Line::from(vec![
+            Span::styled("Type: ", Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD)),
+            Span::styled(object_kind, Style::default().fg(Color::Cyan)),
+        ]),
+        Line::from(vec![
+            Span::styled("Magnitude: ", Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                target
+                    .magnitude
+                    .map(|value| format!("{value:.2}"))
+                    .unwrap_or_else(|| String::from("n/a")),
+                Style::default().fg(Color::Yellow),
+            ),
+        ]),
+        Line::from(vec![
+            Span::styled("RA: ", Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD)),
+            Span::styled(format!("{:.6}°", target.ra_deg), Style::default().fg(Color::White)),
+        ]),
+        Line::from(vec![
+            Span::styled("Dec: ", Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD)),
+            Span::styled(format!("{:.6}°", target.dec_deg), Style::default().fg(Color::White)),
+        ]),
+        Line::from(vec![
+            Span::styled("Aliases: ", Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                if target.aliases.is_empty() {
+                    String::from("-")
+                } else {
+                    target.aliases.join(", ")
+                },
+                Style::default().fg(Color::DarkGray),
+            ),
+        ]),
+    ];
+
+    let details_block = Block::default()
+        .title(Span::styled(
+            "Object Details",
+            Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD),
+        ))
+        .border_style(Style::default().fg(Color::Magenta))
+        .borders(Borders::ALL);
+    frame.render_widget(details_block, body[0]);
     frame.render_widget(
-        Paragraph::new(content)
-            .block(Block::default().title("Selected target").borders(Borders::ALL)),
-        chunks[0],
+        Paragraph::new(detail_lines)
+            .alignment(Alignment::Left)
+            .style(Style::default().fg(Color::White))
+            .block(Block::default()),
+        body[0].inner(Margin::new(1, 1)),
     );
 
+    let chart_data = build_altitude_plot_data(app, target);
+    let chart = Chart::new(vec![
+        Dataset::default()
+            .name("Altitude")
+            .marker(Marker::Braille)
+            .graph_type(GraphType::Line)
+            .style(Style::default().fg(Color::Yellow))
+            .data(&chart_data.altitude_points),
+        Dataset::default()
+            .name("Horizon")
+            .marker(Marker::Block)
+            .graph_type(GraphType::Line)
+            .style(Style::default().fg(Color::DarkGray))
+            .data(&chart_data.horizon_points),
+        Dataset::default()
+            .name("Now")
+            .marker(Marker::Block)
+            .graph_type(GraphType::Line)
+            .style(Style::default().fg(Color::Cyan))
+            .data(&chart_data.marker_points),
+    ])
+        .block(
+            Block::default()
+                .title(Span::styled(
+                    format!("Altitude Graph - {}", target.designation),
+                    Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD),
+                ))
+                .border_style(Style::default().fg(Color::Blue))
+                .borders(Borders::ALL),
+        )
+        .x_axis(
+            Axis::default()
+                .title(Span::styled("24h window", Style::default().fg(Color::DarkGray)))
+                .style(Style::default().fg(Color::Gray))
+                .bounds([0.0, 24.0])
+                .labels(chart_data.x_labels),
+        )
+        .y_axis(
+            Axis::default()
+                .title(Span::styled("Altitude (deg)", Style::default().fg(Color::DarkGray)))
+                .style(Style::default().fg(Color::Gray))
+                .bounds([-30.0, 90.0])
+                .labels(vec![
+                    Span::styled("-30", Style::default().fg(Color::DarkGray)),
+                    Span::styled("0", Style::default().fg(Color::DarkGray)),
+                    Span::styled("45", Style::default().fg(Color::DarkGray)),
+                    Span::styled("90", Style::default().fg(Color::DarkGray)),
+                ]),
+        );
+    frame.render_widget(chart, body[1]);
+
+    let lst_deg = app.current_lst_deg();
+    let footer_text = vec![
+        Line::from(vec![
+            Span::styled("Simulated time: ", Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                app.simulated_time.format("%Y-%m-%d %H:%M:%S UTC").to_string(),
+                Style::default().fg(Color::White),
+            ),
+        ]),
+        Line::from(vec![
+            Span::styled("LST: ", Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                format_lst_deg(lst_deg),
+                Style::default().fg(Color::Cyan),
+            ),
+            Span::styled(
+                format!("  |  Alt at now: {:.1}°", altitude_deg(target.ra_deg, target.dec_deg, lst_deg, app.selected_observer_latitude())),
+                Style::default().fg(Color::Yellow),
+            ),
+        ]),
+        Line::from(vec![
+            Span::styled("Controls: ", Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD)),
+            Span::styled("Left/Right = 15 min, Up/Down = 1 day, r = back to search", Style::default().fg(Color::DarkGray)),
+        ]),
+    ];
+
     frame.render_widget(
-        Paragraph::new("Press r to choose a different location lookup or q to quit.")
-            .alignment(Alignment::Center)
-            .style(Style::default().fg(Color::DarkGray)),
-        chunks[1],
+        Paragraph::new(footer_text)
+            .style(Style::default().fg(Color::White))
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .border_style(Style::default().fg(Color::Blue)),
+            ),
+        outer[1],
     );
 }
 
@@ -648,9 +811,7 @@ async fn handle_key_event(key: KeyEvent, app: &mut App) -> Result<bool, Box<dyn 
             }
             KeyCode::Enter => {
                 if let Some(target) = app.search_results.get(app.search_selected).cloned() {
-                    app.active_target = Some(target);
-                    app.state = AppState::ObjectDetails;
-                    app.status = String::from("Object selected.");
+                    app.set_active_target(target);
                 }
             }
             KeyCode::Char(c) if !c.is_control() => {
@@ -661,6 +822,18 @@ async fn handle_key_event(key: KeyEvent, app: &mut App) -> Result<bool, Box<dyn 
         },
         AppState::ObjectDetails => match key.code {
             KeyCode::Char('q') | KeyCode::Esc => return Ok(true),
+            KeyCode::Left => {
+                app.simulated_time -= ChronoDuration::minutes(15);
+            }
+            KeyCode::Right => {
+                app.simulated_time += ChronoDuration::minutes(15);
+            }
+            KeyCode::Up => {
+                app.simulated_time -= ChronoDuration::days(1);
+            }
+            KeyCode::Down => {
+                app.simulated_time += ChronoDuration::days(1);
+            }
             KeyCode::Char('r') | KeyCode::Char('R') => {
                 app.state = AppState::SearchByName;
                 app.status = String::from("Type to search the MongoDB object collection.");
@@ -782,4 +955,82 @@ fn centered_rect(percent_x: u16, percent_y: u16, area: Rect) -> Rect {
             Constraint::Percentage((100 - percent_x) / 2),
         ])
         .split(vertical[1])[1]
+}
+
+struct AltitudePlotData {
+    altitude_points: Vec<(f64, f64)>,
+    horizon_points: Vec<(f64, f64)>,
+    marker_points: Vec<(f64, f64)>,
+    x_labels: Vec<Span<'static>>,
+}
+
+fn build_altitude_plot_data(app: &App, target: &SkyObject) -> AltitudePlotData {
+    let observer_latitude = app.selected_observer_latitude();
+    let observer_longitude = app.selected_observer_longitude();
+    let base_unix_seconds = datetime_to_unix_seconds(app.simulated_time);
+
+    let mut altitude_points = Vec::with_capacity(97);
+    for step in 0..=96 {
+        let hour_offset = step as f64 * 24.0 / 96.0;
+        // Shift by -12 hours so that "now" (hour 0) appears at the center (x=12)
+        let sample_unix_seconds = base_unix_seconds + (hour_offset - 12.0) * 3600.0;
+        let lst_deg = lst_deg_at_unix_seconds(observer_longitude, sample_unix_seconds);
+        let altitude = altitude_deg(target.ra_deg, target.dec_deg, lst_deg, observer_latitude);
+        altitude_points.push((hour_offset, altitude));
+    }
+
+    let horizon_points = vec![(0.0, 0.0), (24.0, 0.0)];
+    // Place marker at x=12 (center) showing the full altitude range including below horizon
+    let marker_points = vec![(12.0, -30.0), (12.0, 90.0)];
+
+    let labels = [-12_i64, -6, 0, 6, 12]
+        .into_iter()
+        .map(|hours| {
+            Span::styled(
+                (app.simulated_time + ChronoDuration::hours(hours)).format("%H:%M").to_string(),
+                Style::default().fg(Color::DarkGray),
+            )
+        })
+        .collect();
+
+    AltitudePlotData {
+        altitude_points,
+        horizon_points,
+        marker_points,
+        x_labels: labels,
+    }
+}
+
+fn datetime_to_unix_seconds(datetime: DateTime<Utc>) -> f64 {
+    datetime.timestamp() as f64 + f64::from(datetime.timestamp_subsec_nanos()) / 1_000_000_000.0
+}
+
+fn format_lst_deg(lst_deg: f64) -> String {
+    let total_seconds = ((lst_deg.rem_euclid(360.0) / 15.0) * 3600.0).round() as i64;
+    let hours = total_seconds / 3600;
+    let minutes = (total_seconds % 3600) / 60;
+    let seconds = total_seconds % 60;
+    format!("{:02}:{:02}:{:02} ({:.2}°)", hours, minutes, seconds, lst_deg.rem_euclid(360.0))
+}
+
+fn object_type_label(object: &SkyObject) -> String {
+    if let Ok(kind) = object.metadata.get_str("hubble") {
+        return kind.to_string();
+    }
+
+    if let Ok(kind) = object.metadata.get_str("spectral_type") {
+        return kind.to_string();
+    }
+
+    if let Ok(kind) = object.metadata.get_str("constellation") {
+        if !kind.is_empty() {
+            return kind.to_string();
+        }
+    }
+
+    object
+        .source
+        .as_deref()
+        .unwrap_or("Unknown")
+        .to_string()
 }
