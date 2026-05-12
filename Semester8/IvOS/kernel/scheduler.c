@@ -9,7 +9,7 @@
 enum { MaxThreads = MAX_PROCESSES };
 
 #define EXEC_SLOT 0
-#define APP_MAX_SIZE (64 * 1024) /* 64 KB */
+#define APP_MAX_SIZE (512 * 1024) /* 512 KB */
 
 #define IS_APP(t) ((uint32_t)(t)->entry == (uint32_t)PROC_BASE(EXEC_SLOT))
 
@@ -338,6 +338,8 @@ static void do_switch(int next_idx) {
     uint32_t tmp = new_esp;
     kt_switch(&tmp, new_esp);
   }
+
+  __asm__ volatile("sti");
 }
 
 void scheduler_tick(void) {

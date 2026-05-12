@@ -1,10 +1,7 @@
 #ifndef FACTORY_H
 #define FACTORY_H
 
-typedef unsigned char uint8_t;
-typedef signed char int8_t;
-typedef unsigned short uint16_t;
-typedef unsigned int uint32_t;
+#include "../lib/api.h"
 
 #define GRID_W 80
 #define GRID_H 25
@@ -23,9 +20,43 @@ typedef unsigned int uint32_t;
 #define COL_YELLOW 0x0E
 #define COL_WHITE 0x0F
 
-typedef enum { TERR_EMPTY = 0, TERR_IRON, TERR_COPPER, TERR_COAL, TERR_STONE } TerrainType;
-typedef enum { EMPTY = 0, BELT, SPLITTER, MINER, FURNACE, CRAFTER, LAB } EntityType;
-typedef enum { NONE = 0, IRON_ORE, COPPER_ORE, COAL, STONE, IRON_PLATE, COPPER_PLATE, GEAR, COPPER_WIRE, CIRCUIT, MACHINE_PART, ITEM_BELT, ITEM_SPLITTER, ITEM_MINER, ITEM_FURNACE, ITEM_CRAFTER, ITEM_LAB } ItemType;
+extern const os_api_t *g_api;
+
+typedef enum {
+  TERR_EMPTY = 0,
+  TERR_IRON,
+  TERR_COPPER,
+  TERR_COAL,
+  TERR_STONE
+} TerrainType;
+typedef enum {
+  EMPTY = 0,
+  BELT,
+  SPLITTER,
+  MINER,
+  FURNACE,
+  CRAFTER,
+  LAB
+} EntityType;
+typedef enum {
+  NONE = 0,
+  IRON_ORE,
+  COPPER_ORE,
+  COAL,
+  STONE,
+  IRON_PLATE,
+  COPPER_PLATE,
+  GEAR,
+  COPPER_WIRE,
+  CIRCUIT,
+  MACHINE_PART,
+  ITEM_BELT,
+  ITEM_SPLITTER,
+  ITEM_MINER,
+  ITEM_FURNACE,
+  ITEM_CRAFTER,
+  ITEM_LAB
+} ItemType;
 typedef enum { DIR_UP = 0, DIR_RIGHT = 1, DIR_DOWN = 2, DIR_LEFT = 3 } Dir;
 
 struct Cell {
@@ -95,100 +126,179 @@ extern int machine_y;
 extern uint8_t machine_panel;
 extern uint8_t machine_focus;
 
-static inline int in_bounds(int x, int y) { return x >= 0 && x < GRID_W && y >= 0 && y < GRID_H; }
-static inline uint8_t inb(uint16_t port) { uint8_t ret; __asm__ volatile("inb %w1, %b0" : "=a"(ret) : "Nd"(port)); return ret; }
-static inline void outb(uint16_t port, uint8_t value) { __asm__ volatile("outb %b0, %w1" : : "a"(value), "Nd"(port)); }
+static inline int in_bounds(int x, int y) {
+  return x >= 0 && x < GRID_W && y >= 0 && y < GRID_H;
+}
+static inline uint8_t inb(uint16_t port) {
+  uint8_t ret;
+  __asm__ volatile("inb %w1, %b0" : "=a"(ret) : "Nd"(port));
+  return ret;
+}
+static inline void outb(uint16_t port, uint8_t value) {
+  __asm__ volatile("outb %b0, %w1" : : "a"(value), "Nd"(port));
+}
 
 static inline int item_is_placeable(ItemType item) {
-  return item == ITEM_BELT || item == ITEM_SPLITTER || item == ITEM_MINER || item == ITEM_FURNACE || item == ITEM_CRAFTER || item == ITEM_LAB;
+  return item == ITEM_BELT || item == ITEM_SPLITTER || item == ITEM_MINER ||
+         item == ITEM_FURNACE || item == ITEM_CRAFTER || item == ITEM_LAB;
 }
 static inline EntityType item_to_building(ItemType item) {
-  if (item == ITEM_BELT) return BELT;
-  if (item == ITEM_SPLITTER) return SPLITTER;
-  if (item == ITEM_MINER) return MINER;
-  if (item == ITEM_FURNACE) return FURNACE;
-  if (item == ITEM_CRAFTER) return CRAFTER;
-  if (item == ITEM_LAB) return LAB;
+  if (item == ITEM_BELT)
+    return BELT;
+  if (item == ITEM_SPLITTER)
+    return SPLITTER;
+  if (item == ITEM_MINER)
+    return MINER;
+  if (item == ITEM_FURNACE)
+    return FURNACE;
+  if (item == ITEM_CRAFTER)
+    return CRAFTER;
+  if (item == ITEM_LAB)
+    return LAB;
   return EMPTY;
 }
 static inline ItemType building_to_item(EntityType building) {
-  if (building == BELT) return ITEM_BELT;
-  if (building == SPLITTER) return ITEM_SPLITTER;
-  if (building == MINER) return ITEM_MINER;
-  if (building == FURNACE) return ITEM_FURNACE;
-  if (building == CRAFTER) return ITEM_CRAFTER;
-  if (building == LAB) return ITEM_LAB;
+  if (building == BELT)
+    return ITEM_BELT;
+  if (building == SPLITTER)
+    return ITEM_SPLITTER;
+  if (building == MINER)
+    return ITEM_MINER;
+  if (building == FURNACE)
+    return ITEM_FURNACE;
+  if (building == CRAFTER)
+    return ITEM_CRAFTER;
+  if (building == LAB)
+    return ITEM_LAB;
   return NONE;
 }
 static inline ItemType terrain_to_item(TerrainType terrain) {
-  if (terrain == TERR_IRON) return IRON_ORE;
-  if (terrain == TERR_COPPER) return COPPER_ORE;
-  if (terrain == TERR_COAL) return COAL;
-  if (terrain == TERR_STONE) return STONE;
+  if (terrain == TERR_IRON)
+    return IRON_ORE;
+  if (terrain == TERR_COPPER)
+    return COPPER_ORE;
+  if (terrain == TERR_COAL)
+    return COAL;
+  if (terrain == TERR_STONE)
+    return STONE;
   return NONE;
 }
 static inline char item_glyph(ItemType item) {
-  if (item == IRON_ORE || item == COPPER_ORE) return '*';
-  if (item == COAL) return 'o';
-  if (item == STONE) return 's';
-  if (item == IRON_PLATE) return 'i';
-  if (item == COPPER_PLATE) return 'c';
-  if (item == GEAR) return 'G';
-  if (item == COPPER_WIRE) return 'w';
-  if (item == CIRCUIT) return 'X';
-  if (item == MACHINE_PART) return 'P';
-  if (item == ITEM_BELT) return 'B';
-  if (item == ITEM_SPLITTER) return 'T';
-  if (item == ITEM_MINER) return 'M';
-  if (item == ITEM_FURNACE) return 'F';
-  if (item == ITEM_CRAFTER) return 'C';
-  if (item == ITEM_LAB) return 'L';
+  if (item == IRON_ORE || item == COPPER_ORE)
+    return '*';
+  if (item == COAL)
+    return 'o';
+  if (item == STONE)
+    return 's';
+  if (item == IRON_PLATE)
+    return 'i';
+  if (item == COPPER_PLATE)
+    return 'c';
+  if (item == GEAR)
+    return 'G';
+  if (item == COPPER_WIRE)
+    return 'w';
+  if (item == CIRCUIT)
+    return 'X';
+  if (item == MACHINE_PART)
+    return 'P';
+  if (item == ITEM_BELT)
+    return 'B';
+  if (item == ITEM_SPLITTER)
+    return 'T';
+  if (item == ITEM_MINER)
+    return 'M';
+  if (item == ITEM_FURNACE)
+    return 'F';
+  if (item == ITEM_CRAFTER)
+    return 'C';
+  if (item == ITEM_LAB)
+    return 'L';
   return '?';
 }
 static inline uint8_t item_color(ItemType item) {
-  if (item == IRON_ORE || item == IRON_PLATE) return COL_LIGHT_GREY;
-  if (item == COPPER_ORE || item == COPPER_PLATE || item == COPPER_WIRE) return COL_BROWN;
-  if (item == COAL) return COL_DARK_GREY;
-  if (item == STONE) return COL_DARK_GREY;
-  if (item == GEAR) return COL_WHITE;
-  if (item == CIRCUIT) return COL_GREEN;
-  if (item == MACHINE_PART) return COL_YELLOW;
-  if (item == ITEM_BELT) return COL_CYAN;
-  if (item == ITEM_SPLITTER) return COL_GREEN;
-  if (item == ITEM_MINER) return COL_MAGENTA;
-  if (item == ITEM_FURNACE) return COL_RED;
-  if (item == ITEM_CRAFTER) return COL_YELLOW;
-  if (item == ITEM_LAB) return COL_GREEN;
+  if (item == IRON_ORE || item == IRON_PLATE)
+    return COL_LIGHT_GREY;
+  if (item == COPPER_ORE || item == COPPER_PLATE || item == COPPER_WIRE)
+    return COL_BROWN;
+  if (item == COAL)
+    return COL_DARK_GREY;
+  if (item == STONE)
+    return COL_DARK_GREY;
+  if (item == GEAR)
+    return COL_WHITE;
+  if (item == CIRCUIT)
+    return COL_GREEN;
+  if (item == MACHINE_PART)
+    return COL_YELLOW;
+  if (item == ITEM_BELT)
+    return COL_CYAN;
+  if (item == ITEM_SPLITTER)
+    return COL_GREEN;
+  if (item == ITEM_MINER)
+    return COL_MAGENTA;
+  if (item == ITEM_FURNACE)
+    return COL_RED;
+  if (item == ITEM_CRAFTER)
+    return COL_YELLOW;
+  if (item == ITEM_LAB)
+    return COL_GREEN;
   return COL_WHITE;
 }
 static inline const char *item_name(ItemType item) {
-  if (item == IRON_ORE) return "Iron Ore";
-  if (item == COPPER_ORE) return "Copper Ore";
-  if (item == COAL) return "Coal";
-  if (item == STONE) return "Stone";
-  if (item == IRON_PLATE) return "Iron Plate";
-  if (item == COPPER_PLATE) return "Copper Plate";
-  if (item == GEAR) return "Gear";
-  if (item == COPPER_WIRE) return "Copper Wire";
-  if (item == CIRCUIT) return "Circuit";
-  if (item == MACHINE_PART) return "Machine Part";
-  if (item == ITEM_BELT) return "Belt";
-  if (item == ITEM_SPLITTER) return "Splitter";
-  if (item == ITEM_MINER) return "Miner";
-  if (item == ITEM_FURNACE) return "Furnace";
-  if (item == ITEM_CRAFTER) return "Crafter";
-  if (item == ITEM_LAB) return "Lab";
+  if (item == IRON_ORE)
+    return "Iron Ore";
+  if (item == COPPER_ORE)
+    return "Copper Ore";
+  if (item == COAL)
+    return "Coal";
+  if (item == STONE)
+    return "Stone";
+  if (item == IRON_PLATE)
+    return "Iron Plate";
+  if (item == COPPER_PLATE)
+    return "Copper Plate";
+  if (item == GEAR)
+    return "Gear";
+  if (item == COPPER_WIRE)
+    return "Copper Wire";
+  if (item == CIRCUIT)
+    return "Circuit";
+  if (item == MACHINE_PART)
+    return "Machine Part";
+  if (item == ITEM_BELT)
+    return "Belt";
+  if (item == ITEM_SPLITTER)
+    return "Splitter";
+  if (item == ITEM_MINER)
+    return "Miner";
+  if (item == ITEM_FURNACE)
+    return "Furnace";
+  if (item == ITEM_CRAFTER)
+    return "Crafter";
+  if (item == ITEM_LAB)
+    return "Lab";
   return "Empty";
 }
-static inline int is_furnace_ore(ItemType item) { return item == IRON_ORE || item == COPPER_ORE; }
+static inline int is_furnace_ore(ItemType item) {
+  return item == IRON_ORE || item == COPPER_ORE;
+}
 static inline ItemType furnace_output_for(ItemType ore) {
-  if (ore == IRON_ORE) return IRON_PLATE;
-  if (ore == COPPER_ORE) return COPPER_PLATE;
+  if (ore == IRON_ORE)
+    return IRON_PLATE;
+  if (ore == COPPER_ORE)
+    return COPPER_PLATE;
   return NONE;
 }
-static inline void stack_clear(struct ItemStack *stack) { stack->item = NONE; stack->count = 0; }
-static inline int stack_is_empty(const struct ItemStack *stack) { return stack->item == NONE || stack->count == 0; }
-static inline int inventory_stack_can_merge(const struct ItemStack *stack, ItemType item) {
+static inline void stack_clear(struct ItemStack *stack) {
+  stack->item = NONE;
+  stack->count = 0;
+}
+static inline int stack_is_empty(const struct ItemStack *stack) {
+  return stack->item == NONE || stack->count == 0;
+}
+static inline int inventory_stack_can_merge(const struct ItemStack *stack,
+                                            ItemType item) {
   return !stack_is_empty(stack) && stack->item == item && stack->count < 255;
 }
 
@@ -237,7 +347,8 @@ void clear_entity_with_refund(int x, int y);
 int place_from_hotbar(void);
 void init_grid();
 int push_item_to_belt(int x, int y, ItemType item);
-void move_splitter_item(struct Cell *anchor, int srcx, int srcy, int dstx, int dsty, int use_out_toggle, int use_in_toggle);
+void move_splitter_item(struct Cell *anchor, int srcx, int srcy, int dstx,
+                        int dsty, int use_out_toggle, int use_in_toggle);
 void process_splitter_anchor(int ax, int ay);
 void process_tick();
 

@@ -3,8 +3,9 @@
 
 #include "types.h"
 
-typedef struct {
+typedef struct os_api_t {
   int (*getchar)(void);
+  int (*poll_scancode)(void);
   void (*print)(const char *);
   void (*exit)(int code);
   void (*yield)(void);

@@ -28,6 +28,11 @@ static char kbd_buf[KBD_BUF_SIZE];
 static volatile int head = 0;
 static volatile int tail = 0;
 
+#define KBD_SCANCODE_BUF_SIZE 256
+static uint8_t scancode_buf[KBD_SCANCODE_BUF_SIZE];
+static volatile int scancode_head = 0;
+static volatile int scancode_tail = 0;
+
 int keyboard_handle_scancode_irq(uint8_t scancode) {
   /* Update modifier state */
   if (scancode == 0x38) {
@@ -78,6 +83,12 @@ void keyboard_irq_handler(void) {
     return; /* DO NOT put ALT+TAB into the buffer! */
   }
 
+  int next_scancode_head = (scancode_head + 1) % KBD_SCANCODE_BUF_SIZE;
+  if (next_scancode_head != scancode_tail) {
+    scancode_buf[scancode_head] = scancode;
+    scancode_head = next_scancode_head;
+  }
+
   /* 1. Ignore key releases (top bit is set) */
   if (scancode & 0x80) {
     return;
@@ -97,6 +108,7 @@ void keyboard_irq_handler(void) {
 }
 
 int kernel_keyboard_getchar(void) {
+  /* Read from the translated ASCII buffer! */
   while (head == tail) {
     extern void scheduler_yield(void);
     scheduler_yield();
@@ -105,4 +117,14 @@ int kernel_keyboard_getchar(void) {
   char c = kbd_buf[tail];
   tail = (tail + 1) % KBD_BUF_SIZE;
   return c;
+}
+
+int kernel_keyboard_poll_scancode(void) {
+  /* Read from the raw hardware scancode buffer! */
+  if (scancode_head == scancode_tail)
+    return 0;
+
+  uint8_t scancode = scancode_buf[scancode_tail];
+  scancode_tail = (scancode_tail + 1) % KBD_SCANCODE_BUF_SIZE;
+  return (int)scancode;
 }

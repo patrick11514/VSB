@@ -12,6 +12,7 @@
 #include "partitions.h"
 
 static os_api_t kernel_api = {.getchar = kernel_keyboard_getchar,
+                              .poll_scancode = kernel_keyboard_poll_scancode,
                               .print = vga_print,
                               .exit = scheduler_exit,
                               .yield = scheduler_yield,
@@ -115,7 +116,7 @@ static void print_fat_name(const Fat16Entry *entry) {
 }
 
 #define APP_LOAD_ADDR 0x100000
-#define APP_MAX_SIZE (64 * 1024)
+#define APP_MAX_SIZE (512 * 1024) /* 512 KB */
 #define CLI_WRITE_BUFFER_SIZE (64 * 1024)
 
 // --- CLI State ---
@@ -158,9 +159,6 @@ void cli_app_exited(int pid) {
     /* Resume the CLI thread so it can get scheduled again */
     if (cli_thread_pid > 0) {
       scheduler_resume(cli_thread_pid);
-      /* Dump scheduler state to help debug scheduling issues */
-      extern void scheduler_list(void);
-      scheduler_list();
     }
   } else {
     serial_print("[NO_MATCH: fg_pid mismatch, not resuming CLI]\n");
