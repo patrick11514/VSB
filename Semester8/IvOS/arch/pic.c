@@ -20,8 +20,9 @@ void pic_remap(void) {
   /* ICW4 */
   outb(PIC1_DATA, 0x01);
   outb(PIC2_DATA, 0x01);
-  /* Mask everything except timer IRQ0. Keyboard IRQ1 is polled, not IRQ-driven. */
-  outb(PIC1_DATA, 0xFE);
+  /* Keyboard
+   */
+  outb(PIC1_DATA, 0xFC);
   outb(PIC2_DATA, 0xFF);
 }
 

@@ -5,8 +5,8 @@
 #include "drivers/serial.h"
 #include "drivers/vga.h"
 #include "fs_state.h"
-#include "lib/string.h"
 #include "kernel/scheduler.h"
+#include "lib/string.h"
 
 FatFileSystem g_fat_fs;
 PartitionTable g_fat_partitions[4];
@@ -62,6 +62,9 @@ void kernel_main() {
   pic_remap();
   /* set timer ISR gate (IRQ0 -> vector 0x20) */
   idt_set_gate(0x20, (uint32_t)isr_timer_stub);
+  /* set keyboard ISR gate (IRQ1 -> vector 0x21) */
+  idt_set_gate(0x21, (uint32_t)isr_keyboard_stub);
+
   idt_load();
   timer_init(100); /* 100 Hz */
   /* enable interrupts */
@@ -72,7 +75,7 @@ void kernel_main() {
   extern int scheduler_create(void (*entry)(void *), void *arg, int priority);
   extern int scheduler_activate(int tid, void (*entry)(void *));
   extern void scheduler_set_name(int tid, const char *name);
-  
+
   int cli_tid = scheduler_create(cli_thread_main, NULL, 0);
   if (cli_tid >= 0) {
     scheduler_activate(cli_tid, cli_thread_main);
@@ -81,6 +84,6 @@ void kernel_main() {
 
   /* Run the scheduler: timer IRQs will drive scheduling. Just loop. */
   while (1) {
-    __asm__ volatile("hlt");  /* Wait for interrupt */
+    __asm__ volatile("hlt"); /* Wait for interrupt */
   }
 }

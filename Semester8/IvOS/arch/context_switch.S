@@ -1,13 +1,27 @@
-    .text
+.text
     .global kt_switch
-/* kt_switch(old_esp_ptr, new_esp_val)
- * cdecl: [esp+4]=old_esp_ptr, [esp+8]=new_esp_val
- * Saves current esp into *old_esp_ptr, sets esp=new_esp_val and returns.
- * Caller must have arranged new stack so that a `ret` resumes execution.
- */
+    .extern kt_do_memory_swap
+
+/* kt_switch(old_esp_ptr, new_esp_val) */
 kt_switch:
-    mov 4(%esp), %eax    # load old_esp_ptr
-    mov 8(%esp), %edx    # load new_esp_val
-    mov %esp, (%eax)     # save current esp into *old_esp_ptr
-    mov %edx, %esp       # switch to new stack
+    pushf
+    pusha                # Save all 8 general purpose registers (32 bytes)
+
+    mov 40(%esp), %eax   # Load old_esp_ptr
+    mov 44(%esp), %edx   # Load new_esp_val
+
+    mov %esp, (%eax)     # Save the current ESP into *old_esp_ptr
+
+    # --- THE TRAMPOLINE ---
+    # The stack is now 100% saved. We safely trigger the memory swap!
+    # We must push %edx so the C function doesn't accidentally overwrite it.
+    push %edx            
+    call kt_do_memory_swap
+    pop %edx             
+    # ----------------------
+
+    mov %edx, %esp       # SWAP TO NEW STACK!
+
+    popa                 # Restore all 8 registers for the NEW thread!
+    popf                 # Restore EFLAGS
     ret

@@ -10,5 +10,6 @@ void pic_send_eoi(int irq);
 void timer_init(uint32_t frequency);
 /* ISR stubs defined in assembly */
 extern void isr_timer_stub(void);
+extern void isr_keyboard_stub(void);
 
 #endif

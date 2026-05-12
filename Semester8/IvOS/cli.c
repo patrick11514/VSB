@@ -1,4 +1,5 @@
 #include "cli.h"
+#include "arch/io.h"
 #include "config.h"
 #include "drivers/ide.h"
 #include "drivers/keyboard.h"
@@ -9,10 +10,12 @@
 #include "lib/convert.h"
 #include "lib/string.h"
 #include "partitions.h"
-#include "arch/io.h"
 
-#define KEYBOARD_DATA_PORT 0x60
-#define KEYBOARD_STATUS_PORT 0x64
+static os_api_t kernel_api = {.getchar = kernel_keyboard_getchar,
+                              .print = vga_print,
+                              .exit = scheduler_exit,
+                              .yield = scheduler_yield,
+                              .serial_print = serial_print};
 
 static uint32_t parse_hex(const char *str) {
   uint32_t val = 0;
@@ -112,7 +115,7 @@ static void print_fat_name(const Fat16Entry *entry) {
 }
 
 #define APP_LOAD_ADDR 0x100000
-#define APP_MAX_SIZE (512 * 1024)
+#define APP_MAX_SIZE (64 * 1024)
 #define CLI_WRITE_BUFFER_SIZE (64 * 1024)
 
 // --- CLI State ---
@@ -123,15 +126,13 @@ static char cli_current_path[128] = "/";
 /* Foreground/background process tracking */
 enum cli_state_enum { CLI_NORMAL = 0, CLI_PAUSED = 1 };
 static int cli_state = CLI_NORMAL;
-static int cli_foreground_pid = 0;      /* PID of currently running app (0 = none) */
-static int cli_thread_pid = 0;          /* PID of the CLI thread itself */
+static int cli_foreground_pid = 0; /* PID of currently running app (0 = none) */
+static int cli_thread_pid = 0;     /* PID of the CLI thread itself */
 /* Single backgrounded app PID (only one app may be backgrounded) */
 static int background_pid = 0;
 
 /* Getter for keyboard driver to check if app is in foreground */
-int cli_get_foreground_pid(void) {
-  return cli_foreground_pid;
-}
+int cli_get_foreground_pid(void) { return cli_foreground_pid; }
 
 /* Called by scheduler when a process exits to allow CLI to restore state */
 void cli_app_exited(int pid) {
@@ -140,10 +141,12 @@ void cli_app_exited(int pid) {
   extern void serial_print(const char *);
   extern void serial_putchar(char c);
   serial_print("[CLI_APP_EXITED_CALLED: pid=");
-  if (pid < 10) serial_putchar('0');
+  if (pid < 10)
+    serial_putchar('0');
   serial_putchar('0' + pid);
   serial_print(" fg_pid=");
-  if (cli_foreground_pid < 10) serial_putchar('0');
+  if (cli_foreground_pid < 10)
+    serial_putchar('0');
   serial_putchar('0' + cli_foreground_pid);
   serial_print("]\n");
   if (cli_foreground_pid == pid) {
@@ -684,7 +687,7 @@ static uint32_t collect_write_input(uint8_t *buffer, uint32_t max_size) {
   serial_print("[cli/write] input loop start\n");
 
   while (1) {
-    char c = keyboard_getchar();
+    char c = kernel_keyboard_getchar();
 
     if (c == 4) {
       serial_print("[cli/write] got Ctrl+D\n");
@@ -1052,7 +1055,7 @@ static void do_mv(const char *src_path, const char *dst_path) {
   g_fat_fs.current_file_index = saved_index;
 }
 
-static void handle_alt_tab(void) {
+void cli_handle_alt_tab(void) {
   extern int scheduler_pause(int pid);
   extern int scheduler_resume(int pid);
 
@@ -1111,29 +1114,7 @@ static void cli_readline(char *buffer, int max_len) {
   int i = 0;
   serial_print("[CLI_READLINE_START]\n");
   while (1) {
-    serial_print("[CALLING_KEYBOARD_GETCHAR]\n");
-    char c = keyboard_getchar();
-    serial_print("[GOT_CHAR: ");
-    if (c >= 32 && c <= 126) serial_putchar(c);
-    else { serial_putchar('\\'); serial_putchar('x'); }
-    serial_print("]\n");
-
-    /* suppressed noisy debug output */
-
-    /* Alt+Tab indicator: 0xFF */
-    if (c == 0xFF) {
-      extern void serial_print(const char *);
-      serial_print("[ALT_TAB_IN_CLI]");
-      handle_alt_tab();
-      if (cli_foreground_pid != 0) {
-        /* We switched to an app, return control to scheduler */
-        serial_print("[SWITCH_TO_APP]\n");
-        buffer[i] = '\0';
-        return;
-      }
-      serial_print("[STAY_IN_CLI]\n");
-      continue;
-    }
+    char c = kernel_keyboard_getchar();
 
     if (c == '\n' || c == '\r') {
       vga_putchar('\n');
@@ -1197,7 +1178,6 @@ static void do_help() {
       "  exec <path>          - Load and run program from current path\n");
   vga_print("  ps                   - List all processes\n");
   vga_print("  unpause <pid>        - Resume a paused process\n");
-  vga_print("  pause <pid>          - Pause a running process\n");
   vga_print("  kill <pid>           - Terminate a process\n");
 }
 
@@ -1493,7 +1473,7 @@ static void do_exec(const char *target_name) {
   extern int scheduler_get_pid(int tid);
   extern void scheduler_set_name(int tid, const char *name);
 
-  int tid = scheduler_create(NULL, NULL, 0);
+  int tid = scheduler_create(NULL, &kernel_api, 0);
   if (tid < 0) {
     vga_print("exec: scheduler failed to create thread\n");
     return;
@@ -1515,7 +1495,7 @@ static void do_exec(const char *target_name) {
 
   memcpy((void *)PROC_BASE(slot), buffer, size);
 
-  if (scheduler_activate(tid, (void (*)(void *))PROC_BASE(slot)) < 0) {
+  if (scheduler_activate(tid, (void (*)(void *))PROC_BASE(0)) < 0) {
     vga_print("exec: scheduler activation failed\n");
     partitions_free(slot);
     return;
@@ -1537,6 +1517,16 @@ static void do_exec(const char *target_name) {
   vga_print(" pid=");
   print_dec(pid);
   vga_print(" (foreground)\n");
+
+  extern int scheduler_pause(int pid);
+  if (cli_thread_pid > 0) {
+    scheduler_pause(cli_thread_pid);
+
+    /* ADD THIS: Force the CLI to yield the CPU immediately so it goes to sleep!
+     */
+    extern void scheduler_yield(void);
+    scheduler_yield();
+  }
 }
 
 static void do_ps(void) {
@@ -1577,30 +1567,17 @@ static void do_unpause(const char *pid_str) {
     cli_foreground_pid = pid;
     cli_state = CLI_PAUSED;
     background_pid = 0;
+
     /* Pause the CLI thread so it won't be scheduled while app runs */
     if (cli_thread_pid > 0) {
       scheduler_pause(cli_thread_pid);
+
+      /* CRITICAL FIX: Force the CLI to sleep IMMEDIATELY! */
+      extern void scheduler_yield(void);
+      scheduler_yield();
     }
   } else {
     vga_print("Failed to resume process ");
-    print_dec(pid);
-    vga_print(".\n");
-  }
-}
-
-static void do_pause_cmd(const char *pid_str) {
-  extern int scheduler_pause(int pid);
-  if (!pid_str || strlen(pid_str) == 0) {
-    vga_print("Usage: pause <pid>\n");
-    return;
-  }
-  int pid = parse_dec(pid_str);
-  if (scheduler_pause(pid) == 0) {
-    vga_print("Process ");
-    print_dec(pid);
-    vga_print(" paused.\n");
-  } else {
-    vga_print("Failed to pause process ");
     print_dec(pid);
     vga_print(".\n");
   }
@@ -1617,6 +1594,15 @@ static void do_kill(const char *pid_str) {
     vga_print("Process ");
     print_dec(pid);
     vga_print(" killed.\n");
+
+    /* Clean up CLI state if we just killed the tracked app */
+    if (pid == background_pid) {
+      background_pid = 0;
+    }
+    if (pid == cli_foreground_pid) {
+      cli_foreground_pid = 0;
+      cli_state = CLI_NORMAL;
+    }
   } else {
     vga_print("Failed to kill process ");
     print_dec(pid);
@@ -1647,22 +1633,6 @@ void cli_thread_main(void *arg) {
     serial_print("[LOOP_ITER: state=");
     serial_putchar(cli_state ? 'P' : 'N');
     serial_print("]\n");
-    /* If CLI is paused (app running), poll for Alt+Tab and busy-wait */
-    if (cli_state == CLI_PAUSED) {
-      /* Poll for Alt+Tab without blocking */
-      uint8_t sc = 0;
-      if (inb(KEYBOARD_STATUS_PORT) & 1) {
-        sc = inb(KEYBOARD_DATA_PORT);
-        /* Check if this is Alt+Tab */
-        if (keyboard_handle_scancode_irq(sc)) {
-          /* Alt+Tab detected, handle pause/resume */
-          handle_alt_tab();
-        }
-      }
-      /* Busy-loop: timer IRQs will interrupt us and run the app.
-       * Do NOT call yield here — that would make us READY again. */
-      continue;
-    }
 
     /* Normal CLI mode: show prompt and read input */
     serial_print("[ABOUT_TO_PRINT_PROMPT]\n");
@@ -1813,12 +1783,6 @@ void cli_thread_main(void *arg) {
         do_unpause(argv[1]);
       } else {
         vga_print("Usage: unpause <pid>\n");
-      }
-    } else if (strcmp(argv[0], "pause") == 0) {
-      if (argc >= 2) {
-        do_pause_cmd(argv[1]);
-      } else {
-        vga_print("Usage: pause <pid>\n");
       }
     } else if (strcmp(argv[0], "kill") == 0) {
       if (argc >= 2) {

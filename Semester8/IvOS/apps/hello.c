@@ -1,37 +1,16 @@
-typedef unsigned char uint8_t;
-typedef unsigned short uint16_t;
+#include "../lib/api.h"
 
-static inline uint8_t inb(uint16_t port) {
-  uint8_t ret;
-  __asm__ volatile("inb %w1, %b0" : "=a"(ret) : "Nd"(port));
-  return ret;
-}
+__attribute__((section(".text.entry"))) void entry(os_api_t *api) {
+  api->serial_print("Hello from FAT /games! Press ESC to return to CLI.\n");
 
-static uint8_t get_scancode() {
-  if (inb(0x64) & 1)
-    return inb(0x60);
-  return 0;
-}
-
-__attribute__((section(".text.entry"))) void entry() {
-  volatile char *video = (volatile char *)0xB8000;
   const char *msg = "Hello from FAT /games! Press ESC to return to CLI.";
 
-  /* App entry — avoid calling kernel symbols such as serial_print */
-
-  /* Do not clear the entire VGA buffer here; avoid erasing CLI output. */
-
-  int j = 0;
-  while (msg[j] != '\0') {
-    video[j * 2] = msg[j];
-    video[j * 2 + 1] = 0x0A; // Light green on black
-    j++;
-  }
+  api->print(msg);
 
   while (1) {
-    uint8_t scancode = get_scancode();
+    uint8_t scancode = api->getchar();
 
-    if (scancode == 0x01) {
+    if (scancode == 27 /* ESC */) {
       break;
     }
   }

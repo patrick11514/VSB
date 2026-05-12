@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-int keyboard_getchar(void);
-int keyboard_handle_scancode_irq(uint8_t scancode);
+void keyboard_irq_handler(void);
+int kernel_keyboard_getchar(void);
 
 #endif // KEYBOARD_H

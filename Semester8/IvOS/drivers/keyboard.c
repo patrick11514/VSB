@@ -23,88 +23,22 @@ static int ctrl_held = 0;
 static int alt_held = 0;
 static int shift_held = 0;
 
-int keyboard_getchar() {
-  extern void serial_print(const char *);
-  extern void serial_putchar(char c);
-  
-  while (1) {
-    // Wait until keyboard buffer has data
-    if (inb(KEYBOARD_STATUS_PORT) & 1) {
-      uint8_t scancode = inb(KEYBOARD_DATA_PORT);
+#define KBD_BUF_SIZE 256
+static char kbd_buf[KBD_BUF_SIZE];
+static volatile int head = 0;
+static volatile int tail = 0;
 
-      /* Alt key: press=0x38, release=0xB8 */
-      if (scancode == 0x38) {
-        alt_held = 1;
-        continue;
-      }
-      if (scancode == 0xB8) {
-        alt_held = 0;
-        continue;
-      }
-
-      /* Shift keys */
-      if (scancode == 0x2A || scancode == 0x36) {
-        shift_held = 1;
-        continue;
-      }
-      if (scancode == 0xAA || scancode == 0xB6) {
-        shift_held = 0;
-        continue;
-      }
-
-      if (scancode == 0x1D) {
-        ctrl_held = 1;
-        continue;
-      }
-
-      if (scancode == 0x9D) {
-        ctrl_held = 0;
-        continue;
-      }
-
-      /* Tab key: 0x0F. If Alt held, return special Alt+Tab code 0xFF */
-      if (scancode == 0x0F) {
-        if (alt_held) {
-          alt_held = 0;
-          serial_print("[ALT+TAB!]\n");
-          return 0xFF; /* Special Alt+Tab indicator */
-        }
-        continue; /* Otherwise skip Tab */
-      }
-
-      // If the highest bit is set, it's a key release -> ignore
-      if (scancode & 0x80)
-        continue;
-
-      // Check bounds
-      if (scancode < sizeof(scancode_to_ascii)) {
-        char c = scancode_to_ascii[scancode];
-        if (c) {
-          if (ctrl_held && c == 'd') {
-            ctrl_held = 0;
-            return 4;
-          }
-          ctrl_held = 0;
-          return c;
-        }
-      }
-    }
-  }
-}
-
-/* Process a raw scancode from IRQ context. Returns 1 if an Alt+Tab
- * event was observed that should be handled by the kernel. Safe to call
- * from IRQ handler. */
 int keyboard_handle_scancode_irq(uint8_t scancode) {
-  /* Update modifier state similar to keyboard_getchar */
+  /* Update modifier state */
   if (scancode == 0x38) {
     alt_held = 1;
     return 0;
-  }
+  } /* Alt Pressed */
   if (scancode == 0xB8) {
     alt_held = 0;
     return 0;
-  }
+  } /* Alt Released */
+
   if (scancode == 0x2A || scancode == 0x36) {
     shift_held = 1;
     return 0;
@@ -113,6 +47,7 @@ int keyboard_handle_scancode_irq(uint8_t scancode) {
     shift_held = 0;
     return 0;
   }
+
   if (scancode == 0x1D) {
     ctrl_held = 1;
     return 0;
@@ -122,15 +57,52 @@ int keyboard_handle_scancode_irq(uint8_t scancode) {
     return 0;
   }
 
-  /* Tab key: 0x0F */
+  /* Check for Tab key (0x0F) */
   if (scancode == 0x0F) {
     if (alt_held) {
-      /* consume the Alt+Tab here */
+      /* We caught an ALT+TAB! Reset alt_held so it doesn't get stuck */
       alt_held = 0;
-      return 1;
+      return 1; /* Return 1 to tell the IRQ handler to switch tasks */
     }
-    return 0;
   }
 
-  return 0;
+  return 0; /* Normal key, do not intercept */
+}
+
+void keyboard_irq_handler(void) {
+  uint8_t scancode = inb(KEYBOARD_DATA_PORT);
+
+  if (keyboard_handle_scancode_irq(scancode) == 1) {
+    extern void cli_handle_alt_tab(void);
+    cli_handle_alt_tab();
+    return; /* DO NOT put ALT+TAB into the buffer! */
+  }
+
+  /* 1. Ignore key releases (top bit is set) */
+  if (scancode & 0x80) {
+    return;
+  }
+
+  /* 2. Prevent array out of bounds */
+  if (scancode < sizeof(scancode_to_ascii)) {
+    char c = scancode_to_ascii[scancode];
+    if (c) {
+      int next_head = (head + 1) % KBD_BUF_SIZE;
+      if (next_head != tail) { /* Prevent overflow */
+        kbd_buf[head] = c;
+        head = next_head;
+      }
+    }
+  }
+}
+
+int kernel_keyboard_getchar(void) {
+  while (head == tail) {
+    extern void scheduler_yield(void);
+    scheduler_yield();
+  }
+
+  char c = kbd_buf[tail];
+  tail = (tail + 1) % KBD_BUF_SIZE;
+  return c;
 }
