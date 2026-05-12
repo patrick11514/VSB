@@ -38,12 +38,36 @@ void scheduler_init(void) {
 }
 
 static int find_rr_next(void) {
+  extern void serial_print(const char *);
+  extern void serial_putchar(char);
   int start = kt_current < 0 ? 0 : kt_current;
+  serial_print("[find_rr_next: start=");
+  serial_putchar('0' + start);
+  serial_print(" scanning...]\n");
   for (int i = 0; i < MaxThreads; ++i) {
     int idx = (start + 1 + i) % MaxThreads;
-    if (kt_table[idx].state == KT_READY)
+    serial_print("[idx=");
+    serial_putchar('0' + idx);
+    serial_print(" state=");
+    int s = kt_table[idx].state;
+    if (s == 0) serial_putchar('U');
+    else if (s == 1) serial_putchar('R');
+    else if (s == 2) serial_putchar('D');
+    else if (s == 3) serial_putchar('P');
+    else serial_putchar('?');
+    serial_print(" pid=");
+    int pid = kt_table[idx].pid;
+    if (pid < 10) serial_putchar('0');
+    serial_putchar('0' + pid);
+    serial_print("]\n");
+    if (kt_table[idx].state == KT_READY) {
+      serial_print("[FOUND READY at idx=");
+      serial_putchar('0' + idx);
+      serial_print("]\n");
       return idx;
+    }
   }
+  serial_print("[find_rr_next: NO READY FOUND]\n");
   return -1;
 }
 
@@ -95,19 +119,44 @@ int scheduler_pause(int pid) {
 
 int scheduler_resume(int pid) {
   extern void serial_print(const char *);
+  extern void serial_putchar(char);
   extern void vga_print(const char *);
-  serial_print("[RESUME_CALL]");
+  serial_print("[RESUME_CALL: pid=");
+  if (pid < 10) serial_putchar('0');
+  serial_putchar('0' + pid);
+  serial_print("]");
   vga_print("[RESUME]");
   int tid = find_tid_by_pid(pid);
+  serial_print("[found_tid=");
+  if (tid < 0) {
+    serial_putchar('-');
+    serial_putchar('1');
+  } else {
+    serial_putchar('0' + tid);
+  }
+  serial_print(" state=");
+  if (tid >= 0) {
+    int s = kt_table[tid].state;
+    if (s == 0) serial_putchar('U');
+    else if (s == 1) serial_putchar('R');
+    else if (s == 2) serial_putchar('D');
+    else if (s == 3) serial_putchar('P');
+    else serial_putchar('?');
+  } else {
+    serial_putchar('?');
+  }
+  serial_print("]\n");
   if (tid < 0) {
     serial_print("[RESUME_FAIL_NO_TID]\n");
     return -1;
   }
   serial_print("[RESUME_OK]\n");
   if (kt_table[tid].state == KT_PAUSED) {
+    serial_print("[state was PAUSED, setting to READY]\n");
     kt_table[tid].state = KT_READY;
     return 0;
   }
+  serial_print("[state was NOT PAUSED, no change]\n");
   return -1;
 }
 
@@ -311,12 +360,29 @@ static void do_switch(int next_idx) {
 
 void scheduler_tick(void) {
   extern void serial_print(const char *);
+  extern void serial_putchar(char);
   serial_print("[TICK]");
   int next = -1;
   if (scheduler_mode == 1)
     next = find_priority_next();
   else
     next = find_rr_next();
+
+  serial_print("[next=");
+  if (next < 0) {
+    serial_putchar('-');
+    serial_putchar('1');
+  } else {
+    serial_putchar('0' + next);
+  }
+  serial_print(" kt_current=");
+  if (kt_current < 0) {
+    serial_putchar('-');
+    serial_putchar('1');
+  } else {
+    serial_putchar('0' + kt_current);
+  }
+  serial_print("]\n");
 
   if (next == -1)
     return;
@@ -332,9 +398,24 @@ void scheduler_yield(void) {
 }
 
 void scheduler_exit(int code) {
+  extern void serial_print(const char *);
+  extern void serial_putchar(char);
+  serial_print("[SCHEDULER_EXIT: kt_current=");
+  if (kt_current < 0) {
+    serial_print("-1");
+  } else {
+    serial_putchar('0' + kt_current);
+  }
+  serial_print("]\n");
   if (kt_current >= 0) {
     /* capture pid to notify CLI */
     int exiting_pid = kt_table[kt_current].pid;
+    serial_print("[SCHED_EXIT: captured pid=");
+    if (exiting_pid < 10) serial_putchar('0');
+    serial_putchar('0' + exiting_pid);
+    serial_print(" from kt_table[");
+    serial_putchar('0' + kt_current);
+    serial_print("].pid]\n");
     /* free partition using stored slot */
     if (kt_table[kt_current].slot >= 0) {
       partitions_free(kt_table[kt_current].slot);

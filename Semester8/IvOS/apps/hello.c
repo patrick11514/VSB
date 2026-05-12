@@ -17,11 +17,9 @@ __attribute__((section(".text.entry"))) void entry() {
   volatile char *video = (volatile char *)0xB8000;
   const char *msg = "Hello from FAT /games! Press ESC to return to CLI.";
 
-  // Clear screen and print
-  for (int i = 0; i < 80 * 25 * 2; i += 2) {
-    video[i] = ' ';
-    video[i + 1] = 0x07;
-  }
+  /* App entry — avoid calling kernel symbols such as serial_print */
+
+  /* Do not clear the entire VGA buffer here; avoid erasing CLI output. */
 
   int j = 0;
   while (msg[j] != '\0') {

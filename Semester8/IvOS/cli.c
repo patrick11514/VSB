@@ -9,6 +9,10 @@
 #include "lib/convert.h"
 #include "lib/string.h"
 #include "partitions.h"
+#include "arch/io.h"
+
+#define KEYBOARD_DATA_PORT 0x60
+#define KEYBOARD_STATUS_PORT 0x64
 
 static uint32_t parse_hex(const char *str) {
   uint32_t val = 0;
@@ -119,13 +123,10 @@ static char cli_current_path[128] = "/";
 /* Foreground/background process tracking */
 enum cli_state_enum { CLI_NORMAL = 0, CLI_PAUSED = 1 };
 static int cli_state = CLI_NORMAL;
-static int cli_foreground_pid = 0;
-static int paused_stack[8] = {0};
-static int paused_stack_top = -1;
-
-/* forward declarations so IRQ handler can call them */
-static void push_paused_pid(int pid);
-static int pop_paused_pid(void);
+static int cli_foreground_pid = 0;      /* PID of currently running app (0 = none) */
+static int cli_thread_pid = 0;          /* PID of the CLI thread itself */
+/* Single backgrounded app PID (only one app may be backgrounded) */
+static int background_pid = 0;
 
 /* Getter for keyboard driver to check if app is in foreground */
 int cli_get_foreground_pid(void) {
@@ -135,45 +136,35 @@ int cli_get_foreground_pid(void) {
 /* Called by scheduler when a process exits to allow CLI to restore state */
 void cli_app_exited(int pid) {
   extern void vga_print(const char *);
+  extern int scheduler_resume(int pid);
+  extern void serial_print(const char *);
+  extern void serial_putchar(char c);
+  serial_print("[CLI_APP_EXITED_CALLED: pid=");
+  if (pid < 10) serial_putchar('0');
+  serial_putchar('0' + pid);
+  serial_print(" fg_pid=");
+  if (cli_foreground_pid < 10) serial_putchar('0');
+  serial_putchar('0' + cli_foreground_pid);
+  serial_print("]\n");
   if (cli_foreground_pid == pid) {
+    serial_print("[MATCH: clearing fg_pid and setting state to NORMAL]\n");
     cli_foreground_pid = 0;
     cli_state = CLI_NORMAL;
     vga_print("[App exited, back to CLI]\n");
-  }
-}
-
-/* Minimal IRQ-safe handler called from keyboard IRQ when Alt+Tab detected.
- * This performs the pause/resume action without heavy printing. */
-void cli_handle_alt_tab_irq(void) {
-  /* Only manipulate scheduler state — avoid VGA prints here. */
-  if (cli_foreground_pid != 0 && cli_state == CLI_PAUSED) {
-    /* Pause foreground app */
-    scheduler_pause(cli_foreground_pid);
-    push_paused_pid(cli_foreground_pid);
-    cli_foreground_pid = 0;
-    cli_state = CLI_NORMAL;
-  } else if (cli_foreground_pid == 0 && cli_state == CLI_NORMAL) {
-    int paused_pid = pop_paused_pid();
-    if (paused_pid != 0) {
-      scheduler_resume(paused_pid);
-      cli_foreground_pid = paused_pid;
-      cli_state = CLI_PAUSED;
+    serial_print("[CLI] cli_app_exited called, resuming CLI thread\n");
+    /* Resume the CLI thread so it can get scheduled again */
+    if (cli_thread_pid > 0) {
+      scheduler_resume(cli_thread_pid);
+      /* Dump scheduler state to help debug scheduling issues */
+      extern void scheduler_list(void);
+      scheduler_list();
     }
+  } else {
+    serial_print("[NO_MATCH: fg_pid mismatch, not resuming CLI]\n");
   }
 }
 
-static void push_paused_pid(int pid) {
-  if (paused_stack_top < 7) {
-    paused_stack[++paused_stack_top] = pid;
-  }
-}
-
-static int pop_paused_pid(void) {
-  if (paused_stack_top >= 0) {
-    return paused_stack[paused_stack_top--];
-  }
-  return 0;
-}
+/* No push/pop helpers needed with single background_pid */
 
 #define LINE_MAX 128
 #define ARGS_MAX 10
@@ -1082,54 +1073,32 @@ static void handle_alt_tab(void) {
   vga_print("]\n");
 
   if (cli_foreground_pid != 0 && cli_state == CLI_PAUSED) {
-    /* Pause the foreground app and return to CLI */
-    vga_print("[PAUSING app pid=");
-    for (int i = 0; i < 3; i++) {
-      int div = 100;
-      if (i == 1)
-        div = 10;
-      if (i == 2)
-        div = 1;
-      if (cli_foreground_pid >= div)
-        vga_putchar('0' + (cli_foreground_pid / div) % 10);
-    }
+    /* Move the foreground app to background and resume CLI */
+    vga_print("[ALT+TAB -> background app pid=");
+    print_dec(cli_foreground_pid);
     vga_print("]\n");
     scheduler_pause(cli_foreground_pid);
-    push_paused_pid(cli_foreground_pid);
+    background_pid = cli_foreground_pid;
     cli_foreground_pid = 0;
     cli_state = CLI_NORMAL;
-    vga_print("[App paused, back to CLI]\n");
-  } else if (cli_foreground_pid == 0 && cli_state == CLI_NORMAL) {
-    /* Resume the most recently paused app */
-    vga_print("[Looking for paused app]\n");
-    int paused_pid = pop_paused_pid();
-    vga_print("[Popped pid=");
-    for (int i = 0; i < 3; i++) {
-      int div = 100;
-      if (i == 1)
-        div = 10;
-      if (i == 2)
-        div = 1;
-      if (paused_pid >= div)
-        vga_putchar('0' + (paused_pid / div) % 10);
+    /* Resume CLI thread so it becomes schedulable */
+    if (cli_thread_pid > 0) {
+      scheduler_resume(cli_thread_pid);
     }
-    vga_print("]\n");
-    if (paused_pid != 0) {
-      vga_print("[RESUMING pid=");
-      for (int i = 0; i < 3; i++) {
-        int div = 100;
-        if (i == 1)
-          div = 10;
-        if (i == 2)
-          div = 1;
-        if (paused_pid >= div)
-          vga_putchar('0' + (paused_pid / div) % 10);
-      }
+  } else if (cli_foreground_pid == 0 && cli_state == CLI_NORMAL) {
+    /* Bring the single backgrounded app to foreground (if any) */
+    if (background_pid != 0) {
+      vga_print("[ALT+TAB -> resume background pid=");
+      print_dec(background_pid);
       vga_print("]\n");
-      scheduler_resume(paused_pid);
-      cli_foreground_pid = paused_pid;
+      scheduler_resume(background_pid);
+      cli_foreground_pid = background_pid;
       cli_state = CLI_PAUSED;
-      vga_print("[Resumed app, CLI paused]\n");
+      background_pid = 0;
+      /* Pause the CLI thread so it won't be scheduled while app runs */
+      if (cli_thread_pid > 0) {
+        scheduler_pause(cli_thread_pid);
+      }
     }
   } else {
     vga_print("[ALT+TAB: unexpected state, ignoring]\n");
@@ -1138,12 +1107,18 @@ static void handle_alt_tab(void) {
 
 static void cli_readline(char *buffer, int max_len) {
   extern void serial_print(const char *);
+  extern void serial_putchar(char c_);
   int i = 0;
   serial_print("[CLI_READLINE_START]\n");
   while (1) {
+    serial_print("[CALLING_KEYBOARD_GETCHAR]\n");
     char c = keyboard_getchar();
+    serial_print("[GOT_CHAR: ");
+    if (c >= 32 && c <= 126) serial_putchar(c);
+    else { serial_putchar('\\'); serial_putchar('x'); }
+    serial_print("]\n");
 
-    serial_print("GOT_CHAR");
+    /* suppressed noisy debug output */
 
     /* Alt+Tab indicator: 0xFF */
     if (c == 0xFF) {
@@ -1550,6 +1525,13 @@ static void do_exec(const char *target_name) {
   cli_foreground_pid = pid;
   cli_state = CLI_PAUSED;
 
+  /* Pause the CLI thread in the scheduler so it doesn't get scheduled
+   * until Alt+Tab or app exit brings it back */
+  extern int scheduler_pause(int pid);
+  if (cli_thread_pid > 0) {
+    scheduler_pause(cli_thread_pid);
+  }
+
   vga_print("exec: started in slot ");
   print_dec(slot);
   vga_print(" pid=");
@@ -1562,19 +1544,43 @@ static void do_ps(void) {
   scheduler_list();
 }
 
+static void do_top(void) {
+  if (background_pid != 0) {
+    vga_print("Paused background app PID=");
+    print_dec(background_pid);
+    vga_print("\n");
+  } else {
+    vga_print("No paused/background app.\n");
+  }
+}
+
 static void do_unpause(const char *pid_str) {
   extern int scheduler_resume(int pid);
+  extern int scheduler_pause(int pid);
   if (!pid_str || strlen(pid_str) == 0) {
     vga_print("Usage: unpause <pid>\n");
     return;
   }
   int pid = parse_dec(pid_str);
+  if (background_pid == 0) {
+    vga_print("No background app to unpause.\n");
+    return;
+  }
+  if (pid != background_pid) {
+    vga_print("PID does not match backgrounded app. Use 'top' to see PID.\n");
+    return;
+  }
   if (scheduler_resume(pid) == 0) {
     vga_print("Process ");
     print_dec(pid);
     vga_print(" resumed.\n");
     cli_foreground_pid = pid;
     cli_state = CLI_PAUSED;
+    background_pid = 0;
+    /* Pause the CLI thread so it won't be scheduled while app runs */
+    if (cli_thread_pid > 0) {
+      scheduler_pause(cli_thread_pid);
+    }
   } else {
     vga_print("Failed to resume process ");
     print_dec(pid);
@@ -1618,19 +1624,58 @@ static void do_kill(const char *pid_str) {
   }
 }
 
-void cli_loop() {
+/* CLI as a scheduled thread: entry point for scheduler */
+void cli_thread_main(void *arg) {
+  (void)arg;
   char line[LINE_MAX];
   char *argv[ARGS_MAX];
 
+  /* Record our own PID so we can pause/resume ourselves */
+  extern int scheduler_current_index(void);
+  extern int scheduler_get_pid(int tid);
+  int my_tid = scheduler_current_index();
+  if (my_tid >= 0) {
+    cli_thread_pid = scheduler_get_pid(my_tid);
+  }
+
   vga_print("\nType 'help' for a list of commands.\n");
+  serial_print("[CLI_THREAD_MAIN_LOOP_START]\n");
 
   while (1) {
+    extern void serial_print(const char *);
+    char debug_buf[32];
+    serial_print("[LOOP_ITER: state=");
+    serial_putchar(cli_state ? 'P' : 'N');
+    serial_print("]\n");
+    /* If CLI is paused (app running), poll for Alt+Tab and busy-wait */
+    if (cli_state == CLI_PAUSED) {
+      /* Poll for Alt+Tab without blocking */
+      uint8_t sc = 0;
+      if (inb(KEYBOARD_STATUS_PORT) & 1) {
+        sc = inb(KEYBOARD_DATA_PORT);
+        /* Check if this is Alt+Tab */
+        if (keyboard_handle_scancode_irq(sc)) {
+          /* Alt+Tab detected, handle pause/resume */
+          handle_alt_tab();
+        }
+      }
+      /* Busy-loop: timer IRQs will interrupt us and run the app.
+       * Do NOT call yield here — that would make us READY again. */
+      continue;
+    }
+
+    /* Normal CLI mode: show prompt and read input */
+    serial_print("[ABOUT_TO_PRINT_PROMPT]\n");
     vga_print(cli_current_path);
     vga_print("> ");
+    serial_print("[PROMPT_PRINTED, CALLING_CLI_READLINE]\n");
     cli_readline(line, LINE_MAX);
+    serial_print("[CLI_READLINE_RETURNED]\n");
 
-    if (strlen(line) == 0)
+    if (strlen(line) == 0) {
+      serial_print("[EMPTY_LINE, CONTINUE]\n");
       continue;
+    }
 
     int argc = cli_parse(line, argv, ARGS_MAX);
     if (argc == 0)
@@ -1761,6 +1806,8 @@ void cli_loop() {
       }
     } else if (strcmp(argv[0], "ps") == 0) {
       do_ps();
+    } else if (strcmp(argv[0], "top") == 0) {
+      do_top();
     } else if (strcmp(argv[0], "unpause") == 0) {
       if (argc >= 2) {
         do_unpause(argv[1]);

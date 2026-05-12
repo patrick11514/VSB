@@ -6,6 +6,7 @@
 #include "drivers/vga.h"
 #include "fs_state.h"
 #include "lib/string.h"
+#include "kernel/scheduler.h"
 
 FatFileSystem g_fat_fs;
 PartitionTable g_fat_partitions[4];
@@ -66,5 +67,20 @@ void kernel_main() {
   /* enable interrupts */
   __asm__ volatile("sti");
 
-  cli_loop();
+  /* Create CLI as a scheduled thread (tid will be 0, pid will be 1) */
+  extern void cli_thread_main(void *arg);
+  extern int scheduler_create(void (*entry)(void *), void *arg, int priority);
+  extern int scheduler_activate(int tid, void (*entry)(void *));
+  extern void scheduler_set_name(int tid, const char *name);
+  
+  int cli_tid = scheduler_create(cli_thread_main, NULL, 0);
+  if (cli_tid >= 0) {
+    scheduler_activate(cli_tid, cli_thread_main);
+    scheduler_set_name(cli_tid, "cli");
+  }
+
+  /* Run the scheduler: timer IRQs will drive scheduling. Just loop. */
+  while (1) {
+    __asm__ volatile("hlt");  /* Wait for interrupt */
+  }
 }
