@@ -1,3 +1,4 @@
+#include "arch/interrupts.h"
 #include "cli.h"
 #include "drivers/ide.h"
 #include "drivers/keyboard.h"
@@ -5,7 +6,6 @@
 #include "drivers/vga.h"
 #include "fs_state.h"
 #include "lib/string.h"
-#include "arch/interrupts.h"
 
 FatFileSystem g_fat_fs;
 PartitionTable g_fat_partitions[4];

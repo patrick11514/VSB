@@ -8,25 +8,25 @@
 #define PIC2_DATA 0xA1
 
 void pic_remap(void) {
-    /* Initialization Control Word 1 */
-    outb(PIC1_CMD, 0x11);
-    outb(PIC2_CMD, 0x11);
-    /* ICW2: vector offset */
-    outb(PIC1_DATA, 0x20); /* Master offset 0x20 */
-    outb(PIC2_DATA, 0x28); /* Slave offset 0x28 */
-    /* ICW3: tell master/slave about each other */
-    outb(PIC1_DATA, 0x04);
-    outb(PIC2_DATA, 0x02);
-    /* ICW4 */
-    outb(PIC1_DATA, 0x01);
-    outb(PIC2_DATA, 0x01);
-    /* Mask none (enable all) */
-    outb(PIC1_DATA, 0x0);
-    outb(PIC2_DATA, 0x0);
+  /* Initialization Control Word 1 */
+  outb(PIC1_CMD, 0x11);
+  outb(PIC2_CMD, 0x11);
+  /* ICW2: vector offset */
+  outb(PIC1_DATA, 0x20); /* Master offset 0x20 */
+  outb(PIC2_DATA, 0x28); /* Slave offset 0x28 */
+  /* ICW3: tell master/slave about each other */
+  outb(PIC1_DATA, 0x04);
+  outb(PIC2_DATA, 0x02);
+  /* ICW4 */
+  outb(PIC1_DATA, 0x01);
+  outb(PIC2_DATA, 0x01);
+  /* Mask everything except timer IRQ0. Keyboard IRQ1 is polled, not IRQ-driven. */
+  outb(PIC1_DATA, 0xFE);
+  outb(PIC2_DATA, 0xFF);
 }
 
 void pic_send_eoi(int irq) {
-    if (irq >= 8)
-        outb(PIC2_CMD, 0x20);
-    outb(PIC1_CMD, 0x20);
+  if (irq >= 8)
+    outb(PIC2_CMD, 0x20);
+  outb(PIC1_CMD, 0x20);
 }

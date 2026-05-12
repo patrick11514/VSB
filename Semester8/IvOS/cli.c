@@ -1,12 +1,13 @@
 #include "cli.h"
+#include "config.h"
 #include "drivers/ide.h"
 #include "drivers/keyboard.h"
 #include "drivers/serial.h"
 #include "drivers/vga.h"
 #include "fs_state.h"
+#include "kernel/scheduler.h"
 #include "lib/convert.h"
 #include "lib/string.h"
-#include "config.h"
 #include "partitions.h"
 
 static uint32_t parse_hex(const char *str) {
@@ -114,6 +115,26 @@ static void print_fat_name(const Fat16Entry *entry) {
 static uint8_t disk_buffer[512];
 static uint8_t write_buffer[CLI_WRITE_BUFFER_SIZE];
 static char cli_current_path[128] = "/";
+
+/* Foreground/background process tracking */
+enum cli_state_enum { CLI_NORMAL = 0, CLI_PAUSED = 1 };
+static int cli_state = CLI_NORMAL;
+static int cli_foreground_pid = 0;
+static int paused_stack[8] = {0};
+static int paused_stack_top = -1;
+
+static void push_paused_pid(int pid) {
+  if (paused_stack_top < 7) {
+    paused_stack[++paused_stack_top] = pid;
+  }
+}
+
+static int pop_paused_pid(void) {
+  if (paused_stack_top >= 0) {
+    return paused_stack[paused_stack_top--];
+  }
+  return 0;
+}
 
 #define LINE_MAX 128
 #define ARGS_MAX 10
@@ -1001,10 +1022,105 @@ static void do_mv(const char *src_path, const char *dst_path) {
   g_fat_fs.current_file_index = saved_index;
 }
 
+static void handle_alt_tab(void) {
+  extern int scheduler_pause(int pid);
+  extern int scheduler_resume(int pid);
+
+  vga_print("[HANDLE_ALT_TAB: fg_pid=");
+  if (cli_foreground_pid < 10)
+    vga_putchar(' ');
+  for (int i = 0; i < 3; i++) {
+    int div = 100;
+    if (i == 1)
+      div = 10;
+    if (i == 2)
+      div = 1;
+    if (cli_foreground_pid >= div)
+      vga_putchar('0' + (cli_foreground_pid / div) % 10);
+  }
+  vga_print(" state=");
+  vga_putchar(cli_state ? 'P' : 'C');
+  vga_print("]\n");
+
+  if (cli_foreground_pid != 0 && cli_state == CLI_PAUSED) {
+    /* Pause the foreground app and return to CLI */
+    vga_print("[PAUSING app pid=");
+    for (int i = 0; i < 3; i++) {
+      int div = 100;
+      if (i == 1)
+        div = 10;
+      if (i == 2)
+        div = 1;
+      if (cli_foreground_pid >= div)
+        vga_putchar('0' + (cli_foreground_pid / div) % 10);
+    }
+    vga_print("]\n");
+    scheduler_pause(cli_foreground_pid);
+    push_paused_pid(cli_foreground_pid);
+    cli_foreground_pid = 0;
+    cli_state = CLI_NORMAL;
+    vga_print("[App paused, back to CLI]\n");
+  } else if (cli_foreground_pid == 0 && cli_state == CLI_NORMAL) {
+    /* Resume the most recently paused app */
+    vga_print("[Looking for paused app]\n");
+    int paused_pid = pop_paused_pid();
+    vga_print("[Popped pid=");
+    for (int i = 0; i < 3; i++) {
+      int div = 100;
+      if (i == 1)
+        div = 10;
+      if (i == 2)
+        div = 1;
+      if (paused_pid >= div)
+        vga_putchar('0' + (paused_pid / div) % 10);
+    }
+    vga_print("]\n");
+    if (paused_pid != 0) {
+      vga_print("[RESUMING pid=");
+      for (int i = 0; i < 3; i++) {
+        int div = 100;
+        if (i == 1)
+          div = 10;
+        if (i == 2)
+          div = 1;
+        if (paused_pid >= div)
+          vga_putchar('0' + (paused_pid / div) % 10);
+      }
+      vga_print("]\n");
+      scheduler_resume(paused_pid);
+      cli_foreground_pid = paused_pid;
+      cli_state = CLI_PAUSED;
+      vga_print("[Resumed app, CLI paused]\n");
+    }
+  } else {
+    vga_print("[ALT+TAB: unexpected state, ignoring]\n");
+  }
+}
+
 static void cli_readline(char *buffer, int max_len) {
+  extern void serial_print(const char *);
   int i = 0;
+  serial_print("[CLI_READLINE_START]\n");
   while (1) {
     char c = keyboard_getchar();
+
+    serial_print("GOT_CHAR");
+
+    /* Alt+Tab indicator: 0xFF */
+    if (c == 0xFF) {
+      extern void serial_print(const char *);
+      serial_print("[ALT_TAB_IN_CLI]");
+      handle_alt_tab();
+      if (cli_foreground_pid != 0) {
+        /* We switched to an app, return control to scheduler */
+        serial_print("[SWITCH_TO_APP]\n");
+        buffer[i] = '\0';
+        return;
+      }
+      serial_print("[STAY_IN_CLI]\n");
+      continue;
+    }
+
     if (c == '\n' || c == '\r') {
       vga_putchar('\n');
       buffer[i] = '\0';
@@ -1065,6 +1181,10 @@ static void do_help() {
   vga_print("  load <lba> <addr>    - Load 1 sector from lba to addr\n");
   vga_print(
       "  exec <path>          - Load and run program from current path\n");
+  vga_print("  ps                   - List all processes\n");
+  vga_print("  unpause <pid>        - Resume a paused process\n");
+  vga_print("  pause <pid>          - Pause a running process\n");
+  vga_print("  kill <pid>           - Terminate a process\n");
 }
 
 static void do_dump(uint32_t addr) {
@@ -1352,30 +1472,111 @@ static void do_exec(const char *target_name) {
     return;
   }
 
-  int slot = partitions_alloc();
+  /* create scheduled thread (allocates partition) */
+  extern int scheduler_create(void (*entry)(void *), void *arg, int priority);
+  extern int scheduler_get_slot(int tid);
+  extern int scheduler_activate(int tid, void (*entry)(void *));
+  extern int scheduler_get_pid(int tid);
+  extern void scheduler_set_name(int tid, const char *name);
+
+  int tid = scheduler_create(NULL, NULL, 0);
+  if (tid < 0) {
+    vga_print("exec: scheduler failed to create thread\n");
+    return;
+  }
+
+  /* Extract program name from path */
+  const char *prog_name = target_name;
+  for (const char *p = target_name; *p; p++) {
+    if (*p == '/')
+      prog_name = p + 1;
+  }
+  scheduler_set_name(tid, prog_name);
+
+  int slot = scheduler_get_slot(tid);
   if (slot < 0) {
-    vga_print("exec: no free process slot\n");
+    vga_print("exec: failed to get slot for thread\n");
     return;
   }
 
   memcpy((void *)PROC_BASE(slot), buffer, size);
 
-  /* create scheduled thread */
-  extern int scheduler_create(void (*entry)(void *), void *arg, int priority);
-  int tid = scheduler_create((void (*)(void *))PROC_BASE(slot), NULL, 0);
-  if (tid < 0) {
-    vga_print("exec: scheduler failed to create thread\n");
+  if (scheduler_activate(tid, (void (*)(void *))PROC_BASE(slot)) < 0) {
+    vga_print("exec: scheduler activation failed\n");
     partitions_free(slot);
     return;
   }
 
+  int pid = scheduler_get_pid(tid);
+  cli_foreground_pid = pid;
+  cli_state = CLI_PAUSED;
+
   vga_print("exec: started in slot ");
   print_dec(slot);
-  vga_print(" tid=");
-  print_dec(tid);
-  vga_print("\n");
+  vga_print(" pid=");
+  print_dec(pid);
+  vga_print(" (foreground)\n");
+}
 
-  vga_print("Program finished.\n");
+static void do_ps(void) {
+  extern void scheduler_list(void);
+  scheduler_list();
+}
+
+static void do_unpause(const char *pid_str) {
+  extern int scheduler_resume(int pid);
+  if (!pid_str || strlen(pid_str) == 0) {
+    vga_print("Usage: unpause <pid>\n");
+    return;
+  }
+  int pid = parse_dec(pid_str);
+  if (scheduler_resume(pid) == 0) {
+    vga_print("Process ");
+    print_dec(pid);
+    vga_print(" resumed.\n");
+    cli_foreground_pid = pid;
+    cli_state = CLI_PAUSED;
+  } else {
+    vga_print("Failed to resume process ");
+    print_dec(pid);
+    vga_print(".\n");
+  }
+}
+
+static void do_pause_cmd(const char *pid_str) {
+  extern int scheduler_pause(int pid);
+  if (!pid_str || strlen(pid_str) == 0) {
+    vga_print("Usage: pause <pid>\n");
+    return;
+  }
+  int pid = parse_dec(pid_str);
+  if (scheduler_pause(pid) == 0) {
+    vga_print("Process ");
+    print_dec(pid);
+    vga_print(" paused.\n");
+  } else {
+    vga_print("Failed to pause process ");
+    print_dec(pid);
+    vga_print(".\n");
+  }
+}
+
+static void do_kill(const char *pid_str) {
+  extern int scheduler_kill(int pid);
+  if (!pid_str || strlen(pid_str) == 0) {
+    vga_print("Usage: kill <pid>\n");
+    return;
+  }
+  int pid = parse_dec(pid_str);
+  if (scheduler_kill(pid) == 0) {
+    vga_print("Process ");
+    print_dec(pid);
+    vga_print(" killed.\n");
+  } else {
+    vga_print("Failed to kill process ");
+    print_dec(pid);
+    vga_print(".\n");
+  }
 }
 
 void cli_loop() {
@@ -1518,6 +1719,26 @@ void cli_loop() {
         do_exec(argv[1]);
       } else {
         vga_print("Usage: exec <path>\n");
+      }
+    } else if (strcmp(argv[0], "ps") == 0) {
+      do_ps();
+    } else if (strcmp(argv[0], "unpause") == 0) {
+      if (argc >= 2) {
+        do_unpause(argv[1]);
+      } else {
+        vga_print("Usage: unpause <pid>\n");
+      }
+    } else if (strcmp(argv[0], "pause") == 0) {
+      if (argc >= 2) {
+        do_pause_cmd(argv[1]);
+      } else {
+        vga_print("Usage: pause <pid>\n");
+      }
+    } else if (strcmp(argv[0], "kill") == 0) {
+      if (argc >= 2) {
+        do_kill(argv[1]);
+      } else {
+        vga_print("Usage: kill <pid>\n");
       }
     } else {
       vga_print("Unknown command: ");
