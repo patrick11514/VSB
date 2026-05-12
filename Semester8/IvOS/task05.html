@@ -1,0 +1,204 @@
+<div class="tab-content">
+            <div class="tab-pane active" id="tab_assignment">
+                <div>
+<h2>Cíl</h2>
+<p>Cílem tohoto cvičení je rozšířit váš operační systém o podporu <strong>hardwarových přerušení (interrupts)</strong> a využít je pro implementaci <strong>časovače (timer interrupt)</strong>.</p>
+<p>Po dokončení bude váš OS schopen:</p>
+<ul>
+<li>inicializovat tabulku přerušení (<strong>IDT</strong>)</li>
+<li>registrovat vlastní obslužné rutiny (<strong>ISR – Interrupt Service Routine</strong>)</li>
+<li>zpracovávat přerušení z časovače (IRQ0)</li>
+<li>periodicky přerušovat běh kernelu</li>
+<li>napojit časovač na váš plánovač (<code>scheduler_tick()</code>)</li>
+</ul>
+<p>Tímto krokem přecházíte od <strong>kooperativního plánování</strong> k základům <strong>preemptivního multitaskingu</strong>.</p>
+<p>Můžete se inspirovat/převzít některé ISR rutiny z <a href="https://github.com/cfenollosa/os-tutorial/tree/master/18-interrupts">os-tutorial</a><a></a></p>
+<hr>
+<h2>Kontext</h2>
+<p>V předchozích úlohách jste implementovali:</p>
+<ul>
+<li>běh kernelu v protected mode</li>
+<li>ovladače (VGA, serial, keyboard, ATA)</li>
+<li>CLI</li>
+<li>vlastní plánovače (RR, priority, lottery)</li>
+</ul>
+<p>Plánovač je nyní spouštěn <strong>explicitně (např. yield)</strong>.
+V této úloze zajistíte, že bude spouštěn <strong>automaticky pomocí časovače</strong>.</p>
+<hr>
+<h2>Co je přerušení?</h2>
+<p>Přerušení je mechanismus, kterým hardware přeruší běh CPU a předá řízení <a href="https://wiki.osdev.org/Interrupt_Service_Routines#x86">speciální funkci (ISR)</a>.</p>
+<p>Na architektuře x86:</p>
+<ul>
+<li>přerušení jsou směrována přes <strong>IDT (Interrupt Descriptor Table)</strong>
+</li>
+<li>každé přerušení má své číslo (0–255)</li>
+<li>hardware IRQ jsou mapovány přes <strong>PIC (Programmable Interrupt Controller)</strong>
+</li>
+</ul>
+<hr>
+<h2>Úkol 1: IDT (Interrupt Descriptor Table)</h2>
+<h3>Implementujte:</h3>
+<ul>
+<li>strukturu položky <a href="https://wiki.osdev.org/Interrupt_Descriptor_Table">IDT (IDT entry)</a>
+</li>
+<li>pole IDT (256 položek)</li>
+<li>funkci pro nastavení handleru:</li>
+</ul>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">idt_set_gate</span><span class="hljs-params">(<span class="hljs-type">int</span> n, <span class="hljs-type">uint32_t</span> handler)</span></span>;
+</code></pre></div>
+<ul>
+<li>strukturu IDTR (pro instrukci lidt)</li>
+</ul>
+<ul>
+<li>načtení IDT:</li>
+</ul>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-csharp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">idt_load</span>()</span>;
+</code></pre></div>
+<h3>Požadavky:</h3>
+<ul>
+<li>IDT musí být zarovnaná a správně inicializovaná</li>
+<li>používejte interrupt gate (typ 0x8E)</li>
+<li>segment selector nastavte na kernel code segment (např. 0x08)</li>
+</ul>
+<hr>
+<h2>Úkol 2: ISR (Interrupt Service Routines)</h2>
+<h3>Vytvořte:</h3>
+<ul>
+<li>assembler wrapper pro ISR (uložení registrů)</li>
+</ul>
+<p>např.:</p>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-x86asm"><span class="hljs-symbol">isr_common_stub:</span>
+    <span class="hljs-keyword">pusha</span>
+    <span class="hljs-keyword">call</span> isr_handler
+    <span class="hljs-keyword">popa</span>
+    <span class="hljs-keyword">iret</span>
+</code></pre></div>
+<ul>
+<li>C handler:</li>
+</ul>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-csharp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">isr_handler</span>()</span>;
+</code></pre></div>
+<h3>Doporučení:</h3>
+<ul>
+<li>
+<p>oddělte:</p>
+<ul>
+<li>low-level ASM stub</li>
+<li>high-level C handler</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2>Úkol 3: PIC (8259) – remapování IRQ</h2>
+<p>Defaultně se IRQ překrývají s CPU výjimkami → je nutné je přemapovat.</p>
+<h3>Implementujte:</h3>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-csharp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">pic_remap</span>()</span>;
+</code></pre></div>
+<h3>Nové mapování:</h3>
+<ul>
+<li>IRQ0–IRQ7 → 32–39</li>
+<li>IRQ8–IRQ15 → 40–47</li>
+</ul>
+<h3>Nezapomeňte:</h3>
+<ul>
+<li>posílat <strong>EOI (End Of Interrupt)</strong>:</li>
+</ul>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-apache"><span class="hljs-attribute">outb</span>(<span class="hljs-number">0</span>x20, <span class="hljs-number">0</span>x20);
+</code></pre></div>
+<p>(případně i pro slave PIC)</p>
+<hr>
+<h2>Úkol 4: Časovač (PIT – Programmable Interval Timer)</h2>
+<p>Použijeme <a href="http://www.osdever.net/bkerndev/Docs/pit.htm"><strong>PIT (IRQ0)</strong></a> pro generování pravidelných přerušení.</p>
+<h3>Implementujte:</h3>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">timer_init</span><span class="hljs-params">(<span class="hljs-type">uint32_t</span> frequency)</span></span>;
+</code></pre></div>
+<h3>Nastavení:</h3>
+<ul>
+<li>PIT frekvence: 1193180 Hz</li>
+<li>např. 100 Hz → každých 10 ms</li>
+</ul>
+<hr>
+<h2>Úkol 5: Timer ISR</h2>
+<p>V ISR pro časovač:</p>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-scss">void <span class="hljs-built_in">timer_callback</span>()
+{
+    tick++;
+
+    <span class="hljs-built_in">scheduler_tick</span>();   <span class="hljs-comment">// napojení na váš plánovač</span>
+}
+</code></pre></div>
+<h3>Požadavky:</h3>
+<ul>
+<li>
+<p>ISR musí:</p>
+<ul>
+<li>být rychlá</li>
+<li>neobsahovat blokující operace</li>
+<li>nezapomeňte na EOI</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2>Úkol 6: Napojení na plánovač</h2>
+<p>Použijte připravené rozhraní:</p>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-csharp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">scheduler_tick</span>()</span>;
+</code></pre></div>
+<h3>Cíl:</h3>
+<ul>
+<li>místo ručního <code>yield()</code> bude plánování řízeno časovačem</li>
+<li>systém začne „sám“ přepínat vlákna</li>
+</ul>
+<hr>
+<h2>Struktura projektu (doporučená)</h2>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-stylus">kernel/
+ ├─ arch/
+ │   ├─ idt<span class="hljs-selector-class">.c</span>
+ │   ├─ isr<span class="hljs-selector-class">.S</span>
+ │   ├─ isr<span class="hljs-selector-class">.c</span>
+ │   ├─ pic<span class="hljs-selector-class">.c</span>
+ │   └─ timer<span class="hljs-selector-class">.c</span>
+ │
+ ├─ scheduler/
+ │   └─ scheduler<span class="hljs-selector-class">.c</span>
+ │
+ └─ kernel/
+     └─ <span class="hljs-selector-tag">main</span><span class="hljs-selector-class">.c</span>
+</code></pre></div>
+<hr>
+<h2>Testování</h2>
+<p>Po implementaci by měl systém:</p>
+<ul>
+<li>inicializovat IDT</li>
+<li>zapnout přerušení (<code>sti</code>)</li>
+<li>periodicky generovat tick</li>
+</ul>
+<h3>Test:</h3>
+<ul>
+<li>vypisujte tick counter (např. na serial)</li>
+<li>spusťte více vláken</li>
+<li>ověřte, že se přepínají bez explicitního yield</li>
+</ul>
+<hr>
+<h2>Bonus</h2>
+<ul>
+<li>implementace dalších ISR (např. klávesnice přes IRQ)</li>
+<li>měření času běhu vláken pomocí timeru</li>
+<li>ladění přes serial (výpis při přerušení)</li>
+<li>implementace systémového času (uptime)</li>
+</ul>
+<hr>
+<h2>Umělecké ztvárnění problému ChatGPT :)</h2>
+<hr>
+<p><img src="/task/IvOS/2025S/KRU13/preruseni_a_casovac_(irq)_%E2%80%93_zaklad_preemptivniho_planovani/asset/chatgpt_isr.png" width="800"></p>
+</div>
+
+                
+            </div>
+            <div class="tab-pane" id="tab_tests">
+                <a href="/task/IvOS/2025S/KRU13/preruseni_a_casovac_(irq)_%E2%80%93_zaklad_preemptivniho_planovani.tar.gz" class="float-end">Download all tests</a>
+
+                
+            </div>
+
+            
+        </div>

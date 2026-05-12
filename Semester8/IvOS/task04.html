@@ -1,0 +1,198 @@
+<div class="tab-pane active" id="tab_assignment">
+                <div>
+<h2>Úvod</h2>
+<p>Doposud váš operační systém pracoval s pamětí jako s jedním „plochým“ prostorem bez jasné struktury. Programy jste načítali na pevné adresy a spouštěli bez jakékoliv správy paměti.</p>
+<p>V této úloze zavedeme jednoduchý paměťový model založený na <a href="https://www.geeksforgeeks.org/operating-systems/fixed-or-static-partitioning-in-operating-system/?utm_source=chatgpt.com"><strong>statických partitionách (fixed partitioning)</strong></a>.</p>
+<p>Tento přístup není pouze historickou zajímavostí (např. IBM OS/360), ale byl využíván i v relativně moderních systémech, jako je Windows CE / Windows Mobile, kde byly aplikace často mapovány do předem definovaných paměťových oblastí.</p>
+<p>Cílem je vytvořit <strong>jednoduchý, deterministický paměťový model</strong>, který umožní:</p>
+<ul>
+<li>spouštění více programů současně</li>
+<li>oddělení jejich zásobníků (stacků)</li>
+<li>přípravu na integraci plánovače s časovačem (příští úloha)</li>
+</ul>
+<hr>
+<h2>Výchozí stav</h2>
+<p>Aktuálně:</p>
+<ul>
+<li>kernel je načten přibližně na:</li>
+</ul>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-apache"><span class="hljs-attribute">KERNEL_OFFSET</span> equ <span class="hljs-number">0</span>x1000
+</code></pre></div>
+<ul>
+<li>stack kernelu:</li>
+</ul>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-x86asm"><span class="hljs-keyword">mov</span> <span class="hljs-built_in">ebp</span>, <span class="hljs-number">0x80000</span>
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">esp</span>, <span class="hljs-built_in">ebp</span>
+</code></pre></div>
+<ul>
+<li>programy spouštíte pomocí:</li>
+</ul>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-delphi">void <span class="hljs-comment">(*func)() = (void(*)</span>())addr;
+func();
+</code></pre></div>
+<hr>
+<h2>Cíl</h2>
+<p>Po dokončení úlohy bude váš OS:</p>
+<ul>
+<li>rozdělovat paměť na pevné bloky (partitiony)</li>
+<li>přiřazovat každý blok jednomu vláknu/programu</li>
+<li>inicializovat stack pro každé vlákno</li>
+<li>umožňovat bezpečné přepínání kontextu mezi vlákny</li>
+</ul>
+<hr>
+<h2>Navržený paměťový model</h2>
+<p>Paměť rozdělte například na pevné bloky:</p>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-dns"><span class="hljs-number">0x00000000</span> - <span class="hljs-number">0</span>x0009FFFF   BIOS / low memory
+<span class="hljs-number">0x00001000</span> - ...          KERNEL
+
+<span class="hljs-number">0x00100000</span> - <span class="hljs-number">0</span>x0010FFFF   PROCESS <span class="hljs-number">0</span> (<span class="hljs-number">64</span> KB)
+<span class="hljs-number">0x00110000</span> - <span class="hljs-number">0</span>x0011FFFF   PROCESS <span class="hljs-number">1</span>
+<span class="hljs-number">0x00120000</span> - <span class="hljs-number">0</span>x0012FFFF   PROCESS <span class="hljs-number">2</span>
+...
+</code></pre></div>
+<hr>
+<h2>Konstanty</h2>
+<p>Doporučená konfigurace:</p>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-cpp"><span class="hljs-meta">#<span class="hljs-keyword">define</span> KERNEL_BASE      0x00001000</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> PROC_BASE_START  0x00100000</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> PROC_SLOT_SIZE   0x00010000   <span class="hljs-comment">// 64 KB</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> MAX_PROCESSES    8</span>
+</code></pre></div>
+<hr>
+<h2>Výpočet adres</h2>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-scss"><span class="hljs-selector-id">#define</span> <span class="hljs-built_in">PROC_BASE</span>(i) \
+    (PROC_BASE_START + (i) * PROC_SLOT_SIZE)
+
+<span class="hljs-selector-id">#define</span> <span class="hljs-built_in">PROC_STACK_TOP</span>(i) \
+    (PROC_BASE(i) + PROC_SLOT_SIZE - <span class="hljs-number">4</span>)
+</code></pre></div>
+<hr>
+<h2>Struktura paměti procesu</h2>
+<p>Každý proces bude mít:</p>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-gherkin">+----------------------+
+|<span class="hljs-string"> STACK (roste dolů)   </span>|
+|<span class="hljs-string">                      </span>|
+|<span class="hljs-string">                      </span>|
+|<span class="hljs-string">----------------------</span>|
+|<span class="hljs-string"> DATA / BSS           </span>|
+|<span class="hljs-string">----------------------</span>|
+|<span class="hljs-string"> CODE (.text)         </span>|
++----------------------+
+base
+</code></pre></div>
+<hr>
+<h2>Úkol 1: Správa partition</h2>
+<p>Implementujte jednoduchou tabulku:</p>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-abnf">struct partition {
+    uint32_t base<span class="hljs-comment">;</span>
+    int used<span class="hljs-comment">;</span>
+}<span class="hljs-comment">;</span>
+</code></pre></div>
+<p>Inicializujte pole partition podle <code>MAX_PROCESSES</code>.</p>
+<hr>
+<h2>Úkol 2: Úprava scheduleru / vláken</h2>
+<p>Rozšiřte strukturu vlákna (<code>struct gt</code>):</p>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-abnf">struct gt {
+    ...
+    uint32_t esp<span class="hljs-comment">;</span>
+    uint32_t eip<span class="hljs-comment">;</span>
+
+    uint32_t base<span class="hljs-comment">;</span>
+    uint32_t stack_top<span class="hljs-comment">;</span>
+}<span class="hljs-comment">;</span>
+</code></pre></div>
+<hr>
+<h2>Úkol 3: Vytvoření vlákna</h2>
+<p>Při <code>gt_create()</code>:</p>
+<ol>
+<li>Najděte volný slot</li>
+<li>Nastavte:</li>
+</ol>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-abnf">gt-&gt;base <span class="hljs-operator">=</span> PROC_BASE(i)<span class="hljs-comment">;</span>
+gt-&gt;stack_top <span class="hljs-operator">=</span> PROC_STACK_TOP(i)<span class="hljs-comment">;</span>
+</code></pre></div>
+<ol>
+<li>Inicializujte stack:</li>
+</ol>
+<ul>
+<li>nastavte ESP na <code>stack_top</code>
+</li>
+<li>připravte návratovou adresu (např. <code>gt_exit</code>)</li>
+</ul>
+<ol>
+<li>Nastavte EIP na entry point</li>
+</ol>
+<hr>
+<h2>Úkol 4: Úprava CLI (load / run)</h2>
+<p>Změňte chování:</p>
+<div class="highlight"><pre><span></span><code data-highlighted="yes" class="hljs language-node-repl"><span class="hljs-meta prompt_">&gt;</span> <span class="language-javascript">exec test.<span class="hljs-property">bin</span></span>
+</code></pre></div>
+<p>→ systém:</p>
+<ul>
+<li>najde volný slot</li>
+<li>načte binárku na <code>PROC_BASE(i)</code>
+</li>
+<li>vytvoří vlákno</li>
+<li>předá řízení scheduleru</li>
+</ul>
+<hr>
+<h2>Úkol 5: Oddělení stacků</h2>
+<p>Ověřte:</p>
+<ul>
+<li>každé vlákno má vlastní stack</li>
+<li>nedochází ke kolizi paměti</li>
+<li>přepínání kontextu funguje správně</li>
+</ul>
+<hr>
+<h2>Testovací scénář</h2>
+<ol>
+<li>Spusťte více programů současně, doporučuji si vytvořit jednoduchou aplikaci zobrazující čas nebo rotující hvězdičku (ze znaků ... /|-)</li>
+<li>
+<p>Každý program:</p>
+<ul>
+<li>zapisuje na stack</li>
+<li>vypisuje svou identitu
+3. Sledujte:</li>
+</ul>
+<ul>
+<li>zda se nepřepisují</li>
+<li>zda běží paralelně (RR)</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2>Bonus</h2>
+<ul>
+<li>jednoduchý „kill“ procesu (uvolnění slotu)</li>
+</ul>
+<hr>
+<h2>Poznámka: Způsoby spouštění programů v tomto modelu</h2>
+<p>V rámci tohoto cvičení existuje více způsobů, jak řešit umístění a spouštění programů v paměti. Vzhledem k tomu, že nepoužíváme paging ani relocace, budeme pracovat s následujícími zjednodušenými přístupy:</p>
+<h3>Varianta A – pevná adresa pro každý slot</h3>
+<p>Každý paměťový slot má pevně danou adresu (<code>PROC_BASE(i)</code>), na kterou je program nahráván. Program musí být při překladu (linkování) nastaven tak, aby počítal s tím, že poběží právě na této adrese.</p>
+<p>To znamená, že:</p>
+<ul>
+<li>linker script určuje konkrétní adresu <code>.text</code> segmentu (např. <code>0x00100000</code>)</li>
+<li>pro každý slot může existovat samostatná verze binárky</li>
+<li>operační systém pouze nahraje binární soubor na správnou adresu a spustí jej</li>
+</ul>
+<p>Tento přístup je velmi jednoduchý a nevyžaduje žádnou podporu relocace, ale není flexibilní – program je pevně svázán s konkrétní adresou v paměti.</p>
+<hr>
+<h3>Varianta B – jednotná adresa + kopírování</h3>
+<p>Alternativně lze všechny programy překládat pro jednu společnou adresu (např. <code>0x2000</code>). Při přepnutí kontextu operační systém:</p>
+<ul>
+<li>zkopíruje obsah příslušného paměťového slotu na tuto adresu</li>
+<li>nastaví stack a registry</li>
+<li>spustí program</li>
+</ul>
+<p>Každý program tak běží vždy na stejné adrese, bez nutnosti řešit relocaci nebo více verzí binárek.</p>
+<p>Nevýhodou je nutnost kopírování paměti při každém přepnutí, což je neefektivní. Tento přístup je však konceptuálně jednoduchý a může být vhodný pro experimentální účely.</p>
+<hr>
+<h2>Umělecké ztvárnění problému ChatGPT :)</h2>
+<hr>
+<p><img src="/task/IvOS/2025S/KRU13/zadani:_pame%C5%A5ovy_model_%E2%80%93_staticke_partitiony/asset/gpt_memory_model.png" width="800"></p>
+</div>
+
+                
+            </div>

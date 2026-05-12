@@ -6,6 +6,8 @@
 #include "fs_state.h"
 #include "lib/convert.h"
 #include "lib/string.h"
+#include "config.h"
+#include "partitions.h"
 
 static uint32_t parse_hex(const char *str) {
   uint32_t val = 0;
@@ -1350,10 +1352,28 @@ static void do_exec(const char *target_name) {
     return;
   }
 
-  memcpy((void *)APP_LOAD_ADDR, buffer, size);
+  int slot = partitions_alloc();
+  if (slot < 0) {
+    vga_print("exec: no free process slot\n");
+    return;
+  }
 
-  void (*func)() = (void (*)())APP_LOAD_ADDR;
-  func();
+  memcpy((void *)PROC_BASE(slot), buffer, size);
+
+  /* create scheduled thread */
+  extern int scheduler_create(void (*entry)(void *), void *arg, int priority);
+  int tid = scheduler_create((void (*)(void *))PROC_BASE(slot), NULL, 0);
+  if (tid < 0) {
+    vga_print("exec: scheduler failed to create thread\n");
+    partitions_free(slot);
+    return;
+  }
+
+  vga_print("exec: started in slot ");
+  print_dec(slot);
+  vga_print(" tid=");
+  print_dec(tid);
+  vga_print("\n");
 
   vga_print("Program finished.\n");
 }

@@ -1,8 +1,10 @@
 CC = gcc
 CFLAGS = -m32 -ffreestanding -fno-stack-protector -fno-pie -O0
 
-SRCS = kernel.c cli.c lib/string.c lib/convert.c drivers/vga.c drivers/serial.c drivers/keyboard.c drivers/ide.c drivers/fat_fs.c drivers/fat_io.c
-OBJS = $(SRCS:.c=.o)
+SRCS = kernel.c cli.c lib/string.c lib/convert.c drivers/vga.c drivers/serial.c drivers/keyboard.c drivers/ide.c drivers/fat_fs.c drivers/fat_io.c partitions.c kernel/scheduler.c \
+	arch/idt.c arch/isr.c arch/pic.c arch/timer.c
+ASM_SRCS = arch/context_switch.S arch/isr_stub.S
+OBJS = $(SRCS:.c=.o) $(ASM_SRCS:.S=.o)
 
 .PHONY: start join apps build link clean
 
@@ -28,6 +30,9 @@ switch.o: switch.asm
 	nasm -f elf32 switch.asm -o switch.o
 
 %.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+%.o: %.S
 	$(CC) $(CFLAGS) -c $< -o $@
 
 link: switch.o $(OBJS)

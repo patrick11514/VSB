@@ -56,6 +56,7 @@ struct gt {
   uint64_t switches_count;
   uint64_t last_run_start_us;
   uint64_t last_ready_start_us;
+  
 };
 
 void gt_init(void);

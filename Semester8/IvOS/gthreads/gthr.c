@@ -414,7 +414,7 @@ bool gt_schedule(void) {
   if (gt_scheduler_mode == GtSchedulerPriority)
     gt_age_priority_threads(next);
   gt_prepare_selected(next, now_us);
-  
+
   if (next == gt_current)
     return true;
 

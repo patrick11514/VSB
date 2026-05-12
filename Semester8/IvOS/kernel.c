@@ -5,6 +5,7 @@
 #include "drivers/vga.h"
 #include "fs_state.h"
 #include "lib/string.h"
+#include "arch/interrupts.h"
 
 FatFileSystem g_fat_fs;
 PartitionTable g_fat_partitions[4];
@@ -51,6 +52,19 @@ void kernel_main() {
   mount_fat16_partition();
 
   serial_print("PleiadOS booted successfully!\n");
+
+  /* initialize scheduler */
+  extern void scheduler_init(void);
+  scheduler_init();
+
+  /* interrupts: IDT, PIC, PIT */
+  pic_remap();
+  /* set timer ISR gate (IRQ0 -> vector 0x20) */
+  idt_set_gate(0x20, (uint32_t)isr_timer_stub);
+  idt_load();
+  timer_init(100); /* 100 Hz */
+  /* enable interrupts */
+  __asm__ volatile("sti");
 
   cli_loop();
 }
