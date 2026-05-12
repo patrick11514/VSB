@@ -6,6 +6,7 @@
 #include "drivers/vga.h"
 #include "fs_state.h"
 #include "kernel/scheduler.h"
+#include "lib/convert.h"
 #include "lib/string.h"
 
 FatFileSystem g_fat_fs;
@@ -26,6 +27,22 @@ static int mount_fat16_partition(void) {
   vga_print("Mounted FAT16 volume at sector 2048.\n");
   serial_print("Mounted FAT16 volume at sector 2048.\n");
   return 1;
+}
+
+void counter(void *arg) {
+  int count = 0;
+  int sub_count = 0;
+  char buf[16];
+
+  while (1) {
+    if (++sub_count >= 10000000) {
+      sub_count = 0;
+      serial_print("Counter: ");
+      itoc(++count, buf);
+      serial_print(buf);
+      serial_print("\n");
+    }
+  }
 }
 
 void kernel_main() {
@@ -75,6 +92,13 @@ void kernel_main() {
   extern int scheduler_create(void (*entry)(void *), void *arg, int priority);
   extern int scheduler_activate(int tid, void (*entry)(void *));
   extern void scheduler_set_name(int tid, const char *name);
+
+  // simple counter
+  int counter_tid = scheduler_create(counter, NULL, 0);
+  if (counter_tid >= 0) {
+    scheduler_activate(counter_tid, counter);
+    scheduler_set_name(counter_tid, "counter");
+  }
 
   int cli_tid = scheduler_create(cli_thread_main, NULL, 0);
   if (cli_tid >= 0) {
