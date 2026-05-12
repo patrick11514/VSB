@@ -26,17 +26,11 @@ static int shift_held = 0;
 int keyboard_getchar() {
   extern void serial_print(const char *);
   extern void serial_putchar(char c);
-  serial_print("[KBD_ENTER]");
-  int loop_count = 0;
+  
   while (1) {
     // Wait until keyboard buffer has data
     if (inb(KEYBOARD_STATUS_PORT) & 1) {
-      serial_print("[KBD_HAS_DATA]");
       uint8_t scancode = inb(KEYBOARD_DATA_PORT);
-      serial_print("[KBD:");
-      serial_putchar('0' + (scancode >> 4));
-      serial_putchar('0' + (scancode & 0xF));
-      serial_print("] ");
 
       /* Alt key: press=0x38, release=0xB8 */
       if (scancode == 0x38) {
@@ -96,4 +90,47 @@ int keyboard_getchar() {
       }
     }
   }
+}
+
+/* Process a raw scancode from IRQ context. Returns 1 if an Alt+Tab
+ * event was observed that should be handled by the kernel. Safe to call
+ * from IRQ handler. */
+int keyboard_handle_scancode_irq(uint8_t scancode) {
+  /* Update modifier state similar to keyboard_getchar */
+  if (scancode == 0x38) {
+    alt_held = 1;
+    return 0;
+  }
+  if (scancode == 0xB8) {
+    alt_held = 0;
+    return 0;
+  }
+  if (scancode == 0x2A || scancode == 0x36) {
+    shift_held = 1;
+    return 0;
+  }
+  if (scancode == 0xAA || scancode == 0xB6) {
+    shift_held = 0;
+    return 0;
+  }
+  if (scancode == 0x1D) {
+    ctrl_held = 1;
+    return 0;
+  }
+  if (scancode == 0x9D) {
+    ctrl_held = 0;
+    return 0;
+  }
+
+  /* Tab key: 0x0F */
+  if (scancode == 0x0F) {
+    if (alt_held) {
+      /* consume the Alt+Tab here */
+      alt_held = 0;
+      return 1;
+    }
+    return 0;
+  }
+
+  return 0;
 }

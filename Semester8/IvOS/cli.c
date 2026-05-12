@@ -123,6 +123,45 @@ static int cli_foreground_pid = 0;
 static int paused_stack[8] = {0};
 static int paused_stack_top = -1;
 
+/* forward declarations so IRQ handler can call them */
+static void push_paused_pid(int pid);
+static int pop_paused_pid(void);
+
+/* Getter for keyboard driver to check if app is in foreground */
+int cli_get_foreground_pid(void) {
+  return cli_foreground_pid;
+}
+
+/* Called by scheduler when a process exits to allow CLI to restore state */
+void cli_app_exited(int pid) {
+  extern void vga_print(const char *);
+  if (cli_foreground_pid == pid) {
+    cli_foreground_pid = 0;
+    cli_state = CLI_NORMAL;
+    vga_print("[App exited, back to CLI]\n");
+  }
+}
+
+/* Minimal IRQ-safe handler called from keyboard IRQ when Alt+Tab detected.
+ * This performs the pause/resume action without heavy printing. */
+void cli_handle_alt_tab_irq(void) {
+  /* Only manipulate scheduler state — avoid VGA prints here. */
+  if (cli_foreground_pid != 0 && cli_state == CLI_PAUSED) {
+    /* Pause foreground app */
+    scheduler_pause(cli_foreground_pid);
+    push_paused_pid(cli_foreground_pid);
+    cli_foreground_pid = 0;
+    cli_state = CLI_NORMAL;
+  } else if (cli_foreground_pid == 0 && cli_state == CLI_NORMAL) {
+    int paused_pid = pop_paused_pid();
+    if (paused_pid != 0) {
+      scheduler_resume(paused_pid);
+      cli_foreground_pid = paused_pid;
+      cli_state = CLI_PAUSED;
+    }
+  }
+}
+
 static void push_paused_pid(int pid) {
   if (paused_stack_top < 7) {
     paused_stack[++paused_stack_top] = pid;

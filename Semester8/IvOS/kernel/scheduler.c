@@ -280,6 +280,10 @@ void scheduler_list(void) {
 extern void kt_switch(uint32_t *old_esp_ptr, uint32_t new_esp_val);
 
 static void do_switch(int next_idx) {
+  extern void serial_print(const char *);
+  serial_print("[SWITCH:");
+  if (next_idx < 10) serial_print("0");
+  
   if (next_idx < 0)
     return;
   int prev = kt_current;
@@ -294,6 +298,7 @@ static void do_switch(int next_idx) {
     old_esp_ptr = &kt_table[prev].esp;
   }
   kt_table[next_idx].state = KT_RUNNING;
+  serial_print("]");
   /* perform context switch */
   if (old_esp_ptr)
     kt_switch(old_esp_ptr, new_esp);
@@ -305,6 +310,8 @@ static void do_switch(int next_idx) {
 }
 
 void scheduler_tick(void) {
+  extern void serial_print(const char *);
+  serial_print("[TICK]");
   int next = -1;
   if (scheduler_mode == 1)
     next = find_priority_next();
@@ -326,6 +333,8 @@ void scheduler_yield(void) {
 
 void scheduler_exit(int code) {
   if (kt_current >= 0) {
+    /* capture pid to notify CLI */
+    int exiting_pid = kt_table[kt_current].pid;
     /* free partition using stored slot */
     if (kt_table[kt_current].slot >= 0) {
       partitions_free(kt_table[kt_current].slot);
@@ -334,6 +343,9 @@ void scheduler_exit(int code) {
     kt_table[kt_current].pid = 0;
     kt_table[kt_current].entry = NULL;
     kt_current = -1;
+    /* notify CLI if foreground app exited */
+    extern void cli_app_exited(int pid);
+    cli_app_exited(exiting_pid);
   }
   /* schedule next */
   scheduler_tick();
@@ -341,12 +353,65 @@ void scheduler_exit(int code) {
 
 /* Thread bootstrap called when a new thread first starts */
 void kt_thread_start(void) {
+  extern void serial_print(const char *);
+  serial_print("[ENTRY_POINT]");
   int idx = kt_current;
   if (idx < 0)
     return;
   struct kt *t = &kt_table[idx];
+  serial_print("[ABOUT_TO_CALL_ENTRY]");
+  /* enable interrupts for the new thread */
+  __asm__ volatile("sti");
+  /* print diagnostic info: tid, base, stack_top, esp */
+  char buf[64];
+  int len = 0;
+  /* simple itoa into buf */
+  buf[len++] = '[';
+  buf[len++] = 'I';
+  buf[len++] = 'D';
+  buf[len++] = ':';
+  int pid = t->pid;
+  if (pid == 0) {
+    buf[len++] = '0';
+  } else {
+    int tmp = pid;
+    char rev[16];
+    int p = 0;
+    while (tmp > 0 && p < 15) {
+      rev[p++] = '0' + (tmp % 10);
+      tmp /= 10;
+    }
+    for (int i = p - 1; i >= 0; --i)
+      buf[len++] = rev[i];
+  }
+  buf[len++] = ']';
+  buf[len] = '\0';
+  serial_print(buf);
+  /* print base/stack_top/esp hex (very small routine) */
+  char hbuf[64];
+  unsigned int v;
+  v = (unsigned int)t->base;
+  /* format like [B=100000] */
+  hbuf[0] = '['; hbuf[1] = 'B'; hbuf[2] = '='; int hi = 3;
+  const char *hex = "0123456789ABCDEF";
+  for (int s = 28; s >= 0; s -= 4) {
+    hbuf[hi++] = hex[(v >> s) & 0xF];
+  }
+  hbuf[hi++] = ']';
+  hbuf[hi] = '\0';
+  serial_print(hbuf);
+  v = (unsigned int)t->stack_top;
+  /* [S=...] */
+  hbuf[0] = '['; hbuf[1] = 'S'; hbuf[2] = '='; hi = 3;
+  for (int s = 28; s >= 0; s -= 4) hbuf[hi++] = hex[(v >> s) & 0xF];
+  hbuf[hi++] = ']'; hbuf[hi] = '\0'; serial_print(hbuf);
+  v = (unsigned int)t->esp;
+  hbuf[0] = '['; hbuf[1] = 'E'; hbuf[2] = '='; hi = 3;
+  for (int s = 28; s >= 0; s -= 4) hbuf[hi++] = hex[(v >> s) & 0xF];
+  hbuf[hi++] = ']'; hbuf[hi] = '\0'; serial_print(hbuf);
   if (t->entry)
     t->entry(t->arg);
+  serial_print("[ENTRY_RETURNED]");
   scheduler_exit(0);
   while (1) {
   }

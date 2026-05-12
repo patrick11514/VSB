@@ -6,8 +6,8 @@
  * Caller must have arranged new stack so that a `ret` resumes execution.
  */
 kt_switch:
-    mov 8(%esp), %eax    # load old_esp_ptr
-    mov 12(%esp), %edx   # load new_esp_val
+    mov 4(%esp), %eax    # load old_esp_ptr
+    mov 8(%esp), %edx    # load new_esp_val
     mov %esp, (%eax)     # save current esp into *old_esp_ptr
     mov %edx, %esp       # switch to new stack
     ret

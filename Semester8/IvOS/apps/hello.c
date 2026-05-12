@@ -32,6 +32,7 @@ __attribute__((section(".text.entry"))) void entry() {
 
   while (1) {
     uint8_t scancode = get_scancode();
+
     if (scancode == 0x01) {
       break;
     }
