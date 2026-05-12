@@ -19,6 +19,7 @@ void partitions_init(void) {
     parts[i].used = (i == EXEC_SLOT) ? 1 : 0;
   }
 }
+
 int partitions_alloc(void) {
   // Start searching from Slot 1, leaving Slot 0 for execution
   for (int i = 1; i < MAX_PROCESSES; ++i) {

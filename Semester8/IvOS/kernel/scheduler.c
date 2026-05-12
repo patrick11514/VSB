@@ -100,7 +100,8 @@ int scheduler_resume(int pid) {
   int tid = find_tid_by_pid(pid);
   if (tid < 0)
     return -1;
-  if (kt_table[tid].state == KT_PAUSED) {
+
+  if (kt_table[tid].state == KT_PAUSED || kt_table[tid].state == KT_READY) {
     kt_table[tid].state = KT_READY;
     return 0;
   }
@@ -316,9 +317,12 @@ static void do_switch(int next_idx) {
   /* Prepare the slot variables for the assembly trampoline */
   kt_prev_slot = -1;
   if (prev >= 0) {
+    /* STRICT ENFORCEMENT: Only set to READY if it was actually RUNNING.
+       If ALT+TAB forced it to PAUSED, leave it as PAUSED! */
     if (kt_table[prev].state == KT_RUNNING) {
       kt_table[prev].state = KT_READY;
     }
+
     old_esp_ptr = &kt_table[prev].esp;
     if (IS_APP(&kt_table[prev])) {
       kt_prev_slot = kt_table[prev].slot;
