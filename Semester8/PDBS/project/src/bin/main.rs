@@ -13,7 +13,7 @@ use mongodb::{Client, Collection};
 use ratatui::backend::CrosstermBackend;
 use ratatui::prelude::*;
 use ratatui::symbols::Marker;
-use ratatui::widgets::canvas::{Canvas, Points};
+use ratatui::widgets::canvas::Canvas;
 use ratatui::widgets::{
     Axis, Block, Borders, Cell, Chart, Clear, Dataset, GraphType, List, ListItem, ListState,
     Paragraph, Row, Table, TableState,
@@ -268,8 +268,6 @@ impl App {
         self.search_around_radius_hint = radius;
         self.search_around_magnitude_limit = magnitude_limit;
 
-        // WE REMOVED the lines that reset the map mode and selection here!
-
         let collection = self.collection.clone();
         let center_lon = target.normalized_longitude();
         let center_lat = target.dec_deg;
@@ -315,7 +313,6 @@ impl App {
             Ok(Ok(results)) => {
                 self.search_around_results = results;
 
-                // Prevent out-of-bounds crash if the new search has fewer results
                 if self.search_around_selected >= self.search_around_results.len() {
                     self.search_around_selected =
                         self.search_around_results.len().saturating_sub(1);
@@ -1076,9 +1073,8 @@ async fn handle_key_event(key: KeyEvent, app: &mut App) -> Result<bool, Box<dyn 
             _ => {}
         },
         AppState::ObjectDetails => match key.code {
-            KeyCode::Char('q') | KeyCode::Char('Q') => return Ok(true), // Only Q quits now
+            KeyCode::Char('q') | KeyCode::Char('Q') => return Ok(true),
             KeyCode::Esc | KeyCode::Backspace => {
-                // Esc goes back
                 app.state = AppState::SearchByName;
                 app.status = String::from("Type to search the MongoDB object collection.");
             }
@@ -1100,7 +1096,7 @@ async fn handle_key_event(key: KeyEvent, app: &mut App) -> Result<bool, Box<dyn 
             }
             KeyCode::Char('s') | KeyCode::Char('S') => {
                 app.state = AppState::SearchAround;
-                app.search_around_focus = 0; // Start with focus on Radius
+                app.search_around_focus = 0;
                 let radius = app
                     .search_around_radius_input
                     .parse::<f64>()
@@ -1111,7 +1107,6 @@ async fn handle_key_event(key: KeyEvent, app: &mut App) -> Result<bool, Box<dyn 
             _ => {}
         },
         AppState::SearchAround => {
-            // Helper closure to trigger the search reactively
             let trigger_search = |app: &mut App| {
                 let radius = app
                     .search_around_radius_input
@@ -1127,14 +1122,12 @@ async fn handle_key_event(key: KeyEvent, app: &mut App) -> Result<bool, Box<dyn 
                     app.status = String::from("Returned to Object Details.");
                 }
                 KeyCode::Tab => {
-                    // 2. Cycle through 4 states now (0, 1, 2, 3)
                     app.search_around_focus = (app.search_around_focus + 1) % 4;
                 }
                 KeyCode::Char('m') | KeyCode::Char('M') if app.search_around_focus != 2 => {
                     app.search_around_is_map_mode = !app.search_around_is_map_mode;
                 }
 
-                // --- RESULT NAVIGATION (Global, no focus check required) ---
                 KeyCode::Up if app.search_around_focus == 3 => {
                     app.search_around_selected = app.search_around_selected.saturating_sub(1);
                 }
@@ -1150,12 +1143,10 @@ async fn handle_key_event(key: KeyEvent, app: &mut App) -> Result<bool, Box<dyn 
                         .get(app.search_around_selected)
                         .cloned()
                     {
-                        // Set the new target, which automatically drops you back into ObjectDetails!
                         app.set_active_target(target);
                     }
                 }
 
-                // --- LIVE TYPING (Only when focus is 0 or 1) ---
                 KeyCode::Backspace => {
                     if app.search_around_focus == 0 {
                         app.search_around_radius_input.pop();
@@ -1169,7 +1160,6 @@ async fn handle_key_event(key: KeyEvent, app: &mut App) -> Result<bool, Box<dyn 
                     }
                 }
                 KeyCode::Char(c) => {
-                    // For Radius and Mag, only allow numbers/decimals
                     if (app.search_around_focus == 0 || app.search_around_focus == 1)
                         && (c.is_ascii_digit() || c == '.' || c == '-')
                     {
@@ -1179,9 +1169,7 @@ async fn handle_key_event(key: KeyEvent, app: &mut App) -> Result<bool, Box<dyn 
                             app.search_around_mag_input.push(c);
                         }
                         trigger_search(app);
-                    }
-                    // For Catalog, allow letters, numbers, spaces, and hyphens!
-                    else if app.search_around_focus == 2
+                    } else if app.search_around_focus == 2
                         && (c.is_alphanumeric() || c == ' ' || c == '-')
                     {
                         app.search_around_catalog_input.push(c);
@@ -1321,7 +1309,6 @@ fn build_altitude_plot_data(app: &App, target: &SkyObject) -> AltitudePlotData {
     let mut altitude_points = Vec::with_capacity(97);
     for step in 0..=96 {
         let hour_offset = step as f64 * 24.0 / 96.0;
-        // Shift by -12 hours so that "now" (hour 0) appears at the center (x=12)
         let sample_unix_seconds = base_unix_seconds + (hour_offset - 12.0) * 3600.0;
         let lst_deg = lst_deg_at_unix_seconds(observer_longitude, sample_unix_seconds);
         let altitude = altitude_deg(target.ra_deg, target.dec_deg, lst_deg, observer_latitude);
@@ -1329,7 +1316,6 @@ fn build_altitude_plot_data(app: &App, target: &SkyObject) -> AltitudePlotData {
     }
 
     let horizon_points = vec![(0.0, 0.0), (24.0, 0.0)];
-    // Place marker at x=12 (center) showing the full altitude range including below horizon
     let marker_points = vec![(12.0, -30.0), (12.0, 90.0)];
 
     let labels = [-12_i64, -6, 0, 6, 12]
@@ -1394,7 +1380,6 @@ fn render_search_around(frame: &mut Frame<'_>, area: Rect, app: &App) {
         .constraints([Constraint::Length(3), Constraint::Min(5)])
         .split(area);
 
-    // Split into 3 equal columns
     let top_chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([
@@ -1448,7 +1433,6 @@ fn render_search_around(frame: &mut Frame<'_>, area: Rect, app: &App) {
     frame.render_widget(mag_p, top_chunks[1]);
     frame.render_widget(cat_p, top_chunks[2]);
 
-    // 3. Render the Map or List in the bottom chunk
     if app.search_around_is_map_mode {
         render_search_around_map(frame, chunks[1], app);
     } else {
@@ -1535,7 +1519,6 @@ fn render_search_around_list(frame: &mut Frame<'_>, area: Rect, app: &App) {
 
     frame.render_stateful_widget(table, area, &mut table_state);
 
-    // Render footer help
     let footer_area = Rect {
         x: area.x,
         y: area.bottom().saturating_sub(1),
@@ -1588,9 +1571,7 @@ fn render_search_around_map(frame: &mut Frame<'_>, area: Rect, app: &App) {
         .y_bounds([-radius, radius])
         .paint(|ctx| {
             for (idx, (neighbor, _dist)) in app.search_around_results.iter().enumerate() {
-                // Calculate angular offset
                 let mut ra_diff = neighbor.ra_deg - target.ra_deg;
-                // Handle spherical wrapping
                 if ra_diff > 180.0 {
                     ra_diff -= 360.0;
                 }
@@ -1598,12 +1579,10 @@ fn render_search_around_map(frame: &mut Frame<'_>, area: Rect, app: &App) {
                     ra_diff += 360.0;
                 }
 
-                // Apply cosine correction for converging RA lines at poles
                 let x = ra_diff * target.dec_deg.to_radians().cos();
                 let y = neighbor.dec_deg - target.dec_deg;
 
                 if idx == app.search_around_selected {
-                    // Highlight selected neighbor
                     ctx.print(
                         x,
                         y,
@@ -1645,7 +1624,6 @@ fn render_search_around_map(frame: &mut Frame<'_>, area: Rect, app: &App) {
 
     frame.render_widget(canvas, area);
 
-    // Render footer help
     let footer_area = Rect {
         x: area.x,
         y: area.bottom().saturating_sub(1),

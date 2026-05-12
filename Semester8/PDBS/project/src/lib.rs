@@ -2,7 +2,7 @@ use std::error::Error;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use mongodb::Collection;
-use mongodb::bson::{Bson, Document, RawBsonRef, doc};
+use mongodb::bson::{Bson, Document, doc};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -150,18 +150,6 @@ pub async fn nearby_objects(
     collect_find_results(collection, filter, limit).await
 }
 
-pub async fn visible_objects(
-    collection: &Collection<SkyObject>,
-    lst_deg: f64,
-    horizon_limit_deg: f64,
-    max_magnitude: Option<f64>,
-    limit: usize,
-) -> Result<Vec<SkyObject>, Box<dyn Error + Send + Sync>> {
-    let visible_filter = build_visible_filter(lst_deg, horizon_limit_deg);
-    let filter = combine_filters(vec![visible_filter, build_magnitude_filter(max_magnitude)]);
-    collect_find_results(collection, filter, limit).await
-}
-
 pub async fn geonear_objects(
     collection: &Collection<SkyObject>,
     center_lon: f64,
@@ -174,13 +162,11 @@ pub async fn geonear_objects(
 ) -> Result<Vec<(SkyObject, f64)>, Box<dyn Error + Send + Sync>> {
     use mongodb::bson::raw::RawBsonRef;
 
-    // Create the exclusion query
     let mut query_doc = doc! {};
     if let Some(exclude) = exclude_designation {
         query_doc.insert("designation", doc! { "$ne": exclude });
     }
     if let Some(catalog) = catalog_filter {
-        // Filter by the source field (e.g., "NGC", "Messier") ignoring case
         query_doc.insert("source", doc! { "$regex": catalog, "$options": "i" });
     }
 
@@ -258,62 +244,6 @@ fn build_radius_filter(center: &SkyObject, radius_deg: f64) -> Document {
                     radius_deg.to_radians()
                 ]
             }
-        }
-    }
-}
-
-fn build_visible_filter(lst_deg: f64, horizon_limit_deg: f64) -> Document {
-    let left = normalize_longitude(lst_deg - 90.0);
-    let right = normalize_longitude(lst_deg + 90.0);
-
-    let make_ring = |west: f64, east: f64| {
-        vec![
-            vec![west, horizon_limit_deg],
-            vec![east, horizon_limit_deg],
-            vec![east, 90.0],
-            vec![west, 90.0],
-            vec![west, horizon_limit_deg],
-        ]
-    };
-
-    if left <= right {
-        doc! {
-            "location": {
-                "$geoWithin": {
-                    "$geometry": {
-                        "type": "Polygon",
-                        "coordinates": [make_ring(left, right)],
-                    }
-                }
-            }
-        }
-    } else {
-        let western_ring = make_ring(left, 180.0);
-        let eastern_ring = make_ring(-180.0, right);
-
-        doc! {
-            "$or": [
-                {
-                    "location": {
-                        "$geoWithin": {
-                            "$geometry": {
-                                "type": "Polygon",
-                                "coordinates": [western_ring],
-                            }
-                        }
-                    }
-                },
-                {
-                    "location": {
-                        "$geoWithin": {
-                            "$geometry": {
-                                "type": "Polygon",
-                                "coordinates": [eastern_ring],
-                            }
-                        }
-                    }
-                }
-            ]
         }
     }
 }
