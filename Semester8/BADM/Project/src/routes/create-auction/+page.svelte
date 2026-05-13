@@ -41,6 +41,7 @@
 			const originalFileHash = `0x${await sha256Hex(
 				`${name.trim()}|${description.trim()}|${ipfsHandle.trim()}|${passphraseHash}`
 			)}`;
+			const hashedFileHash = `0x${await sha256Hex(originalFileHash)}`;
 			const endTimestamp = BigInt(Math.floor(new Date(endAt).getTime() / 1000));
 
 			const address = await deployAuctionContract(signer, {
@@ -48,6 +49,7 @@
 				name: name.trim(),
 				description: description.trim(),
 				originalFileHash,
+				hashedFileHash,
 				ipfsHandle: ipfsHandle.trim(),
 				passphraseHash,
 				endAt: endTimestamp

@@ -12,6 +12,7 @@ contract Auction {
     string private name;
     string private description;
     bytes32 private originalFileHash;
+    bytes32 private hashedFileHash;
     string private ipfsHandle;
     bytes32 private passphraseHash;
     string private revealedPassphrase;
@@ -48,6 +49,7 @@ contract Auction {
         string memory _name,
         string memory _description,
         bytes32 _originalFileHash,
+        bytes32 _hashedFileHash,
         string memory _ipfsHandle,
         bytes32 _passphraseHash,
         uint256 _endAt
@@ -56,6 +58,7 @@ contract Auction {
         name = _name;
         description = _description;
         originalFileHash = _originalFileHash;
+        hashedFileHash = _hashedFileHash;
         ipfsHandle = _ipfsHandle;
         passphraseHash = _passphraseHash;
         endAt = _endAt;
@@ -84,7 +87,7 @@ contract Auction {
     }
 
     function checkStatus() public view 
-        returns (string memory, string memory, address, uint256, uint256, uint8, string memory) 
+        returns (string memory, string memory, address, uint256, uint256, uint8, string memory, bytes32) 
     {
         uint8 derivedState = uint8(state);
 
@@ -92,7 +95,7 @@ contract Auction {
             derivedState = uint8(State.WaitingPassphrase);
         }
 
-        return (name, description, owner, endAt, maxBid, derivedState, ipfsHandle);
+        return (name, description, owner, endAt, maxBid, derivedState, ipfsHandle, hashedFileHash);
     }
 
     function bid() external payable inState(State.Bidding) {

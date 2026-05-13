@@ -209,6 +209,10 @@
 								<span class="font-medium text-slate-950">IPFS handle:</span>
 								{auction.ipfsHandle}
 							</p>
+							<p class="break-all">
+								<span class="font-medium text-slate-950">Hashed file hash:</span>
+								{auction.hashedFileHash}
+							</p>
 						</div>
 
 						{#if actionMessage}

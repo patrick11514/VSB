@@ -2,12 +2,12 @@ import { browser } from '$app/environment';
 import { ethers } from 'ethers';
 
 export const AUCTION_ABI = [
-	'constructor(uint256 _minBid, string _name, string _description, bytes32 _originalFileHash, string _ipfsHandle, bytes32 _passphraseHash, uint256 _endAt)',
+	'constructor(uint256 _minBid, string _name, string _description, bytes32 _originalFileHash, bytes32 _hashedFileHash, string _ipfsHandle, bytes32 _passphraseHash, uint256 _endAt)',
 	'function isOwner() view returns (bool)',
 	'function isWinner() view returns (bool)',
 	'function canRefund() view returns (uint256)',
 	'function canEndAuction() view returns (bool)',
-	'function checkStatus() view returns (string, string, address, uint256, uint256, uint8, string)',
+	'function checkStatus() view returns (string, string, address, uint256, uint256, uint8, string, bytes32)',
 	'function bid() payable',
 	'function endAuction()',
 	'function revealPassphrase(string passphrase)',
@@ -19,10 +19,7 @@ const AUCTION_BYTECODE = import.meta.env.VITE_AUCTION_BYTECODE?.trim() ?? '';
 
 if (!browser) {
 	import('node:crypto').then((crypto) => {
-		console.log(
-			'Bytecode hash: ',
-			crypto.createHash('sha256').update(AUCTION_BYTECODE).digest('hex')
-		);
+		crypto.createHash('sha256').update(AUCTION_BYTECODE).digest('hex');
 	});
 }
 
@@ -34,6 +31,7 @@ export interface AuctionDetails {
 	name: string;
 	description: string;
 	ipfsHandle: string;
+	hashedFileHash: string;
 	endAt: bigint;
 	maxBid: bigint;
 	state: number;
@@ -71,7 +69,8 @@ export async function readAuction(
 	runner: ethers.ContractRunner
 ): Promise<AuctionDetails> {
 	const contract = getAuctionContract(address, runner);
-	const [name, description, owner, endAt, maxBid, state, ipfsHandle] = await contract.checkStatus();
+	const [name, description, owner, endAt, maxBid, state, ipfsHandle, hashedFileHash] =
+		await contract.checkStatus();
 
 	return {
 		address,
@@ -79,6 +78,7 @@ export async function readAuction(
 		name,
 		description,
 		ipfsHandle,
+		hashedFileHash,
 		endAt: BigInt(endAt),
 		maxBid: BigInt(maxBid),
 		state: Number(state)
@@ -93,8 +93,6 @@ export async function getAuctionPermissions(address: string, runner: ethers.Cont
 		contract.canRefund(),
 		contract.canEndAuction()
 	]);
-
-	console.log(refundAmount);
 
 	return {
 		isOwner: Boolean(isOwner),
@@ -128,6 +126,7 @@ export async function deployAuctionContract(
 		name: string;
 		description: string;
 		originalFileHash: string;
+		hashedFileHash: string;
 		ipfsHandle: string;
 		passphraseHash: string;
 		endAt: bigint;
@@ -145,6 +144,7 @@ export async function deployAuctionContract(
 		params.name,
 		params.description,
 		params.originalFileHash,
+		params.hashedFileHash,
 		params.ipfsHandle,
 		params.passphraseHash,
 		params.endAt
