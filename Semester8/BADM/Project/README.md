@@ -25,12 +25,20 @@ EtherZar is an Ethereum-based marketplace for selling encrypted digital content 
 
 1. User connects MetaMask (Sepolia).
 2. User fills auction form: `Name`, `End Timestamp`, `Min bid` (optional), `Description` (Markdown), `Passphrase/key` (or auto-generate), and file (upload) or IPFS handle.
-3. If uploading a raw file (Mode A):
-   - App generates SHA-256 of the original file and SHA-256 of passphrase.
-   - The file is symmetrically encrypted/hashed with the passphrase client-side.
-   - App uploads the (encrypted) file to IPFS and obtains an IPFS handle.
-4. If user provided an IPFS handle (Mode B):
-   - User must supply the passphrase used to derive the encrypted file.
+3. If the user chooses manual metadata entry with an existing IPFS handle (Mode A):
+
+- User provides `ipfs handle`, `original file hash`, `hashed file hash`, and `passphrase`.
+- The app validates the hashes as 32-byte content checksums and can optionally verify the IPFS handle.
+- No browser-side file processing happens in this mode.
+
+4. If the user chooses local file upload (Mode B):
+
+- User provides a local file and `passphrase`.
+- The app reads the raw file bytes and computes `original file hash` from the file content, like running `sha256sum` on the raw file.
+- The app encrypts the raw bytes in memory with the provided passphrase.
+- The app packages the encrypted payload and computes `hashed file hash` from the encrypted bytes, again matching `sha256sum` semantics on the uploaded artifact.
+- Only the encrypted payload is uploaded to IPFS; the plaintext file is discarded after processing.
+
 5. The app deploys the auction smart contract to Sepolia with constructor args: `minBid`, `name`, `description`, `original_file_hash`, `ipfs_handle`, `passphrase_hash`, `end_at_ts`.
 6. User confirms the deployment in MetaMask and the app waits for contract confirmation.
 7. After deployment the app stores: `name`, `description`, and `contract address` in the app database (for search/listing) and redirects to `/auction/{contract_address}`.
@@ -81,14 +89,18 @@ Notes:
 
 ## IPFS & Encryption Modes
 
-- Mode A (app uploads): user uploads file; app hashes, encrypts with passphrase client-side, uploads to IPFS and stores handle.
-- Mode B (user provides handle): suitable for large files; user must provide the passphrase used to symmetrically encrypt the file previously uploaded to IPFS.
+- Mode A (manual metadata): user supplies an existing IPFS handle and both checksums. The app does not touch file bytes in this mode.
+- Mode B (file upload): user uploads a local file; the app computes the raw file checksum, encrypts the bytes in memory with the passphrase, computes the checksum of the encrypted payload, and uploads only the encrypted payload to IPFS.
+- In Mode B, the encrypted payload checksum is meant to match `sha256sum` run on the downloaded IPFS file byte-for-byte.
+- The encrypted payload includes the data needed for future decryption handling, while the plaintext file is not uploaded and is discarded after processing.
+- Browser uploads require a real IPFS API endpoint in `VITE_IPFS_API_URL`; a public gateway like `ipfs.io` cannot be used for `add` requests because it does not expose the IPFS API with the CORS headers the browser needs.
 
 ## Testing / Notes
 
 - The app is intended for Sepolia testnet only (for school/testing). Users must switch MetaMask to Sepolia.
 - Sensitive secrets (passphrases) are only stored locally if the user opts in; the smart contract only stores the hash of the passphrase.
 - Verify client-side SHA-256 calculations and encryption before submitting contracts.
+- For local development, point `VITE_IPFS_API_URL` at an IPFS daemon API such as `http://127.0.0.1:5001/api/v0` and ensure that daemon allows CORS from your app origin.
 
 ## Security considerations
 
@@ -152,3 +164,10 @@ Next actions I can take for you:
 - Run a local build and dev server to verify installs (`pnpm build` / `pnpm dev`).
 - Scaffold SvelteKit pages for auction listing and `/auction/[address]` pages that use the services above.
 - Add unit tests for the crypto and IPFS wrappers.
+
+### Example environment variables
+
+```bash
+VITE_AUCTION_BYTECODE=...
+VITE_IPFS_API_URL=http://127.0.0.1:5001/api/v0
+```

@@ -59,7 +59,6 @@
 		"date-fns": "^4.1.0",
 		"dotenv": "^17.4.2",
 		"ethers": "^6.16.0",
-		"ipfs-http-client": "^60.0.1",
 		"tweetnacl": "^1.0.3",
 		"uuid": "^14.0.0",
 		"zod": "^4.4.3"

@@ -41,11 +41,23 @@ if (output.errors && output.errors.length > 0) {
 const contract = output.contracts['Auction.sol']['Auction'];
 const bytecode = contract.evm.bytecode.object;
 
-// Create .env.local file with the bytecode
-const envContent = `VITE_AUCTION_BYTECODE=${bytecode}\n`;
+let originalContent = '';
+if (fs.existsSync(path.join(__dirname, '../.env.local'))) {
+	originalContent = fs.readFileSync(path.join(__dirname, '../.env.local'), 'utf8');
+}
+
+if (originalContent.includes('VITE_AUCTION_BYTECODE=')) {
+	originalContent = originalContent.replace(
+		/VITE_AUCTION_BYTECODE=[^\n]*/,
+		`VITE_AUCTION_BYTECODE=${bytecode}`
+	);
+} else {
+	originalContent = `VITE_AUCTION_BYTECODE=${bytecode}\n${originalContent}`;
+}
+
 const envPath = path.join(__dirname, '../.env.local');
 
-fs.writeFileSync(envPath, envContent);
+fs.writeFileSync(envPath, originalContent, 'utf8');
 
 console.log('Bytecode hash: ', crypto.createHash('sha256').update(bytecode).digest('hex'));
 

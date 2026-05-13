@@ -6,12 +6,14 @@ function toHex(buffer: ArrayBuffer) {
 		.join('');
 }
 
-export async function sha256Hex(input: string | ArrayBuffer) {
+export async function sha256Hex(input: string | ArrayBuffer | ArrayBufferView) {
 	const data =
 		typeof input === 'string'
 			? new TextEncoder().encode(input)
-			: new Uint8Array(input as ArrayBuffer);
-	const hash = await crypto.subtle.digest('SHA-256', data);
+			: input instanceof ArrayBuffer
+				? new Uint8Array(input)
+				: new Uint8Array(input.buffer, input.byteOffset, input.byteLength);
+	const hash = await crypto.subtle.digest('SHA-256', data as BufferSource);
 	return toHex(hash);
 }
 
@@ -40,6 +42,14 @@ export async function encryptWithPassphrase(plaintext: ArrayBuffer, passphrase: 
 	const iv = crypto.getRandomValues(new Uint8Array(12));
 	const cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, plaintext);
 	return { cipher: new Uint8Array(cipher), iv, salt };
+}
+
+export function packageEncryptedFile(cipher: Uint8Array, iv: Uint8Array, salt: Uint8Array) {
+	const payload = new Uint8Array(salt.length + iv.length + cipher.length);
+	payload.set(salt, 0);
+	payload.set(iv, salt.length);
+	payload.set(cipher, salt.length + iv.length);
+	return payload;
 }
 
 export async function decryptWithPassphrase(

@@ -253,7 +253,7 @@
 							</div>
 						</div>
 
-						<div class="grid gap-3 text-sm text-slate-600 sm:grid-cols-2">
+						<div class="grid gap-3 text-sm text-slate-600">
 							<p><span class="font-medium text-slate-950">Owner:</span> {auction.owner}</p>
 							<p>
 								<span class="font-medium text-slate-950">Max bid:</span>

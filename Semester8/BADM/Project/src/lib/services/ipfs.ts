@@ -1,37 +1,38 @@
-import type { IPFSHTTPClient } from 'ipfs-http-client';
-import { create } from 'ipfs-http-client';
+const JWT = import.meta.env.VITE_PINATA_JWT;
 
-const IPFS_URL = import.meta.env.VITE_IPFS_URL || 'https://ipfs.io';
+//eslint-disable-next-line
+const pinataHTTP = async (url: string, method: string, body: any) => {
+	const response = await fetch(url, {
+		method,
+		headers: {
+			Authorization: `Bearer ${JWT}`
+		},
+		body
+	});
 
-let client: IPFSHTTPClient | null = null;
+	if (!response.ok) {
+		const errText = await response.text();
+		throw new Error(`Pinata API error: ${response.status} ${response.statusText} - ${errText}`);
+	}
 
-function getClient() {
-	if (client) return client;
-	// Use ipfs-http-client with a configurable URL
-	client = create({ url: IPFS_URL });
-	return client;
-}
+	return response;
+};
 
 export async function uploadFile(file: File): Promise<string> {
-	const c = getClient();
-	const added = await c.add(file);
-	return added.cid.toString();
+	const fd = new FormData();
+	fd.append('file', file);
+
+	const response = await pinataHTTP('https://api.pinata.cloud/pinning/pinFileToIPFS', 'POST', fd);
+	const json = await response.json();
+	return json.IpfsHash;
 }
 
 export async function getFile(cid: string): Promise<Uint8Array> {
-	const c = getClient();
-	const stream = c.cat(cid);
-	const chunks: Uint8Array[] = [];
-	for await (const chunk of stream) {
-		chunks.push(chunk as Uint8Array);
-	}
-	// concat
-	const length = chunks.reduce((sum, c) => sum + c.length, 0);
-	const result = new Uint8Array(length);
-	let offset = 0;
-	for (const chunk of chunks) {
-		result.set(chunk, offset);
-		offset += chunk.length;
-	}
-	return result;
+	const response = await pinataHTTP(
+		`https://pink-cheerful-anglerfish-366.mypinata.cloud/ipfs/${cid}`,
+		'GET',
+		undefined
+	);
+	const buffer = await response.arrayBuffer();
+	return new Uint8Array(buffer);
 }

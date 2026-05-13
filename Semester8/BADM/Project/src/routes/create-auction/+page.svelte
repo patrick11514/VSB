@@ -4,7 +4,12 @@
 	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
 	import { deployAuctionContract } from '$lib/services/auction-contract';
-	import { generateRandomPassphrase, sha256Hex } from '$lib/services/crypto';
+	import {
+		encryptWithPassphrase,
+		generateRandomPassphrase,
+		packageEncryptedFile,
+		sha256Hex
+	} from '$lib/services/crypto';
 	import { uploadFile } from '$lib/services/ipfs';
 	import { parseEth } from '$lib/services/web3';
 	import { pendingWalletAddress, provider, walletAddress } from '$lib/stores/session';
@@ -86,9 +91,15 @@
 			if (sourceMode === 'file' && selectedFile) {
 				const fileBytes = await selectedFile.arrayBuffer();
 				resolvedOriginalFileHash = `0x${await sha256Hex(fileBytes)}`;
-				resolvedHashedFileHash = `0x${await sha256Hex(resolvedOriginalFileHash)}`;
 
-				const cid = await uploadFile(selectedFile);
+				const { cipher, iv, salt } = await encryptWithPassphrase(fileBytes, passphrase.trim());
+				const encryptedPayload = packageEncryptedFile(cipher, iv, salt);
+				resolvedHashedFileHash = `0x${await sha256Hex(encryptedPayload)}`;
+
+				const encryptedFile = new File([encryptedPayload], selectedFile.name, {
+					type: selectedFile.type || 'application/octet-stream'
+				});
+				const cid = await uploadFile(encryptedFile);
 				resolvedIpfsHandle = `ipfs://${cid}`;
 			}
 			const endTimestamp = BigInt(Math.floor(new Date(endAt).getTime() / 1000));
