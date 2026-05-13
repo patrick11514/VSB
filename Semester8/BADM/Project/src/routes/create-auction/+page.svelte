@@ -6,8 +6,8 @@
 	import { deployAuctionContract } from '$lib/services/auction-contract';
 	import { generateRandomPassphrase, sha256Hex } from '$lib/services/crypto';
 	import { uploadFile } from '$lib/services/ipfs';
-	import { formatEth, parseEth } from '$lib/services/web3';
-	import { provider, walletAddress } from '$lib/stores/session';
+	import { parseEth } from '$lib/services/web3';
+	import { pendingWalletAddress, provider, walletAddress } from '$lib/stores/session';
 
 	const defaultEndAt = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
 	type SourceMode = 'manual' | 'file';
@@ -25,6 +25,8 @@
 	let isSubmitting = $state(false);
 	let errorMessage = $state('');
 	let successMessage = $state('');
+
+	const footerWalletAddress = $derived($pendingWalletAddress ?? $walletAddress);
 
 	function isValidBytes32(value: string) {
 		return /^0x[a-fA-F0-9]{64}$/.test(value);
@@ -237,8 +239,7 @@
 					<div
 						class="rounded-lg border border-dashed border-slate-200 bg-slate-100/70 p-4 text-sm text-slate-600"
 					>
-						<p>Connected wallet: {$walletAddress ?? 'Not connected'}</p>
-						<p class="mt-1">Min bid: {minBidEth || formatEth(0n)} ETH</p>
+						<p>Connected wallet: {footerWalletAddress ?? 'Not connected'}</p>
 					</div>
 
 					{#if errorMessage}

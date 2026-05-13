@@ -8,10 +8,12 @@
 	} from '$lib/components/ui/card';
 	import { connectMetaMask } from '$lib/services/web3';
 	import {
+		accountSwitchPromptOpen,
 		error,
 		isAuthenticated,
 		isLoading,
 		network,
+		pendingWalletAddress,
 		provider,
 		walletAddress
 	} from '$lib/stores/session';
@@ -41,6 +43,8 @@
 			provider.set(p);
 			network.set(net);
 			walletAddress.set(address);
+			pendingWalletAddress.set(null);
+			accountSwitchPromptOpen.set(false);
 			isAuthenticated.set(true);
 			isLoading.set(false);
 		} catch (e) {

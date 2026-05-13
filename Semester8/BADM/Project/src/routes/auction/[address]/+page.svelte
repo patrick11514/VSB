@@ -21,7 +21,12 @@
 		type AuctionRevealDetails
 	} from '$lib/services/auction-contract';
 	import { formatEth, parseEth } from '$lib/services/web3';
-	import { provider } from '$lib/stores/session';
+	import {
+		accountSwitchPromptOpen,
+		pendingWalletAddress,
+		provider,
+		walletAddress
+	} from '$lib/stores/session';
 	import { onMount } from 'svelte';
 
 	let { data } = $props<{ data: { address: string } }>();
@@ -39,6 +44,11 @@
 	let isWorking = $state(false);
 	let winnerDetails = $state<AuctionRevealDetails | null>(null);
 	let isFilePopupOpen = $state(false);
+	let hasRejectedAccountSwitch = $state(false);
+
+	function isActionsBlocked() {
+		return hasRejectedAccountSwitch && Boolean($pendingWalletAddress);
+	}
 
 	async function loadAuction() {
 		actionError = '';
@@ -88,6 +98,11 @@
 	}
 
 	async function handleBid() {
+		if (isActionsBlocked()) {
+			actionError = 'Please accept the switched MetaMask account to continue.';
+			return;
+		}
+
 		if (!$provider || !auction) {
 			return;
 		}
@@ -100,6 +115,11 @@
 	}
 
 	async function handleEndAuction() {
+		if (isActionsBlocked()) {
+			actionError = 'Please accept the switched MetaMask account to continue.';
+			return;
+		}
+
 		if (!$provider) {
 			return;
 		}
@@ -109,6 +129,11 @@
 	}
 
 	async function handleRevealPassphrase() {
+		if (isActionsBlocked()) {
+			actionError = 'Please accept the switched MetaMask account to continue.';
+			return;
+		}
+
 		if (!$provider) {
 			return;
 		}
@@ -127,6 +152,11 @@
 	}
 
 	async function handleRefund() {
+		if (isActionsBlocked()) {
+			actionError = 'Please accept the switched MetaMask account to continue.';
+			return;
+		}
+
 		if (!$provider) {
 			return;
 		}
@@ -136,6 +166,11 @@
 	}
 
 	async function openWinnerDetails() {
+		if (isActionsBlocked()) {
+			actionError = 'Please accept the switched MetaMask account to continue.';
+			return;
+		}
+
 		if (!$provider) {
 			return;
 		}
@@ -148,6 +183,25 @@
 	onMount(() => {
 		void loadAuction();
 	});
+
+	async function acceptAccountSwitch() {
+		if (!$pendingWalletAddress) {
+			accountSwitchPromptOpen.set(false);
+			hasRejectedAccountSwitch = false;
+			return;
+		}
+
+		walletAddress.set($pendingWalletAddress);
+		pendingWalletAddress.set(null);
+		accountSwitchPromptOpen.set(false);
+		hasRejectedAccountSwitch = false;
+		await loadAuction();
+	}
+
+	function rejectAccountSwitch() {
+		accountSwitchPromptOpen.set(false);
+		hasRejectedAccountSwitch = true;
+	}
 </script>
 
 <svelte:head>
@@ -247,7 +301,11 @@
 									>
 									<Input id="bidAmount" bind:value={bidAmount} type="number" min="0" step="0.01" />
 								</div>
-								<Button class="w-full" disabled={isWorking} onclick={handleBid}>Submit bid</Button>
+								<Button
+									class="w-full"
+									disabled={isWorking || isActionsBlocked()}
+									onclick={handleBid}>Submit bid</Button
+								>
 							</CardContent>
 						</Card>
 					{/if}
@@ -264,9 +322,14 @@
 								<p class="text-sm text-slate-600">
 									Refund amount: {formatEth(refundAmount)} ETH
 								</p>
-								<Button class="w-full" variant="outline" disabled={isWorking} onclick={handleRefund}
-									>Get money back</Button
+								<Button
+									class="w-full"
+									variant="outline"
+									disabled={isWorking || isActionsBlocked()}
+									onclick={handleRefund}
 								>
+									Get money back
+								</Button>
 							</CardContent>
 						</Card>
 					{/if}
@@ -282,9 +345,13 @@
 							<CardContent class="space-y-3">
 								{#if auction.state === 0}
 									{#if canEndAuction}
-										<Button class="w-full" disabled={isWorking} onclick={handleEndAuction}
-											>End auction</Button
+										<Button
+											class="w-full"
+											disabled={isWorking || isActionsBlocked()}
+											onclick={handleEndAuction}
 										>
+											End auction
+										</Button>
 									{/if}
 								{/if}
 								{#if auction.state === 1}
@@ -299,9 +366,13 @@
 											placeholder="Enter the auction passphrase"
 										/>
 									</div>
-									<Button class="w-full" disabled={isWorking} onclick={handleRevealPassphrase}
-										>Reveal and complete auction</Button
+									<Button
+										class="w-full"
+										disabled={isWorking || isActionsBlocked()}
+										onclick={handleRevealPassphrase}
 									>
+										Reveal and complete auction
+									</Button>
 								{/if}
 							</CardContent>
 						</Card>
@@ -316,9 +387,13 @@
 								>
 							</CardHeader>
 							<CardContent class="space-y-3">
-								<Button class="w-full" disabled={isWorking} onclick={openWinnerDetails}
-									>Get file</Button
+								<Button
+									class="w-full"
+									disabled={isWorking || isActionsBlocked()}
+									onclick={openWinnerDetails}
 								>
+									Get file
+								</Button>
 							</CardContent>
 						</Card>
 					{/if}
@@ -327,6 +402,23 @@
 		{/if}
 	</div>
 </div>
+
+{#if $accountSwitchPromptOpen && $pendingWalletAddress}
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4">
+		<div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+			<h2 class="text-lg font-semibold text-slate-950">Account changed</h2>
+			<p class="mt-2 text-sm text-slate-600">
+				You changed account in metamask, you want to use that account on page?
+			</p>
+			<p class="mt-2 text-xs break-all text-slate-500">{$pendingWalletAddress}</p>
+
+			<div class="mt-5 flex justify-end gap-2">
+				<Button type="button" variant="outline" onclick={rejectAccountSwitch}>No</Button>
+				<Button type="button" onclick={acceptAccountSwitch}>Yes</Button>
+			</div>
+		</div>
+	</div>
+{/if}
 
 {#if isFilePopupOpen && winnerDetails}
 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4">

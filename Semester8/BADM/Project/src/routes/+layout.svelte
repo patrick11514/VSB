@@ -2,36 +2,59 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import ConnectWallet from '$lib/components/ConnectWallet.svelte';
 	import { removeMetaMaskListeners, setupMetaMaskListeners } from '$lib/services/web3';
-	import { isAuthenticated, walletAddress } from '$lib/stores/session';
+	import {
+		accountSwitchPromptOpen,
+		isAuthenticated,
+		pendingWalletAddress,
+		walletAddress
+	} from '$lib/stores/session';
 	import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
 	import './layout.css';
 
 	let { children } = $props();
 
 	onMount(() => {
-		// Try to reconnect on mount if user was previously connected
-		setupMetaMaskListeners(
-			(accounts: string[]) => {
-				console.log('Accounts changed:', accounts);
-				if (accounts.length === 0) {
-					// User disconnected
-					isAuthenticated.set(false);
-					walletAddress.set(null);
-				}
-			},
-			(chainId: string) => {
-				console.log('Chain changed:', chainId);
-				// User switched networks, re-check authentication
+		const handleAccountsChanged = (accounts: string[]) => {
+			if (accounts.length === 0) {
 				isAuthenticated.set(false);
 				walletAddress.set(null);
+				pendingWalletAddress.set(null);
+				accountSwitchPromptOpen.set(false);
+				return;
 			}
-		);
+
+			const newAccount = accounts[0];
+			const acceptedAccount = get(walletAddress);
+
+			if (!acceptedAccount) {
+				walletAddress.set(newAccount);
+				pendingWalletAddress.set(null);
+				accountSwitchPromptOpen.set(false);
+				return;
+			}
+
+			if (newAccount.toLowerCase() === acceptedAccount.toLowerCase()) {
+				pendingWalletAddress.set(null);
+				accountSwitchPromptOpen.set(false);
+				return;
+			}
+
+			pendingWalletAddress.set(newAccount);
+			accountSwitchPromptOpen.set(true);
+		};
+
+		const handleChainChanged = () => {
+			isAuthenticated.set(false);
+			walletAddress.set(null);
+			pendingWalletAddress.set(null);
+			accountSwitchPromptOpen.set(false);
+		};
+
+		setupMetaMaskListeners(handleAccountsChanged, handleChainChanged);
 
 		return () => {
-			removeMetaMaskListeners(
-				() => {},
-				() => {}
-			);
+			removeMetaMaskListeners(handleAccountsChanged, handleChainChanged);
 		};
 	});
 </script>

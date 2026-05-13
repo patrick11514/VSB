@@ -7,6 +7,8 @@ export const network = writable<ethers.Network | null>(null);
 export const isAuthenticated = writable<boolean>(false);
 export const isLoading = writable<boolean>(false);
 export const error = writable<string | null>(null);
+export const pendingWalletAddress = writable<string | null>(null);
+export const accountSwitchPromptOpen = writable<boolean>(false);
 
 export function resetAuth() {
 	walletAddress.set(null);
@@ -14,4 +16,6 @@ export function resetAuth() {
 	network.set(null);
 	isAuthenticated.set(false);
 	error.set(null);
+	pendingWalletAddress.set(null);
+	accountSwitchPromptOpen.set(false);
 }
