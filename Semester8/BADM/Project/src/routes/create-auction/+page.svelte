@@ -4,20 +4,40 @@
 	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
 	import { deployAuctionContract } from '$lib/services/auction-contract';
-	import { sha256Hex } from '$lib/services/crypto';
-	import { formatEth } from '$lib/services/web3';
+	import { generateRandomPassphrase, sha256Hex } from '$lib/services/crypto';
+	import { uploadFile } from '$lib/services/ipfs';
+	import { formatEth, parseEth } from '$lib/services/web3';
 	import { provider, walletAddress } from '$lib/stores/session';
 
 	const defaultEndAt = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
+	type SourceMode = 'manual' | 'file';
 
 	let name = $state('Example contract');
 	let description = $state('Simple contract presentation auction');
 	let endAt = $state(defaultEndAt);
+	let sourceMode = $state<SourceMode>('manual');
 	let ipfsHandle = $state('ipfs://example-handle');
+	let originalFileHash = $state('');
+	let hashedFileHash = $state('');
+	let selectedFile = $state<File | null>(null);
+	let minBidEth = $state('0');
 	let passphrase = $state('open-sesame');
 	let isSubmitting = $state(false);
 	let errorMessage = $state('');
 	let successMessage = $state('');
+
+	function isValidBytes32(value: string) {
+		return /^0x[a-fA-F0-9]{64}$/.test(value);
+	}
+
+	function handleFileChange(event: Event) {
+		const input = event.currentTarget as HTMLInputElement;
+		selectedFile = input.files?.[0] ?? null;
+	}
+
+	function handleGeneratePassphrase() {
+		passphrase = generateRandomPassphrase(16);
+	}
 
 	async function handleSubmit(event: SubmitEvent) {
 		event.preventDefault();
@@ -29,8 +49,25 @@
 			return;
 		}
 
-		if (!name.trim() || !description.trim() || !ipfsHandle.trim() || !passphrase.trim() || !endAt) {
+		if (!name.trim() || !description.trim() || !passphrase.trim() || !endAt || !minBidEth.trim()) {
 			errorMessage = 'All fields are required.';
+			return;
+		}
+
+		if (sourceMode === 'manual') {
+			if (!ipfsHandle.trim() || !originalFileHash.trim() || !hashedFileHash.trim()) {
+				errorMessage = 'IPFS handle and both hash fields are required in manual mode.';
+				return;
+			}
+
+			if (!isValidBytes32(originalFileHash.trim()) || !isValidBytes32(hashedFileHash.trim())) {
+				errorMessage = 'originalFileHash and hashedFileHash must be 32-byte hex values.';
+				return;
+			}
+		}
+
+		if (sourceMode === 'file' && !selectedFile) {
+			errorMessage = 'Select a file in file mode.';
 			return;
 		}
 
@@ -38,19 +75,29 @@
 		try {
 			const signer = await $provider.getSigner();
 			const passphraseHash = `0x${await sha256Hex(passphrase.trim())}`;
-			const originalFileHash = `0x${await sha256Hex(
-				`${name.trim()}|${description.trim()}|${ipfsHandle.trim()}|${passphraseHash}`
-			)}`;
-			const hashedFileHash = `0x${await sha256Hex(originalFileHash)}`;
+			const minBid = parseEth(minBidEth.trim());
+
+			let resolvedIpfsHandle = ipfsHandle.trim();
+			let resolvedOriginalFileHash = originalFileHash.trim();
+			let resolvedHashedFileHash = hashedFileHash.trim();
+
+			if (sourceMode === 'file' && selectedFile) {
+				const fileBytes = await selectedFile.arrayBuffer();
+				resolvedOriginalFileHash = `0x${await sha256Hex(fileBytes)}`;
+				resolvedHashedFileHash = `0x${await sha256Hex(resolvedOriginalFileHash)}`;
+
+				const cid = await uploadFile(selectedFile);
+				resolvedIpfsHandle = `ipfs://${cid}`;
+			}
 			const endTimestamp = BigInt(Math.floor(new Date(endAt).getTime() / 1000));
 
 			const address = await deployAuctionContract(signer, {
-				minBid: 0n,
+				minBid,
 				name: name.trim(),
 				description: description.trim(),
-				originalFileHash,
-				hashedFileHash,
-				ipfsHandle: ipfsHandle.trim(),
+				originalFileHash: resolvedOriginalFileHash,
+				hashedFileHash: resolvedHashedFileHash,
+				ipfsHandle: resolvedIpfsHandle,
 				passphraseHash,
 				endAt: endTimestamp
 			});
@@ -83,6 +130,26 @@
 			<CardContent>
 				<form class="space-y-5" onsubmit={handleSubmit}>
 					<div class="grid gap-2">
+						<p class="text-sm font-medium text-slate-700">Source mode</p>
+						<div class="grid grid-cols-2 gap-2">
+							<Button
+								type="button"
+								variant={sourceMode === 'manual' ? 'default' : 'outline'}
+								onclick={() => (sourceMode = 'manual')}
+							>
+								IPFS handle (manual)
+							</Button>
+							<Button
+								type="button"
+								variant={sourceMode === 'file' ? 'default' : 'outline'}
+								onclick={() => (sourceMode = 'file')}
+							>
+								File input
+							</Button>
+						</div>
+					</div>
+
+					<div class="grid gap-2">
 						<label class="text-sm font-medium text-slate-700" for="name">Name</label>
 						<Input id="name" bind:value={name} placeholder="Auction name" />
 					</div>
@@ -104,25 +171,74 @@
 					</div>
 
 					<div class="grid gap-2">
-						<label class="text-sm font-medium text-slate-700" for="ipfsHandle">IPFS handle</label>
-						<Input id="ipfsHandle" bind:value={ipfsHandle} placeholder="ipfs://..." />
+						<label class="text-sm font-medium text-slate-700" for="minBidEth">Min bid (ETH)</label>
+						<Input id="minBidEth" bind:value={minBidEth} type="number" min="0" step="0.0001" />
 					</div>
+
+					{#if sourceMode === 'manual'}
+						<div class="grid gap-2">
+							<label class="text-sm font-medium text-slate-700" for="ipfsHandle">IPFS handle</label>
+							<Input id="ipfsHandle" bind:value={ipfsHandle} placeholder="ipfs://..." />
+						</div>
+
+						<div class="grid gap-2">
+							<label class="text-sm font-medium text-slate-700" for="originalFileHash"
+								>Original file hash</label
+							>
+							<Input
+								id="originalFileHash"
+								bind:value={originalFileHash}
+								placeholder="0x... (32-byte hex)"
+							/>
+						</div>
+
+						<div class="grid gap-2">
+							<label class="text-sm font-medium text-slate-700" for="hashedFileHash"
+								>Hashed file hash</label
+							>
+							<Input
+								id="hashedFileHash"
+								bind:value={hashedFileHash}
+								placeholder="0x... (32-byte hex)"
+							/>
+						</div>
+					{:else}
+						<div class="grid gap-2">
+							<label class="text-sm font-medium text-slate-700" for="sourceFile">Source file</label>
+							<input
+								id="sourceFile"
+								type="file"
+								onchange={handleFileChange}
+								class="block w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm text-slate-700 file:mr-4 file:rounded-md file:border-0 file:bg-slate-900 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white"
+							/>
+							{#if selectedFile}
+								<p class="text-xs text-slate-600">Selected: {selectedFile.name}</p>
+							{/if}
+						</div>
+					{/if}
 
 					<div class="grid gap-2">
 						<label class="text-sm font-medium text-slate-700" for="passphrase">Passphrase</label>
-						<Input
-							id="passphrase"
-							bind:value={passphrase}
-							type="password"
-							placeholder="Secret passphrase"
-						/>
+						<div class="flex items-center gap-2">
+							<Input
+								id="passphrase"
+								bind:value={passphrase}
+								type="password"
+								placeholder="Secret passphrase"
+							/>
+							{#if sourceMode === 'file'}
+								<Button type="button" variant="outline" onclick={handleGeneratePassphrase}
+									>Generate</Button
+								>
+							{/if}
+						</div>
 					</div>
 
 					<div
 						class="rounded-lg border border-dashed border-slate-200 bg-slate-100/70 p-4 text-sm text-slate-600"
 					>
 						<p>Connected wallet: {$walletAddress ?? 'Not connected'}</p>
-						<p class="mt-1">Min bid: {formatEth(0n)} ETH</p>
+						<p class="mt-1">Min bid: {minBidEth || formatEth(0n)} ETH</p>
 					</div>
 
 					{#if errorMessage}
