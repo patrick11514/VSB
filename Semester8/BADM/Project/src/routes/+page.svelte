@@ -2,20 +2,28 @@
 	import { goto } from '$app/navigation';
 	import AuctionList from '$lib/components/AuctionList.svelte';
 	import AuctionSearch from '$lib/components/AuctionSearch.svelte';
-	import { Badge } from '$lib/components/ui/badge';
-	import { resetAuth, walletAddress } from '$lib/stores/session';
+	import { Button } from '$lib/components/ui/button';
 	import type { Auction } from '$lib/types';
-	import { LogOut, Plus } from 'lucide-svelte';
+	import { Plus } from 'lucide-svelte';
+	import { onMount } from 'svelte';
 
-	let auctions: Auction[] = [];
-	let isLoading = false;
+	let auctions = $state<Auction[]>([]);
+	let isLoading = $state(false);
 
-	function formatAddress(addr: string) {
-		return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
-	}
-
-	async function handleDisconnect() {
-		resetAuth();
+	async function fetchAuctions() {
+		isLoading = true;
+		try {
+			const response = await fetch('/api/auctions');
+			if (response.ok) {
+				const data = await response.json();
+				auctions = Array.isArray(data) ? data : [];
+			}
+		} catch (err) {
+			console.error('Failed to fetch auctions:', err);
+			auctions = [];
+		} finally {
+			isLoading = false;
+		}
 	}
 
 	function handleSearch(query: string, type: 'name' | 'address') {
@@ -34,36 +42,14 @@
 
 	const onSearch = handleSearch;
 	const onSort = handleSort;
+
+	onMount(() => {
+		void fetchAuctions();
+	});
 </script>
 
-<div class="min-h-screen bg-slate-50">
-	<!-- Header -->
-	<header class="sticky top-0 z-40 border-b bg-white shadow-sm">
-		<div class="container mx-auto flex items-center justify-between px-4 py-4">
-			<div>
-				<h1 class="text-2xl font-bold text-slate-900">EtherZar</h1>
-				<p class="text-xs text-slate-500">Ethereum Bazaar for Encrypted Digital Assets</p>
-			</div>
-
-			<div class="flex items-center gap-4">
-				{#if $walletAddress}
-					<div class="flex items-center gap-2">
-						<Badge variant="secondary">{formatAddress($walletAddress)}</Badge>
-					</div>
-					<button
-						class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-2.5 text-sm font-medium whitespace-nowrap hover:bg-accent hover:text-accent-foreground focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
-						onclick={handleDisconnect}
-					>
-						<LogOut class="mr-2 h-4 w-4" />
-						Disconnect
-					</button>
-				{/if}
-			</div>
-		</div>
-	</header>
-
-	<!-- Main Content -->
-	<main class="container mx-auto px-4 py-8">
+<div class="bg-slate-50 px-4 py-8">
+	<main class="container mx-auto">
 		<div class="space-y-6">
 			<!-- Action Bar -->
 			<div class="flex items-center justify-between">
@@ -71,13 +57,10 @@
 					<h2 class="text-xl font-semibold text-slate-900">Active Auctions</h2>
 					<p class="text-sm text-slate-600">Browse and bid on encrypted digital assets</p>
 				</div>
-				<button
-					class="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium whitespace-nowrap text-primary-foreground hover:bg-primary/90 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
-					onclick={handleCreateAuction}
-				>
+				<Button onclick={handleCreateAuction}>
 					<Plus class="mr-2 h-4 w-4" />
 					Create Auction
-				</button>
+				</Button>
 			</div>
 
 			<!-- Search & Filter -->

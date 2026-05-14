@@ -7,39 +7,9 @@
 		isLoading?: boolean;
 	}>();
 
-	const placeholderAuctions: Auction[] = [
-		{
-			id: '0x742d35Cc6634C0532925a3b844Bc92d426B0A93d',
-			address: '0x742d35Cc6634C0532925a3b844Bc92d426B0A93d',
-			name: 'Digital Art NFT Collection',
-			description: 'Rare digital art collection with 10 unique pieces',
-			endAt: Math.floor(Date.now() / 1000) + 86400 * 2,
-			maxBid: 5.5,
-			owner: '0x742d35Cc6634C0532925a3b844Bc92d426B0A93d'
-		},
-		{
-			id: '0x2222222222222222222222222222222222222222',
-			address: '0x2222222222222222222222222222222222222222',
-			name: 'Trading Bot Source Code',
-			description: 'Algorithmic trading bot for Uniswap swaps',
-			endAt: Math.floor(Date.now() / 1000) + 3600,
-			maxBid: 2.1,
-			owner: '0x2222222222222222222222222222222222222222'
-		},
-		{
-			id: '0x1234567890123456789012345678901234567890',
-			address: '0x1234567890123456789012345678901234567890',
-			name: 'ML Model for Price Prediction',
-			description: 'Trained ML model for crypto price forecasting',
-			endAt: Math.floor(Date.now() / 1000) + 86400 * 7,
-			maxBid: 3.8,
-			owner: '0x1234567890123456789012345678901234567890'
-		}
-	];
+	console.log(auctions);
 
-	const displayAuctions: Auction[] = $derived(
-		auctions && auctions.length > 0 ? auctions : placeholderAuctions
-	);
+	const displayAuctions: Auction[] = $derived(auctions && auctions.length > 0 ? auctions : []);
 </script>
 
 <div class="space-y-4">
@@ -53,7 +23,7 @@
 		</div>
 	{:else}
 		<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-			{#each displayAuctions as auction (auction.id)}
+			{#each displayAuctions as auction (auction.address)}
 				<AuctionCard {auction} />
 			{/each}
 		</div>

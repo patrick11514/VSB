@@ -160,7 +160,7 @@
 	<title>Create Auction</title>
 </svelte:head>
 
-<div class="min-h-screen bg-slate-50 px-4 py-10">
+<div class="bg-slate-50 px-4 py-10">
 	<div class="mx-auto flex max-w-3xl flex-col gap-6">
 		<div>
 			<p class="text-sm font-medium tracking-[0.25em] text-slate-500 uppercase">Create</p>

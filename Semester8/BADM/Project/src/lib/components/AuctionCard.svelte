@@ -11,12 +11,19 @@
 	import type { Auction } from '$lib/types';
 	import { formatDistanceToNow } from 'date-fns';
 
-	let { auction } = $props<{ auction: Auction }>();
+	let {
+		auction
+	}: {
+		auction: Auction;
+	} = $props();
 
-	const isEnded = $derived(Date.now() > auction.endAt);
-	const timeRemaining = $derived(Math.max(auction.endAt, Date.now()));
+	const isEnded = $derived(Date.now() > Number(auction.endAt) * 1000);
 	const auctionAddress = $derived(auction.address ?? auction.id);
 	const detailHref = $derived(`/auction/${auctionAddress}`);
+
+	console.log(auction.endAt);
+	console.log(Date.now() / 1000);
+	console.log(Number(auction.endAt) - Date.now() / 1000);
 </script>
 
 <Card class="transition-shadow hover:shadow-lg">
@@ -46,7 +53,7 @@
 			<div>
 				<p class="text-xs text-slate-500">Time Left</p>
 				<p class="text-xs font-semibold">
-					{formatDistanceToNow(timeRemaining, { addSuffix: true })}
+					{formatDistanceToNow(new Date(Number(auction.endAt) * 1000))}
 				</p>
 			</div>
 		</div>

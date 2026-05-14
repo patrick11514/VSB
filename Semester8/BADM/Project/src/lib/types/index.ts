@@ -3,7 +3,12 @@ export interface Auction {
 	address?: string;
 	name: string;
 	description: string;
-	endAt: number;
-	maxBid: number;
+	endAt: string | number;
+	maxBid?: number;
 	owner: string;
+	ipfsHandle?: string;
+	originalFileHash?: string;
+	hashedFileHash?: string;
+	minBid?: string | number;
+	createdAt?: string;
 }

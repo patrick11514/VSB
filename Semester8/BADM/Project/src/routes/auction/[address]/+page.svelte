@@ -1,4 +1,5 @@
 <script lang="ts">
+	import CardFooter from '$/lib/components/ui/card/card-footer.svelte';
 	import { browser } from '$app/environment';
 	import { Button } from '$lib/components/ui/button';
 	import {
@@ -80,6 +81,7 @@
 					const d = await import('dompurify');
 					const mdToHtml = m.marked?.parse ?? m.parse ?? ((s: string) => s);
 					htmlDescription = d.default.sanitize(mdToHtml(auction.description || ''));
+					//eslint-disable-next-line
 				} catch (err) {
 					htmlDescription = auction.description || '';
 				}
@@ -222,7 +224,7 @@
 	<title>Auction {data.address}</title>
 </svelte:head>
 
-<div class="min-h-screen bg-slate-50 px-4 py-10">
+<div class="bg-slate-50 px-4 py-10">
 	<div class="mx-auto flex max-w-5xl flex-col gap-6">
 		<div>
 			<p class="text-sm font-medium tracking-[0.25em] text-slate-500 uppercase">Auction</p>
@@ -239,21 +241,13 @@
 			<div class="grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
 				<Card>
 					<CardHeader>
-						<div>
-							<div class="flex items-center justify-between gap-4">
-								<CardTitle class="text-2xl">{auction.name}</CardTitle>
-								<div
-									class="rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700"
-								>
-									{formatAuctionState(auction.state)}
-								</div>
+						<div class="flex items-center justify-between gap-4">
+							<CardTitle class="text-2xl">{auction.name}</CardTitle>
+							<div
+								class="rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700"
+							>
+								{formatAuctionState(auction.state)}
 							</div>
-							{#if htmlDescription}
-								<!-- eslint-disable-next-line -->
-								<div class="prose mt-1 max-w-none text-sm">{@html htmlDescription}</div>
-							{:else}
-								<CardDescription class="mt-1">{auction.description}</CardDescription>
-							{/if}
 						</div>
 					</CardHeader>
 					<CardContent class="space-y-5">
@@ -310,6 +304,15 @@
 							</div>
 						{/if}
 					</CardContent>
+					<hr />
+					<CardFooter>
+						{#if htmlDescription}
+							<!-- eslint-disable-next-line -->
+							<div class="prose mt-1 max-w-none text-sm">{@html htmlDescription}</div>
+						{:else}
+							<CardDescription class="mt-1">{auction.description}</CardDescription>
+						{/if}
+					</CardFooter>
 				</Card>
 
 				<div class="space-y-6">

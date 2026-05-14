@@ -100,7 +100,7 @@ contract Auction {
 
     function bid() external payable inState(State.Bidding) {
         require(block.timestamp < endAt, "Bidding ended");
-        require(msg.value > maxBid, "Bid too low");
+        require(msg.value > 0, "Cannot bid 0");
 
         if (bidders[msg.sender] > 0) {
             bidders[msg.sender] += msg.value;
@@ -132,8 +132,11 @@ contract Auction {
         revealedPassphrase = passphrase;
         state = State.Completed;
 
-        (bool sent, ) = payable(owner).call{value: maxBid}("");
-        require(sent, "Payout failed");
+        if (maxBidder != address(0)) {
+            (bool sent, ) = payable(owner).call{value: maxBid}("");
+            require(sent, "Payout to winner failed");
+        }
+        
     }
 
     function givePassphrase() external view 

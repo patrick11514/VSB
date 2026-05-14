@@ -1,6 +1,7 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
 	import ConnectWallet from '$lib/components/ConnectWallet.svelte';
+	import Header from '$lib/components/Header.svelte';
 	import { removeMetaMaskListeners, setupMetaMaskListeners } from '$lib/services/web3';
 	import {
 		accountSwitchPromptOpen,
@@ -64,5 +65,10 @@
 {#if !$isAuthenticated}
 	<ConnectWallet />
 {:else}
-	{@render children()}
+	<div class="flex min-h-screen flex-col">
+		<Header />
+		<main class="flex-1">
+			{@render children()}
+		</main>
+	</div>
 {/if}

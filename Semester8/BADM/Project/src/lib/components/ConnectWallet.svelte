@@ -1,11 +1,5 @@
 <script lang="ts">
-	import {
-		Card,
-		CardContent,
-		CardDescription,
-		CardHeader,
-		CardTitle
-	} from '$lib/components/ui/card';
+	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 	import { connectMetaMask } from '$lib/services/web3';
 	import {
 		accountSwitchPromptOpen,
@@ -61,7 +55,6 @@
 	<Card class="w-full max-w-md shadow-xl">
 		<CardHeader class="text-center">
 			<CardTitle class="text-2xl">EtherZar</CardTitle>
-			<CardDescription>Ethereum Bazaar for Encrypted Digital Content</CardDescription>
 		</CardHeader>
 		<CardContent class="space-y-4">
 			<div class="text-center text-sm text-slate-600">

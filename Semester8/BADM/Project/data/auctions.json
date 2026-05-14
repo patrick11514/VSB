@@ -10,5 +10,17 @@
     "minBid": "1000000000000000",
     "endAt": "1778883780",
     "createdAt": "2026-05-14T00:25:19.175Z"
+  },
+  {
+    "address": "0x3BD7Ef7eba67255028B15f6740b4FfECe86d45db",
+    "owner": "0x658575B4a32ED826C874551cdaDE83e63571C5A9",
+    "name": "The image",
+    "description": "Preview :)\n\n![](https://upload.patrick115.eu/raw/images/c68d1c0a-7d78-4ef7-a458-7d70d9f1dbf1.png\n)",
+    "ipfsHandle": "ipfs://QmT1PA6jS1CkxprQSKarVSnyfuDhAaqAm7fe9vvjrKoLiB",
+    "originalFileHash": "0x9710544a3750c33e0c2cdb3027528c6c2f924ecdfe0817681ea6648894d6e597",
+    "hashedFileHash": "0xac91780e8f693d763c3f569eef22f5672f6b0d9cd14f4a52cd6aa5a6b63f26ef",
+    "minBid": "0",
+    "endAt": "1778886540",
+    "createdAt": "2026-05-14T01:11:18.060Z"
   }
 ]
