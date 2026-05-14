@@ -20,10 +20,6 @@
 	const isEnded = $derived(Date.now() > Number(auction.endAt) * 1000);
 	const auctionAddress = $derived(auction.address ?? auction.id);
 	const detailHref = $derived(`/auction/${auctionAddress}`);
-
-	console.log(auction.endAt);
-	console.log(Date.now() / 1000);
-	console.log(Number(auction.endAt) - Date.now() / 1000);
 </script>
 
 <Card class="transition-shadow hover:shadow-lg">
@@ -53,7 +49,11 @@
 			<div>
 				<p class="text-xs text-slate-500">Time Left</p>
 				<p class="text-xs font-semibold">
-					{formatDistanceToNow(new Date(Number(auction.endAt) * 1000))}
+					{#if isEnded}
+						0 seconds
+					{:else}
+						{formatDistanceToNow(new Date(Number(auction.endAt) * 1000), {})}
+					{/if}
 				</p>
 			</div>
 		</div>

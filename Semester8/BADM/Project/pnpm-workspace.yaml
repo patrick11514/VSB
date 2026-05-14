@@ -1,3 +1,7 @@
+allowBuilds:
+  bufferutil: true
+  msw: true
+  utf-8-validate: true
 onlyBuiltDependencies:
   - '@tailwindcss/oxide'
   - bufferutil
