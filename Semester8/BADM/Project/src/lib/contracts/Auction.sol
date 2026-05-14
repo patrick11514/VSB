@@ -134,7 +134,7 @@ contract Auction {
 
         if (maxBidder != address(0)) {
             (bool sent, ) = payable(owner).call{value: maxBid}("");
-            require(sent, "Payout to winner failed");
+            require(sent, "Payout to owner failed");
         }
         
     }

@@ -28,12 +28,12 @@
 
 	function handleSearch(query: string, type: 'name' | 'address') {
 		console.log('Search:', query, type);
-		// Implement search logic later
+		//TODO
 	}
 
 	function handleSort(sortBy: 'newest' | 'highest-bid' | 'ending-soon') {
 		console.log('Sort:', sortBy);
-		// Implement sort logic later
+		//TODO
 	}
 
 	function handleCreateAuction() {

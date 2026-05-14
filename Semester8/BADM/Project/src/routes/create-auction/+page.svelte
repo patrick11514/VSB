@@ -121,7 +121,6 @@
 
 			successMessage = `Auction deployed at ${address}`;
 
-			// persist auction metadata to local JSON DB for discovery
 			try {
 				await fetch('/api/add-auction', {
 					method: 'POST',
@@ -139,18 +138,15 @@
 					})
 				});
 			} catch (e) {
-				// surface persistence warning but do not block deployment
 				persistenceWarning =
 					'Warning: failed to persist auction metadata for discovery (non-fatal).';
-				// keep console log for diagnostics
 				console.warn('Failed to persist auction metadata:', e);
 			}
 
-			// cache passphrase locally for convenience
 			try {
 				localStorage.setItem(`AUCTION_${address}`, passphrase);
 			} catch {
-				// ignore localStorage failures
+				/**/
 			}
 
 			await goto(`/auction/${address}`);

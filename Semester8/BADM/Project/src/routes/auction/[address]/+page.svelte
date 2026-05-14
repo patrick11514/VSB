@@ -49,6 +49,8 @@
 	let isWorking = $state(false);
 	let winnerDetails = $state<AuctionRevealDetails | null>(null);
 
+	let password = $derived(localStorage.getItem(`AUCTION_${data.address}`) ?? null);
+
 	let hasRejectedAccountSwitch = $state(false);
 	let isRetrieveModalOpen = $state(false);
 	let htmlDescription = $state('');
@@ -77,7 +79,6 @@
 			]);
 
 			auction = auctionData;
-			// render description as sanitized Markdown on client
 			if (browser) {
 				try {
 					const m = await import('marked');
@@ -126,13 +127,7 @@
 			return;
 		}
 
-		// pre-check bid amount to give friendlier feedback
 		const bidValue = parseEth(bidAmount.toString());
-		if (auction && bidValue <= auction.maxBid) {
-			actionError = `Your bid is too low — current highest is ${formatEth(auction.maxBid)} ETH; please bid higher.`;
-			return;
-		}
-
 		const signer = await $provider.getSigner();
 		await performAction(() => bidOnAuction(data.address, signer, bidValue), 'Bid submitted.');
 	}
@@ -200,7 +195,6 @@
 
 		const signer = await $provider.getSigner();
 		winnerDetails = await getWinnerFileDetails(data.address, signer);
-		// open the new retrieve modal
 		isRetrieveModalOpen = true;
 	}
 
@@ -405,6 +399,18 @@
 											type="password"
 											placeholder="Enter the auction passphrase"
 										/>
+										{#if password}
+											<p class="text-xs text-slate-500">
+												Detected stored passphrase. You can pre-fill it:
+											</p>
+											<Button
+												type="button"
+												variant="outline"
+												onclick={() => (revealPassphraseInput = password)}
+											>
+												Pre-fill with stored passphrase
+											</Button>
+										{/if}
 									</div>
 									<Button
 										class="w-full"

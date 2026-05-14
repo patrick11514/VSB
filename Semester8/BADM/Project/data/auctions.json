@@ -34,5 +34,29 @@
     "minBid": "0",
     "endAt": "1778889240",
     "createdAt": "2026-05-14T01:55:38.429Z"
+  },
+  {
+    "address": "0x75b7F3e612c6F2F08D62cb44BDaE0d5CCf7e4C3d",
+    "owner": "0xE8935296fa28455F26184fb15593b3178A204204",
+    "name": "Example contract",
+    "description": "Simple contract presentation auction",
+    "ipfsHandle": "ipfs://QmStm6NQE76aaTAHhZZG8mvLbzTByRQcejwrwuo5LEMUjS",
+    "originalFileHash": "0x06f0b24765bce1649d6b63a3676585f693962208e52ced5b85b7bea2d44e6054",
+    "hashedFileHash": "0x6e861a11ad4f855390dc6f5163461077d1c2583f89af9dbd050a2d905c408d86",
+    "minBid": "0",
+    "endAt": "1778890440",
+    "createdAt": "2026-05-14T02:15:30.026Z"
+  },
+  {
+    "address": "0x85689edf7bfC40454ab2Ad66a4e1F0aED5c56042",
+    "owner": "0x658575B4a32ED826C874551cdaDE83e63571C5A9",
+    "name": "Example contract",
+    "description": "Simple contract presentation auction",
+    "ipfsHandle": "ipfs://QmYhDeHGWP4T1LbPo5Xkhe7xmwzMYPbbvK7MZdfzgmkEDk",
+    "originalFileHash": "0x4d5b70833ed57cbecef72dcd9ccb957c761cc387e97efdbfe83bfb6f9c788622",
+    "hashedFileHash": "0xc5cf9939e8ab947967f119864bd64a1c93ba283c8d5b296395351fe992666607",
+    "minBid": "0",
+    "endAt": "1778891280",
+    "createdAt": "2026-05-14T02:28:40.745Z"
   }
 ]

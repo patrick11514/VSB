@@ -1,5 +1,7 @@
 # EtherZar (Ethereum Bazaar)
 
+https://app.pinata.cloud/ipfs/files
+
 EtherZar is an Ethereum-based marketplace for selling encrypted digital content via auctions. Users connect with MetaMask (Sepolia testnet only for school/testing) and create auctions that reference files stored on IPFS. Auctions are backed by on-chain smart contracts; bidding and settlement happen on SepoliaETH while file storage and retrieval use IPFS.
 
 ## Key Concepts
@@ -114,10 +116,6 @@ Notes:
 - Implement IPFS upload integration and client-side encryption.
 - Implement on-chain deployment flow and MetaMask integration.
 
----
-
-If you'd like, I can also add a short `Getting Started` section with local dev steps and example env vars, or scaffold contract templates and tests next.
-
 ## Packages & Installation
 
 Recommended packages for this project (installed in the workspace):
@@ -158,12 +156,6 @@ Scaffolded files (core helpers):
 - `src/lib/services/crypto.ts` — client-side hashing, key derivation, AES-GCM encrypt/decrypt helpers
 - `src/lib/stores/session.ts` — simple Svelte stores for wallet/provider state
 - `src/lib/contracts/Auction.sol` — Solidity contract template matching the README spec
-
-Next actions I can take for you:
-
-- Run a local build and dev server to verify installs (`pnpm build` / `pnpm dev`).
-- Scaffold SvelteKit pages for auction listing and `/auction/[address]` pages that use the services above.
-- Add unit tests for the crypto and IPFS wrappers.
 
 ### Example environment variables
 
