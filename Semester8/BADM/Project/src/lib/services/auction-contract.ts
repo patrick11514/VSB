@@ -70,8 +70,17 @@ export async function readAuction(
 	runner: ethers.ContractRunner
 ): Promise<AuctionDetails> {
 	const contract = getAuctionContract(address, runner);
-	const [name, description, owner, endAt, maxBid, state, ipfsHandle, originalFileHash, hashedFileHash] =
-		await contract.checkStatus();
+	const [
+		name,
+		description,
+		owner,
+		endAt,
+		maxBid,
+		state,
+		ipfsHandle,
+		originalFileHash,
+		hashedFileHash
+	] = await contract.checkStatus();
 
 	return {
 		address,

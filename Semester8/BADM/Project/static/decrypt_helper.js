@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable */
 // Simple Node.js helper to decrypt payloads produced by the web UI
 // Usage: node decrypt_helper.js <encrypted> <passphrase> > decrypted.bin
 

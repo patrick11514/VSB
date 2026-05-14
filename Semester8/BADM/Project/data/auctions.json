@@ -22,5 +22,17 @@
     "minBid": "0",
     "endAt": "1778886540",
     "createdAt": "2026-05-14T01:11:18.060Z"
+  },
+  {
+    "address": "0x48a55c48C0EE9Bd5084377ecdDef76958F07D603",
+    "owner": "0xE8935296fa28455F26184fb15593b3178A204204",
+    "name": "Selling secret file",
+    "description": "This is the most secret file ever :O",
+    "ipfsHandle": "ipfs://QmTx4UojrDQ33KkwbqojzocthbiwXYKxYZQNcUvUG1Ap9T",
+    "originalFileHash": "0x88ec8c6906504efc37f21a85848f2dfc2f32bb6cdac4c5fbfb5195a26c62bdeb",
+    "hashedFileHash": "0xca67dc2c7536bf91b6ea137e1960232cefc894a52c21bf63bb775ca027dac84f",
+    "minBid": "0",
+    "endAt": "1778889240",
+    "createdAt": "2026-05-14T01:55:38.429Z"
   }
 ]

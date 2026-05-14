@@ -31,6 +31,7 @@
 		provider,
 		walletAddress
 	} from '$lib/stores/session';
+	import formatError from '$lib/utils/formatError';
 	import { onMount } from 'svelte';
 
 	let { data } = $props<{ data: { address: string } }>();
@@ -47,7 +48,7 @@
 	let revealPassphraseInput = $state('');
 	let isWorking = $state(false);
 	let winnerDetails = $state<AuctionRevealDetails | null>(null);
-	let isFilePopupOpen = $state(false);
+
 	let hasRejectedAccountSwitch = $state(false);
 	let isRetrieveModalOpen = $state(false);
 	let htmlDescription = $state('');
@@ -109,7 +110,7 @@
 			actionMessage = successMessage;
 			await loadAuction();
 		} catch (error) {
-			actionError = error instanceof Error ? error.message : 'Action failed.';
+			actionError = formatError(error);
 		} finally {
 			isWorking = false;
 		}
@@ -125,11 +126,15 @@
 			return;
 		}
 
+		// pre-check bid amount to give friendlier feedback
+		const bidValue = parseEth(bidAmount.toString());
+		if (auction && bidValue <= auction.maxBid) {
+			actionError = `Your bid is too low — current highest is ${formatEth(auction.maxBid)} ETH; please bid higher.`;
+			return;
+		}
+
 		const signer = await $provider.getSigner();
-		await performAction(
-			() => bidOnAuction(data.address, signer, parseEth(bidAmount.toString())),
-			'Bid submitted.'
-		);
+		await performAction(() => bidOnAuction(data.address, signer, bidValue), 'Bid submitted.');
 	}
 
 	async function handleEndAuction() {

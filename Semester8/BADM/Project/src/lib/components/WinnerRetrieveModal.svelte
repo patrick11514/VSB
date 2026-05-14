@@ -3,6 +3,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { decryptWithPassphrase, sha256Hex } from '$lib/services/crypto';
 	import { getFile, ipfsToGatewayUrl } from '$lib/services/ipfs';
+	import formatError from '$lib/utils/formatError';
 	import { createEventDispatcher, onMount } from 'svelte';
 
 	let { open = $bindable(), auction, winnerDetails } = $props();
@@ -19,14 +20,29 @@
 	let autoOk = $state(false);
 	let encryptedHash = $state('');
 	let originalHash = $state('');
-	let filename = $state('');
+	let hasStoredPassphrase = $state(false);
 
 	onMount(() => {
 		if (browser && auction?.address) {
 			const stored = localStorage.getItem(`AUCTION_${auction.address}`);
-			if (stored) passphrase = stored;
+			if (stored) {
+				passphrase = stored;
+				hasStoredPassphrase = true;
+			}
 		}
 	});
+
+	function preFillPassphrase() {
+		if (browser && auction?.address) {
+			const stored = localStorage.getItem(`AUCTION_${auction.address}`);
+			if (stored) {
+				passphrase = stored;
+			}
+		}
+	}
+
+	// mark unused prop as referenced for lint
+	void winnerDetails;
 
 	function close() {
 		open = false;
@@ -107,7 +123,7 @@
 			status = 'Ready: decrypted file available';
 			autoOk = true;
 		} catch (err) {
-			error = err instanceof Error ? err.message : String(err);
+			error = formatError(err);
 			status = '';
 		}
 	}
@@ -177,8 +193,16 @@
 								hash below.
 							</li>
 							<li>Decrypt locally using your passphrase (example using node):</li>
-							<p class="text-sm">Download helper: <a href="/decrypt_helper.js" download class="text-blue-600 underline">decrypt_helper.js</a></p>
-							<pre><code>node decrypt_helper.js &lt;encrypted&gt; &lt;passphrase&gt; &gt; decrypted.bin</code></pre>
+							<p class="text-sm">
+								Download helper: <a
+									href="/decrypt_helper.js"
+									download
+									class="text-blue-600 underline">decrypt_helper.js</a
+								>
+							</p>
+							<pre><code
+									>node decrypt_helper.js &lt;encrypted&gt; &lt;passphrase&gt; &gt; decrypted.bin</code
+								></pre>
 							<li>Compute checksum of decrypted file and compare with original file hash below.</li>
 						</ol>
 
@@ -191,12 +215,23 @@
 					<div>
 						<div class="grid gap-2">
 							<label for="passphrase-input" class="text-sm font-medium">Passphrase</label>
-							<input
-								id="passphrase-input"
-								class="rounded-md border px-2 py-1"
-								bind:value={passphrase}
-								placeholder="Enter passphrase"
-							/>
+							<div class="flex gap-2">
+								<input
+									id="passphrase-input"
+									class="flex-1 rounded-md border px-2 py-1"
+									bind:value={passphrase}
+									placeholder="Enter passphrase"
+								/>
+								{#if hasStoredPassphrase}
+									<button
+										type="button"
+										onclick={preFillPassphrase}
+										class="rounded-md bg-slate-200 px-3 py-1 text-sm hover:bg-slate-300"
+									>
+										Pre-fill
+									</button>
+								{/if}
+							</div>
 						</div>
 
 						<div class="mt-4">

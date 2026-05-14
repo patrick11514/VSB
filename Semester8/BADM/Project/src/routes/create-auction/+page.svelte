@@ -13,6 +13,7 @@
 	import { uploadFile } from '$lib/services/ipfs';
 	import { parseEth } from '$lib/services/web3';
 	import { pendingWalletAddress, provider, walletAddress } from '$lib/stores/session';
+	import formatError from '$lib/utils/formatError';
 
 	const defaultEndAt = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
 	type SourceMode = 'manual' | 'file';
@@ -30,6 +31,7 @@
 	let isSubmitting = $state(false);
 	let errorMessage = $state('');
 	let successMessage = $state('');
+	let persistenceWarning = $state('');
 
 	const footerWalletAddress = $derived($pendingWalletAddress ?? $walletAddress);
 
@@ -137,19 +139,23 @@
 					})
 				});
 			} catch (e) {
-				// ignore persistence errors for now
+				// surface persistence warning but do not block deployment
+				persistenceWarning =
+					'Warning: failed to persist auction metadata for discovery (non-fatal).';
+				// keep console log for diagnostics
+				console.warn('Failed to persist auction metadata:', e);
 			}
 
 			// cache passphrase locally for convenience
 			try {
 				localStorage.setItem(`AUCTION_${address}`, passphrase);
-			} catch (e) {
+			} catch {
 				// ignore localStorage failures
 			}
 
 			await goto(`/auction/${address}`);
 		} catch (error) {
-			errorMessage = error instanceof Error ? error.message : 'Failed to create auction.';
+			errorMessage = formatError(error);
 		} finally {
 			isSubmitting = false;
 		}
@@ -295,6 +301,14 @@
 							class="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700"
 						>
 							{successMessage}
+						</div>
+					{/if}
+
+					{#if persistenceWarning}
+						<div
+							class="rounded-md border border-yellow-200 bg-yellow-50 px-3 py-2 text-sm text-yellow-700"
+						>
+							{persistenceWarning}
 						</div>
 					{/if}
 
