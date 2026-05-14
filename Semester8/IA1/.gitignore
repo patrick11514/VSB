@@ -4,3 +4,4 @@ build
 c07/data
 c07/loss.txt
 c07/model.pth
+__pycache__
