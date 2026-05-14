@@ -10,6 +10,7 @@
 		CardTitle
 	} from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
+	import WinnerRetrieveModal from '$lib/components/WinnerRetrieveModal.svelte';
 	import {
 		bidOnAuction,
 		endAuction,
@@ -48,6 +49,7 @@
 	let winnerDetails = $state<AuctionRevealDetails | null>(null);
 	let isFilePopupOpen = $state(false);
 	let hasRejectedAccountSwitch = $state(false);
+	let isRetrieveModalOpen = $state(false);
 	let htmlDescription = $state('');
 
 	function isActionsBlocked() {
@@ -193,7 +195,8 @@
 
 		const signer = await $provider.getSigner();
 		winnerDetails = await getWinnerFileDetails(data.address, signer);
-		isFilePopupOpen = true;
+		// open the new retrieve modal
+		isRetrieveModalOpen = true;
 	}
 
 	onMount(() => {
@@ -282,6 +285,10 @@
 									href={ipfsToGatewayUrl(auction?.ipfsHandle ?? '')}>{auction.ipfsHandle}</a
 								>
 							</div>
+							<p class="break-all">
+								<span class="font-medium text-slate-950">Original file hash:</span>
+								{auction.originalFileHash ?? 'N/A'}
+							</p>
 							<p class="break-all">
 								<span class="font-medium text-slate-950">Hashed file hash:</span>
 								{auction.hashedFileHash}
@@ -448,45 +455,6 @@
 	</div>
 {/if}
 
-{#if isFilePopupOpen && winnerDetails}
-	<div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4">
-		<div class="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl">
-			<div class="flex items-start justify-between gap-4">
-				<div>
-					<h2 class="text-xl font-semibold text-slate-950">File details</h2>
-					<p class="text-sm text-slate-600">Visible only to the winning bidder.</p>
-				</div>
-				<Button variant="ghost" onclick={() => (isFilePopupOpen = false)}>Close</Button>
-			</div>
-
-			<div class="mt-6 space-y-3 text-sm text-slate-700">
-				<div>
-					<p>
-						<span class="font-medium text-slate-950">IPFS handle:</span>
-					</p>
-					<p class="break-all">{winnerDetails.ipfsHandle}</p>
-					<div class="mt-2 flex items-center gap-3">
-						<a
-							class="text-sm text-sky-600 hover:underline"
-							href={ipfsToGatewayUrl(winnerDetails?.ipfsHandle ?? '')}
-							target="_blank"
-							rel="noreferrer">Open in gateway</a
-						>
-					</div>
-				</div>
-				<p>
-					<span class="font-medium text-slate-950">Passphrase:</span>
-					{winnerDetails.revealedPassphrase}
-				</p>
-				<p class="break-all">
-					<span class="font-medium text-slate-950">Original hash:</span>
-					{winnerDetails.originalFileHash}
-				</p>
-				<p class="break-all">
-					<span class="font-medium text-slate-950">Passphrase hash:</span>
-					{winnerDetails.passphraseHash}
-				</p>
-			</div>
-		</div>
-	</div>
+{#if isRetrieveModalOpen && auction}
+	<WinnerRetrieveModal bind:open={isRetrieveModalOpen} {auction} {winnerDetails} />
 {/if}

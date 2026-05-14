@@ -7,7 +7,7 @@ export const AUCTION_ABI = [
 	'function isWinner() view returns (bool)',
 	'function canRefund() view returns (uint256)',
 	'function canEndAuction() view returns (bool)',
-	'function checkStatus() view returns (string, string, address, uint256, uint256, uint8, string, bytes32)',
+	'function checkStatus() view returns (string, string, address, uint256, uint256, uint8, string, bytes32, bytes32)',
 	'function bid() payable',
 	'function endAuction()',
 	'function revealPassphrase(string passphrase)',
@@ -31,6 +31,7 @@ export interface AuctionDetails {
 	name: string;
 	description: string;
 	ipfsHandle: string;
+	originalFileHash?: string;
 	hashedFileHash: string;
 	endAt: bigint;
 	maxBid: bigint;
@@ -69,7 +70,7 @@ export async function readAuction(
 	runner: ethers.ContractRunner
 ): Promise<AuctionDetails> {
 	const contract = getAuctionContract(address, runner);
-	const [name, description, owner, endAt, maxBid, state, ipfsHandle, hashedFileHash] =
+	const [name, description, owner, endAt, maxBid, state, ipfsHandle, originalFileHash, hashedFileHash] =
 		await contract.checkStatus();
 
 	return {
@@ -78,6 +79,7 @@ export async function readAuction(
 		name,
 		description,
 		ipfsHandle,
+		originalFileHash: originalFileHash ?? '',
 		hashedFileHash,
 		endAt: BigInt(endAt),
 		maxBid: BigInt(maxBid),

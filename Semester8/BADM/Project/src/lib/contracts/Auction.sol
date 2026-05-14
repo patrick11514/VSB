@@ -87,7 +87,7 @@ contract Auction {
     }
 
     function checkStatus() public view 
-        returns (string memory, string memory, address, uint256, uint256, uint8, string memory, bytes32) 
+        returns (string memory, string memory, address, uint256, uint256, uint8, string memory, bytes32, bytes32) 
     {
         uint8 derivedState = uint8(state);
 
@@ -95,7 +95,7 @@ contract Auction {
             derivedState = uint8(State.WaitingPassphrase);
         }
 
-        return (name, description, owner, endAt, maxBid, derivedState, ipfsHandle, hashedFileHash);
+        return (name, description, owner, endAt, maxBid, derivedState, ipfsHandle, originalFileHash, hashedFileHash);
     }
 
     function bid() external payable inState(State.Bidding) {
