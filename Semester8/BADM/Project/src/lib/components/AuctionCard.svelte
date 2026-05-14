@@ -21,18 +21,18 @@
 
 <Card class="transition-shadow hover:shadow-lg">
 	<CardHeader>
-		<div class="flex items-start justify-between">
-			<div class="flex-1">
+		<div class="flex-1">
+			<div class="flex items-start justify-between">
 				<CardTitle class="text-lg">{auction.name}</CardTitle>
-				<CardDescription class="mt-1 text-xs"
-					>{auction.owner.slice(0, 6)}...{auction.owner.slice(-4)}</CardDescription
-				>
+				{#if isEnded}
+					<Badge variant="secondary">Ended</Badge>
+				{:else}
+					<Badge variant="outline">Bidding</Badge>
+				{/if}
 			</div>
-			{#if isEnded}
-				<Badge variant="secondary">Ended</Badge>
-			{:else}
-				<Badge variant="outline">Bidding</Badge>
-			{/if}
+			<CardDescription class="mt-1 text-xs">
+				{auction.owner.slice(0, 6)}...{auction.owner.slice(-4)}
+			</CardDescription>
 		</div>
 	</CardHeader>
 	<CardContent class="space-y-4">

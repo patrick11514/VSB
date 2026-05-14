@@ -6,7 +6,6 @@ export async function connectMetaMask(): Promise<ethers.BrowserProvider | null> 
 	// @ts-expect-error - BrowserProvider constructor
 	const provider = new ethers.BrowserProvider(window.ethereum);
 	try {
-		// request accounts
 		// @ts-expect-error - MetaMask request method
 		await window.ethereum.request({ method: 'eth_requestAccounts' });
 		if (!provider) {
@@ -51,8 +50,6 @@ export function isSepoliaNetwork(network: ethers.Network): boolean {
 }
 
 export function disconnectWallet() {
-	// MetaMask SDK doesn't have a true disconnect, but we can clear local state
-	// In practice, the app will just forget the connection
 	return true;
 }
 

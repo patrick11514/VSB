@@ -1,0 +1,14 @@
+[
+  {
+    "address": "0x9a40e920160AbABfFB68b8b708C520Eec2E45F35",
+    "owner": "0x658575B4a32ED826C874551cdaDE83e63571C5A9",
+    "name": "Example contract",
+    "description": "# Markdown Example Guide\n\nWelcome to this quick example demonstrating various Markdown features.\n\n## 1. Text Formatting\n\nMarkdown makes it easy to add emphasis and styling to your text:\n* **Bold text** using double asterisks.\n* *Italic text* using single asterisks.\n* ~~Strikethrough~~ using double tildes.\n* `Inline code` using backticks.\n\n## 2. Tables\n\nHere is a simple table organizing some data:\n\n| Feature | Syntax | Result |\n| :--- | :--- | :--- |\n| Bold | `**text**` | **Bold** |\n| Italic | `*text*` | *Italic* |\n| Code | `` `code` `` | `code` |\n\n## 3. Links and Images\n\nYou can easily embed external resources into your document:\n\n* **Link:** [Markdown Guide](https://www.markdownguide.org)\n* **Image:** ![A placeholder landscape image](https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80)",
+    "ipfsHandle": "ipfs://QmTr9xGbs6fJQK6UiucHShneayv6FjvveK1AXAREZ7gFdL",
+    "originalFileHash": "0x4d5b70833ed57cbecef72dcd9ccb957c761cc387e97efdbfe83bfb6f9c788622",
+    "hashedFileHash": "0xcfa011606dd08048e5ea72e8eac515605d1203e625de5649f5d9263f4137c622",
+    "minBid": "1000000000000000",
+    "endAt": "1778883780",
+    "createdAt": "2026-05-14T00:25:19.175Z"
+  }
+]

@@ -51,6 +51,8 @@
 		errorMessage = '';
 		successMessage = '';
 
+		minBidEth = minBidEth.toString();
+
 		if (!$provider) {
 			errorMessage = 'Connect MetaMask first.';
 			return;
@@ -116,6 +118,35 @@
 			});
 
 			successMessage = `Auction deployed at ${address}`;
+
+			// persist auction metadata to local JSON DB for discovery
+			try {
+				await fetch('/api/add-auction', {
+					method: 'POST',
+					headers: { 'content-type': 'application/json' },
+					body: JSON.stringify({
+						address,
+						owner: await signer.getAddress(),
+						name: name.trim(),
+						description: description.trim(),
+						ipfsHandle: resolvedIpfsHandle,
+						originalFileHash: resolvedOriginalFileHash,
+						hashedFileHash: resolvedHashedFileHash,
+						minBid: minBid.toString(),
+						endAt: endTimestamp.toString()
+					})
+				});
+			} catch (e) {
+				// ignore persistence errors for now
+			}
+
+			// cache passphrase locally for convenience
+			try {
+				localStorage.setItem(`AUCTION_${address}`, passphrase);
+			} catch (e) {
+				// ignore localStorage failures
+			}
+
 			await goto(`/auction/${address}`);
 		} catch (error) {
 			errorMessage = error instanceof Error ? error.message : 'Failed to create auction.';

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { Button } from '$lib/components/ui/button';
 	import {
 		Card,
@@ -20,6 +21,7 @@
 		type AuctionDetails,
 		type AuctionRevealDetails
 	} from '$lib/services/auction-contract';
+	import { ipfsToGatewayUrl } from '$lib/services/ipfs';
 	import { formatEth, parseEth } from '$lib/services/web3';
 	import {
 		accountSwitchPromptOpen,
@@ -45,6 +47,7 @@
 	let winnerDetails = $state<AuctionRevealDetails | null>(null);
 	let isFilePopupOpen = $state(false);
 	let hasRejectedAccountSwitch = $state(false);
+	let htmlDescription = $state('');
 
 	function isActionsBlocked() {
 		return hasRejectedAccountSwitch && Boolean($pendingWalletAddress);
@@ -70,6 +73,17 @@
 			]);
 
 			auction = auctionData;
+			// render description as sanitized Markdown on client
+			if (browser) {
+				try {
+					const m = await import('marked');
+					const d = await import('dompurify');
+					const mdToHtml = m.marked?.parse ?? m.parse ?? ((s: string) => s);
+					htmlDescription = d.default.sanitize(mdToHtml(auction.description || ''));
+				} catch (err) {
+					htmlDescription = auction.description || '';
+				}
+			}
 			isOwner = permissions.isOwner;
 			isWinner = permissions.isWinner;
 			canEndAuction = permissions.canEndAuction;
@@ -225,16 +239,21 @@
 			<div class="grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
 				<Card>
 					<CardHeader>
-						<div class="flex items-center justify-between gap-4">
-							<div>
+						<div>
+							<div class="flex items-center justify-between gap-4">
 								<CardTitle class="text-2xl">{auction.name}</CardTitle>
+								<div
+									class="rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700"
+								>
+									{formatAuctionState(auction.state)}
+								</div>
+							</div>
+							{#if htmlDescription}
+								<!-- eslint-disable-next-line -->
+								<div class="prose mt-1 max-w-none text-sm">{@html htmlDescription}</div>
+							{:else}
 								<CardDescription class="mt-1">{auction.description}</CardDescription>
-							</div>
-							<div
-								class="rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700"
-							>
-								{formatAuctionState(auction.state)}
-							</div>
+							{/if}
 						</div>
 					</CardHeader>
 					<CardContent class="space-y-5">
@@ -259,10 +278,16 @@
 								<span class="font-medium text-slate-950">Max bid:</span>
 								{auction.maxBid || 'None yet'}
 							</p>
-							<p>
-								<span class="font-medium text-slate-950">IPFS handle:</span>
-								{auction.ipfsHandle}
-							</p>
+							<div class="break-all">
+								<p>
+									<span class="font-medium text-slate-950">IPFS handle:</span>
+								</p>
+								<a
+									target="_blank"
+									class="break-all text-blue-600 underline"
+									href={ipfsToGatewayUrl(auction?.ipfsHandle ?? '')}>{auction.ipfsHandle}</a
+								>
+							</div>
 							<p class="break-all">
 								<span class="font-medium text-slate-950">Hashed file hash:</span>
 								{auction.hashedFileHash}
@@ -432,10 +457,20 @@
 			</div>
 
 			<div class="mt-6 space-y-3 text-sm text-slate-700">
-				<p>
-					<span class="font-medium text-slate-950">IPFS handle:</span>
-					{winnerDetails.ipfsHandle}
-				</p>
+				<div>
+					<p>
+						<span class="font-medium text-slate-950">IPFS handle:</span>
+					</p>
+					<p class="break-all">{winnerDetails.ipfsHandle}</p>
+					<div class="mt-2 flex items-center gap-3">
+						<a
+							class="text-sm text-sky-600 hover:underline"
+							href={ipfsToGatewayUrl(winnerDetails?.ipfsHandle ?? '')}
+							target="_blank"
+							rel="noreferrer">Open in gateway</a
+						>
+					</div>
+				</div>
 				<p>
 					<span class="font-medium text-slate-950">Passphrase:</span>
 					{winnerDetails.revealedPassphrase}
