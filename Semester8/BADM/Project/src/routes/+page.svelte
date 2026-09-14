@@ -28,7 +28,9 @@
 
 	function handleSearch(query: string, type: 'name' | 'address') {
 		console.log('Search:', query, type);
-		//TODO
+		if (query.startsWith('0x')) {
+			goto(`/auction/${query}`);
+		}
 	}
 
 	function handleSort(sortBy: 'newest' | 'highest-bid' | 'ending-soon') {

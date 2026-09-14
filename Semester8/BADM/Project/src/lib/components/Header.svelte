@@ -26,7 +26,6 @@
 			class="flex flex-col gap-0 transition-opacity hover:opacity-80"
 		>
 			<h1 class="text-2xl font-bold text-slate-900">EtherZar</h1>
-			<p class="text-xs text-slate-500">Ethereum Bazaar for Encrypted Digital Assets</p>
 		</button>
 
 		<div class="flex items-center gap-4">
