@@ -6,8 +6,10 @@
 	import Button from '$/lib/components/ui/button/button.svelte';
 	import { Field, FieldGroup, FieldLabel } from '$/lib/components/ui/field';
 	import { Input } from '$/lib/components/ui/input';
+	import * as Tabs from '$/lib/components/ui/tabs';
 	import type { Message } from '$/types/message';
 	import { onDestroy, tick } from 'svelte';
+	import { SvelteMap } from 'svelte/reactivity';
 	import { v4 } from 'uuid';
 
 	type IdentifiedMessage = Message & { id: string };
@@ -17,10 +19,24 @@
 	let error = $state<null | 'username'>(null);
 
 	let chat = $state<Chat | null>(null);
-	let messages = $state<IdentifiedMessage[]>([]);
+	let allMessages = new SvelteMap<string, IdentifiedMessage[]>();
+	let messageTab = $state('global');
 	let messagesContainer = $state<HTMLDivElement | null>(null);
+	let dmsOpen = $state<string[]>([]);
+	let dmNotif = new SvelteMap<string, number>();
+
+	const getMessages = (tab: string) => {
+		return allMessages.get(tab);
+	};
 
 	$effect(() => {
+		let messages = getMessages(messageTab);
+
+		if (!messages) {
+			messages = [];
+			allMessages.set(messageTab, messages);
+		}
+
 		if (messages.length && messagesContainer) {
 			tick().then(() => {
 				if (messagesContainer) {
@@ -32,6 +48,14 @@
 			});
 		}
 	});
+
+	$effect(() => {
+		if (messageTab !== 'global') {
+			//AKA WE SWITCHED CHAT
+			dmNotif.set(messageTab, 0);
+		}
+	});
+
 	let currentUsers = $state<Map<string, boolean>>(new Map());
 	let onlineCount = $derived.by(() => {
 		let count = 0;
@@ -45,6 +69,12 @@
 		return currentUsers.size - onlineCount;
 	});
 
+	const putMessage = (message: IdentifiedMessage) => {
+		const messages = getMessages('global') ?? [];
+
+		allMessages.set('global', [...messages, message]);
+	};
+
 	const login = (anonymous: boolean) => {
 		if (username == null && !anonymous) {
 			error = 'username';
@@ -57,7 +87,7 @@
 		chat = new Chat(anonymous ? undefined : username);
 
 		chat.on('user-status', (user, status) => {
-			messages.push({
+			putMessage({
 				id: v4(),
 				type: 'statusUpdate',
 				timestamp: Date.now(),
@@ -65,19 +95,40 @@
 				online: status
 			});
 		});
-
 		chat.on('list-update', (list) => {
 			currentUsers = list;
 		});
 
 		chat.on('message', (from, timestamp, message) => {
-			messages.push({
+			putMessage({
 				id: v4(),
 				type: 'chatMessage',
 				timestamp,
 				from,
 				message
 			});
+		});
+
+		chat.on('dmMessage', (chat, from, timestamp, message) => {
+			if (dmsOpen.indexOf(chat) === -1) {
+				dmsOpen.push(chat);
+			}
+
+			const messages = getMessages(chat) ?? [];
+			allMessages.set(chat, [
+				...messages,
+				{
+					id: v4(),
+					type: 'chatMessage',
+					timestamp,
+					from,
+					message
+				}
+			]);
+
+			if (messageTab !== chat) {
+				dmNotif.set(chat, (dmNotif.get(chat) ?? 0) + 1);
+			}
 		});
 	};
 
@@ -89,7 +140,8 @@
 		if (chat) chat.disconnect();
 		logged = false;
 		username = undefined;
-		messages = [];
+		messageTab = 'global';
+		allMessages.clear();
 		currentUsers = new Map();
 	};
 
@@ -99,7 +151,12 @@
 		if (!message) return;
 		if (!chat) return;
 
-		chat.sendMessage(message);
+		if (messageTab === 'global') {
+			chat.sendMessage(message);
+		} else {
+			chat.sendDM(messageTab, message);
+		}
+
 		message = '';
 	};
 </script>
@@ -115,7 +172,8 @@
 >
 	<AlertDialog.Content class="flex min-h-1/2 flex-col justify-center">
 		<AlertDialog.Header>
-			<AlertDialog.Title class="w-full text-center text-2xl font-bold">Přihlášení</AlertDialog.Title>
+			<AlertDialog.Title class="w-full text-center text-2xl font-bold">Přihlášení</AlertDialog.Title
+			>
 			<AlertDialog.Description class="flex w-full flex-col gap-2">
 				{#if error}
 					<Alert.Root variant="destructive">
@@ -143,15 +201,41 @@
 </AlertDialog.Root>
 
 <!-- chat window aka 4 parts where topleft = chat history, top right = user list + their status bottom left the chat window and bottom right = send button-->
-<main class="flex h-screen max-h-screen w-full gap-2 p-2 overflow-hidden">
-	<div class="flex h-full w-2/3 flex-col gap-2 min-h-0">
-		<div class="flex flex-1 flex-col min-h-0 w-full rounded border border-primary p-2 shadow-md">
-			<h1 class="w-max shrink-0 border-b-2 border-primary text-lg font-bold mb-2">Historie Chatu</h1>
-			<div bind:this={messagesContainer} class="flex flex-1 flex-col gap-1 overflow-y-auto min-h-0">
-				{#each messages as message (message.id)}
-					<ChatMessage {message} />
+<main class="flex h-screen max-h-screen w-full gap-2 overflow-hidden p-2">
+	<div class="flex h-full min-h-0 w-2/3 flex-col gap-2">
+		<div class="flex min-h-0 w-full flex-1 flex-col rounded border border-primary p-2 shadow-md">
+			<h1 class="mb-2 w-max shrink-0 border-b-2 border-primary text-lg font-bold">
+				Historie Chatu
+			</h1>
+
+			<Tabs.Root bind:value={messageTab} class="flex h-full min-h-0 w-full flex-col gap-2">
+				<Tabs.List>
+					<Tabs.Trigger value="global">Globální</Tabs.Trigger>
+					{#each dmsOpen as dm (dm)}
+						<Tabs.Trigger
+							value={dm}
+							class={{
+								'font-bold': (dmNotif.get(dm) ?? 0) > 0
+							}}
+							>{dm} (PZ) {#if dmNotif.get(dm)}
+								({dmNotif.get(dm)})
+							{/if}</Tabs.Trigger
+						>
+					{/each}
+				</Tabs.List>
+				{#each ['global', ...dmsOpen] as tab (tab)}
+					<Tabs.Content value={tab}>
+						<div
+							bind:this={messagesContainer}
+							class="flex h-full min-h-0 w-full flex-col gap-2 overflow-y-auto"
+						>
+							{#each getMessages(tab) ?? [] as message (message.id)}
+								<ChatMessage {message} />
+							{/each}
+						</div>
+					</Tabs.Content>
 				{/each}
-			</div>
+			</Tabs.Root>
 		</div>
 		<div class="w-full shrink-0">
 			<Input
@@ -167,15 +251,27 @@
 		</div>
 	</div>
 
-	<div class="flex h-full w-1/3 flex-col gap-2 min-h-0">
-		<div class="flex flex-1 flex-col min-h-0 w-full rounded border border-primary p-2 shadow-md overflow-y-auto">
-			<h1 class="w-max shrink-0 border-b-2 border-primary text-lg font-bold mb-2">Uživatelé chatu</h1>
+	<div class="flex h-full min-h-0 w-1/3 flex-col gap-2">
+		<div
+			class="flex min-h-0 w-full flex-1 flex-col overflow-y-auto rounded border border-primary p-2 shadow-md"
+		>
+			<h1 class="mb-2 w-max shrink-0 border-b-2 border-primary text-lg font-bold">
+				Uživatelé chatu
+			</h1>
 			<div class="flex flex-col gap-1">
 				<h2 class="text-lg font-bold text-green-500">Online ({onlineCount})</h2>
 				<div class="flex flex-col gap-1">
 					{#each Array.from(currentUsers) as [user, status] (user)}
 						{#if status}
-							<span class="text-green-500">{user}</span>
+							<button
+								class="w-full text-left text-green-500"
+								onclick={() => {
+									dmsOpen.push(user);
+									tick().then(() => {
+										messageTab = user;
+									});
+								}}>{user}</button
+							>
 						{/if}
 					{/each}
 				</div>
@@ -183,13 +279,21 @@
 				<div class="flex flex-col gap-1">
 					{#each Array.from(currentUsers) as [user, status] (user)}
 						{#if !status}
-							<span class="text-red-500">{user}</span>
+							<button
+								class="w-full text-left text-red-500"
+								onclick={() => {
+									dmsOpen.push(user);
+									tick().then(() => {
+										messageTab = user;
+									});
+								}}>{user}</button
+							>
 						{/if}
 					{/each}
 				</div>
 			</div>
 		</div>
-		<div class="flex w-full justify-between shrink-0">
+		<div class="flex w-full shrink-0 justify-between">
 			<Button onclick={send}>Odeslat</Button>
 			<Button variant="destructive" onclick={logout}>Odhlásit se</Button>
 		</div>

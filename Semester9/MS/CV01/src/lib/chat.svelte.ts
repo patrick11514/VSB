@@ -6,6 +6,7 @@ type Events = {
 	'user-status': (name: string, online: boolean) => void;
 	'list-update': (list: Map<string, boolean>) => void;
 	message: (from: string, timestamp: number, message: string) => void;
+	dmMessage: (chat: string, from: string, timestamp: number, message: string) => void;
 };
 
 export class Chat extends EventEmitter<Events> {
@@ -15,9 +16,15 @@ export class Chat extends EventEmitter<Events> {
 	constructor(private username?: string) {
 		super();
 
+		const lastMessage = new MQTT.Message('offline');
+		lastMessage.retained = true;
+		lastMessage.destinationName = '/mschat/status/' + (this.username ?? 'anon');
+		lastMessage.qos = 0;
+
 		this.MQTT = new MQTT.Client('pcfeib425t.vsb.cz', 9999, this.username ?? 'anon');
 		this.MQTT.connect({
-			onSuccess: this.connected.bind(this)
+			onSuccess: this.connected.bind(this),
+			willMessage: lastMessage
 		});
 	}
 
@@ -27,6 +34,23 @@ export class Chat extends EventEmitter<Events> {
 		setTimeout(() => {
 			this.MQTT.disconnect();
 		}, 1000);
+	}
+
+	private parseMessage(text: string): { timestamp: number; message: string } {
+		const [rawTS, ...messageParts] = text.split(' ');
+		let message: string;
+		let timestamp: number;
+
+		const checkTimestmap = Number(rawTS);
+		if (isNaN(checkTimestmap)) {
+			message = text;
+			timestamp = Date.now();
+		} else {
+			message = messageParts.join(' ');
+			timestamp = checkTimestmap * 1000;
+		}
+
+		return { timestamp, message };
 	}
 
 	connected() {
@@ -53,20 +77,19 @@ export class Chat extends EventEmitter<Events> {
 				this.emit('list-update', this.userList);
 			} else if (dst.startsWith('/mschat/all/')) {
 				const username = dst.replace('/mschat/all/', '');
-				const [rawTS, ...messageParts] = value.split(' ');
-				let message: string;
-				let timestamp: number;
+				const { timestamp, message } = this.parseMessage(value);
+				this.emit('message', username, timestamp, message);
+			} else if (dst.startsWith('/mschat/user/')) {
+				const names = dst.replace('/mschat/user/', '').split('/');
+				if (names.length != 2) return;
 
-				const checkTimestmap = Number(rawTS);
-				if (isNaN(checkTimestmap)) {
-					message = value;
-					timestamp = Date.now();
-				} else {
-					message = messageParts.join(' ');
-					timestamp = checkTimestmap * 1000;
-				}
+				const [to, from] = names;
 
-				this.emit('message', username, Number(timestamp), message);
+				if (to !== this.username) return;
+
+				const { timestamp, message } = this.parseMessage(value);
+
+				this.emit('dmMessage', from, from, timestamp, message);
 			}
 		};
 	}
@@ -78,5 +101,14 @@ export class Chat extends EventEmitter<Events> {
 			0,
 			false
 		);
+	}
+
+	sendDM(to: string, message: string) {
+		const msg = Math.round(Date.now() / 1000).toString() + ' ' + message;
+
+		this.MQTT.send('/mschat/user/' + to + '/' + (this.username ?? 'anon'), msg, 0, false);
+
+		//feedback  message back
+		this.emit('dmMessage', to, this.username ?? 'anon', Date.now(), message);
 	}
 }
