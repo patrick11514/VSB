@@ -25,7 +25,7 @@
 			>{data.username} se stal {data.online ? 'online' : 'offline'}
 		</span>
 	{:else if data.type === 'chatMessage'}
-		<span class="mb-auto font-bold">{data.from}:</span>
+		<span class={{ 'mb-auto font-bold': true, 'text-blue-400': data.me }}>{data.from}:</span>
 		<span class="wrap-anywhere">{data.message}</span>
 	{/if}
 </div>

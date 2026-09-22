@@ -4,6 +4,7 @@ export type Message =
 			from: string;
 			message: string;
 			timestamp: number;
+			me: boolean;
 	  }
 	| {
 			type: 'statusUpdate';

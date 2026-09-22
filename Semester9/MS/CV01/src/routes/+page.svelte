@@ -21,27 +21,25 @@
 	let chat = $state<Chat | null>(null);
 	let allMessages = new SvelteMap<string, IdentifiedMessage[]>();
 	let messageTab = $state('global');
-	let messagesContainer = $state<HTMLDivElement | null>(null);
 	let dmsOpen = $state<string[]>([]);
 	let dmNotif = new SvelteMap<string, number>();
+	let chats = $state<{
+		[key: string]: HTMLElement | null;
+	}>({});
 
 	const getMessages = (tab: string) => {
 		return allMessages.get(tab);
 	};
 
 	$effect(() => {
-		let messages = getMessages(messageTab);
+		const messages = allMessages.get(messageTab);
+		const container = chats[messageTab];
 
-		if (!messages) {
-			messages = [];
-			allMessages.set(messageTab, messages);
-		}
-
-		if (messages.length && messagesContainer) {
+		if (messages && messages.length && container) {
 			tick().then(() => {
-				if (messagesContainer) {
-					messagesContainer.scrollTo({
-						top: messagesContainer.scrollHeight,
+				if (container && container.parentElement) {
+					container.parentElement.scrollTo({
+						top: container.scrollHeight,
 						behavior: 'smooth'
 					});
 				}
@@ -105,13 +103,15 @@
 				type: 'chatMessage',
 				timestamp,
 				from,
-				message
+				message,
+				me: from === username
 			});
 		});
 
 		chat.on('dmMessage', (chat, from, timestamp, message) => {
 			if (dmsOpen.indexOf(chat) === -1) {
 				dmsOpen.push(chat);
+				chats[chat] = null;
 			}
 
 			const messages = getMessages(chat) ?? [];
@@ -122,7 +122,8 @@
 					type: 'chatMessage',
 					timestamp,
 					from,
-					message
+					message,
+					me: from === username
 				}
 			]);
 
@@ -217,18 +218,22 @@
 							class={{
 								'font-bold': (dmNotif.get(dm) ?? 0) > 0
 							}}
-							>{dm} (PZ) {#if dmNotif.get(dm)}
+						>
+							{#if dmNotif.get(dm) ?? 0 > 0}
+								🔔
+							{/if}
+							{dm} (PZ) {#if dmNotif.get(dm)}
 								({dmNotif.get(dm)})
 							{/if}</Tabs.Trigger
 						>
 					{/each}
 				</Tabs.List>
 				{#each ['global', ...dmsOpen] as tab (tab)}
-					<Tabs.Content value={tab}>
-						<div
-							bind:this={messagesContainer}
-							class="flex h-full min-h-0 w-full flex-col gap-2 overflow-y-auto"
-						>
+					<Tabs.Content
+						value={tab}
+						class="flex h-full min-h-0 w-full flex-col gap-2 overflow-y-auto"
+					>
+						<div bind:this={chats[tab]}>
 							{#each getMessages(tab) ?? [] as message (message.id)}
 								<ChatMessage {message} />
 							{/each}

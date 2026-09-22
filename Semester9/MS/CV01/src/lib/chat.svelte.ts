@@ -24,7 +24,8 @@ export class Chat extends EventEmitter<Events> {
 		this.MQTT = new MQTT.Client('pcfeib425t.vsb.cz', 9999, this.username ?? 'anon');
 		this.MQTT.connect({
 			onSuccess: this.connected.bind(this),
-			willMessage: lastMessage
+			willMessage: lastMessage,
+			timeout: 10
 		});
 	}
 
