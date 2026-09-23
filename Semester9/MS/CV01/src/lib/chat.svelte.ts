@@ -9,11 +9,16 @@ type Events = {
 	dmMessage: (chat: string, from: string, timestamp: number, message: string) => void;
 };
 
+const SEPARATOR = ' ';
+
 export class Chat extends EventEmitter<Events> {
 	private MQTT = $state() as MQTT.Client;
 	private userList = new SvelteMap<string, boolean>();
 
-	constructor(private username?: string) {
+	constructor(
+		private username?: string,
+		address?: string
+	) {
 		super();
 
 		const lastMessage = new MQTT.Message('offline');
@@ -21,7 +26,7 @@ export class Chat extends EventEmitter<Events> {
 		lastMessage.destinationName = '/mschat/status/' + (this.username ?? 'anon');
 		lastMessage.qos = 0;
 
-		this.MQTT = new MQTT.Client('pcfeib425t.vsb.cz', 9999, this.username ?? 'anon');
+		this.MQTT = new MQTT.Client(address ?? 'pcfeib425t.vsb.cz', 9999, this.username ?? 'anon');
 		this.MQTT.connect({
 			onSuccess: this.connected.bind(this),
 			willMessage: lastMessage,
@@ -38,7 +43,13 @@ export class Chat extends EventEmitter<Events> {
 	}
 
 	private parseMessage(text: string): { timestamp: number; message: string } {
-		const [rawTS, ...messageParts] = text.split(' ');
+		const [rawTS, ...messageParts] = text.includes(SEPARATOR)
+			? text.split(SEPARATOR)
+			: text.includes('\t')
+				? text.split('\t')
+				: text.includes('\n')
+					? text.split('\n')
+					: text.split('');
 		let message: string;
 		let timestamp: number;
 
@@ -57,7 +68,9 @@ export class Chat extends EventEmitter<Events> {
 	connected() {
 		this.MQTT.subscribe('/mschat/#');
 
-		if (this.username) this.MQTT.send('/mschat/status/' + this.username, 'online', 0, true);
+		if (this.username) {
+			this.MQTT.send('/mschat/status/' + this.username, 'online', 0, true);
+		}
 
 		this.MQTT.onMessageArrived = (msg) => {
 			const { destinationName: dst, payloadString: value } = msg;
@@ -98,14 +111,14 @@ export class Chat extends EventEmitter<Events> {
 	sendMessage(message: string) {
 		this.MQTT.send(
 			'/mschat/all/' + (this.username ?? 'anon'),
-			Math.round(Date.now() / 1000).toString() + ' ' + message,
+			Math.round(Date.now() / 1000).toString() + SEPARATOR + message,
 			0,
 			false
 		);
 	}
 
 	sendDM(to: string, message: string) {
-		const msg = Math.round(Date.now() / 1000).toString() + ' ' + message;
+		const msg = Math.round(Date.now() / 1000).toString() + SEPARATOR + message;
 
 		this.MQTT.send('/mschat/user/' + to + '/' + (this.username ?? 'anon'), msg, 0, false);
 

@@ -16,6 +16,7 @@
 
 	let logged = $state(false);
 	let username = $state<string | undefined>(undefined);
+	let address = $state('pcfeib425t.vsb.cz');
 	let error = $state<null | 'username'>(null);
 
 	let chat = $state<Chat | null>(null);
@@ -182,6 +183,16 @@
 					</Alert.Root>
 				{/if}
 				<FieldGroup>
+					<Field>
+						<FieldLabel id="username">Adresa</FieldLabel>
+						<Input
+							id="address"
+							type="text"
+							placeholder="pcfeib425t.vsb.cz"
+							required
+							bind:value={address}
+						/>
+					</Field>
 					<Field>
 						<FieldLabel id="username">Jméno</FieldLabel>
 						<Input id="username" type="text" placeholder="xxx0123" required bind:value={username} />
