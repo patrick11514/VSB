@@ -11,7 +11,8 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"start": "node -r dotenv/config build"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
@@ -53,6 +54,7 @@
 		"vite": "^8.0.16"
 	},
 	"dependencies": {
+		"dotenv": "^18.0.2",
 		"eventemitter3": "^5.0.4",
 		"paho-mqtt": "^1.1.0",
 		"uuid": "^14.0.2"
