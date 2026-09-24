@@ -17,7 +17,9 @@ export class Chat extends EventEmitter<Events> {
 
 	constructor(
 		private username?: string,
-		address?: string
+		address?: string,
+		mqttUsername?: string,
+		mqttPassword?: string
 	) {
 		super();
 
@@ -26,12 +28,30 @@ export class Chat extends EventEmitter<Events> {
 		lastMessage.destinationName = '/mschat/status/' + (this.username ?? 'anon');
 		lastMessage.qos = 0;
 
-		this.MQTT = new MQTT.Client(address ?? 'pcfeib425t.vsb.cz', 9999, this.username ?? 'anon');
-		this.MQTT.connect({
+		const [host, portStr] = (address ?? 'pcfeib425t.vsb.cz').split(':');
+		const port = portStr ? parseInt(portStr, 10) : 9999;
+
+		this.MQTT = new MQTT.Client(host, port, this.username ?? 'anon');
+
+		const connectOptions: MQTT.ConnectionOptions = {
 			onSuccess: this.connected.bind(this),
 			willMessage: lastMessage,
-			timeout: 10
-		});
+			timeout: 10,
+			cleanSession: false
+		};
+
+		const isAuthProvided =
+			(mqttUsername !== undefined && mqttUsername.trim() !== '') ||
+			(mqttPassword !== undefined && mqttPassword !== '');
+
+		if (isAuthProvided) {
+			connectOptions.userName = mqttUsername?.trim()
+				? mqttUsername.trim()
+				: (this.username ?? 'username');
+			connectOptions.password = mqttPassword ?? '';
+		}
+
+		this.MQTT.connect(connectOptions);
 	}
 
 	disconnect() {
@@ -49,7 +69,7 @@ export class Chat extends EventEmitter<Events> {
 				? text.split('\t')
 				: text.includes('\n')
 					? text.split('\n')
-					: text.split('');
+					: text.split(' ');
 		let message: string;
 		let timestamp: number;
 

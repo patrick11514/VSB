@@ -8,7 +8,7 @@
 	import { Input } from '$/lib/components/ui/input';
 	import * as Tabs from '$/lib/components/ui/tabs';
 	import type { Message } from '$/types/message';
-	import { onDestroy, tick } from 'svelte';
+	import { onDestroy, onMount, tick } from 'svelte';
 	import { SvelteMap } from 'svelte/reactivity';
 	import { v4 } from 'uuid';
 
@@ -17,6 +17,8 @@
 	let logged = $state(false);
 	let username = $state<string | undefined>(undefined);
 	let address = $state('pcfeib425t.vsb.cz');
+	let mqttUsername = $state<string | undefined>(undefined);
+	let mqttPassword = $state<string | undefined>(undefined);
 	let error = $state<null | 'username'>(null);
 
 	let chat = $state<Chat | null>(null);
@@ -68,10 +70,105 @@
 		return currentUsers.size - onlineCount;
 	});
 
+	const STORAGE_KEY = 'chat_messages';
+	const MAX_STORED_MESSAGES_PER_TAB = 500;
+
+	const saveMessagesToStorage = () => {
+		if (typeof window === 'undefined') return;
+		try {
+			const data: Record<string, IdentifiedMessage[]> = {};
+			for (const [key, msgs] of allMessages) {
+				data[key] = msgs.slice(-MAX_STORED_MESSAGES_PER_TAB);
+			}
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+		} catch (e) {
+			console.error('Failed to save message history to localStorage:', e);
+		}
+	};
+
+	const loadMessagesFromStorage = () => {
+		if (typeof window === 'undefined') return;
+		try {
+			const saved = localStorage.getItem(STORAGE_KEY);
+			if (!saved) return;
+			const parsed = JSON.parse(saved);
+			if (typeof parsed !== 'object' || parsed === null) return;
+
+			for (const [tab, msgs] of Object.entries(parsed)) {
+				if (!Array.isArray(msgs)) continue;
+				const validMsgs: IdentifiedMessage[] = [];
+				for (const m of msgs) {
+					if (!m || typeof m !== 'object') continue;
+					if (m.type === 'chatMessage' && typeof m.message === 'string' && typeof m.from === 'string') {
+						validMsgs.push({
+							id: typeof m.id === 'string' ? m.id : v4(),
+							type: 'chatMessage',
+							from: m.from,
+							message: m.message,
+							timestamp: typeof m.timestamp === 'number' ? m.timestamp : Date.now(),
+							me: Boolean(username && m.from === username)
+						});
+					} else if (
+						m.type === 'statusUpdate' &&
+						typeof m.username === 'string' &&
+						typeof m.online === 'boolean'
+					) {
+						validMsgs.push({
+							id: typeof m.id === 'string' ? m.id : v4(),
+							type: 'statusUpdate',
+							username: m.username,
+							online: m.online,
+							timestamp: typeof m.timestamp === 'number' ? m.timestamp : Date.now()
+						});
+					}
+				}
+
+				if (validMsgs.length > 0) {
+					allMessages.set(tab, validMsgs);
+					if (tab !== 'global' && !dmsOpen.includes(tab)) {
+						dmsOpen.push(tab);
+						chats[tab] = null;
+					}
+				}
+			}
+		} catch (e) {
+			console.error('Failed to load message history from localStorage:', e);
+		}
+	};
+
+	const updateMessageOwnership = (currentUsername?: string) => {
+		for (const [, messages] of allMessages) {
+			for (const msg of messages) {
+				if (msg.type === 'chatMessage') {
+					msg.me = Boolean(currentUsername && msg.from === currentUsername);
+				}
+			}
+		}
+		saveMessagesToStorage();
+	};
+
+	const clearHistory = () => {
+		allMessages.clear();
+		dmsOpen = [];
+		messageTab = 'global';
+		if (typeof window !== 'undefined') {
+			try {
+				localStorage.removeItem(STORAGE_KEY);
+			} catch (e) {
+				console.error('Failed to clear messages from localStorage:', e);
+			}
+		}
+	};
+
+	onMount(() => {
+		loadMessagesFromStorage();
+	});
+
 	const putMessage = (message: IdentifiedMessage) => {
 		const messages = getMessages('global') ?? [];
 
 		allMessages.set('global', [...messages, message]);
+		saveMessagesToStorage();
 	};
 
 	const login = (anonymous: boolean) => {
@@ -83,7 +180,12 @@
 
 		logged = true;
 
-		chat = new Chat(anonymous ? undefined : username);
+		if (allMessages.size === 0) {
+			loadMessagesFromStorage();
+		}
+		updateMessageOwnership(anonymous ? undefined : username);
+
+		chat = new Chat(anonymous ? undefined : username, address, mqttUsername, mqttPassword);
 
 		chat.on('user-status', (user, status) => {
 			putMessage({
@@ -127,6 +229,7 @@
 					me: from === username
 				}
 			]);
+			saveMessagesToStorage();
 
 			if (messageTab !== chat) {
 				dmNotif.set(chat, (dmNotif.get(chat) ?? 0) + 1);
@@ -142,7 +245,10 @@
 		if (chat) chat.disconnect();
 		logged = false;
 		username = undefined;
+		mqttUsername = undefined;
+		mqttPassword = undefined;
 		messageTab = 'global';
+		dmsOpen = [];
 		allMessages.clear();
 		currentUsers = new Map();
 	};
@@ -184,7 +290,7 @@
 				{/if}
 				<FieldGroup>
 					<Field>
-						<FieldLabel id="username">Adresa</FieldLabel>
+						<FieldLabel id="address">Adresa</FieldLabel>
 						<Input
 							id="address"
 							type="text"
@@ -196,6 +302,19 @@
 					<Field>
 						<FieldLabel id="username">Jméno</FieldLabel>
 						<Input id="username" type="text" placeholder="xxx0123" required bind:value={username} />
+					</Field>
+					<Field>
+						<FieldLabel id="mqtt-username">MQTT Uživatelské jméno</FieldLabel>
+						<Input
+							id="mqtt-username"
+							type="text"
+							placeholder={username || 'username'}
+							bind:value={mqttUsername}
+						/>
+					</Field>
+					<Field>
+						<FieldLabel id="mqtt-password">MQTT Heslo</FieldLabel>
+						<Input id="mqtt-password" type="password" placeholder="" bind:value={mqttPassword} />
 					</Field>
 				</FieldGroup>
 			</AlertDialog.Description>
@@ -216,9 +335,14 @@
 <main class="flex h-screen max-h-screen w-full gap-2 overflow-hidden p-2">
 	<div class="flex h-full min-h-0 w-2/3 flex-col gap-2">
 		<div class="flex min-h-0 w-full flex-1 flex-col rounded border border-primary p-2 shadow-md">
-			<h1 class="mb-2 w-max shrink-0 border-b-2 border-primary text-lg font-bold">
-				Historie Chatu
-			</h1>
+			<div class="mb-2 flex items-center justify-between border-b-2 border-primary pb-1">
+				<h1 class="w-max shrink-0 text-lg font-bold">
+					Historie Chatu
+				</h1>
+				<Button variant="ghost" size="xs" onclick={clearHistory} title="Smazat uloženou historii chatu">
+					Smazat historii
+				</Button>
+			</div>
 
 			<Tabs.Root bind:value={messageTab} class="flex h-full min-h-0 w-full flex-col gap-2">
 				<Tabs.List>
@@ -282,7 +406,10 @@
 							<button
 								class="w-full text-left text-green-500"
 								onclick={() => {
-									dmsOpen.push(user);
+									if (!dmsOpen.includes(user)) {
+										dmsOpen.push(user);
+										chats[user] = null;
+									}
 									tick().then(() => {
 										messageTab = user;
 									});
@@ -298,7 +425,10 @@
 							<button
 								class="w-full text-left text-red-500"
 								onclick={() => {
-									dmsOpen.push(user);
+									if (!dmsOpen.includes(user)) {
+										dmsOpen.push(user);
+										chats[user] = null;
+									}
 									tick().then(() => {
 										messageTab = user;
 									});
