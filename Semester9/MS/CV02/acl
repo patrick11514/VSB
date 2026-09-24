@@ -1,0 +1,22 @@
+##########
+# All chat
+# read
+pattern read /mschat/all/#
+# write
+pattern write /mschat/all/%u
+# anonymous
+pattern write /mschat/all/anon
+
+########
+# STATUS
+# read
+pattern read /mschat/status/#
+# write
+pattern write /mschat/status/%u
+
+#########
+# DMS
+# read
+pattern read /mschat/user/%u/#
+# send
+pattern write /mschat/user/+/%u
