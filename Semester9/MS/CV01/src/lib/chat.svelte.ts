@@ -7,6 +7,7 @@ type Events = {
 	'list-update': (list: Map<string, boolean>) => void;
 	message: (from: string, timestamp: number, message: string) => void;
 	dmMessage: (chat: string, from: string, timestamp: number, message: string) => void;
+	changeState: (state: 'online' | 'offline') => void;
 };
 
 const SEPARATOR = ' ';
@@ -14,51 +15,59 @@ const SEPARATOR = ' ';
 export class Chat extends EventEmitter<Events> {
 	private MQTT = $state() as MQTT.Client;
 	private userList = new SvelteMap<string, boolean>();
+	private online = false;
 
 	constructor(
 		private username?: string,
-		address?: string,
-		mqttUsername?: string,
-		mqttPassword?: string
+		private address?: string,
+		private mqttUsername?: string,
+		private mqttPassword?: string
 	) {
 		super();
-
-		const lastMessage = new MQTT.Message('offline');
-		lastMessage.retained = true;
-		lastMessage.destinationName = '/mschat/status/' + (this.username ?? 'anon');
-		lastMessage.qos = 0;
 
 		const [host, portStr] = (address ?? 'pcfeib425t.vsb.cz').split(':');
 		const port = portStr ? parseInt(portStr, 10) : 9999;
 
 		this.MQTT = new MQTT.Client(host, port, this.username ?? 'anon');
 
+		this.connect();
+	}
+
+	connect() {
+		const lastMessage = new MQTT.Message('offline');
+		lastMessage.retained = true;
+		lastMessage.destinationName = '/mschat/status/' + (this.username ?? 'anon');
+		lastMessage.qos = 0;
+
 		const connectOptions: MQTT.ConnectionOptions = {
 			onSuccess: this.connected.bind(this),
+			onFailure: this.onLost.bind(this),
 			willMessage: lastMessage,
-			timeout: 10,
+			timeout: 5,
 			cleanSession: false
 		};
 
 		const isAuthProvided =
-			(mqttUsername !== undefined && mqttUsername.trim() !== '') ||
-			(mqttPassword !== undefined && mqttPassword !== '');
+			(this.mqttUsername !== undefined && this.mqttUsername.trim() !== '') ||
+			(this.mqttPassword !== undefined && this.mqttPassword !== '');
 
 		if (isAuthProvided) {
-			connectOptions.userName = mqttUsername?.trim()
-				? mqttUsername.trim()
+			connectOptions.userName = this.mqttUsername?.trim()
+				? this.mqttUsername.trim()
 				: (this.username ?? 'username');
-			connectOptions.password = mqttPassword ?? '';
+			connectOptions.password = this.mqttPassword ?? '';
 		}
 
 		this.MQTT.connect(connectOptions);
 	}
 
 	disconnect() {
-		if (this.username) this.MQTT.send('/mschat/status/' + this.username, 'offline', 0, true);
+		if (this.username && this.online) this.MQTT.send('/mschat/status/' + this.username, 'offline', 0, true);
+		if (!this.online) return;
 
 		setTimeout(() => {
 			this.MQTT.disconnect();
+			this.online = false;
 		}, 1000);
 	}
 
@@ -86,6 +95,9 @@ export class Chat extends EventEmitter<Events> {
 	}
 
 	connected() {
+		this.emit('changeState', 'online');
+		this.online = true;
+
 		this.MQTT.subscribe('/mschat/#');
 
 		if (this.username) {
@@ -126,19 +138,32 @@ export class Chat extends EventEmitter<Events> {
 				this.emit('dmMessage', from, from, timestamp, message);
 			}
 		};
+
+		this.MQTT.onConnectionLost = this.onLost.bind(this);
 	}
 
-	sendMessage(message: string) {
+	onLost() {
+		this.emit('changeState', 'offline');
+		this.online = false;
+
+		setTimeout(() => {
+			if (!this.online) {
+				this.connect();
+			}
+		}, 10000);
+	}
+
+	sendMessage(message: string, timestamp?: number) {
 		this.MQTT.send(
 			'/mschat/all/' + (this.username ?? 'anon'),
-			Math.round(Date.now() / 1000).toString() + SEPARATOR + message,
+			Math.round((timestamp ?? Date.now()) / 1000).toString() + SEPARATOR + message,
 			0,
 			false
 		);
 	}
 
-	sendDM(to: string, message: string) {
-		const msg = Math.round(Date.now() / 1000).toString() + SEPARATOR + message;
+	sendDM(to: string, message: string, timestamp?: number) {
+		const msg = Math.round((timestamp ?? Date.now()) / 1000).toString() + SEPARATOR + message;
 
 		this.MQTT.send('/mschat/user/' + to + '/' + (this.username ?? 'anon'), msg, 0, false);
 

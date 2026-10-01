@@ -54,6 +54,7 @@
 		"vite": "^8.0.16"
 	},
 	"dependencies": {
+		"@sveltejs/adapter-static": "^3.0.10",
 		"dotenv": "^18.0.2",
 		"eventemitter3": "^5.0.4",
 		"paho-mqtt": "^1.1.0",

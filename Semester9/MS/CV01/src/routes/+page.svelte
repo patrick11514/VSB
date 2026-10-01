@@ -8,7 +8,7 @@
 	import { Input } from '$/lib/components/ui/input';
 	import * as Tabs from '$/lib/components/ui/tabs';
 	import type { Message } from '$/types/message';
-	import { onDestroy, onMount, tick } from 'svelte';
+	import { onDestroy, tick } from 'svelte';
 	import { SvelteMap } from 'svelte/reactivity';
 	import { v4 } from 'uuid';
 
@@ -70,17 +70,15 @@
 		return currentUsers.size - onlineCount;
 	});
 
-	const STORAGE_KEY = 'chat_messages';
-	const MAX_STORED_MESSAGES_PER_TAB = 500;
+	const STORAGE_KEY = $derived.by(() => 'chat_messages_' + address + '_' + username);
 
 	const saveMessagesToStorage = () => {
 		if (typeof window === 'undefined') return;
 		try {
-			const data: Record<string, IdentifiedMessage[]> = {};
-			for (const [key, msgs] of allMessages) {
-				data[key] = msgs.slice(-MAX_STORED_MESSAGES_PER_TAB);
-			}
-			localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+			console.log(STORAGE_KEY);
+			let all = allMessages.entries();
+			all = all.map(([tab, messages]) => [tab, messages.filter((m) => m.type === 'chatMessage')]);
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(all)));
 		} catch (e) {
 			console.error('Failed to save message history to localStorage:', e);
 		}
@@ -90,61 +88,21 @@
 		if (typeof window === 'undefined') return;
 		try {
 			const saved = localStorage.getItem(STORAGE_KEY);
+			console.log(saved);
 			if (!saved) return;
 			const parsed = JSON.parse(saved);
 			if (typeof parsed !== 'object' || parsed === null) return;
 
-			for (const [tab, msgs] of Object.entries(parsed)) {
-				if (!Array.isArray(msgs)) continue;
-				const validMsgs: IdentifiedMessage[] = [];
-				for (const m of msgs) {
-					if (!m || typeof m !== 'object') continue;
-					if (m.type === 'chatMessage' && typeof m.message === 'string' && typeof m.from === 'string') {
-						validMsgs.push({
-							id: typeof m.id === 'string' ? m.id : v4(),
-							type: 'chatMessage',
-							from: m.from,
-							message: m.message,
-							timestamp: typeof m.timestamp === 'number' ? m.timestamp : Date.now(),
-							me: Boolean(username && m.from === username)
-						});
-					} else if (
-						m.type === 'statusUpdate' &&
-						typeof m.username === 'string' &&
-						typeof m.online === 'boolean'
-					) {
-						validMsgs.push({
-							id: typeof m.id === 'string' ? m.id : v4(),
-							type: 'statusUpdate',
-							username: m.username,
-							online: m.online,
-							timestamp: typeof m.timestamp === 'number' ? m.timestamp : Date.now()
-						});
-					}
-				}
+			console.log(parsed);
 
-				if (validMsgs.length > 0) {
-					allMessages.set(tab, validMsgs);
-					if (tab !== 'global' && !dmsOpen.includes(tab)) {
-						dmsOpen.push(tab);
-						chats[tab] = null;
-					}
-				}
+			allMessages.clear();
+			//parsed -> [[key, value]]
+			for (const [tab, messages] of parsed) {
+				allMessages.set(tab, messages);
 			}
 		} catch (e) {
 			console.error('Failed to load message history from localStorage:', e);
 		}
-	};
-
-	const updateMessageOwnership = (currentUsername?: string) => {
-		for (const [, messages] of allMessages) {
-			for (const msg of messages) {
-				if (msg.type === 'chatMessage') {
-					msg.me = Boolean(currentUsername && msg.from === currentUsername);
-				}
-			}
-		}
-		saveMessagesToStorage();
 	};
 
 	const clearHistory = () => {
@@ -160,16 +118,39 @@
 		}
 	};
 
-	onMount(() => {
-		loadMessagesFromStorage();
-	});
+	const isOfflineMessage = (a: Message, b: Message) => {
+		return (
+			a.type === 'chatMessage' &&
+			b.type === 'chatMessage' &&
+			a.from === b.from &&
+			a.message === b.message &&
+			Math.abs(a.timestamp - b.timestamp) < 1000 &&
+			((a.queued === true && b.queued === false) || (a.queued === false && b.queued === true))
+		);
+	};
 
 	const putMessage = (message: IdentifiedMessage) => {
 		const messages = getMessages('global') ?? [];
 
-		allMessages.set('global', [...messages, message]);
-		saveMessagesToStorage();
+		const msg = messages.find((msg) => isOfflineMessage(msg, message));
+
+		if (msg && msg.type === 'chatMessage') {
+			msg.queued = false;
+		} else {
+			allMessages.set('global', [...messages, message]);
+			saveMessagesToStorage();
+		}
 	};
+
+	let offlineQueue = new SvelteMap<
+		string,
+		{
+			message: string;
+			timestamp: number;
+		}[]
+	>();
+
+	let status = $state<'online' | 'offline'>('offline');
 
 	const login = (anonymous: boolean) => {
 		if (username == null && !anonymous) {
@@ -180,11 +161,7 @@
 
 		logged = true;
 
-		if (allMessages.size === 0) {
-			loadMessagesFromStorage();
-		}
-		updateMessageOwnership(anonymous ? undefined : username);
-
+		loadMessagesFromStorage();
 		chat = new Chat(anonymous ? undefined : username, address, mqttUsername, mqttPassword);
 
 		chat.on('user-status', (user, status) => {
@@ -201,13 +178,15 @@
 		});
 
 		chat.on('message', (from, timestamp, message) => {
+			//check if the message was not send in offline mode
 			putMessage({
 				id: v4(),
 				type: 'chatMessage',
 				timestamp,
 				from,
 				message,
-				me: from === username
+				me: from === username,
+				queued: false
 			});
 		});
 
@@ -226,7 +205,8 @@
 					timestamp,
 					from,
 					message,
-					me: from === username
+					me: from === username,
+					queued: false
 				}
 			]);
 			saveMessagesToStorage();
@@ -234,6 +214,23 @@
 			if (messageTab !== chat) {
 				dmNotif.set(chat, (dmNotif.get(chat) ?? 0) + 1);
 			}
+		});
+
+		chat.on('changeState', (state) => {
+			if (status === 'offline' && state === 'online') {
+				//send all messages
+				offlineQueue.forEach((messages, tab) => {
+					for (const msg of messages) {
+						if (tab === 'global') {
+							chat?.sendMessage(msg.message, msg.timestamp);
+						} else {
+							chat?.sendDM(tab, msg.message, msg.timestamp);
+						}
+					}
+				});
+				offlineQueue.clear();
+			}
+			status = state;
 		});
 	};
 
@@ -259,10 +256,33 @@
 		if (!message) return;
 		if (!chat) return;
 
-		if (messageTab === 'global') {
-			chat.sendMessage(message);
+		if (status === 'offline') {
+			offlineQueue.set(messageTab, [
+				...(offlineQueue.get(messageTab) ?? []),
+				{
+					message,
+					timestamp: Date.now()
+				}
+			]);
+
+			allMessages.set(messageTab, [
+				...(getMessages(messageTab) ?? []),
+				{
+					id: v4(),
+					type: 'chatMessage',
+					timestamp: Date.now(),
+					from: username ?? 'anon',
+					message,
+					me: true,
+					queued: true
+				}
+			]);
 		} else {
-			chat.sendDM(messageTab, message);
+			if (messageTab === 'global') {
+				chat.sendMessage(message);
+			} else {
+				chat.sendDM(messageTab, message);
+			}
 		}
 
 		message = '';
@@ -336,10 +356,13 @@
 	<div class="flex h-full min-h-0 w-2/3 flex-col gap-2">
 		<div class="flex min-h-0 w-full flex-1 flex-col rounded border border-primary p-2 shadow-md">
 			<div class="mb-2 flex items-center justify-between border-b-2 border-primary pb-1">
-				<h1 class="w-max shrink-0 text-lg font-bold">
-					Historie Chatu
-				</h1>
-				<Button variant="ghost" size="xs" onclick={clearHistory} title="Smazat uloženou historii chatu">
+				<h1 class="w-max shrink-0 text-lg font-bold">Historie Chatu</h1>
+				<Button
+					variant="ghost"
+					size="xs"
+					onclick={clearHistory}
+					title="Smazat uloženou historii chatu"
+				>
 					Smazat historii
 				</Button>
 			</div>
@@ -395,6 +418,13 @@
 		<div
 			class="flex min-h-0 w-full flex-1 flex-col overflow-y-auto rounded border border-primary p-2 shadow-md"
 		>
+			<h1 class="text-bold text-2xl">
+				{#if status === 'online'}
+					<span class="text-green-500">Online</span>
+				{:else}
+					<span class="text-red-500">Offline</span>
+				{/if}
+			</h1>
 			<h1 class="mb-2 w-max shrink-0 border-b-2 border-primary text-lg font-bold">
 				Uživatelé chatu
 			</h1>

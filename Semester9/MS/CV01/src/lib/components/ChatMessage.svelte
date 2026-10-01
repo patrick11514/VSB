@@ -25,6 +25,9 @@
 			>{data.username} se stal {data.online ? 'online' : 'offline'}
 		</span>
 	{:else if data.type === 'chatMessage'}
+		{#if data.queued}
+			⏰
+		{/if}
 		<span class={{ 'mb-auto font-bold': true, 'text-blue-400': data.me }}>{data.from}:</span>
 		<span class="wrap-anywhere">{data.message}</span>
 	{/if}

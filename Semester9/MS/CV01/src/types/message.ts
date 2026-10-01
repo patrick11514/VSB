@@ -5,6 +5,7 @@ export type Message =
 			message: string;
 			timestamp: number;
 			me: boolean;
+			queued: boolean;
 	  }
 	| {
 			type: 'statusUpdate';
