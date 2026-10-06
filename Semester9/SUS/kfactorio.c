@@ -647,5 +647,5 @@ module_exit(kfactorio_exit);
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Patrik Mintel");
-MODULE_DESCRIPTION("SUS Kernel Factorio Game with Assembler and Recipes");
+MODULE_DESCRIPTION("SUS Kernel Factorio Game (ported from IvOS)");
 MODULE_VERSION("1.0");

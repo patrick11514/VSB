@@ -1,0 +1,7 @@
+/.*
+/kfactorio.*
+!/kfactorio.c
+Module.symvers
+modules.order
+*.png
+tui
