@@ -13,3 +13,6 @@ This repository contains laboratories and homeworks.
 [**5. semester**](https://github.com/patrick11514/VSB/tree/main/Semester5)
 [**6. semester**](https://github.com/patrick11514/VSB/tree/main/Semester6)
 [**7. semester**](https://github.com/patrick11514/VSB/tree/main/Semester7)
+[**8. semester**](https://github.com/patrick11514/VSB/tree/main/Semester8)
+[**9. semester**](https://github.com/patrick11514/VSB/tree/main/Semester9)
+[**10. semester**](https://github.com/patrick11514/VSB/tree/main/Semester10)
