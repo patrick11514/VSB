@@ -1,0 +1,6 @@
+====================================================
+PVBPS - Anti-Analysis Triggered: BENIGN MODE
+====================================================
+Debugger Detected     : TRUE
+VM / Sandbox Detected : FALSE
+Action: Payload suppressed to prevent dynamic analysis.

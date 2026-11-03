@@ -1,0 +1,14 @@
+[package]
+name = "demo"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+tokio = { version = "1.38", features = ["full"] }
+bytes = "1"
+h2 = "0.4"
+http = "1.0"
+tokio-rustls = "0.26"
+rustls = { version = "0.22", features = ["tls12"] }
+rustls-pki-types = "1.7"
+futures-util = "0.3"

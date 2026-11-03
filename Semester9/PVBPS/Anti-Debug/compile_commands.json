@@ -1,0 +1,7 @@
+[
+  {
+    "directory": "/home/patrick115/Projects/VSB/Semester9/PVBPS/Anti-Debug",
+    "command": "/usr/bin/x86_64-w64-mingw32-gcc -Wall -O2 -c main.c",
+    "file": "main.c"
+  }
+]
